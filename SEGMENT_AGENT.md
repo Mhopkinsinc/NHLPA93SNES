@@ -19,7 +19,7 @@ NHLPA Hockey 93 SNES is a hybrid. The SNES port started from NHL92 Genesis (like
 
 - Reference ROM: `lst/nhlpa93snes.bin` (524288 bytes, sha1 `76a01492cfb656e9fce0094bca356c312adfea0e`). Bytes and branch targets come from it. Do not substitute another ROM.
 - There is no IDA listing. The starting point is the auto-generated `src/bankXX.asm` (quick recursive-descent pass from the vectors, `tools/disasm65816.py`). Each instruction line carries `; $address: bytes`. Unreached bytes are `db` lines: they are unresolved, not proven data. Do not re-run the generator over a bank once it has been edited.
-- Style / naming source: https://github.com/abdulahmad/NHLPA93Genesis (first), then https://github.com/abdulahmad/NHL92Genesis-style 92 source where 93 lacks the routine.
+- Style / naming source: https://github.com/abdulahmad/NHLPA93Genesis (first), then https://github.com/abdulahmad/NHL92Genesis where 93 lacks the routine.
 - `src/nhlpa93snes.asm` is the full build top level: `inc/snes_regs.asm`, `ram93snes.asm`, then the bank files in ROM order. Keep includes in ROM order.
 
 ## Mapping

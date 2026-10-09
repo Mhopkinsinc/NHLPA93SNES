@@ -6,4 +6,4 @@
 - Quick pass: `python3 tools/disasm65816.py lst/nhlpa93snes.bin src` (do not rerun after edits). 1962 entry labels; ~40 KB (7.6%) decoded as code, ~484 KB left as db. Most code is in $80 (55%) and $8F (27%), $88 (12%). Small decodes in other banks may be false (jsl into data).
 - Biggest gap: indirect jumps/jump tables and code only reached through them; every bank except $80/$8F is mostly unresolved.
 - asar notes: branch operands must be labels (a literal is not a target address in asar); all operand sizes written with .b/.w/.l; `check bankcross off`, `--fix-checksum=off`.
-- Open decisions: whether to split banks into logical files (penalty, teamdata, ...) now or as segments are worked; asset extraction (graphics incbins) tooling; NHL92 Genesis reference repo location.
+- Open decisions: whether to split banks into logical files (penalty, teamdata, ...) now or as segments are worked; asset extraction (graphics incbins) tooling. NHL92 Genesis reference: https://github.com/abdulahmad/NHL92Genesis.
