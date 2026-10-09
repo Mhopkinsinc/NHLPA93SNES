@@ -232,7 +232,7 @@ puckbody:		;auto: CODE_80A21A. 93G puckbody (hockey93_05): puck (X) hits player 
 	ldy.b a3		; $80A2E7: A4 3F
 	stx.b a3		; $80A2E9: 86 3F
 	sty.b a2		; $80A2EB: 84 3B
-	jsl.l $80B006		; $80A2ED: 22 06 B0 80  SetSPA (d1 = animation)
+	jsl.l SetSPA		; $80A2ED: 22 06 B0 80
 	ldx.b a2		; $80A2F1: A6 3B
 	ldy.b a3		; $80A2F3: A4 3F
 	stx.b a3		; $80A2F5: 86 3F
@@ -562,7 +562,7 @@ puckfaceoff:		;auto: asstab $1B. 93G puckfaceoff (logic93_4): this is where the 
 	beq .rg		; $80A590: F0 03
 	jmp.w $E7F7		; $80A592: 4C F7 E7  Stop4Pen
 .rg:
-	jsl.l $80BE47		; $80A595: 22 47 BE 80  ReturnGoalies, ReturnGoalies
+	jsl.l ReturnGoalies		; $80A595: 22 47 BE 80  ReturnGoalies
 	lda.w #$FFFF		; $80A599: A9 FF FF  temp1/temp2 = -1: no lc box timers
 	sta.w temp1,x		; $80A59C: 9D 5F 0C
 	sta.w temp2,x		; $80A59F: 9D 7F 0C
@@ -615,7 +615,7 @@ puckfaceoff:		;auto: asstab $1B. 93G puckfaceoff (logic93_4): this is where the 
 	cmp.w cont2team		; $80A60B: CD 98 12
 	beq .rtl		; $80A60E: F0 5E
 	jsl.l $8FE6BD		; $80A610: 22 BD E6 8F  bank $8F: 93G CompLine
-	jsl.l $80BB5A		; $80A614: 22 5A BB 80  setpersonel
+	jsl.l setpersonel		; $80A614: 22 5A BB 80
 	jml.l $89E95D		; $80A618: 5C 5D E9 89  bank $89: 93G printscores1
 .slc:		;controlled player d0 gets the line change box
 	ldy.b a3		; $80A61C: A4 3F
@@ -679,7 +679,7 @@ puckfaceoff:		;auto: asstab $1B. 93G puckfaceoff (logic93_4): this is where the 
 	lda.w #pfaceoff2		; $80A698: A9 1C 00  pfaceoff2
 	sta.b d0		; $80A69B: 85 53
 	ldx.b a3		; $80A69D: A6 3F
-	jmp.w $B4A7		; $80A69F: 4C A7 B4  assreplace (d0 = assignment)
+	jmp.w assreplace		; $80A69F: 4C A7 B4
 .clc:		;d0 = 0 (temp1/temp3) or $20 (temp2/temp4): update one lc box timer
 	lda.b a3		; $80A6A2: A5 3F
 	clc		; $80A6A4: 18
@@ -828,7 +828,7 @@ SetLCmode2:		;auto: CODE_80A748. 93G SetLCmode2 (logic93_1 IDA showfaceoff): a2 
 	ora.w #$2000		; $80A7D7: 09 00 20  text attribute $20
 	ldy.w #$0002		; $80A7DA: A0 02 00
 	sta.b [a1],y		; $80A7DD: 97 37
-	jsl.l $80B92D		; $80A7DF: 22 2D B9 80  print ([a1] string)
+	jsl.l print		; $80A7DF: 22 2D B9 80
 	lda.b d0		; $80A7E3: A5 53
 	pha		; $80A7E5: 48
 	lda.w #$8213		; $80A7E6: A9 13 82  linelist (bank $8F)
@@ -859,7 +859,7 @@ SetLCmode2:		;auto: CODE_80A748. 93G SetLCmode2 (logic93_1 IDA showfaceoff): a2 
 	sta.b a1		; $80A81C: 85 37
 	adc.b [a1]		; $80A81E: 67 37
 	sta.b a1		; $80A820: 85 37
-	jmp.w $B92D		; $80A822: 4C 2D B9  print ([a1] string)
+	jmp.w print		; $80A822: 4C 2D B9
 .btn:		;SNES button letter for lc rows 0-2 (93G A/B/C)
 	db "YBA"		; $80A825
 ClrHor:		;auto: CODE_80A828. 93G ClrHor (penalty93_1): revert to the vertical ice rink: clear sfhormode, Oldrow, SprSort, clear the text map, printscores1
@@ -876,7 +876,7 @@ ClrHor:		;auto: CODE_80A828. 93G ClrHor (penalty93_1): revert to the vertical ic
 	stz.w sfhormode		; $80A839: 9C 8E 12  vertical
 	lda.w #999		; $80A83C: A9 E7 03  Oldrow = 999: redraw the rink rows
 	sta.w Oldrow		; $80A83F: 8D 9B 04
-	jsl.l $80B76C		; $80A842: 22 6C B7 80  SprSort
+	jsl.l SprSort		; $80A842: 22 6C B7 80
 	lda.w sflags		; $80A846: AD 8C 12
 	bit.w #sfpz		; $80A849: 89 01 00  paused: keep the text
 	bne .pop		; $80A84C: D0 1D
@@ -991,15 +991,15 @@ puckfaceoff2:		;auto: asstab $1C. 93G puckfaceoff2 (logic93_4): face off control
 	bpl .cw		; $80A94B: 10 F8
 	lda.w #$003C		; $80A94D: A9 3C 00  yleader = 60
 	sta.w yleader		; $80A950: 8D F9 08
-	jsl.l $80B01A		; $80A953: 22 1A B0 80  ResetBench, ResetBench
+	jsl.l ResetBench		; $80A953: 22 1A B0 80  ResetBench
 	stz.b a2		; $80A957: 64 3B
-	jsl.l $80BB5A		; $80A959: 22 5A BB 80  setpersonel
-	jsl.l $80B086		; $80A95D: 22 86 B0 80  forcepldata
+	jsl.l setpersonel		; $80A959: 22 5A BB 80
+	jsl.l forcepldata		; $80A95D: 22 86 B0 80
 	inc.b a2		; $80A961: E6 3B
 	inc.b a2		; $80A963: E6 3B
-	jsl.l $80BB5A		; $80A965: 22 5A BB 80  setpersonel
-	jsl.l $80B086		; $80A969: 22 86 B0 80  forcepldata
-	jsl.l $80B3F8		; $80A96D: 22 F8 B3 80  resetplstuff, resetplstuff
+	jsl.l setpersonel		; $80A965: 22 5A BB 80
+	jsl.l forcepldata		; $80A969: 22 86 B0 80
+	jsl.l resetplstuff		; $80A96D: 22 F8 B3 80  resetplstuff
 	lda.b a3+2		; $80A971: A5 41  push a3
 	pha		; $80A973: 48
 	lda.b a3		; $80A974: A5 3F
@@ -1043,7 +1043,7 @@ puckfaceoff2:		;auto: asstab $1C. 93G puckfaceoff2 (logic93_4): face off control
 	lda.w #afaceoffpl		; $80A9CC: A9 17 00  afaceoffpl
 	sta.b d0		; $80A9CF: 85 53
 .l1:
-	jsl.l $80B49D		; $80A9D1: 22 9D B4 80  assinsert (d0 = assignment)
+	jsl.l assinsert		; $80A9D1: 22 9D B4 80
 .goalie1:
 	lda.w tmap		; $80A9D5: AD EE 13  d4 = (6-tmap)*8: .apl row
 	sta.b d4		; $80A9D8: 85 63
@@ -1173,7 +1173,7 @@ puckfaceoff2:		;auto: asstab $1C. 93G puckfaceoff2 (logic93_4): face off control
 	stz.w SPA,x		; $80AACA: 9E FF 0D
 	lda.w #SPAglide		; $80AACD: A9 78 04
 	sta.b d1		; $80AAD0: 85 57
-	jsl.l $80B006		; $80AAD2: 22 06 B0 80  SetSPA (d1 = animation)
+	jsl.l SetSPA		; $80AAD2: 22 06 B0 80
 .next:
 	inc.b a3		; $80AAD6: E6 3F
 	inc.b a3		; $80AAD8: E6 3F
@@ -1181,14 +1181,14 @@ puckfaceoff2:		;auto: asstab $1C. 93G puckfaceoff2 (logic93_4): face off control
 	bmi .done		; $80AADC: 30 03
 	jmp.w .l0		; $80AADE: 4C 7E A9
 .done:
-	jsl.l $80B76C		; $80AAE1: 22 6C B7 80  SprSort, SprSort
+	jsl.l SprSort		; $80AAE1: 22 6C B7 80  SprSort
 	pla		; $80AAE5: 68
 	sta.b a3		; $80AAE6: 85 3F
 	pla		; $80AAE8: 68
 	sta.b a3+2		; $80AAE9: 85 41
 	ldx.b a3		; $80AAEB: A6 3F
 	jsl.l $8FFDD8		; $80AAED: 22 D8 FD 8F  bank $8F: 93G ResetAndSelectPlayers
-	jsl.l $80B90C		; $80AAF1: 22 0C B9 80  printz (inline string follows)
+	jsl.l printz		; $80AAF1: 22 0C B9 80
 	dw $0005		; $80AAF5  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$00,$00
 	lda.w #$0036		; $80AAFA: A9 36 00  8+46
@@ -1415,7 +1415,7 @@ updatefaceoff:		;auto: CODE_80ACC4. 93G updatefaceoff (logic93_4): X = puck. Dro
 .rtl:
 	rtl		; $80ACEF: 6B
 .erase:
-	jsl.l $80B90C		; $80ACF0: 22 0C B9 80  erase the faceoff box, printz (inline string follows)
+	jsl.l printz		; $80ACF0: 22 0C B9 80  erase the faceoff box
 	dw $0005		; $80ACF4  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$00,$00
 	lda.w fodropx		; $80ACF9: AD 36 01
@@ -1558,7 +1558,7 @@ Endfaceoff:		;auto: CODE_80AD34. 93G Endfaceoff (logic93_4): drop the puck: pick
 	stz.w pfnc,x		; $80AE25: 9E FF 11
 	lda.w #pnorm		; $80AE28: A9 18 00  pnorm
 	sta.b d0		; $80AE2B: 85 53
-	jmp.w $B4A7		; $80AE2D: 4C A7 B4  assreplace (d0 = assignment)
+	jmp.w assreplace		; $80AE2D: 4C A7 B4
 .ftab:		;93G .ftab: faceoff strength by pull frame
 	db 0,8,16,0,8,16		; $80AE30
 dirtab:		;93G dirtab (logic93_5): x,y speed for each direction 0-7 (92 runspeed 200, diagonal 141)

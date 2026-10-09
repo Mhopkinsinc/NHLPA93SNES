@@ -478,7 +478,7 @@ goalieacc:		;auto: CODE_8083AB. 93G goalieacc (logic93_5): goalie gets acc. in d
 .cgl:		;no direction: ready stance unless an animation is in progress
 	lda.w pf2aip,x		; $8083CC: BD DF 11
 	bne .rts		; $8083CF: D0 03
-	jmp.w $B006		; $8083D1: 4C 06 B0  SetSPA (d1 = animation)
+	jmp.w SetSPA		; $8083D1: 4C 06 B0
 .rts:
 	rtl		; $8083D4: 6B
 .d1:		;d0 = wanted direction: step facedir one eighth toward it
@@ -499,7 +499,7 @@ goalieacc:		;auto: CODE_8083AB. 93G goalieacc (logic93_5): goalie gets acc. in d
 .spa:
 	lda.w #SPAgskate		; $8083F2: A9 44 03  93G SPAgskate $3F8
 	sta.b d1		; $8083F5: 85 57
-	jsl.l $80B006		; $8083F7: 22 06 B0 80  SetSPA (d1 = animation)
+	jsl.l SetSPA		; $8083F7: 22 06 B0 80
 	lda.w facedir,x		; $8083FB: BD BF 0D
 	sta.b d2		; $8083FE: 85 5B
 	jml.l $8FE164		; $808400: 5C 64 E1 8F  d2 = facedir, bank $8F: 93G playeracc (d2 = direction)
@@ -540,7 +540,7 @@ dostop:		;auto: CODE_808404. 93G dostop (logic93_5 IDA loc_D538): player X stops
 	sta.b d1		; $808449: 85 57
 	sta.w pf2aip,x		; $80844B: 9D DF 11
 .setspa:
-	jsl.l $80B006		; $80844E: 22 06 B0 80  SetSPA (d1 = animation)
+	jsl.l SetSPA		; $80844E: 22 06 B0 80
 StopNA:		;auto: CODE_808452. 93G StopNA (logic93_5): slow player X by $70*d7 on each axis (93G 150), no animation change
 	lda.w #$0070		; $808452: A9 70 00  $70 per frame (93G 150)
 	sta.b mula		; $808455: 85 7D
@@ -675,7 +675,7 @@ check4bench:		;auto: CODE_808527 (asscenter*, assdef*, asswing* ... call it with
 	stz.w temp1,x		; $808569: 9E 5F 0C
 	lda.w #abench		; $80856C: A9 0B 00  abench
 	sta.b d0		; $80856F: 85 53
-	jmp.w $B4A7		; $808571: 4C A7 B4  assreplace (d0 = assignment)
+	jmp.w assreplace		; $808571: 4C A7 B4
 .rts:
 	rtl		; $808574: 6B
 .samepl:		;same roster player: just change position (93G .samepl)
@@ -692,7 +692,7 @@ check4bench:		;auto: CODE_808527 (asscenter*, assdef*, asswing* ... call it with
 	sta.w newpos,x		; $80858D: 9D 9F 0E
 	lda.w position,x		; $808590: BD 9F 0B  d0 = position (newpos is negative here)
 	sta.b d0		; $808593: 85 53
-	jmp.w $B138		; $808595: 4C 38 B1  Setplass (d0 = position)
+	jmp.w Setplass		; $808595: 4C 38 B1
 checkob:		;auto: CODE_808598. 93G checkob (logic93_4): bring up the little warning ref if a player on your team is over the blue line. Called from doinput and asspuckc
 	lda.w gmode		; $808598: AD 88 12
 	bit.w #gmoffs		; $80859B: 89 20 00  offsides off: nothing to do
@@ -860,12 +860,12 @@ chk4lc:		;auto: CODE_808681. 93G chk4lc (logic93_3): should the computer call a 
 	lda.w #$0002		; $8086C3: A9 02 00
 	sta.b a2		; $8086C6: 85 3B
 .teams:		;a2 = own team, a1 = other team
-	jsl.l $80B84C		; $8086C8: 22 4C B8 80  AvgCline: d0 = average energy of the line
+	jsl.l AvgCline		; $8086C8: 22 4C B8 80
 	lda.b d0		; $8086CC: A5 53
 	cmp.w #$0C01		; $8086CE: C9 01 0C  average energy of the line still above $C00: no change
 	bcs .rts		; $8086D1: B0 0F
 	jsl.l $8FE6BD		; $8086D3: 22 BD E6 8F  bank $8F: 93G CompLine
-	jsl.l $80BB5A		; $8086D7: 22 5A BB 80  setpersonel
+	jsl.l setpersonel		; $8086D7: 22 5A BB 80
 	jsl.l $89E95D		; $8086DB: 22 5D E9 89  bank $89: 93G printscores1
 	jmp.w CompShoot		; $8086DF: 4C F7 87
 .rts:
@@ -1034,7 +1034,7 @@ CompShoot:		;auto: CODE_8087F7. 93G CompShoot (logic93_3): computer player X sho
 	sta.w temp2b,x		; $808829: 9D FF 0C
 	lda.w #ashoot		; $80882C: A9 12 00  ashoot
 	sta.b d0		; $80882F: 85 53
-	jmp.w $B4A7		; $808831: 4C A7 B4  assreplace (d0 = assignment)
+	jmp.w assreplace		; $808831: 4C A7 B4
 assnearest:		;auto: CODE_808834 (asstab $11). 93G assnearest (logic93_4): assignment for the player nearest the puck who does not have it
 	lda.w pflags,x		; $808834: BD DF 0E
 	bit.w #pfna		; $808837: 89 02 00  pfna
@@ -1061,7 +1061,7 @@ assnearest:		;auto: CODE_808834 (asstab $11). 93G assnearest (logic93_4): assign
 	lda.w pflags,x		; $808867: BD DF 0E
 	bit.w #pfjoycon		; $80886A: 89 08 00
 	bne .rts		; $80886D: D0 03
-	jmp.w $B49D		; $80886F: 4C 9D B4  assinsert (d0 = assignment)
+	jmp.w assinsert		; $80886F: 4C 9D B4
 .rts:
 	rtl		; $808872: 6B
 .nopc:		;every aioff frames: find the teammate nearest the (moving) puck
@@ -1241,7 +1241,7 @@ assnearest:		;auto: CODE_808834 (asstab $11). 93G assnearest (logic93_4): assign
 	sta.w pflags,x		; $8089CB: 9D DF 0E
 	lda.w #anearest		; $8089CE: A9 11 00  anearest
 	sta.b d0		; $8089D1: 85 53
-	jsl.l $80B49D		; $8089D3: 22 9D B4 80  assinsert (d0 = assignment)
+	jsl.l assinsert		; $8089D3: 22 9D B4 80
 	ldx.b a1		; $8089D7: A6 37  exg back
 	ldy.b a3		; $8089D9: A4 3F
 	stx.b a3		; $8089DB: 86 3F
@@ -1534,7 +1534,7 @@ burst:		;auto: CODE_808BAD. 93G burst (logic93_1): check button: speed burst in 
 	lda.w #SPAburst		; $808C22: A9 CA 0B  93G SPAburst $C7E, pfalock
 	sta.b d1		; $808C25: 85 57
 	sta.w pfalock,x		; $808C27: 9D 7F 11
-	jmp.w $B006		; $808C2A: 4C 06 B0  SetSPA (d1 = animation)
+	jmp.w SetSPA		; $808C2A: 4C 06 B0
 skatetopuck:		;auto: CODE_808C2D. 93G skatetopuck (logic93_5): player X skates to the puck. d7 = elapsed frames
 	jsl.l $8BFFD3		; $808C2D: 22 D3 FF 8B  bank $8B: 93G skatetopuckinit (d0/d1 = puck spot)
 	lda.w temp2,x		; $808C31: BD 7F 0C
@@ -1702,7 +1702,7 @@ Sweepcheck:		;auto: CODE_808D8A. 93G Sweepcheck (logic93_1): start a sweep check
 	lda.w #SPAsweepchk		; $808D8A: A9 90 0A  93G SPAsweepchk $B44, pfalock
 	sta.b d1		; $808D8D: 85 57
 	sta.w pfalock,x		; $808D8F: 9D 7F 11
-	jmp.w $B006		; $808D92: 4C 06 B0  SetSPA (d1 = animation)
+	jmp.w SetSPA		; $808D92: 4C 06 B0
 chkpk:		;auto: CODE_808D95. 93G chkpk (logic93_3): Z set if player X is killing a penalty. No power play returns NE
 	lda.w sflags		; $808D95: AD 8C 12
 	and.w #sf2pwrplay		; $808D98: 29 00 20  sf2pwrplay
@@ -1775,7 +1775,7 @@ SetShotMode:		;auto: CODE_808DE9. 93G SetShotMode (logic93_1): start a shot by p
 	lda.w #SPAshotb		; $808E2B: A9 BA 08  93G SPAshotb $94E
 	sta.b d1		; $808E2E: 85 57
 .ck1:
-	jmp.w $B006		; $808E30: 4C 06 B0  SetSPA (d1 = animation)
+	jmp.w SetSPA		; $808E30: 4C 06 B0
 ShotMode:		;auto: CODE_808E33. 93G ShotMode (logic93_1): shot input. d0 = dpad, d2 = changed buttons. Falls into doshot at the end of the animation
 	lda.w SPAnum,x		; $808E33: BD 1F 0E
 	cmp.w #$0018		; $808E36: C9 18 00  7*4: end of the animation

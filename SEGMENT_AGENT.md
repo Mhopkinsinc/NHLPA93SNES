@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank80_B000` ($80B006-$80BFFF). <- CURRENT
+`bank80_C000` ($80C18F-$80CFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -76,8 +76,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | ram93snes | skipped | no org (equates only) | - | - | RAM map, not a queue segment |
 | bank80_9000 | matched | $80910F | $80A120 | 100% | 4114 bytes $80910F-$80A120 (end moved to the end of puckglue). 93G asspassrec, assfight (.al), chkhit, CwdFight, FightFall, assfwatch, assfaceoff, assexit, assfaceoffp1, randomd0, pucknorm, findpc, findpc_calc, divs, a2touchpuck, a2offsides, GetHot, puckIChk, ChkOffsides, ClearOffsidesIfAllPlayers, checkpuckcoll, checkpuckcoll_ccx, puckstick, puckglue |
 | bank80_A000 | matched | $80A121 | $80B005 | 100% | 3813 bytes $80A121-$80B005 (start moved by bank80_9000). 93G deflect, setc1player, setc2player, restorepl, makepde, puckbody, puckgoalie, pucknothing, puckfaceoff, SetLCmode, SetLCmode2, ClrHor, puckfaceoff2 (.apl/.ptab), updatefaceoff, Endfaceoff (.ftab), dirtab, random, randoma, changeplayer, vtoa (.dt) |
-| bank80_B000 | not matched <- CURRENT | $80B006 | $80BFFF | 79% | Penalty strings $BF9C-$C16B (92G penalty.asm $966C-$9830) |
-| bank80_C000 | not matched | $80C00A | $80CFFF | 90% | Penalty strings continue to $C16B |
+| bank80_B000 | matched | $80B006 | $80C18E | 100% | 4489 bytes $80B006-$80C18E (end moved to the end of PenaltyList). 93G SetSPA, ResetBench, forcepldata, Setplass, setplayer, ClampNibble, resetplstuff, assinsert, assreplace, setupice, setplayercolors, SprSort, DoGameFrame, periodicevents, AvgCline, printz, print, updatepwrplay, ChkGoalies, setpersonel, SetPlList, TryAddPlayerToList, ReturnGoalies, CPgoalie, updatecrowdf, PenaltyList; SNES SetTeamColors, divu16, printteamname |
+| bank80_C000 | not matched <- CURRENT | $80C18F | $80CFFF | 90% | starts at AddPenalty |
 | bank80_D000 | not matched | $80D002 | $80DFFF | 100% |  |
 | bank80_E000 | not matched | $80E001 | $80EFFF | 82% |  |
 | bank80_F000 | not matched | $80F008 | $80FFFF | 18% | Internal header $FFC0-$FFFF and vectors (write as dw labels) |
@@ -210,3 +210,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank80_8000: matched $808000-$80910E (4367 bytes; boundary moved to $80910F so doshot and its shotsets table stay in one file). Decoded the vbint handlers ($81C5-$838F, entries from lda #addr : sta vbint) and the player logic reached through asstab ($8D86A8, 29 long pointers in 93G asstab order). RAM: DP 68k pseudo registers d0-d7/a0-a3, sort-object field arrays (SoA, $20 per field), game/team/option globals, constants section (bit masks, SPA, assignments, sfx) in ram93snes.asm. Calls into later segments and other banks keep their address with the 93G name in the line comment. MATCH.
 - bank80_9000: matched $80910F-$80A120 (4114 bytes; start moved from $809000 by bank80_8000, end moved to $80A120 so puckstick/puckglue stay whole). The fight, faceoff and puck logic and the puck/player collision, all decoded from db (entries from asstab). New RAM: object fields frame, Zpos, attribute, oldframe, OldXpos/OldYpos, impactp, temp4/5, SCnum, stickhand, fightagg, handed, Ylist/OOlistpos/OOlist; fight/icing/touch/clock globals; team words; sound queue DP; music cue flags. Locals reached from another global are written Global_local (asar sublabel reference). bank80_8000 regenerated to call the new names (assexit, GetHot, randomd0, divs). MATCH.
 - bank80_A000: matched $80A121-$80B005 (3813 bytes). Puck deflect/body/goalie collisions, controller switching, the faceoff and line change box code, ClrHor, dirtab, random, changeplayer, vtoa. printz ($80B90C) takes an inline string after the jsl (length word counting itself, then control bytes and text): written as dw/db, the quick pass had decoded it as code. Renamed $0154/$0156 Hpos/Hscroll, $08DF/$08E1 Vpos/Vscroll, $049B Oldrow, $049D vramrow (bank80_8000 comments updated). MATCH.
+- bank80_B000: matched $80B006-$80C18E (4489 bytes; PenaltyList moved in from bank80_C000, which now starts at AddPenalty $80C18F). Personnel, setupice, SprSort, game frame, print/printz, power play box, goalie pulls, crowd. PenaltyList written as 93G-style entries (offset table, $ttmm, length-prefixed name, frame/delay words). Inline-string callers found: printz $80B90C, $82FDBF, appendz $82FDD3. New RAM: print state (printm/printa/printfont/printfontset), text vram tile bases, bonuses, crowd, team stats, sndbank. Earlier bank80 slices regenerated to call the new names. MATCH.

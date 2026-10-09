@@ -184,7 +184,7 @@ assfight:		;auto: asstab $14. 93G assfight (logic93_2): fighting logic for playe
 	ldy.b d0		; $80928B: A4 53
 	lda.b [a1],y		; $80928D: B7 37
 	sta.b d1		; $80928F: 85 57
-	jsl.l $80B006		; $809291: 22 06 B0 80  SetSPA (d1 = animation)
+	jsl.l SetSPA		; $809291: 22 06 B0 80
 .j:
 	jsl.l chkhit		; $809295: 22 30 93 80
 	lda.w SPA,x		; $809299: BD FF 0D
@@ -406,7 +406,7 @@ chkhit:		;auto: CODE_809330. 93G chkhit (logic93_2): part of the fight, is playe
 	lda.w #SPAfheld		; $80942E: A9 2E 0F
 	sta.b d1		; $809431: 85 57
 	sta.w pf2aip,x		; $809433: 9D DF 11
-	jsl.l $80B006		; $809436: 22 06 B0 80  SetSPA (d1 = animation)
+	jsl.l SetSPA		; $809436: 22 06 B0 80
 	jmp.w .ex		; $80943A: 4C B8 93
 .hithigh:
 	ldx.b a0		; $80943D: A6 33
@@ -420,7 +420,7 @@ chkhit:		;auto: CODE_809330. 93G chkhit (logic93_2): part of the fight, is playe
 	bmi FightFall		; $809452: 30 77
 	lda.w #SPAfhith		; $809454: A9 B4 0F
 	sta.b d1		; $809457: 85 57
-	jsl.l $80B006		; $809459: 22 06 B0 80  SetSPA (d1 = animation)
+	jsl.l SetSPA		; $809459: 22 06 B0 80
 	lda.w #SFXhithigh		; $80945D: A9 92 00
 	pha		; $809460: 48
 	jsl.l $80C28B		; $809461: 22 8B C2 80  sfx (sound number pushed)
@@ -437,7 +437,7 @@ chkhit:		;auto: CODE_809330. 93G chkhit (logic93_2): part of the fight, is playe
 	bmi FightFall		; $80947D: 30 4C
 	lda.w #SPAfhitl		; $80947F: A9 D6 0F
 	sta.b d1		; $809482: 85 57
-	jsl.l $80B006		; $809484: 22 06 B0 80  SetSPA (d1 = animation)
+	jsl.l SetSPA		; $809484: 22 06 B0 80
 	lda.w #SFXhitlow		; $809488: A9 93 00
 	pha		; $80948B: 48
 	jsl.l $80C28B		; $80948C: 22 8B C2 80  sfx (sound number pushed)
@@ -529,7 +529,7 @@ FightFall:		;auto: CODE_8094CB. 93G chkhit .fall (IDA FightFall): X lost the fig
 	sta.w pflags,x		; $809541: 9D DF 0E
 	lda.w #SPAffall		; $809544: A9 56 11
 	sta.b d1		; $809547: 85 57
-	jsl.l $80B006		; $809549: 22 06 B0 80  SetSPA (d1 = animation)
+	jsl.l SetSPA		; $809549: 22 06 B0 80
 	stx.b a2		; $80954D: 86 3B
 	jsl.l $8FF74A		; $80954F: 22 4A F7 8F  setInjuryType (bank $8F): d1 = roster offset, bank $8F: 93G setInjuryType
 	lda.b a0		; $809553: A5 33
@@ -548,7 +548,7 @@ FightFall:		;auto: CODE_8094CB. 93G chkhit .fall (IDA FightFall): X lost the fig
 .noinj:
 	lda.w #SPAbfall		; $809570: A9 F8 0F
 	sta.b d1		; $809573: 85 57
-	jsl.l $80B006		; $809575: 22 06 B0 80  SetSPA (d1 = animation)
+	jsl.l SetSPA		; $809575: 22 06 B0 80
 	stz.b a2		; $809579: 64 3B
 	lda.w #SFXcrowdcheer		; $80957B: A9 8A 00  home won: cheer
 	pha		; $80957E: 48
@@ -802,7 +802,7 @@ assfaceoffp1:		;auto: asstab $17. 93G assfaceoffp1 (logic93_2): assignment for t
 .d:
 	lda.w #$0001		; $809790: A9 01 00
 	sta.w pf2aip,x		; $809793: 9D DF 11
-	jmp.w $B006		; $809796: 4C 06 B0  SetSPA (d1 = animation)
+	jmp.w SetSPA		; $809796: 4C 06 B0
 .rts:
 	rtl		; $809799: 6B
 .exit:
