@@ -1137,7 +1137,7 @@ assnearest:		;auto: CODE_808834 (asstab $11). 93G assnearest (logic93_4): assign
 	jmp.w .next		; $808900: 4C 91 89
 .dist:
 	lda.b a0		; $808903: A5 33
-	jsl.l $809B0A		; $808905: 22 0A 9B 80  GetHot: d0/d1 = hot spot of object A
+	jsl.l GetHot		; $808905: 22 0A 9B 80
 	ldy.b a0		; $808909: A4 33
 	lda.b d0		; $80890B: A5 53
 	clc		; $80890D: 18
@@ -1246,7 +1246,7 @@ assnearest:		;auto: CODE_808834 (asstab $11). 93G assnearest (logic93_4): assign
 	ldy.b a3		; $8089D9: A4 3F
 	stx.b a3		; $8089DB: 86 3F
 	sty.b a1		; $8089DD: 84 37
-	jmp.w $96F9		; $8089DF: 4C F9 96  assexit
+	jmp.w assexit		; $8089DF: 4C F9 96
 .de1:
 	lda.w pfalock,x		; $8089E2: BD 7F 11
 	beq .odds		; $8089E5: F0 03
@@ -1286,7 +1286,7 @@ assnearest:		;auto: CODE_808834 (asstab $11). 93G assnearest (logic93_4): assign
 	asl.b d0		; $808A2B: 06 53
 	bra .shl		; $808A2D: 80 F8
 .rnd:
-	jsl.l $8097A3		; $808A2F: 22 A3 97 80  randomd0: d0 = random 0..d0-1
+	jsl.l randomd0		; $808A2F: 22 A3 97 80
 	lda.b d0		; $808A33: A5 53
 	cmp.w #$0002		; $808A35: C9 02 00
 	bcs .nodec		; $808A38: B0 06
@@ -1552,7 +1552,7 @@ skatetopuck:		;auto: CODE_808C2D. 93G skatetopuck (logic93_5): player X skates t
 	lda.b d0		; $808C4C: A5 53
 	pha		; $808C4E: 48
 	txa		; $808C4F: 8A
-	jsl.l $809B0A		; $808C50: 22 0A 9B 80  GetHot: d0/d1 = hot spot of object A
+	jsl.l GetHot		; $808C50: 22 0A 9B 80
 	lda.b d0		; $808C54: A5 53
 	eor.w #$FFFF		; $808C56: 49 FF FF
 	inc a		; $808C59: 1A
@@ -1731,7 +1731,7 @@ assshoot:		;auto: CODE_808DB5 (asstab $12). 93G assshoot (logic93_4): assignment
 	lda.w sflags		; $808DC5: AD 8C 12
 	bit.w #sfssdir		; $808DC8: 89 08 00  sfssdir
 	bne .swing		; $808DCB: D0 03
-	jmp.w $96F9		; $808DCD: 4C F9 96  assexit
+	jmp.w assexit		; $808DCD: 4C F9 96
 .swing:		;count down the swing time; then press the shot button (d2 = cbut)
 	lda.w temp1,x		; $808DD0: BD 5F 0C
 	sta.b d0		; $808DD3: 85 53
@@ -2021,7 +2021,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	jsl.l $82FCDB		; $80902D: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
 	lda.b d3		; $809031: A5 5F
 	sta.b mula		; $809033: 85 7D
-	jsl.l $80996C		; $809035: 22 6C 99 80  divs: A = (mulres 32-bit)/mula
+	jsl.l divs		; $809035: 22 6C 99 80
 	asl a		; $809039: 0A
 	sta.w puckvx		; $80903A: 8D FB 0A
 	lda.w passspeed		; $80903D: AD 3D 04
@@ -2034,7 +2034,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	jsl.l $82FCDB		; $80904E: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
 	lda.b d3		; $809052: A5 5F
 	sta.b mula		; $809054: 85 7D
-	jsl.l $80996C		; $809056: 22 6C 99 80  divs: A = (mulres 32-bit)/mula
+	jsl.l divs		; $809056: 22 6C 99 80
 	asl a		; $80905A: 0A
 	sta.w puckvy		; $80905B: 8D 1B 0B
 	pla		; $80905E: 68
@@ -2048,7 +2048,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	jsl.l $888942		; $809071: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
 	lda.b d3		; $809075: A5 5F
 	sta.b mula		; $809077: 85 7D
-	jsl.l $80CBE5		; $809079: 22 E5 CB 80  divu: A = (mulres 32-bit)/mula
+	jsl.l $80CBE5		; $809079: 22 E5 CB 80  divu: A = mulb (32-bit)/mula
 	asl a		; $80907D: 0A
 	sta.b d1		; $80907E: 85 57
 	lda.w #$0B33		; $809080: A9 33 0B
@@ -2058,7 +2058,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	jsl.l $888942		; $809089: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
 	lda.w passspeed		; $80908D: AD 3D 04
 	sta.b mula		; $809090: 85 7D
-	jsl.l $80CBE5		; $809092: 22 E5 CB 80  divu: A = (mulres 32-bit)/mula
+	jsl.l $80CBE5		; $809092: 22 E5 CB 80  divu: A = mulb (32-bit)/mula
 	lsr a		; $809096: 4A
 	adc.b d1		; $809097: 65 57
 	cmp.w #$1801		; $809099: C9 01 18

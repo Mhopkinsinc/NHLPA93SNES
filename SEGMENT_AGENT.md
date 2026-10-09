@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank80_9000` ($80910F-$809FFF). <- CURRENT
+`bank80_A000` ($80A121-$80AFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -74,8 +74,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 |---|---|---|---|---|---|
 | bank80_8000 | matched | $808000 | $80910E | 100% | 4367 bytes $808000-$80910E (end moved from $808FFF to the doshot table). Start, VBjsr, vb2*, VBlank* handlers, HBjsr; 93G goalieacc, dostop, StopNA, muls16, getpde, rtss, MaxSpeed, check4bench, checkob, chk4lc, chk4shot, CompShoot, assnearest, check4check, burst, skatetopuck, Sweepcheck, chkpk, chkpk2, assshoot, SetShotMode, ShotMode, doshot, shotsets |
 | ram93snes | skipped | no org (equates only) | - | - | RAM map, not a queue segment |
-| bank80_9000 | not matched <- CURRENT | $80910F | $809FFF | 11% | starts at asspassrec (asstab $13) |
-| bank80_A000 | not matched | $80A00A | $80AFFF | 22% |  |
+| bank80_9000 | matched | $80910F | $80A120 | 100% | 4114 bytes $80910F-$80A120 (end moved to the end of puckglue). 93G asspassrec, assfight (.al), chkhit, CwdFight, FightFall, assfwatch, assfaceoff, assexit, assfaceoffp1, randomd0, pucknorm, findpc, findpc_calc, divs, a2touchpuck, a2offsides, GetHot, puckIChk, ChkOffsides, ClearOffsidesIfAllPlayers, checkpuckcoll, checkpuckcoll_ccx, puckstick, puckglue |
+| bank80_A000 | not matched <- CURRENT | $80A121 | $80AFFF | 22% | starts at deflect |
 | bank80_B000 | not matched | $80B006 | $80BFFF | 79% | Penalty strings $BF9C-$C16B (92G penalty.asm $966C-$9830) |
 | bank80_C000 | not matched | $80C00A | $80CFFF | 90% | Penalty strings continue to $C16B |
 | bank80_D000 | not matched | $80D002 | $80DFFF | 100% |  |
@@ -208,3 +208,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - Queue split into 128 ~4 KB segments (one file per slice). MATCH.
 - Sample (branch sample-bank80): bank80 Start, BRKHalt, VBjsr, vb2_blank, vb2, vb2_main, VBlank, HBjsr, HBdefault named; $80CE-$81C4 decoded from db (vbint targets reached only through `vbint`). RAM $00-$18 named in ram93snes.asm. MATCH.
 - bank80_8000: matched $808000-$80910E (4367 bytes; boundary moved to $80910F so doshot and its shotsets table stay in one file). Decoded the vbint handlers ($81C5-$838F, entries from lda #addr : sta vbint) and the player logic reached through asstab ($8D86A8, 29 long pointers in 93G asstab order). RAM: DP 68k pseudo registers d0-d7/a0-a3, sort-object field arrays (SoA, $20 per field), game/team/option globals, constants section (bit masks, SPA, assignments, sfx) in ram93snes.asm. Calls into later segments and other banks keep their address with the 93G name in the line comment. MATCH.
+- bank80_9000: matched $80910F-$80A120 (4114 bytes; start moved from $809000 by bank80_8000, end moved to $80A120 so puckstick/puckglue stay whole). The fight, faceoff and puck logic and the puck/player collision, all decoded from db (entries from asstab). New RAM: object fields frame, Zpos, attribute, oldframe, OldXpos/OldYpos, impactp, temp4/5, SCnum, stickhand, fightagg, handed, Ylist/OOlistpos/OOlist; fight/icing/touch/clock globals; team words; sound queue DP; music cue flags. Locals reached from another global are written Global_local (asar sublabel reference). bank80_8000 regenerated to call the new names (assexit, GetHot, randomd0, divs). MATCH.
