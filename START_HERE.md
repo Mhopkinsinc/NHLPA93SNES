@@ -29,20 +29,27 @@ If setup fails after you have tried to install the missing prerequisite, stop an
 
 The last line must be `MATCH` and both sha1 lines must equal `76a01492cfb656e9fce0094bca356c312adfea0e`. On a fresh clone, if it is not MATCH, stop and report the output. Do not try to fix a fresh clone.
 
-## 3. Work loop
+## 3. Work loop: one bank per run
 
-Repeat until the human tells you to stop or the queue is empty:
+A run covers one bank: the 8 segments of the bank that holds the current segment (e.g. `bank80_8000` ... `bank80_F000`). Then you stop and wait.
 
 1. `git pull --ff-only` on `main`.
-2. Open `SEGMENT_AGENT.md`. The current segment is the line marked `<- CURRENT` (the first row not `matched`).
-3. Do that segment exactly as `PROMPT.md` says (the text block in it is your instruction for one segment). Follow every rule in `SEGMENT_AGENT.md`.
+2. Open `SEGMENT_AGENT.md`. The current segment is the line marked `<- CURRENT` (the first row not `matched`). This run's bank is that segment's bank.
+3. Do that segment exactly as `PROMPT.md` says. Follow every rule in `SEGMENT_AGENT.md`.
+   A segment is done only when it is **fully named**: every routine, every local label, every RAM variable it touches (in `src/ram93snes.asm`), parameters / arguments passed in registers or RAM, constants and bit values (equates instead of magic numbers), hardware registers (`src/inc/snes_regs.asm`), data tables, and comments on routines and non-obvious lines. Naming only the routines is not done. No `CODE_` labels and no unexplained `db` in code may remain.
 4. Build after each batch of edits. It must print MATCH. If it does not, undo your last edit and redo it; the build lists the first differing offsets.
-5. When the segment is done: mark the row `matched` with the byte range, add one History line, move `<- CURRENT` to the next unfinished row.
-   If you ran out of time or context: mark the row `in progress` with the named ranges instead and keep it current.
-6. Build once more (MATCH), then commit only this segment's files plus `SEGMENT_AGENT.md`, `src/ram93snes.asm`, `src/inc/snes_regs.asm` if you changed them:
+5. When the segment is done: mark the row `matched` with the byte range, add one History line, move `<- CURRENT` to the next row.
+   If you ran out of context: mark the row `in progress` with what is named and keep it current; end the run there and report.
+6. Build once more (MATCH), commit only this segment's files plus `SEGMENT_AGENT.md`, `src/ram93snes.asm`, `src/inc/snes_regs.asm` if changed:
    `git commit -m "<segment>: <short summary>"`
-7. `git push origin main`. If the push is rejected because the remote moved, `git pull --rebase`, build again (MATCH), then push. Never `--force`.
-8. Next segment.
+7. `git push origin main`. If rejected because the remote moved: `git pull --rebase`, build (MATCH), push. Never `--force`.
+8. If the bank has another segment, go to step 3 with it.
+9. When the bank's last segment is committed and pushed, **STOP**. Post a summary to the user:
+   - segments done (and any `in progress` / `blocked`, with why)
+   - functions, local labels, RAM variables, constants named (lists, with the 93G/92G counterpart where there is one)
+   - the final build result (MATCH and sha1)
+   - the commit hash of each segment
+   Then wait. Do not start the next bank until the user says continue.
 
 ## 4. When stuck
 

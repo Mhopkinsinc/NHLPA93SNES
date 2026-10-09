@@ -57,6 +57,9 @@ Vectors: native COP `$80B4`, BRK `$80B2`, ABORT `$80B4`, NMI `$80B4`, IRQ `$8390
 
 ## Naming rules
 
+- A segment is matched only when it is fully named: routines, local labels, RAM variables, parameters, constants / bit values, data tables, hardware registers, and comments. Routine names alone are not enough.
+- Runs are one bank (8 segments) at a time; see START_HERE.md. After the bank, stop and report to the user.
+
 - Match a routine to the 93G routine when the body does the same thing. Keep the 93G name. If only 92G has it (and the SNES follows 92G), use the 92G name and note `;92G` on the definition.
 - If the name is already used for a different routine, do not steal it. Name the new routine from what it does.
 - Put the generator name in one `;auto: CODE_xxxxxx` comment on the definition, not on every line.
