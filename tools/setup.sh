@@ -7,9 +7,9 @@ BIN=tools/bin; mkdir -p "$BIN"
 if [ -x "$BIN/asar" ] && "$BIN/asar" --version 2>/dev/null | grep -q "Asar 1.91"; then echo "asar 1.91 already installed"; else
   for t in git cmake c++; do command -v $t >/dev/null || { echo "MISSING: $t (install it: apt install git cmake g++ / brew install cmake / xcode-select --install; or pip install --user cmake)"; exit 1; }; done
   tmp=$(mktemp -d)
-  git clone -q --depth 1 --branch v1.91 https://github.com/RPGHacker/asar.git "$tmp/asar"
-  cmake -S "$tmp/asar/src" -B "$tmp/build" -DCMAKE_BUILD_TYPE=Release -DASAR_GEN_LIB=OFF >/dev/null
-  cmake --build "$tmp/build" -j 4 >/dev/null
+  git -c advice.detachedHead=false clone -q --depth 1 --branch v1.91 https://github.com/RPGHacker/asar.git "$tmp/asar"
+  cmake -S "$tmp/asar/src" -B "$tmp/build" -DCMAKE_BUILD_TYPE=Release -DASAR_GEN_LIB=OFF >/dev/null 2>&1
+  cmake --build "$tmp/build" -j 4 >/dev/null 2>&1
   cp "$(find "$tmp/build" -name asar -type f -perm -u+x | head -1)" "$BIN/asar"
   rm -rf "$tmp"
 fi
