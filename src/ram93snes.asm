@@ -87,6 +87,11 @@ HmAwBonus	= $015A	; setplayer: home bonus / visitor penalty. 93G HmAwBonus
 iflags		= $015C	; icing flags (if* masks); high byte ($015D) = icingPlayer (SCnum). 93G iflags/icingPlayer
 joypad1		= $015E	; controller 1 buttons (SNES joypad bits, JOY* masks)
 joypad2		= $0160	; controller 2 buttons
+joypad3		= $0162	; controller 3 buttons (multitap)
+joypad4		= $0164	; controller 4 buttons
+padlast1	= $0166	; 4 words: buttons at the last ReadPads (joypad1-4)
+padnew1		= $016E	; 4 words: buttons newly pressed at the last ReadPads (joypad1-4)
+padvcount	= $0176	; vcount of the last ReadPads (the pads are read once per frame)
 jmlvector	= $0178	; RAM jml trampoline: $5C (jml opcode, set by Start), target at +1..+3. sfx returns through it, updateplayers calls the assignment through it
 lastsfx		= $017F	; last sound effect requested. 93G lastsfx
 carriedy	= $0181	; pucky while the puck is carried: the y a shot was taken from (puckgoalie)
@@ -272,6 +277,7 @@ tmboxlist	= $154A	; penalty box list of roster players (bytes, +$1A for team 2, 
 
 ; Options
 OptPen		= $160A	; penalties (0 = off). 93G OptPen
+bignum		= $1624	; 128-bit number (8 words, low first) that divbig divides (bank $8B)
 OptLine		= $160C	; line changes (0 = on). 93G OptLine
 
 sndbank		= $164F	; sound set loaded into the SPC (1 = the in-game sounds); sfx are queued only for it
@@ -294,8 +300,11 @@ sprframetime	= $7E2000	; 4 bytes per sprite frame: sprclock when its tiles were 
 palbuffer	= $7E6C74	; CGRAM shadow (256 colors, 512 bytes): VBlank_Cram sends it. 93G palbuffer role
 textmap		= $7E6E74	; text layer tile map buffer (32x32 words); textdirtylo/hi mark what to send
 
+ReplayBufferEnd	= $7EFF41	; replay buffer end: adda43 wraps to ReplayBufferStart
+ReplayBufferStart	= $7E8174	; first replay frame record
 SPAList		= $82B86C	; animation data: SPA offsets point into it (93G SPAList)
 ; --- constants (values, not addresses) ---
+replaysize	= $71	; bytes per replay frame record (93G replaysize)
 puckobj		= $1C	; object index of the puck (93G puckscnum 14 * 2)
 JMLOPCODE	= $5C	; jml opcode (sfxretjml)
 DPCLEAREND	= $164E	; Start clears DP/RAM $0000 up to here
@@ -373,6 +382,7 @@ afwatch		= $15	; 93G afwatch
 pnothing	= $1A	; 93G pnothing
 pfaceoff	= $1B	; 93G pfaceoff
 agoalie		= $0E	; 93G agoalie
+agoalietopuck	= $0F	; 93G assgoalietopuck (asstab $F)
 apassrec	= $13	; 93G apassrec
 afaceoff	= $16	; 93G afaceoff
 afaceoffpl	= $17	; 93G afaceoffpl (assfaceoffp1)
@@ -434,6 +444,12 @@ SPAshoulderchkl	= $0B02	; 93G $BB6
 SPAshoulderchkr	= $0B34	; 93G $BE8
 SPAhipchkl	= $0B66	; 93G $C1A
 SPAhipchkr	= $0B98	; 93G $C4C
+SPAgglovel	= $0166	; goalie save anims (GoalieSaveList): glove, side 0
+SPAgglover	= $0198	; glove, side 1
+SPAgstackl	= $022E	; stack pad save, side 0
+SPAgstackr	= $0280	; stack pad save, side 1
+SPAgstickl	= $01CA	; stick save, side 0
+SPAgstickr	= $01FC	; stick save, side 1
 SPAsiren	= $10DA	; goal siren on the puck shadow (93G SPA $11E8)
 ; sprite frames (93G SPF numbers, same values)
 SPFfight	= $0162	; first fight frame (93G SPFfight)

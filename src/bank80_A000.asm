@@ -6,10 +6,10 @@ deflect:		;auto: CODE_80A121. 93G deflect (hockey93_05): random puck direction o
 	lda.w #$FFFF		; $80A121: A9 FF FF  puck loose
 	sta.w puckc		; $80A124: 8D BB 0E
 	lda.w #$1000		; $80A127: A9 00 10  random velocity +-$1000 in y and x, 0..$1000 up
-	jsl.l $80F6A1		; $80A12A: 22 A1 F6 80  randomd0s: A = random -A..A
+	jsl.l randomd0s		; $80A12A: 22 A1 F6 80
 	sta.w puckvy		; $80A12E: 8D 1B 0B
 	lda.w #$1000		; $80A131: A9 00 10
-	jsl.l $80F6A1		; $80A134: 22 A1 F6 80  randomd0s: A = random -A..A
+	jsl.l randomd0s		; $80A134: 22 A1 F6 80
 	sta.w puckvx		; $80A138: 8D FB 0A
 	lda.w #$1000		; $80A13B: A9 00 10
 	jsl.l randoma		; $80A13E: 22 8B AE 80
@@ -762,7 +762,7 @@ SetLCmode:		;auto: CODE_80A70F. 93G SetLCmode (logic93_1): open the line change 
 .rtl:
 	rtl		; $80A747: 6B
 SetLCmode2:		;auto: CODE_80A748. 93G SetLCmode2 (logic93_1 IDA showfaceoff): a2 = team; draw the lc box, one row per eligible line (button letter + line name)
-	jsl.l $80F391		; $80A748: 22 91 F3 80  setlccords
+	jsl.l setlccords		; $80A748: 22 91 F3 80
 	inc.b d0		; $80A74C: E6 53  box size +1
 	inc.b d1		; $80A74E: E6 57
 	lda.w blankchar		; $80A750: AD E7 1B  d2 = blank tile
@@ -771,7 +771,7 @@ SetLCmode2:		;auto: CODE_80A748. 93G SetLCmode2 (logic93_1 IDA showfaceoff): a2 
 	bne .cords		; $80A757: D0 04
 	jsl.l $8D847C		; $80A759: 22 7C 84 8D  bank $8D: 93G eraser (d0/d1 size, d2 tile)
 .cords:
-	jsl.l $80F391		; $80A75D: 22 91 F3 80  setlccords
+	jsl.l setlccords		; $80A75D: 22 91 F3 80
 	lda.w printy		; $80A761: AD 7D 04  lower half of the screen?
 	sec		; $80A764: 38
 	sbc.w #$000F		; $80A765: E9 0F 00
@@ -786,7 +786,7 @@ SetLCmode2:		;auto: CODE_80A748. 93G SetLCmode2 (logic93_1 IDA showfaceoff): a2 
 	bra .frame		; $80A776: 80 08
 .box:
 	jsl.l $8FDBDB		; $80A778: 22 DB DB 8F  bank $8F: 93G box
-	jsl.l $80F391		; $80A77C: 22 91 F3 80  setlccords
+	jsl.l setlccords		; $80A77C: 22 91 F3 80
 .frame:
 	jsl.l $8FD69F		; $80A780: 22 9F D6 8F  bank $8F: 93G Framer (d0/d1 size)
 	dec.w printy		; $80A784: CE 7D 04  printy -= 2, printx += 1

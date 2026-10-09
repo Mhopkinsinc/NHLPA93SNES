@@ -1054,7 +1054,7 @@ assnearest:		;auto: CODE_808834 (asstab $11). 93G assnearest (logic93_4): assign
 	bne .nopc		; $808858: D0 19
 	lda.w position,x		; $80885A: BD 9F 0B
 	bne .pc		; $80885D: D0 03
-	jmp.w $F6AD		; $80885F: 4C AD F6  assgoalie
+	jmp.w assgoalie		; $80885F: 4C AD F6
 .pc:
 	lda.w #apuckc		; $808862: A9 10 00  apuckc unless joystick controlled
 	sta.b d0		; $808865: 85 53
@@ -1828,7 +1828,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	cpx.w #$0010		; $808E93: E0 10 00
 	bne .pusha		; $808E96: D0 F6
 	ldx.b xsave		; $808E98: A6 0A
-	jsl.l $80FD7C		; $808E9A: 22 7C FD 80  checkgoalp_CalcGoalShotDir
+	jsl.l checkgoalp_CalcGoalShotDir		; $808E9A: 22 7C FD 80
 	lda.w seed		; $808E9E: AD A1 04  sound: wiff (one of 4)
 	and.w #$0003		; $808EA1: 29 03 00
 	clc		; $808EA4: 18
@@ -1986,7 +1986,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 .ar:
 	lda.b d0		; $808FE7: A5 53
 	pha		; $808FE9: 48
-	jsl.l $80F6A1		; $808FEA: 22 A1 F6 80  randomd0s: A = random -A..A
+	jsl.l randomd0s		; $808FEA: 22 A1 F6 80
 	adc.b $03,s		; $808FEE: 63 03
 	sta.b $03,s		; $808FF0: 83 03
 	lda.b $01,s		; $808FF2: A3 01
