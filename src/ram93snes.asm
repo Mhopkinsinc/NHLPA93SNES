@@ -57,6 +57,7 @@ impactstep	= $E2	; d7*2: impact decay this game frame (game loop)
 velstep		= $E4	; d7*16: velocity to position scale this game frame (93G d4 in updateplayers)
 gravstep	= $E6	; d7*96: gravity this game frame (93G 2*d4 + 4*d4)
 ThirdPBonus	= $F0	; setplayer: +2 when tied or trailing late in the 3rd period. 93G ThirdPBonus
+evalue		= $F2	; elasticity value of a player collision (0-16). 93G evalue
 fobox		= $F4	; nonzero while the faceoff box is on screen (puckfaceoff2 .. Endfaceoff): SetLCmode2 keeps its area. 93G disflags bit 4
 
 ; $0100-$1FFF: absolute (DB = $80 mirrors bank $00 WRAM)
@@ -221,10 +222,15 @@ Pencntdwn	= $12E0	; penalty/fight count down (negative = fight over). 93G Pencnt
 PBnum		= $12E4	; players in the penalty boxes: home*16 + visitors. 93G PBnum
 InjCntDown	= $12E6	; 93G InjCntDown
 RefCnt		= $12EA	; ref graphics control (negative = idle). 93G RefCnt
+ChkCnt		= $12F8	; checks since the last fight (fight chance). 93G ChkCnt
+ScoreSumbytes	= $12FC	; bytes used in ScoreSum (6 per goal, max $B4). 93G ScoreSumbytes
+ScoreSum	= $12FE	; goal log: time word, (2+tmap diff | $80 away), scorer, assist, assist. 93G ScoreSum
 gsp		= $12F0	; game period. 93G gsp
 gameclock	= $12F2	; game clock seconds; gameclock+2 = jiffies (-$AAA per frame). 93G gameclock
 
 ; Team structs (93G hmtmstruct / awtmstruct): word arrays indexed by a2 (0 home, 2 away)
+tmshots		= $13B2	; shots stat. 93G tmshots
+tmPwrGoals	= $13B6	; power play goals stat. 93G tmPwrGoals
 tmPwrPlays	= $13BA	; power plays stat. 93G tmPwrPlays
 tmdata		= $13CE	; team data address (bank $83). 93G tmdata
 tmsort		= $13D2	; first object index of the team. 93G tmsort
@@ -237,11 +243,15 @@ tmtouch3	= $13EA	; third last touch (93G $1C)
 tmap		= $13EE	; active players on ice. 93G tmap
 tmgoalie	= $13F2	; goalie: low byte = goalie 0/1, $FFxx = pulled (xx = goalie to return, $FF = stays out). 93G tmgoalie
 tmnear		= $13FA	; 32-bit (tmnear = low word, +4 = high word): nearest distance^2 to the puck (assnearest). 93G team long $2A
+tmchecks	= $1402	; checks stat (93G team word $10)
 tmpasscomp	= $1406	; completed passes (93G team word $14)
 tmflags		= $140A	; team flags. 93G tmflags
 tmlcchoice	= $140E	; line change box row chosen (0-2). 93G team word $2E
+tmgoals		= $1412	; goals per roster player (bytes, +$1A for team 2; 93G team bytes $B4)
+pchecks		= $1446	; checks per roster player (bytes, +$1A for team 2; 93G team bytes $11C)
 tmpde		= $147A	; energy of each roster player (word per player, +$34 for team 2). 93G tmpde
 tmpdst		= $14E2	; bench/ice/box state of each roster player (+$34 for team 2). 93G tmpdst
+tmboxlist	= $154A	; penalty box list of roster players (bytes, +$1A for team 2, negative ends; 93G team bytes $9A)
 
 ; Options
 OptPen		= $160A	; penalties (0 = off). 93G OptPen
@@ -318,6 +328,7 @@ attrxflip	= $0800	; x flip (93G attribute bit 3)
 attryflip	= $1000	; y flip (93G attribute bit 4)
 ; tmflags bits
 tmfmid		= $0002	; nearest player takes the spot between puck and own goal (93G tmflags bit 2)
+tmflcc		= $0001	; line change box needs redrawing (93G tmflcc 0)
 tmflast		= $0004	; next touch overwrites the last touch only (93G tmflags bit 3)
 tmflc		= $0008	; team in line change mode (93G tmflags bit 1)
 tmfoffside	= $0010	; team offsides (93G tmflags bit 4)
@@ -337,6 +348,11 @@ acenterd	= $05	; 93G acenterd
 aeben		= $09	; 93G aeben (from the bench)
 aepen		= $0A	; 93G aepen (from the penalty box)
 apenalty	= $0C	; 93G apenalty
+ascore		= $07	; 93G ascore (assignment 7)
+afight		= $14	; 93G afight
+afwatch		= $15	; 93G afwatch
+pnothing	= $1A	; 93G pnothing
+pfaceoff	= $1B	; 93G pfaceoff
 agoalie		= $0E	; 93G agoalie
 apassrec	= $13	; 93G apassrec
 afaceoff	= $16	; 93G afaceoff
@@ -345,10 +361,24 @@ pnorm		= $18	; 93G pnorm (pucknorm)
 pfaceoff2	= $1C	; 93G pfaceoff2
 ; penalties (93G PenaltyList numbers)
 PenOOP		= $06	; face off / out of play (93G penalty 6, 92 PenOOP): puck still too long, puck over the glass
+PenGhold	= $08	; goalie held the puck / bump (93G penalty 8)
+PenWhistle	= $0A	; 93G whistle
 PenIcing	= $0C	; 93G PenIcing
+PenGoal		= $0E	; 93G goal
 PenOffsides	= $10	; 93G PenOffsides
-PenFight	= $26	; penalty byte of a fight in the penalty list (93G $26)
-PenFighting	= $28	; fighting (93G PenFighting $28)
+PenRough2	= $12	; roughing with slow down time $A (93G .rough2)
+PenInjury	= $14	; injury stop, no text (93G .p14)
+PenCharge	= $16	; 93G charging
+PenSlash	= $18	; 93G slashing
+PenRough	= $1A	; 93G roughing
+PenCross	= $1C	; 93G cross check
+PenHook		= $1E	; 93G hooking
+PenTrip		= $20	; 93G tripping
+PenInt		= $22	; 93G interference
+PenHold		= $24	; 93G holding
+PenFight	= $26	; fighting, also the penalty byte of a fight in the list (93G $26)
+PenFighting	= $28	; fighting * (93G PenFighting $28)
+PenInst		= $2A	; fight instigator (93G .inst)
 ; animations (offsets into the animation data; 93G value in the comment)
 SPAgready	= $0002	; 93G SPAgready 2
 SPAgskate	= $0344	; 93G SPAgskate $3F8
@@ -373,7 +403,18 @@ SPAg314		= $1490	; goalie animation (93G SPA $314: temp5 = 5 instead of 140 afte
 SPAslowhit	= $1418	; player hit by a slow puck (93G SPA $128A)
 SPApflip	= $03D6	; puck spin (93G SPApflip $48A)
 SPAglass	= $146A	; the puck shadow when the puck flies over the glass (93G SPA $1232)
-SPAnomove	= $1502	; animation with no movement and no bounce (93G SPA $1616)
+SPAnomove	= $1502	; injured: no movement and no bounce (93G SPA $1616)
+SPAstumble	= $12A2	; stumble instead of a fall (93G SPA $13A0)
+SPAfallfwd	= $0C92	; 93G SPAfallfwd $D46
+SPAfallback	= $0D44	; 93G SPAfallback $DF8
+SPAfall3	= $11B0	; third fall animation (93G SPA $1524)
+SPAhold		= $0BFC	; 93G SPAHold $CB0
+SPAhold2	= $1354	; 93G SPAHold $12DC
+SPAshoulderchkl	= $0B02	; 93G $BB6
+SPAshoulderchkr	= $0B34	; 93G $BE8
+SPAhipchkl	= $0B66	; 93G $C1A
+SPAhipchkr	= $0B98	; 93G $C4C
+SPAsiren	= $10DA	; goal siren on the puck shadow (93G SPA $11E8)
 ; sprite frames (93G SPF numbers, same values)
 SPFfight	= $0162	; first fight frame (93G SPFfight)
 SPFpuck		= $0189	; puck frame (93G SPFpuck $18A)
@@ -393,9 +434,14 @@ SFXsavehome	= $8A	; hard shot saved by the home goalie (93G song $B)
 SFXsaveaway	= $8C	; hard shot saved by the visiting goalie (93G song $D)
 SFXoverglass	= $8C	; puck over the glass (93G $E)
 SFXpuckwall	= $95	; +0-2: puck off the boards by speed (93G $28-$2B)
+SFXpost		= $94	; puck off the post (93G 8 / $25)
+SFXsiren	= $A0	; goal siren (93G 0)
+SFXcheck	= $90	; +0/1: check (93G $1C-$1F)
 SFXplayerwall	= $9E	; +0/1: player hits the boards (93G $20)
 ; joypad bits (SNES)
 JOYSTART	= $1000	; Start (93G sbut)
+bbut		= $8000	; B: pass / switch player (93G bbut)
+abut		= $4000	; Y: hold / line change (93G abut)
 ; injury
 INJfight	= $112C	; tmpdst value for a player injured in a fight (93G $112C)
 ; tmpdst values

@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank80_D000` ($80CEE7-$80DFFF). <- CURRENT
+`bank80_E000` ($80E0E1-$80EFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -78,8 +78,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank80_A000 | matched | $80A121 | $80B005 | 100% | 3813 bytes $80A121-$80B005 (start moved by bank80_9000). 93G deflect, setc1player, setc2player, restorepl, makepde, puckbody, puckgoalie, pucknothing, puckfaceoff, SetLCmode, SetLCmode2, ClrHor, puckfaceoff2 (.apl/.ptab), updatefaceoff, Endfaceoff (.ftab), dirtab, random, randoma, changeplayer, vtoa (.dt) |
 | bank80_B000 | matched | $80B006 | $80C18E | 100% | 4489 bytes $80B006-$80C18E (end moved to the end of PenaltyList). 93G SetSPA, ResetBench, forcepldata, Setplass, setplayer, ClampNibble, resetplstuff, assinsert, assreplace, setupice, setplayercolors, SprSort, DoGameFrame, periodicevents, AvgCline, printz, print, updatepwrplay, ChkGoalies, setpersonel, SetPlList, TryAddPlayerToList, ReturnGoalies, CPgoalie, updatecrowdf, PenaltyList; SNES SetTeamColors, divu16, printteamname |
 | bank80_C000 | matched | $80C18F | $80CEE6 | 100% | 3416 bytes $80C18F-$80CEE6 (start moved by bank80_B000, end moved to puckflip). 93G AddPenalty, AddPenalty2, freezewindow, sfx, updatereplay, demoread, Readjoy1, Readjoy2, ReadJoy, jdtab, updateplayers, checkcoll, checkwallcoll, sroot, divu, wallcollb, wallcoll, puckflip |
-| bank80_D000 | not matched <- CURRENT | $80CEE7 | $80DFFF | 100% | starts at checkgoal |
-| bank80_E000 | not matched | $80E001 | $80EFFF | 82% |  |
+| bank80_D000 | matched | $80CEE7 | $80E0E0 | 100% | 4602 bytes $80CEE7-$80E0E0 (start moved by bank80_C000, end moved to the end of holdplayer). 93G checkgoal, ChkShotStat (+addteamstat), Goal (.setass), PenGoalStuff, checkgoalp, CheckBump, checkplcoll, checkcx, newcheck, checkint (.ci), FallDown, checkcheck (.cc/.list), checkfight (.sf), SetInst, doinput (.setpassmode), faceoffinput, holdplayer |
+| bank80_E000 | not matched <- CURRENT | $80E0E1 | $80EFFF | 82% | starts at setpads |
 | bank80_F000 | not matched | $80F008 | $80FFFF | 18% | Internal header $FFC0-$FFFF and vectors (write as dw labels) |
 | bank81_8000 | not matched | $818000 | $818FFF | 0% |  |
 | bank81_9000 | not matched | $819000 | $819FFF | 0% |  |
@@ -212,3 +212,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank80_A000: matched $80A121-$80B005 (3813 bytes). Puck deflect/body/goalie collisions, controller switching, the faceoff and line change box code, ClrHor, dirtab, random, changeplayer, vtoa. printz ($80B90C) takes an inline string after the jsl (length word counting itself, then control bytes and text): written as dw/db, the quick pass had decoded it as code. Renamed $0154/$0156 Hpos/Hscroll, $08DF/$08E1 Vpos/Vscroll, $049B Oldrow, $049D vramrow (bank80_8000 comments updated). MATCH.
 - bank80_B000: matched $80B006-$80C18E (4489 bytes; PenaltyList moved in from bank80_C000, which now starts at AddPenalty $80C18F). Personnel, setupice, SprSort, game frame, print/printz, power play box, goalie pulls, crowd. PenaltyList written as 93G-style entries (offset table, $ttmm, length-prefixed name, frame/delay words). Inline-string callers found: printz $80B90C, $82FDBF, appendz $82FDD3. New RAM: print state (printm/printa/printfont/printfontset), text vram tile bases, bonuses, crowd, team stats, sndbank. Earlier bank80 slices regenerated to call the new names. MATCH.
 - bank80_C000: matched $80C18F-$80CEE6 (3416 bytes; bank80_D000 now starts at checkgoal $80CEE7). Penalties, sfx, replay recording, joypads, updateplayers (fractional positions: Xfrac/Yfrac/Zfrac, per-frame velstep/gravstep/impactstep computed by the game loop), collisions with the boards. $0178 renamed jmlvector (also the asstab call trampoline). MATCH.
+- bank80_D000: matched $80CEE7-$80E0E0 (4602 bytes; bank80_E000 now starts at setpads $80E0E1). Goal/net collisions and the goal itself (ScoreSum log, goal counts, PenGoalStuff), player collisions with momentum transfer, checks, falls and injuries, fights and instigators, controller input. New RAM: evalue, ChkCnt, ScoreSum/ScoreSumbytes, tmshots/tmPwrGoals/tmchecks, per player tmgoals/pchecks, tmboxlist; constants for the penalty numbers, fall/check/hold SPAs, sfx and B/Y buttons. Earlier bank80 slices regenerated to call the new names. MATCH.

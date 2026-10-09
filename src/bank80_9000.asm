@@ -1998,7 +1998,7 @@ puckglue:		;auto: CODE_80A07D. 93G puckglue (hockey93_05 IDA loc_10F8A): player 
 	beq .goalie		; $80A0F9: F0 04
 	jml.l $8D87FB		; $80A0FB: 5C FB 87 8D  bank $8D: 93G setd0player
 .goalie:
-	jsl.l $80D12E		; $80A0FF: 22 2E D1 80  ChkShotStat (goalie made a save), ChkShotStat
+	jsl.l ChkShotStat		; $80A0FF: 22 2E D1 80  ChkShotStat (goalie made a save)
 	ldy.b a2		; $80A103: A4 3B
 	lda.w #$008C		; $80A105: A9 8C 00  temp5 = 140, count down for the faceoff
 	sta.w temp5,y		; $80A108: 99 DF 0C

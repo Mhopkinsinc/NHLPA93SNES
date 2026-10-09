@@ -215,7 +215,7 @@ puckbody:		;auto: CODE_80A21A. 93G puckbody (hockey93_05): puck (X) hits player 
 	bmi .v3		; $80A2CB: 30 05
 	bvs .rtl		; $80A2CD: 70 05
 .fall:
-	jmp.w $D933		; $80A2CF: 4C 33 D9  FallDown, FallDown
+	jmp.w FallDown		; $80A2CF: 4C 33 D9  FallDown
 .v3:
 	bvs .fall		; $80A2D2: 70 FB
 .rtl:
@@ -358,7 +358,7 @@ puckgoalie:		;auto: CODE_80A2FA. 93G puckgoalie (hockey93_05): puck (X) hits goa
 .v2:
 	bvs .nosave		; $80A3EB: 70 FB
 .save:
-	jsl.l $80D12E		; $80A3ED: 22 2E D1 80  ChkShotStat, ChkShotStat
+	jsl.l ChkShotStat		; $80A3ED: 22 2E D1 80  ChkShotStat
 	jsl.l a2touchpuck		; $80A3F1: 22 C7 99 80
 	lda.w seed+1		; $80A3F5: AD A2 04  puck body sound (one of 2)
 	and.w #$0001		; $80A3F8: 29 01 00

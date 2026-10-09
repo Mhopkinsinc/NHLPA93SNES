@@ -601,7 +601,7 @@ updateplayers:		;auto: CODE_80C46D. 93G updateplayers (hockey93_02): animation, 
 	bne .t0		; $80C668: D0 20
 	jsl.l Readjoy1		; $80C66A: 22 0B C4 80
 	stz.b d4		; $80C66E: 64 63
-	jsl.l $80DF3F		; $80C670: 22 3F DF 80  doinput
+	jsl.l doinput		; $80C670: 22 3F DF 80
 	bra .t1		; $80C674: 80 26
 .decel:		;deceleration factor /256 per d7 (1-10): normal
 	db $F7,$F5,$F2,$EF,$EC,$E9,$E6,$E3,$E1,$DE		; $80C676
@@ -613,7 +613,7 @@ updateplayers:		;auto: CODE_80C46D. 93G updateplayers (hockey93_02): animation, 
 	jsl.l Readjoy2		; $80C68F: 22 29 C4 80
 	lda.w #$0002		; $80C693: A9 02 00
 	sta.b d4		; $80C696: 85 63
-	jsl.l $80DF3F		; $80C698: 22 3F DF 80  doinput
+	jsl.l doinput		; $80C698: 22 3F DF 80
 .t1:		;call the assignment through asstab and jmlvector
 	lda.w pfalock,x		; $80C69C: BD 7F 11
 	bne .cc		; $80C69F: D0 2D
@@ -985,7 +985,7 @@ checkcoll:		;auto: CODE_80C894. 93G checkcoll (hockey93_03): d2/d3 = new x/y of 
 	sta.b d6		; $80C97B: 85 6B
 	pla		; $80C97D: 68
 	sta.b d6+2		; $80C97E: 85 6D
-	jsl.l $80D573		; $80C980: 22 73 D5 80  checkplcoll, checkplcoll
+	jsl.l checkplcoll		; $80C980: 22 73 D5 80  checkplcoll
 .ex:
 	lda.b collflag		; $80C984: A5 D8  collflag: restore the old position
 	beq .sort		; $80C986: F0 03
@@ -1121,7 +1121,7 @@ checkwallcoll:		;auto: CODE_80CA1D. 93G checkwallcoll (hockey93_04): d2/d3 = x/y
 .goal13:		;goal at the -y end (object 13)
 	lda.w #$001A		; $80CA74: A9 1A 00
 	sta.b a2		; $80CA77: 85 3B
-	jsl.l $80CEE7		; $80CA79: 22 E7 CE 80  checkgoal (a2 = goal object)
+	jsl.l checkgoal		; $80CA79: 22 E7 CE 80
 	jmp.w .exit		; $80CA7D: 4C 37 CB
 .ctc:
 	lda.b d5		; $80CA80: A5 67
@@ -1161,7 +1161,7 @@ checkwallcoll:		;auto: CODE_80CA1D. 93G checkwallcoll (hockey93_04): d2/d3 = x/y
 .goal12:		;goal at the +y end (object 12)
 	lda.w #$0018		; $80CAB6: A9 18 00
 	sta.b a2		; $80CAB9: 85 3B
-	jsl.l $80CEE7		; $80CABB: 22 E7 CE 80  checkgoal (a2 = goal object)
+	jsl.l checkgoal		; $80CABB: 22 E7 CE 80
 	jmp.w .exit		; $80CABF: 4C 37 CB
 .circle:		;distance from the corner center (max+min/4)
 	lda.b d2		; $80CAC2: A5 5B
