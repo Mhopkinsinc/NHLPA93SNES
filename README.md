@@ -1,6 +1,6 @@
 # NHLPA Hockey '93 (SNES)
 
-Bitwise rebuild of NHLPA Hockey '93 for the Super Nintendo, assembled with asar. The full build is byte-identical to `lst/nhlpa93snes.bin` (sha1 `76a01492cfb656e9fce0094bca356c312adfea0e`). No segment is named yet: `src/bank80.asm`-`bank8F.asm` are a quick auto-generated pass.
+Bitwise rebuild of NHLPA Hockey '93 for the Super Nintendo, assembled with asar. The full build is byte-identical to `lst/nhlpa93snes.bin` (sha1 `76a01492cfb656e9fce0094bca356c312adfea0e`). No segment is named yet: `src/bankXX_YYYY.asm` (128 ~4 KB segments) are a quick auto-generated pass.
 
 ## Lineage
 
@@ -8,7 +8,7 @@ The SNES port is a hybrid: it began as a port of NHL92 Genesis (likely while NHL
 
 ## Layout
 
-- `src/nhlpa93snes.asm` top level, `src/bankXX.asm` one file per 32 KB LoROM bank (org `$XX8000`, FastROM mirror), `src/inc/snes_regs.asm` hardware registers, `src/ram93snes.asm` RAM names.
+- `src/nhlpa93snes.asm` top level, `src/bankXX_YYYY.asm` one file per ~4 KB segment (FastROM mirror addresses), `src/inc/snes_regs.asm` hardware registers, `src/ram93snes.asm` RAM names.
 - `lst/nhlpa93snes.bin` reference ROM (committed, as NHL94Genesis does).
 - `tools/disasm65816.py` the quick-pass generator (recursive descent from the vectors, REP/SEP/PHP/PLP M/X tracking). Setup only.
 - `SEGMENT_AGENT.md` queue and rules, `PROMPT.md` per-session prompt, `docs/HANDOFF.md` setup notes.

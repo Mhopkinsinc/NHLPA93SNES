@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank80` (ROM $00000-$07FFF, org `$808000`). <- CURRENT
+`bank80_8000` ($808000-$808FFF), in progress: see its row. <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -18,9 +18,9 @@ NHLPA Hockey 93 SNES is a hybrid. The SNES port started from NHL92 Genesis (like
 ## Sources
 
 - Reference ROM: `lst/nhlpa93snes.bin` (524288 bytes, sha1 `76a01492cfb656e9fce0094bca356c312adfea0e`). Bytes and branch targets come from it. Do not substitute another ROM.
-- There is no IDA listing. The starting point is the auto-generated `src/bankXX.asm` (quick recursive-descent pass from the vectors, `tools/disasm65816.py`). Each instruction line carries `; $address: bytes`. Unreached bytes are `db` lines: they are unresolved, not proven data. Do not re-run the generator over a bank once it has been edited.
+- There is no IDA listing. The starting point is the auto-generated `src/bankXX_YYYY.asm` slices (quick recursive-descent pass from the vectors, `tools/disasm65816.py`). Each instruction line carries `; $address: bytes`. Unreached bytes are `db` lines: they are unresolved, not proven data. Do not re-run the generator over a bank once it has been edited.
 - Style / naming source: https://github.com/abdulahmad/NHLPA93Genesis (first), then https://github.com/abdulahmad/NHL92Genesis where 93 lacks the routine.
-- `src/nhlpa93snes.asm` is the full build top level: `inc/snes_regs.asm`, `ram93snes.asm`, then the bank files in ROM order. Keep includes in ROM order.
+- `src/nhlpa93snes.asm` is the full build top level: `inc/snes_regs.asm`, `ram93snes.asm`, then the segment files in ROM order. Keep includes in ROM order.
 
 ## Mapping
 
@@ -48,7 +48,8 @@ Vectors: native COP `$80B4`, BRK `$80B2`, ABORT `$80B4`, NMI `$80B4`, IRQ `$8390
 
 ## Practical notes (from the sample session)
 
-- A bank is 32 KB; one session will not finish it. Work in ROM order from the last named address, mark the row `in progress` with the named ranges, and leave Current segment on that bank until all of it is named or proven data.
+- Segments are ~4 KB slices of a bank (`src/bankXX_YYYY.asm`, org = first line address; a slice starts at the first line at or after $YYYY). If one session does not finish a slice, mark it `in progress` with the named ranges and leave Current segment on it. You may move a boundary to a function/region edge: move the lines between the two adjacent files, fix both orgs and both rows. Each file keeps its own `org`.
+- asar label scope continues across `incsrc`: a `.local` at the top of a slice belongs to the last global in the previous slice. Give it a global name when you work that slice.
 - Code reached only through a RAM vector (`vbint` $14, `hbint` $16, the `lda #addr-1 : pha : rts` dispatch) or a jump table is `db` in the quick pass. To decode it, run the generator into a scratch dir with extra entries and paste only that region: `python3 tools/disasm65816.py lst/nhlpa93snes.bin /tmp/dis --entry 8080CE:16:16` (M:X widths at entry, 8 or 16). Never write its output into `src/` for a bank already edited.
 - asar locals are `.name:` and belong to the last global label; a branch from one global into another's local fails, so a shared tail gets its own global (`vb2_main`).
 - Labels work as 16-bit immediates (`lda.w #vb2`) and DP equates work with `.b` (`sta.b vbint`); asar truncates to the written size. Equates go in `ram93snes.asm` as `name = $xx`.
@@ -66,27 +67,140 @@ Vectors: native COP `$80B4`, BRK `$80B2`, ABORT `$80B4`, NMI `$80B4`, IRQ `$8390
 
 The first row that is not matched is the current segment. Code% is the share of the bank the quick pass decoded as instructions (some decodes outside bank $80/$8F may be false positives from `jsl` into data: check them).
 
-| File | Status | Org | ROM range | Code% | Note |
+| File | Status | Org | End | Code% | Note |
 |---|---|---|---|---|---|
-| bank80 | in progress <- CURRENT (named so far: $8000-$81C4, $8390-$83AA) | $808000 | $00000-$07FFF | 55% | Reset $8000, NMI/COP $80B4, IRQ $8390. Penalty strings $BF9C-$C16B (92G penalty.asm $966C). Header $FFC0-$FFFF stays data |
+| bank80_8000 | in progress <- CURRENT | $808000 | $808FFF | 42% | Reset/NMI/IRQ. Named: Start, BRKHalt, VBjsr, vb2_blank, vb2, vb2_main, VBlank ($8000-$81C4), HBjsr, HBdefault ($8390-$83AA). Rest of the range not yet named |
 | ram93snes | skipped | no org (equates only) | - | - | RAM map, not a queue segment |
-| bank81 | not matched | $818000 | $08000-$0FFFF | 0% | Nothing reached |
-| bank82 | not matched | $828000 | $10000-$17FFF | 3% | |
-| bank83 | not matched | $838000 | $18000-$1FFFF | 0% | Teamdata $80F8-$C4A9 (92G Teamdata.asm $116C-$32DA); scouting report intro text $D630 (93G $2CEC8) |
-| bank84 | not matched | $848000 | $20000-$27FFF | 4% | penalty.asm DisplayStats $FAEC (92G $A784); title credits $FAAA-$FCF4 (93G $4B3C); 'Ice','Bench' $FDC8 (93G $78E8) |
-| bank85 | not matched | $858000 | $28000-$2FFFF | 3% | |
-| bank86 | not matched | $868000 | $30000-$37FFF | 2% | |
-| bank87 | not matched | $878000 | $38000-$3FFFF | 3% | |
-| bank88 | not matched | $888000 | $40000-$47FFF | 12% | |
-| bank89 | not matched | $898000 | $48000-$4FFFF | 1% | |
-| bank8A | not matched | $8A8000 | $50000-$57FFF | 2% | |
-| bank8B | not matched | $8B8000 | $58000-$5FFFF | 3% | |
-| bank8C | not matched | $8C8000 | $60000-$67FFF | 1% | |
-| bank8D | not matched | $8D8000 | $68000-$6FFFF | 5% | StartHL2 'Highlight from game:' $F8D7 (92G $AC98) |
-| bank8E | not matched | $8E8000 | $70000-$77FFF | 2% | Tile data (4bpp planar composite) from about ROM $709A7 |
-| bank8F | not matched | $8F8000 | $78000-$7FFFF | 27% | PerLabels $8248 (92G $A34E), GameLabels $89A5, 'Status ]' $D7A3, Scouting labels $DF68, PauseMode $EDC8, setoptions cpo $F395, 'GOAL'/'HAT TRICK!' $FFE1 |
+| bank80_9000 | not matched | $809000 | $809FFF | 11% |  |
+| bank80_A000 | not matched | $80A00A | $80AFFF | 22% |  |
+| bank80_B000 | not matched | $80B006 | $80BFFF | 79% | Penalty strings $BF9C-$C16B (92G penalty.asm $966C-$9830) |
+| bank80_C000 | not matched | $80C00A | $80CFFF | 90% | Penalty strings continue to $C16B |
+| bank80_D000 | not matched | $80D002 | $80DFFF | 100% |  |
+| bank80_E000 | not matched | $80E001 | $80EFFF | 82% |  |
+| bank80_F000 | not matched | $80F008 | $80FFFF | 18% | Internal header $FFC0-$FFFF and vectors (write as dw labels) |
+| bank81_8000 | not matched | $818000 | $818FFF | 0% |  |
+| bank81_9000 | not matched | $819000 | $819FFF | 0% |  |
+| bank81_A000 | not matched | $81A000 | $81AFFF | 0% |  |
+| bank81_B000 | not matched | $81B000 | $81BFFF | 0% |  |
+| bank81_C000 | not matched | $81C000 | $81CFFF | 0% |  |
+| bank81_D000 | not matched | $81D000 | $81DFFF | 0% |  |
+| bank81_E000 | not matched | $81E000 | $81EFFF | 0% |  |
+| bank81_F000 | not matched | $81F000 | $80FFFF | -0% |  |
+| bank82_8000 | not matched | $828000 | $828FFF | 0% |  |
+| bank82_9000 | not matched | $829000 | $829FFF | 0% |  |
+| bank82_A000 | not matched | $82A000 | $82AFFF | 0% |  |
+| bank82_B000 | not matched | $82B000 | $82BFFF | 0% |  |
+| bank82_C000 | not matched | $82C000 | $82CFFF | 0% |  |
+| bank82_D000 | not matched | $82D000 | $82DFFF | 0% |  |
+| bank82_E000 | not matched | $82E000 | $82EFFF | 0% |  |
+| bank82_F000 | not matched | $82F000 | $82FFFF | 22% |  |
+| bank83_8000 | not matched | $838000 | $838FFF | 0% | Teamdata $80F8-$C4A9 (92G Teamdata.asm $116C-$32DA) runs through $83C4A9 |
+| bank83_9000 | not matched | $839000 | $839FFF | 0% | Teamdata (92G Teamdata.asm) continues |
+| bank83_A000 | not matched | $83A000 | $83AFFF | 0% | Teamdata (92G Teamdata.asm) continues |
+| bank83_B000 | not matched | $83B000 | $83BFFF | 0% | Teamdata (92G Teamdata.asm) continues |
+| bank83_C000 | not matched | $83C000 | $83CFFF | 0% | Teamdata (92G Teamdata.asm) continues |
+| bank83_D000 | not matched | $83D000 | $83DFFF | 0% | Scouting report intro text $D630 (93G $2CEC8) |
+| bank83_E000 | not matched | $83E000 | $83EFFF | 0% |  |
+| bank83_F000 | not matched | $83F000 | $82FFFF | -0% |  |
+| bank84_8000 | not matched | $848000 | $848FFF | 0% |  |
+| bank84_9000 | not matched | $849000 | $849FFF | 0% |  |
+| bank84_A000 | not matched | $84A000 | $84AFFF | 0% |  |
+| bank84_B000 | not matched | $84B000 | $84BFFF | 0% |  |
+| bank84_C000 | not matched | $84C000 | $84CFFF | 0% |  |
+| bank84_D000 | not matched | $84D000 | $84DFFF | 0% |  |
+| bank84_E000 | not matched | $84E000 | $84EFFF | 24% |  |
+| bank84_F000 | not matched | $84F00C | $84FFFF | 8% | Title credits $FAAA-$FCF4 (93G $4B3C-$4D7E); penalty DisplayStats $FAEC (92G $A784); Ice/Bench/Inj strings $FDC8 (93G $78E8) |
+| bank85_8000 | not matched | $858000 | $858FFF | 0% |  |
+| bank85_9000 | not matched | $859000 | $859FFF | 0% |  |
+| bank85_A000 | not matched | $85A000 | $85AFFF | 0% |  |
+| bank85_B000 | not matched | $85B000 | $85BFFF | 0% |  |
+| bank85_C000 | not matched | $85C000 | $85CFFF | 0% |  |
+| bank85_D000 | not matched | $85D000 | $85DFFF | 1% |  |
+| bank85_E000 | not matched | $85E000 | $85EFFF | 0% |  |
+| bank85_F000 | not matched | $85F000 | $84FFFF | -2% |  |
+| bank86_8000 | not matched | $868000 | $868FFF | 0% |  |
+| bank86_9000 | not matched | $869000 | $869FFF | 0% |  |
+| bank86_A000 | not matched | $86A000 | $86AFFF | 0% |  |
+| bank86_B000 | not matched | $86B000 | $86BFFF | 0% |  |
+| bank86_C000 | not matched | $86C000 | $86CFFF | 0% |  |
+| bank86_D000 | not matched | $86D000 | $86DFFF | 0% |  |
+| bank86_E000 | not matched | $86E000 | $86EFFF | 0% |  |
+| bank86_F000 | not matched | $86F000 | $86FFFF | 19% |  |
+| bank87_8000 | not matched | $878000 | $878FFF | 0% |  |
+| bank87_9000 | not matched | $879000 | $879FFF | 0% |  |
+| bank87_A000 | not matched | $87A000 | $87AFFF | 0% |  |
+| bank87_B000 | not matched | $87B000 | $87BFFF | 0% |  |
+| bank87_C000 | not matched | $87C000 | $87CFFF | 10% |  |
+| bank87_D000 | not matched | $87D000 | $87DFFF | 13% |  |
+| bank87_E000 | not matched | $87E005 | $87EFFF | 0% |  |
+| bank87_F000 | not matched | $87F005 | $86FFFF | -0% |  |
+| bank88_8000 | not matched | $888000 | $888FFF | 28% |  |
+| bank88_9000 | not matched | $88900F | $889FFF | 0% |  |
+| bank88_A000 | not matched | $88A00F | $88AFFF | 0% |  |
+| bank88_B000 | not matched | $88B00F | $88BFFF | 0% |  |
+| bank88_C000 | not matched | $88C00F | $88CFFF | 0% |  |
+| bank88_D000 | not matched | $88D00F | $88DFFF | 0% |  |
+| bank88_E000 | not matched | $88E00F | $88EFFF | 2% |  |
+| bank88_F000 | not matched | $88F002 | $88FFFF | 61% |  |
+| bank89_8000 | not matched | $898000 | $898FFF | 0% |  |
+| bank89_9000 | not matched | $899000 | $899FFF | 0% |  |
+| bank89_A000 | not matched | $89A000 | $89AFFF | 0% |  |
+| bank89_B000 | not matched | $89B000 | $89BFFF | 0% |  |
+| bank89_C000 | not matched | $89C000 | $89CFFF | 0% |  |
+| bank89_D000 | not matched | $89D000 | $89DFFF | 0% |  |
+| bank89_E000 | not matched | $89E000 | $89EFFF | 5% |  |
+| bank89_F000 | not matched | $89F00A | $88FFFF | -0% |  |
+| bank8A_8000 | not matched | $8A8000 | $8A8FFF | 0% |  |
+| bank8A_9000 | not matched | $8A9000 | $8A9FFF | 0% |  |
+| bank8A_A000 | not matched | $8AA000 | $8AAFFF | 0% |  |
+| bank8A_B000 | not matched | $8AB000 | $8ABFFF | 0% |  |
+| bank8A_C000 | not matched | $8AC000 | $8ACFFF | 0% |  |
+| bank8A_D000 | not matched | $8AD000 | $8ADFFF | 0% |  |
+| bank8A_E000 | not matched | $8AE000 | $8AEFFF | 0% |  |
+| bank8A_F000 | not matched | $8AF000 | $8AFFFF | 14% |  |
+| bank8B_8000 | not matched | $8B8000 | $8B8FFF | 13% |  |
+| bank8B_9000 | not matched | $8B9003 | $8B9FFF | 0% |  |
+| bank8B_A000 | not matched | $8BA003 | $8BAFFF | 0% |  |
+| bank8B_B000 | not matched | $8BB003 | $8BBFFF | 0% |  |
+| bank8B_C000 | not matched | $8BC003 | $8BCFFF | 0% |  |
+| bank8B_D000 | not matched | $8BD003 | $8BDFFF | 0% |  |
+| bank8B_E000 | not matched | $8BE003 | $8BEFFF | 0% |  |
+| bank8B_F000 | not matched | $8BF003 | $8AFFFF | -1% |  |
+| bank8C_8000 | not matched | $8C8000 | $8C8FFF | 0% |  |
+| bank8C_9000 | not matched | $8C9000 | $8C9FFF | 0% |  |
+| bank8C_A000 | not matched | $8CA000 | $8CAFFF | 0% |  |
+| bank8C_B000 | not matched | $8CB000 | $8CBFFF | 0% |  |
+| bank8C_C000 | not matched | $8CC000 | $8CCFFF | 0% |  |
+| bank8C_D000 | not matched | $8CD000 | $8CDFFF | 0% |  |
+| bank8C_E000 | not matched | $8CE000 | $8CEFFF | 0% |  |
+| bank8C_F000 | not matched | $8CF000 | $8CFFFF | 7% |  |
+| bank8D_8000 | not matched | $8D8000 | $8D8FFF | 38% |  |
+| bank8D_9000 | not matched | $8D900C | $8D9FFF | 0% |  |
+| bank8D_A000 | not matched | $8DA00C | $8DAFFF | 0% |  |
+| bank8D_B000 | not matched | $8DB00C | $8DBFFF | 0% |  |
+| bank8D_C000 | not matched | $8DC00C | $8DCFFF | 0% |  |
+| bank8D_D000 | not matched | $8DD00C | $8DDFFF | 0% |  |
+| bank8D_E000 | not matched | $8DE00C | $8DEFFF | 0% |  |
+| bank8D_F000 | not matched | $8DF00C | $8CFFFF | -0% | penalty StartHL2 "Highlight from game:" $F8D7 (92G $AC98) |
+| bank8E_8000 | not matched | $8E8000 | $8E8FFF | 14% | Tile data (4bpp planar composite) from about $8E89A7 (ROM $709A7) |
+| bank8E_9000 | not matched | $8E900B | $8E9FFF | 0% |  |
+| bank8E_A000 | not matched | $8EA00B | $8EAFFF | 0% |  |
+| bank8E_B000 | not matched | $8EB00B | $8EBFFF | 0% |  |
+| bank8E_C000 | not matched | $8EC00B | $8ECFFF | 0% |  |
+| bank8E_D000 | not matched | $8ED00B | $8EDFFF | 0% |  |
+| bank8E_E000 | not matched | $8EE00B | $8EEFFF | 0% |  |
+| bank8E_F000 | not matched | $8EF00B | $8EFFFF | 0% |  |
+| bank8F_8000 | not matched | $8F8000 | $8F8FFF | 58% | PerLabels "Final" $8248 (92G $A34E); GameLabels $89A5 (92G $AB16, 93G $F6CC) |
+| bank8F_9000 | not matched | $8F9000 | $8F9FFF | 3% |  |
+| bank8F_A000 | not matched | $8FA005 | $8FAFFF | 0% |  |
+| bank8F_B000 | not matched | $8FB005 | $8FBFFF | 0% |  |
+| bank8F_C000 | not matched | $8FC005 | $8FCFFF | 0% |  |
+| bank8F_D000 | not matched | $8FD005 | $8FDFFF | 31% | "Status ]" $D7A3 (93G $156AF); Scouting labels $DF68 (93G $13050, 92G $E00E) |
+| bank8F_E000 | not matched | $8FE00E | $8FEFFF | 49% | PauseMode .mlist $EDC8 (92G $4D60, 93G $15937); checksum pointer table $E67D (read by Start) |
+| bank8F_F000 | not matched | $8FF003 | $8EFFFF | -5% | setoptions cpo $F395 (92G $E878, 93G $13D49); GOAL/HAT TRICK $FFE1 (93G $14E59) |
 
 ## History
 
 - Setup: quick pass, 16 bank files, full build MATCH (sha1 76a01492...).
+- Queue split into 128 ~4 KB segments (one file per slice). MATCH.
 - Sample (branch sample-bank80): bank80 Start, BRKHalt, VBjsr, vb2_blank, vb2, vb2_main, VBlank, HBjsr, HBdefault named; $80CE-$81C4 decoded from db (vbint targets reached only through `vbint`). RAM $00-$18 named in ram93snes.asm. MATCH.
