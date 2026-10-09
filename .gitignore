@@ -3,3 +3,4 @@ Extracted/
 *.log
 __pycache__/
 # nhl*.bin  (reference ROM is committed in lst/, as NHL94Genesis)
+tools/bin/

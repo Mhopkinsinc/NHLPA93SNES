@@ -1,5 +1,7 @@
 # NHLPA Hockey '93 (SNES)
 
+**AI agent: start with [START_HERE.md](START_HERE.md).**
+
 Bitwise rebuild of NHLPA Hockey '93 for the Super Nintendo, assembled with asar. The full build is byte-identical to `lst/nhlpa93snes.bin` (sha1 `76a01492cfb656e9fce0094bca356c312adfea0e`). No segment is named yet: `src/bankXX_YYYY.asm` (128 ~4 KB segments) are a quick auto-generated pass.
 
 ## Lineage
@@ -23,4 +25,4 @@ cmake -S src -B build -DCMAKE_BUILD_TYPE=Release -DASAR_GEN_LIB=OFF && cmake --b
 cp build/asar/bin/asar ~/.local/bin/
 ```
 
-Then `./build.sh` (or `make`). It writes `output/nhlpa93snes.sfc` and prints MATCH / MISMATCH.
+Or run `sh tools/setup.sh` (Linux/macOS) or `tools\setup.ps1` (Windows), which install asar 1.91 into `tools/bin`. Then `./build.sh` (or `make`, or `build.ps1` on Windows). It writes `output/nhlpa93snes.sfc` and prints MATCH / MISMATCH.
