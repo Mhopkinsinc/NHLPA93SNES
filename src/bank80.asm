@@ -1,7 +1,8 @@
 ; Bank $80  ROM $00000-$07FFF  (auto-generated quick pass; TODO: segment agents refine)
 org $808000
 
-CODE_808000:		; M=8 X=8
+
+Start:		;auto: CODE_808000. 93G main93 Start (+ Begin RAM clear). Reset vector. Native mode, stack $1FFF, D=0, DB=$80; clears DP/RAM, sets vbint/hbint
 	sei		; $808000: 78
 	clc		; $808001: 18
 	xce		; $808002: FB
@@ -15,16 +16,16 @@ CODE_808000:		; M=8 X=8
 	plb		; $808010: AB
 	rep #$30		; $808011: C2 30
 	ldx.w #$0000		; $808013: A2 00 00
-CODE_808016:		; M=16 X=16
+.clrdp:		;clear DP $0000-$164D
 	stz.b $00,x		; $808016: 74 00
 	inx		; $808018: E8
 	inx		; $808019: E8
 	cpx.w #$164E		; $80801A: E0 4E 16
-	bcc CODE_808016		; $80801D: 90 F7
-	lda.w #$80CE		; $80801F: A9 CE 80
-	sta.b $14		; $808022: 85 14
-	lda.w #$83A3		; $808024: A9 A3 83
-	sta.b $16		; $808027: 85 16
+	bcc .clrdp		; $80801D: 90 F7
+	lda.w #vb2_blank		; $80801F: A9 CE 80
+	sta.b vbint		; $808022: 85 14
+	lda.w #HBdefault		; $808024: A9 A3 83
+	sta.b hbint		; $808027: 85 16
 	lda.w #$005C		; $808029: A9 5C 00
 	sta.w $0178		; $80802C: 8D 78 01
 	lda.w #$0012		; $80802F: A9 12 00
@@ -33,27 +34,27 @@ CODE_808016:		; M=16 X=16
 	sec		; $808036: 38
 	sbc.w #$003C		; $808037: E9 3C 00
 	ldx.w #$0000		; $80803A: A2 00 00
-CODE_80803D:		; M=16 X=16
+.clrwram:		;fill $7E2000-$7E6C73 with ($A7-$3C)
 	sta.l $7E2000,x		; $80803D: 9F 00 20 7E
 	inx		; $808041: E8
 	inx		; $808042: E8
 	cpx.w #$4C74		; $808043: E0 74 4C
-	bne CODE_80803D		; $808046: D0 F5
+	bne .clrwram		; $808046: D0 F5
 	ldx.w #$0000		; $808048: A2 00 00
-CODE_80804B:		; M=16 X=16
+.clrbuf:		;fill $04AB-$08AA
 	sta.w $04AB,x		; $80804B: 9D AB 04
 	inx		; $80804E: E8
 	inx		; $80804F: E8
 	cpx.w #$0400		; $808050: E0 00 04
-	bne CODE_80804B		; $808053: D0 F6
+	bne .clrbuf		; $808053: D0 F6
 	lda.w #$0020		; $808055: A9 20 00
 	sta.b $BB		; $808058: 85 BB
 	stz.b $73		; $80805A: 64 73
 	ldx.w #$0000		; $80805C: A2 00 00
 	ldy.w #$0002		; $80805F: A0 02 00
-CODE_808062:		; M=16 X=16
+.sumloop:		;sum the word at [ptr]+2 for each long ptr in the table at $8FE67D (0-terminated)
 	lda.l $8FE67D,x		; $808062: BF 7D E6 8F
-	beq CODE_80807D		; $808066: F0 15
+	beq .validate		; $808066: F0 15
 	sta.b $75		; $808068: 85 75
 	lda.l $8FE67E,x		; $80806A: BF 7E E6 8F
 	sta.b $76		; $80806E: 85 76
@@ -65,109 +66,225 @@ CODE_808062:		; M=16 X=16
 	inx		; $808078: E8
 	inx		; $808079: E8
 	inx		; $80807A: E8
-	bra CODE_808062		; $80807B: 80 E5
-CODE_80807D:		; M=16 X=16
+	bra .sumloop		; $80807B: 80 E5
+.validate:		;anti-tamper: hang forever unless the sum is $131D (93G ValidationRoutine role, inline here)
 	lda.b $73		; $80807D: A5 73
 	cmp.w #$131D		; $80807F: C9 1D 13
-	bne CODE_80807D		; $808082: D0 F9
+	bne .validate		; $808082: D0 F9
 	lda.w #$0001		; $808084: A9 01 00
 	sta.b $21		; $808087: 85 21
 	jsl.l $8D8120		; $808089: 22 20 81 8D
 	sep #$20		; $80808D: E2 20
 	cli		; $80808F: 58
-	lda.w $4210		; $808090: AD 10 42
+	lda.w RDNMI		; $808090: AD 10 42
 	lda.b #$81		; $808093: A9 81
-	sta.w $4200		; $808095: 8D 00 42
+	sta.w NMITIMEN		; $808095: 8D 00 42
 	rep #$30		; $808098: C2 30
 	jsl.l $82FA31		; $80809A: 22 31 FA 82
 	stz.b $21		; $80809E: 64 21
-	stz.b $12		; $8080A0: 64 12
+	stz.b vbactive		; $8080A0: 64 12
 	jsl.l $8F9073		; $8080A2: 22 73 90 8F
 	jsl.l $8FE32B		; $8080A6: 22 2B E3 8F
 	jsl.l $84FAD2		; $8080AA: 22 D2 FA 84
 	jml.l $8B816A		; $8080AE: 5C 6A 81 8B
-CODE_8080B2:		; M=8 X=8
-	bra CODE_8080B2		; $8080B2: 80 FE
-CODE_8080B4:		; M=8 X=8
+
+BRKHalt:		;auto: CODE_8080B2. BRK vector: hang. No 92G/93G counterpart (68k traps go to IRQ7 rte)
+	bra BRKHalt		; $8080B2: 80 FE
+
+VBjsr:		;auto: CODE_8080B4. 93G VBjsr (hockey93_01, IDA VBLANK). NMI: ack RDNMI, skip if vbactive, else "rts" into the vbint handler
 	rep #$30		; $8080B4: C2 30
 	pha		; $8080B6: 48
-	lda.w $4210		; $8080B7: AD 10 42
+	lda.w RDNMI		; $8080B7: AD 10 42
 	bit.w #$0080		; $8080BA: 89 80 00
-	beq CODE_8080C3		; $8080BD: F0 04
-	lda.b $12		; $8080BF: A5 12
-	beq CODE_8080C5		; $8080C1: F0 02
-CODE_8080C3:		; M=16 X=16
+	beq .skip		; $8080BD: F0 04
+	lda.b vbactive		; $8080BF: A5 12
+	beq .dispatch		; $8080C1: F0 02
+.skip:
 	pla		; $8080C3: 68
 	rti		; $8080C4: 40
-CODE_8080C5:		; M=16 X=16
-	inc.b $12		; $8080C5: E6 12
+.dispatch:
+	inc.b vbactive		; $8080C5: E6 12
 	phx		; $8080C7: DA
 	phy		; $8080C8: 5A
-	lda.b $14		; $8080C9: A5 14
+	lda.b vbint		; $8080C9: A5 14
 	dec a		; $8080CB: 3A
 	pha		; $8080CC: 48
 	rts		; $8080CD: 60
-	db $E2,$20,$A9,$80,$8D,$00,$21,$C2,$30,$A9,$A3,$83,$85,$16,$80,$07	; $8080CE
-	db $E2,$20,$A5,$04,$8D,$00,$21,$C2,$30,$E6,$00,$D0,$02,$E6,$02,$22	; $8080DE
-	db $15,$EB,$89,$64,$18,$A5,$06,$F0,$11,$A5,$04,$F0,$0B,$A5,$00,$89	; $8080EE
-	db $03,$00,$D0,$06,$C6,$04,$80,$02,$64,$06,$A5,$08,$F0,$1D,$C9,$01	; $8080FE
-	db $00,$D0,$12,$A5,$04,$C9,$0F,$00,$F0,$0F,$A5,$00,$89,$03,$00,$D0	; $80810E
-	db $0A,$E6,$04,$80,$06,$C6,$08,$80,$02,$64,$08,$7A,$FA,$68,$64,$12	; $80811E
-	db $40,$5C,$33,$81,$80,$E2,$20,$A9,$80,$8D,$00,$21,$A6,$A3,$80,$23	; $80812E
-	db $BC,$58,$16,$8C,$16,$21,$BC,$56,$16,$8C,$75,$43,$A0,$01,$18,$8C	; $80813E
-	db $70,$43,$BC,$53,$16,$8C,$72,$43,$BD,$55,$16,$8D,$74,$43,$A9,$80	; $80814E
-	db $8D,$0B,$42,$CA,$CA,$CA,$CA,$CA,$CA,$CA,$10,$D4,$C2,$30,$64,$A3	; $80815E
-	db $AD,$56,$01,$18,$69,$C0,$00,$E2,$20,$8D,$0F,$21,$EB,$8D,$0F,$21	; $80816E
-	db $AD,$E1,$08,$29,$07,$48,$C2,$30,$AD,$9D,$04,$0A,$0A,$0A,$E2,$20	; $80817E
-	db $03,$01,$8D,$10,$21,$EB,$8D,$10,$21,$68,$C2,$30,$A9,$00,$04,$8D	; $80818E
-	db $70,$43,$A9,$FF,$01,$8D,$72,$43,$A9,$20,$02,$8D,$75,$43,$9C,$02	; $80819E
-	db $21,$E2,$20,$A9,$00,$8D,$74,$43,$A9,$80,$8D,$0B,$42,$C2,$30,$A9	; $8081AE
-	db $DE,$80,$85,$14,$4C,$DE,$80,$E2,$20,$A9,$80,$8D,$00,$21,$A6,$A3	; $8081BE
-	db $80,$23,$BC,$58,$16,$8C,$16,$21,$BC,$56,$16,$8C,$75,$43,$A0,$01	; $8081CE
-	db $18,$8C,$70,$43,$BC,$53,$16,$8C,$72,$43,$BD,$55,$16,$8D,$74,$43	; $8081DE
-	db $A9,$80,$8D,$0B,$42,$CA,$CA,$CA,$CA,$CA,$CA,$CA,$10,$D4,$C2,$30	; $8081EE
-	db $64,$A3,$A9,$00,$04,$8D,$70,$43,$A9,$FF,$01,$8D,$72,$43,$A9,$20	; $8081FE
-	db $02,$8D,$75,$43,$9C,$02,$21,$E2,$20,$A9,$00,$8D,$74,$43,$A9,$80	; $80820E
-	db $8D,$0B,$42,$C2,$30,$A9,$00,$22,$8D,$70,$43,$A9,$B4,$6D,$8D,$72	; $80821E
-	db $43,$A9,$40,$00,$8D,$75,$43,$E2,$20,$A9,$A0,$8D,$21,$21,$A9,$7E	; $80822E
-	db $8D,$74,$43,$A9,$80,$8D,$0B,$42,$C2,$30,$A9,$DE,$80,$85,$14,$4C	; $80823E
-	db $DE,$80,$E2,$20,$A9,$80,$8D,$00,$21,$A6,$A3,$80,$23,$BC,$58,$16	; $80824E
-	db $8C,$16,$21,$BC,$56,$16,$8C,$75,$43,$A0,$01,$18,$8C,$70,$43,$BC	; $80825E
-	db $53,$16,$8C,$72,$43,$BD,$55,$16,$8D,$74,$43,$A9,$80,$8D,$0B,$42	; $80826E
-	db $CA,$CA,$CA,$CA,$CA,$CA,$CA,$10,$D4,$C2,$30,$64,$A3,$A9,$DE,$80	; $80827E
-	db $85,$14,$4C,$DE,$80,$E2,$20,$A9,$80,$8D,$00,$21,$A5,$53,$8D,$0E	; $80828E
-	db $21,$A5,$54,$8D,$0E,$21,$A6,$A3,$80,$23,$BC,$58,$16,$8C,$16,$21	; $80829E
-	db $BC,$56,$16,$8C,$75,$43,$A0,$01,$18,$8C,$70,$43,$BC,$53,$16,$8C	; $8082AE
-	db $72,$43,$BD,$55,$16,$8D,$74,$43,$A9,$80,$8D,$0B,$42,$CA,$CA,$CA	; $8082BE
-	db $CA,$CA,$CA,$CA,$10,$D4,$C2,$30,$64,$A3,$A9,$DE,$80,$85,$14,$4C	; $8082CE
-	db $DE,$80,$E2,$20,$A9,$80,$8D,$00,$21,$A6,$A3,$80,$23,$BC,$58,$16	; $8082DE
-	db $8C,$16,$21,$BC,$56,$16,$8C,$75,$43,$A0,$01,$18,$8C,$70,$43,$BC	; $8082EE
-	db $53,$16,$8C,$72,$43,$BD,$55,$16,$8D,$74,$43,$A9,$80,$8D,$0B,$42	; $8082FE
-	db $CA,$CA,$CA,$CA,$CA,$CA,$CA,$10,$D4,$C2,$30,$64,$A3,$E2,$20,$AD	; $80830E
-	db $56,$01,$29,$07,$8D,$0D,$21,$9C,$0D,$21,$9C,$0E,$21,$9C,$0E,$21	; $80831E
-	db $C2,$30,$A9,$00,$22,$8D,$70,$43,$A9,$74,$6C,$8D,$72,$43,$A9,$00	; $80832E
-	db $01,$8D,$75,$43,$E2,$20,$9C,$21,$21,$A9,$7E,$8D,$74,$43,$A9,$80	; $80833E
-	db $8D,$0B,$42,$C2,$30,$A9,$61,$83,$85,$14,$A2,$12,$00,$CA,$D0,$FD	; $80834E
-	db $4C,$DE,$80,$E2,$20,$A9,$80,$8D,$00,$21,$C2,$30,$A9,$00,$22,$8D	; $80835E
-	db $70,$43,$A9,$74,$6C,$8D,$72,$43,$A9,$00,$01,$8D,$75,$43,$E2,$20	; $80836E
-	db $9C,$21,$21,$A9,$7E,$8D,$74,$43,$A9,$80,$8D,$0B,$42,$C2,$30,$4C	; $80837E
-	db $DE,$80	; $80838E
-CODE_808390:		; M=8 X=8
+
+vb2_blank:		;auto: CODE_8080CE. vbint target: vb2 with the screen held in forced blank. Resets hbint to HBdefault
+	sep #$20		; $8080CE: E2 20
+	lda.b #$80		; $8080D0: A9 80
+	sta.w INIDISP		; $8080D2: 8D 00 21
+	rep #$30		; $8080D5: C2 30
+	lda.w #HBdefault		; $8080D7: A9 A3 83
+	sta.b hbint		; $8080DA: 85 16
+	bra vb2_main		; $8080DC: 80 07
+
+vb2:		;auto: CODE_8080DE. 93G vb2 (video93_1): vblank for fades only, no dma. INIDISP from brightness, then vb2_main
+	sep #$20		; $8080DE: E2 20
+	lda.b brightness		; $8080E0: A5 04
+	sta.w INIDISP		; $8080E2: 8D 00 21
+
+vb2_main:		;auto: CODE_8080E5. common vblank tail: vcount, sound tick (jsl $89EB15, 93G p_music_vblank), brightness fades (93G cramfade), rti
+	rep #$30		; $8080E5: C2 30
+	inc.b vcount		; $8080E7: E6 00
+	bne .tick		; $8080E9: D0 02
+	inc.b vcount+2		; $8080EB: E6 02
+.tick:
+	jsl.l $89EB15		; $8080ED: 22 15 EB 89
+	stz.b hcount		; $8080F1: 64 18
+	lda.b fadeout		; $8080F3: A5 06
+	beq .fadein		; $8080F5: F0 11
+	lda.b brightness		; $8080F7: A5 04
+	beq .fadeoutdone		; $8080F9: F0 0B
+	lda.b vcount		; $8080FB: A5 00
+	bit.w #$0003		; $8080FD: 89 03 00
+	bne .fadein		; $808100: D0 06
+	dec.b brightness		; $808102: C6 04
+	bra .fadein		; $808104: 80 02
+.fadeoutdone:
+	stz.b fadeout		; $808106: 64 06
+.fadein:
+	lda.b fadein		; $808108: A5 08
+	beq .exit		; $80810A: F0 1D
+	cmp.w #$0001		; $80810C: C9 01 00
+	bne .fadeindelay		; $80810F: D0 12
+	lda.b brightness		; $808111: A5 04
+	cmp.w #$000F		; $808113: C9 0F 00
+	beq .fadeindone		; $808116: F0 0F
+	lda.b vcount		; $808118: A5 00
+	bit.w #$0003		; $80811A: 89 03 00
+	bne .exit		; $80811D: D0 0A
+	inc.b brightness		; $80811F: E6 04
+	bra .exit		; $808121: 80 06
+.fadeindelay:
+	dec.b fadein		; $808123: C6 08
+	bra .exit		; $808125: 80 02
+.fadeindone:
+	stz.b fadein		; $808127: 64 08
+.exit:
+	ply		; $808129: 7A
+	plx		; $80812A: FA
+	pla		; $80812B: 68
+	stz.b vbactive		; $80812C: 64 12
+	rti		; $80812E: 40
+	db $5C,$33,$81,$80	; $80812F
+
+VBlank:		;auto: CODE_808133. 93G VBlank / DumpSprites2+DoDMAList role: forced blank, run the DMA list at $1653 (7-byte entries, ch7), BG2 scroll, OAM dma from $0400; one shot: sets vbint back to vb2
+	sep #$20		; $808133: E2 20
+	lda.b #$80		; $808135: A9 80
+	sta.w INIDISP		; $808137: 8D 00 21
+	ldx.b $A3		; $80813A: A6 A3
+	bra .next		; $80813C: 80 23
+.dmaloop:
+	ldy.w $1658,x		; $80813E: BC 58 16
+	sty.w VMADDL		; $808141: 8C 16 21
+	ldy.w $1656,x		; $808144: BC 56 16
+	sty.w DAS7L		; $808147: 8C 75 43
+	ldy.w #$1801		; $80814A: A0 01 18
+	sty.w DMAP7		; $80814D: 8C 70 43
+	ldy.w $1653,x		; $808150: BC 53 16
+	sty.w A1T7L		; $808153: 8C 72 43
+	lda.w $1655,x		; $808156: BD 55 16
+	sta.w A1B7		; $808159: 8D 74 43
+	lda.b #$80		; $80815C: A9 80
+	sta.w MDMAEN		; $80815E: 8D 0B 42
+.next:
+	dex		; $808161: CA
+	dex		; $808162: CA
+	dex		; $808163: CA
+	dex		; $808164: CA
+	dex		; $808165: CA
+	dex		; $808166: CA
+	dex		; $808167: CA
+	bpl .dmaloop		; $808168: 10 D4
+	rep #$30		; $80816A: C2 30
+	stz.b $A3		; $80816C: 64 A3
+	lda.w $0156		; $80816E: AD 56 01
+	clc		; $808171: 18
+	adc.w #$00C0		; $808172: 69 C0 00
+	sep #$20		; $808175: E2 20
+	sta.w BG2HOFS		; $808177: 8D 0F 21
+	xba		; $80817A: EB
+	sta.w BG2HOFS		; $80817B: 8D 0F 21
+	lda.w $08E1		; $80817E: AD E1 08
+	and.b #$07		; $808181: 29 07
+	pha		; $808183: 48
+	rep #$30		; $808184: C2 30
+	lda.w $049D		; $808186: AD 9D 04
+	asl a		; $808189: 0A
+	asl a		; $80818A: 0A
+	asl a		; $80818B: 0A
+	sep #$20		; $80818C: E2 20
+	ora.b $01,s		; $80818E: 03 01
+	sta.w BG2VOFS		; $808190: 8D 10 21
+	xba		; $808193: EB
+	sta.w BG2VOFS		; $808194: 8D 10 21
+	pla		; $808197: 68
+	rep #$30		; $808198: C2 30
+	lda.w #$0400		; $80819A: A9 00 04
+	sta.w DMAP7		; $80819D: 8D 70 43
+	lda.w #$01FF		; $8081A0: A9 FF 01
+	sta.w A1T7L		; $8081A3: 8D 72 43
+	lda.w #$0220		; $8081A6: A9 20 02
+	sta.w DAS7L		; $8081A9: 8D 75 43
+	stz.w OAMADDL		; $8081AC: 9C 02 21
+	sep #$20		; $8081AF: E2 20
+	lda.b #$00		; $8081B1: A9 00
+	sta.w A1B7		; $8081B3: 8D 74 43
+	lda.b #$80		; $8081B6: A9 80
+	sta.w MDMAEN		; $8081B8: 8D 0B 42
+	rep #$30		; $8081BB: C2 30
+	lda.w #vb2		; $8081BD: A9 DE 80
+	sta.b vbint		; $8081C0: 85 14
+	jmp.w $80DE		; $8081C2: 4C DE 80
+	db $E2,$20,$A9,$80,$8D,$00,$21,$A6,$A3,$80,$23,$BC,$58,$16,$8C,$16	; $8081C5
+	db $21,$BC,$56,$16,$8C,$75,$43,$A0,$01,$18,$8C,$70,$43,$BC,$53,$16	; $8081D5
+	db $8C,$72,$43,$BD,$55,$16,$8D,$74,$43,$A9,$80,$8D,$0B,$42,$CA,$CA	; $8081E5
+	db $CA,$CA,$CA,$CA,$CA,$10,$D4,$C2,$30,$64,$A3,$A9,$00,$04,$8D,$70	; $8081F5
+	db $43,$A9,$FF,$01,$8D,$72,$43,$A9,$20,$02,$8D,$75,$43,$9C,$02,$21	; $808205
+	db $E2,$20,$A9,$00,$8D,$74,$43,$A9,$80,$8D,$0B,$42,$C2,$30,$A9,$00	; $808215
+	db $22,$8D,$70,$43,$A9,$B4,$6D,$8D,$72,$43,$A9,$40,$00,$8D,$75,$43	; $808225
+	db $E2,$20,$A9,$A0,$8D,$21,$21,$A9,$7E,$8D,$74,$43,$A9,$80,$8D,$0B	; $808235
+	db $42,$C2,$30,$A9,$DE,$80,$85,$14,$4C,$DE,$80,$E2,$20,$A9,$80,$8D	; $808245
+	db $00,$21,$A6,$A3,$80,$23,$BC,$58,$16,$8C,$16,$21,$BC,$56,$16,$8C	; $808255
+	db $75,$43,$A0,$01,$18,$8C,$70,$43,$BC,$53,$16,$8C,$72,$43,$BD,$55	; $808265
+	db $16,$8D,$74,$43,$A9,$80,$8D,$0B,$42,$CA,$CA,$CA,$CA,$CA,$CA,$CA	; $808275
+	db $10,$D4,$C2,$30,$64,$A3,$A9,$DE,$80,$85,$14,$4C,$DE,$80,$E2,$20	; $808285
+	db $A9,$80,$8D,$00,$21,$A5,$53,$8D,$0E,$21,$A5,$54,$8D,$0E,$21,$A6	; $808295
+	db $A3,$80,$23,$BC,$58,$16,$8C,$16,$21,$BC,$56,$16,$8C,$75,$43,$A0	; $8082A5
+	db $01,$18,$8C,$70,$43,$BC,$53,$16,$8C,$72,$43,$BD,$55,$16,$8D,$74	; $8082B5
+	db $43,$A9,$80,$8D,$0B,$42,$CA,$CA,$CA,$CA,$CA,$CA,$CA,$10,$D4,$C2	; $8082C5
+	db $30,$64,$A3,$A9,$DE,$80,$85,$14,$4C,$DE,$80,$E2,$20,$A9,$80,$8D	; $8082D5
+	db $00,$21,$A6,$A3,$80,$23,$BC,$58,$16,$8C,$16,$21,$BC,$56,$16,$8C	; $8082E5
+	db $75,$43,$A0,$01,$18,$8C,$70,$43,$BC,$53,$16,$8C,$72,$43,$BD,$55	; $8082F5
+	db $16,$8D,$74,$43,$A9,$80,$8D,$0B,$42,$CA,$CA,$CA,$CA,$CA,$CA,$CA	; $808305
+	db $10,$D4,$C2,$30,$64,$A3,$E2,$20,$AD,$56,$01,$29,$07,$8D,$0D,$21	; $808315
+	db $9C,$0D,$21,$9C,$0E,$21,$9C,$0E,$21,$C2,$30,$A9,$00,$22,$8D,$70	; $808325
+	db $43,$A9,$74,$6C,$8D,$72,$43,$A9,$00,$01,$8D,$75,$43,$E2,$20,$9C	; $808335
+	db $21,$21,$A9,$7E,$8D,$74,$43,$A9,$80,$8D,$0B,$42,$C2,$30,$A9,$61	; $808345
+	db $83,$85,$14,$A2,$12,$00,$CA,$D0,$FD,$4C,$DE,$80,$E2,$20,$A9,$80	; $808355
+	db $8D,$00,$21,$C2,$30,$A9,$00,$22,$8D,$70,$43,$A9,$74,$6C,$8D,$72	; $808365
+	db $43,$A9,$00,$01,$8D,$75,$43,$E2,$20,$9C,$21,$21,$A9,$7E,$8D,$74	; $808375
+	db $43,$A9,$80,$8D,$0B,$42,$C2,$30,$4C,$DE,$80	; $808385
+
+HBjsr:		;auto: CODE_808390. IRQ vector: if TIMEUP set, "rts" into hbint; else HBdefault. No 93G counterpart (Genesis hbint not used this way)
 	rep #$30		; $808390: C2 30
 	pha		; $808392: 48
 	phx		; $808393: DA
 	phy		; $808394: 5A
 	sep #$20		; $808395: E2 20
-	lda.w $4211		; $808397: AD 11 42
-	bpl CODE_8083A3		; $80839A: 10 07
+	lda.w TIMEUP		; $808397: AD 11 42
+	bpl HBdefault		; $80839A: 10 07
 	rep #$30		; $80839C: C2 30
-	lda.b $16		; $80839E: A5 16
+	lda.b hbint		; $80839E: A5 16
 	dec a		; $8083A0: 3A
 	pha		; $8083A1: 48
 	rts		; $8083A2: 60
-CODE_8083A3:		; M=8 X=16
+
+HBdefault:		;auto: CODE_8083A3. default hbint: count hcount, restore regs, rti
 	rep #$30		; $8083A3: C2 30
-	inc.b $18		; $8083A5: E6 18
+	inc.b hcount		; $8083A5: E6 18
 	ply		; $8083A7: 7A
 	plx		; $8083A8: FA
 	pla		; $8083A9: 68

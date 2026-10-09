@@ -46,6 +46,14 @@ Vectors: native COP `$80B4`, BRK `$80B2`, ABORT `$80B4`, NMI `$80B4`, IRQ `$8390
 - Do not delete an asm file. Edit it in place. Split a bank into logical files (e.g. `penalty93s.asm`, `teamdata93s.asm`) only by cutting the text at an instruction/data boundary and adding the include in ROM order in the same session; add the new row to the ROM map.
 - RAM names go in `src/ram93snes.asm` as you transcribe. Do not wait for a RAM pass.
 
+## Practical notes (from the sample session)
+
+- A bank is 32 KB; one session will not finish it. Work in ROM order from the last named address, mark the row `in progress` with the named ranges, and leave Current segment on that bank until all of it is named or proven data.
+- Code reached only through a RAM vector (`vbint` $14, `hbint` $16, the `lda #addr-1 : pha : rts` dispatch) or a jump table is `db` in the quick pass. To decode it, run the generator into a scratch dir with extra entries and paste only that region: `python3 tools/disasm65816.py lst/nhlpa93snes.bin /tmp/dis --entry 8080CE:16:16` (M:X widths at entry, 8 or 16). Never write its output into `src/` for a bank already edited.
+- asar locals are `.name:` and belong to the last global label; a branch from one global into another's local fails, so a shared tail gets its own global (`vb2_main`).
+- Labels work as 16-bit immediates (`lda.w #vb2`) and DP equates work with `.b` (`sta.b vbint`); asar truncates to the written size. Equates go in `ram93snes.asm` as `name = $xx`.
+- The vector table and header ($80FFC0-$80FFFF) are still `db`; when you reach them write `dw VBjsr` etc. and keep MATCH.
+
 ## Naming rules
 
 - Match a routine to the 93G routine when the body does the same thing. Keep the 93G name. If only 92G has it (and the SNES follows 92G), use the 92G name and note `;92G` on the definition.
@@ -60,7 +68,7 @@ The first row that is not matched is the current segment. Code% is the share of 
 
 | File | Status | Org | ROM range | Code% | Note |
 |---|---|---|---|---|---|
-| bank80 | not matched <- CURRENT | $808000 | $00000-$07FFF | 55% | Reset $8000, NMI/COP $80B4, IRQ $8390. Penalty strings $BF9C-$C16B (92G penalty.asm $966C). Header $FFC0-$FFFF stays data |
+| bank80 | in progress <- CURRENT (named so far: $8000-$81C4, $8390-$83AA) | $808000 | $00000-$07FFF | 55% | Reset $8000, NMI/COP $80B4, IRQ $8390. Penalty strings $BF9C-$C16B (92G penalty.asm $966C). Header $FFC0-$FFFF stays data |
 | ram93snes | skipped | no org (equates only) | - | - | RAM map, not a queue segment |
 | bank81 | not matched | $818000 | $08000-$0FFFF | 0% | Nothing reached |
 | bank82 | not matched | $828000 | $10000-$17FFF | 3% | |
@@ -81,3 +89,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 ## History
 
 - Setup: quick pass, 16 bank files, full build MATCH (sha1 76a01492...).
+- Sample (branch sample-bank80): bank80 Start, BRKHalt, VBjsr, vb2_blank, vb2, vb2_main, VBlank, HBjsr, HBdefault named; $80CE-$81C4 decoded from db (vbint targets reached only through `vbint`). RAM $00-$18 named in ram93snes.asm. MATCH.

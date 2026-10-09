@@ -2,7 +2,9 @@
 """Quick recursive-descent 65816 disassembler for NHLPA Hockey 93 SNES (LoROM, banks $80-$8F).
 Tracks M/X through REP/SEP (and PLP/RTI heuristically: state after PLP = state at matching PHP if known).
 Emits asar asm, one file per bank, under src/. Unreached bytes become db (TODO for segment agents).
-Usage: python3 tools/disasm65816.py rom.bin outdir
+Usage: python3 tools/disasm65816.py rom.bin outdir [--entry 8080CE:16:16 ...]
+Writes to outdir; to decode a new region for an edited bank, write to a scratch dir (e.g. /tmp/dis) and paste
+the lines for that region into src/bankXX.asm by hand. Never point outdir at src/ after setup.
 """
 import sys, os, collections
 M = {}
@@ -42,7 +44,8 @@ FMT={'imp':'{m}','acc':'{m} a','imm8':'{m} #${v:02X}','dp':'{m}.b ${v:02X}','dpx
  'ind':'{m} (${v:04X})','iax':'{m} (${v:04X},x)','ial':'{m} [${v:04X}]','abl':'{m}.l ${v:06X}','alx':'{m}.l ${v:06X},x'}
 STOP={'rts','rtl','rti','jmp','jml','bra','brl','stp','brk','cop'}
 BR={'bpl','bmi','bvc','bvs','bra','bcc','bcs','bne','beq','brl'}
-rom=open(sys.argv[1],'rb').read(); out=sys.argv[2]; NB=len(rom)//0x8000
+rom=open(sys.argv[1],'rb').read(); out=sys.argv[2]
+EXTRA=[a.split(':') for i,a in enumerate(sys.argv) if i>0 and sys.argv[i-1]=='--entry']; NB=len(rom)//0x8000
 def off(addr):  # LoROM
     b=(addr>>16)&0x7F; a=addr&0xFFFF
     if a<0x8000 or b>=NB: return None
@@ -60,6 +63,7 @@ v=rom[0x7FE0:0x8000]
 for i in (4,6,0xA,0xE,0x1C,0x1E):
     a=w(0x7FE0+i)
     if a>=0x8000: push(0x800000|a,1,1,'vec')
+for e,mm,xx in EXTRA: push(int(e,16),mm=='8',xx=='8','extra')
 while q:
     o,m,x=q.popleft(); phps=[]
     while True:

@@ -115,3 +115,11 @@ DASB0 = $4307
 A2A0L = $4308
 A2A0H = $4309
 NLTR0 = $430A
+; DMA channel 7 (used by the vblank DMA list)
+DMAP7 = $4370
+BBAD7 = $4371
+A1T7L = $4372
+A1T7H = $4373
+A1B7 = $4374
+DAS7L = $4375
+DAS7H = $4376
