@@ -420,7 +420,7 @@ updateplayers:		;auto: CODE_80C46D. 93G updateplayers (hockey93_02): animation, 
 	bpl .onice		; $80C4D9: 10 03
 	jmp.w .nf1		; $80C4DB: 4C 6A C7
 .onice:
-	jsl.l $80E13E		; $80C4DE: 22 3E E1 80  updateanim, updateanim
+	jsl.l updateanim		; $80C4DE: 22 3E E1 80  updateanim
 	lda.w nopuck,x		; $80C4E2: BD 5F 0E  nopuck, nopuckb count down
 	sec		; $80C4E5: 38
 	sbc.b d7		; $80C4E6: E5 6F
@@ -594,7 +594,7 @@ updateplayers:		;auto: CODE_80C46D. 93G updateplayers (hockey93_02): animation, 
 	bne .tp		; $80C658: D0 09
 	lda.w #-2		; $80C65A: A9 FE FF  d4 = -2: pad index of the puck carrier
 	sta.b d4		; $80C65D: 85 63
-	jsl.l $80E0E1		; $80C65F: 22 E1 E0 80  setpads (d4 = pad index)
+	jsl.l setpads		; $80C65F: 22 E1 E0 80
 .tp:
 	lda.b d6		; $80C663: A5 6B
 	cmp.w c1playernum		; $80C665: CD 92 12  controller 1 player: doinput

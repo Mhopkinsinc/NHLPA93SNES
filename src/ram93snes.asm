@@ -44,6 +44,12 @@ mulcnt		= $87	; divs: bit loop count (16)
 DMAListend	= $A3	; byte offset of the end of DMAList (7 bytes per entry); VBlank sends and empties it. 93G DMAListend
 sprclock	= $A7	; sprite VRAM tile cache clock: a slot whose sprslottime is older than sprclock-sprslotlife is free
 sprpriority	= $BB	; OAM attribute priority bits ORed into every game sprite ($20 at start)
+sprflag		= $AB	; addframe parameter: $8000 = attribute bit 0 / the second faceoff sprite (cleared by addframe)
+sprframe	= $C3	; addframe parameter: sprite frame number (1-based)
+sprx		= $C9	; addframe parameter: screen x of the frame
+spry		= $CB	; addframe parameter: screen y
+sprhflip	= $A5	; addframe parameter: $0800 = x flip (attribute bit 11)
+sprvflip	= $CD	; addframe parameter: $1000 = attribute bit 12
 sprslotlife	= $C1	; frames a sprite VRAM slot stays reserved after it was last used ($12 at start)
 textdirtylo	= $D0	; lowest changed word of textmap (sent at the next vblank); $D2 = highest
 textdirtyhi	= $D2	; highest changed word of textmap
@@ -59,9 +65,13 @@ gravstep	= $E6	; d7*96: gravity this game frame (93G 2*d4 + 4*d4)
 ThirdPBonus	= $F0	; setplayer: +2 when tied or trailing late in the 3rd period. 93G ThirdPBonus
 evalue		= $F2	; elasticity value of a player collision (0-16). 93G evalue
 fobox		= $F4	; nonzero while the faceoff box is on screen (puckfaceoff2 .. Endfaceoff): SetLCmode2 keeps its area. 93G disflags bit 4
+ffoattr		= $F6	; 5 words: attribute of the ffo objects (pads 0-3, gloves). 93G ffo attribute
 
 ; $0100-$1FFF: absolute (DB = $80 mirrors bank $00 WRAM)
-colorflag0	= $0106	; cleared by setplayercolors (no reader found)
+ffoframe	= $0100	; 5 words: frame of the objects tied to rink scrolling (pads 0-3, gloves at +8). 93G ffo frame (92 ffo)
+ffox		= $0114	; 5 words: ffo x. 93G ffo Xpos
+ffoy		= $011E	; 5 words: ffo y
+ffoz		= $0128	; 5 words: ffo z ($FFFF = hidden)
 fodir1		= $0132	; pull direction of the home center on the faceoff (dpad, negative = none). 93G fodir1
 fodir2		= $0134	; 93G fodir2
 fodropx		= $0136	; faceoff box x (pixels). 93G fodropx
@@ -221,8 +231,12 @@ PenBuf		= $129E	; up to 32 penalties: (penalty number, SCnum) byte pairs, 0 = fr
 Pencntdwn	= $12E0	; penalty/fight count down (negative = fight over). 93G Pencntdwn
 PBnum		= $12E4	; players in the penalty boxes: home*16 + visitors. 93G PBnum
 InjCntDown	= $12E6	; 93G InjCntDown
+penmsgtimer	= $12E8	; count down to reprinting the horizontal penalty message line ($7FFF = never). 93G penmsgtimer
 RefCnt		= $12EA	; ref graphics control (negative = idle). 93G RefCnt
+RefStep		= $12EC	; step in the ref animation (negative = done). 93G RefStep
+RefPen		= $12EE	; penalty number of the ref animation. 93G RefPen
 ChkCnt		= $12F8	; checks since the last fight (fight chance). 93G ChkCnt
+TempPlOffset	= $12FA	; pnum of the penalized player | $8000 for the visitors (InProgress). 93G TempPlOffset
 ScoreSumbytes	= $12FC	; bytes used in ScoreSum (6 per goal, max $B4). 93G ScoreSumbytes
 ScoreSum	= $12FE	; goal log: time word, (2+tmap diff | $80 away), scorer, assist, assist. 93G ScoreSum
 gsp		= $12F0	; game period. 93G gsp
@@ -232,6 +246,9 @@ gameclock	= $12F2	; game clock seconds; gameclock+2 = jiffies (-$AAA per frame).
 tmshots		= $13B2	; shots stat. 93G tmshots
 tmPwrGoals	= $13B6	; power play goals stat. 93G tmPwrGoals
 tmPwrPlays	= $13BA	; power plays stat. 93G tmPwrPlays
+tmPenalties	= $13BE	; penalties stat. 93G tmPenalties
+tmPenmin	= $13C2	; penalty minutes stat. 93G tmPenmin
+tmATOP		= $13CA	; attack zone time stat (seconds). 93G tmATOP
 tmdata		= $13CE	; team data address (bank $83). 93G tmdata
 tmsort		= $13D2	; first object index of the team. 93G tmsort
 tmscore		= $13D6	; score. 93G tmscore
@@ -277,6 +294,7 @@ sprframetime	= $7E2000	; 4 bytes per sprite frame: sprclock when its tiles were 
 palbuffer	= $7E6C74	; CGRAM shadow (256 colors, 512 bytes): VBlank_Cram sends it. 93G palbuffer role
 textmap		= $7E6E74	; text layer tile map buffer (32x32 words); textdirtylo/hi mark what to send
 
+SPAList		= $82B86C	; animation data: SPA offsets point into it (93G SPAList)
 ; --- constants (values, not addresses) ---
 puckobj		= $1C	; object index of the puck (93G puckscnum 14 * 2)
 JMLOPCODE	= $5C	; jml opcode (sfxretjml)
@@ -289,6 +307,7 @@ dmavram		= 5	; word: VRAM word address
 dmasize		= 7	; bytes per entry
 ; gmode bits (93G gmode bit numbers in the comments)
 gmdir		= $0002	; 0 = home team goes up (93G gmdir 1)
+gmpen		= $0004	; penalty called, ref in progress (93G gmpen 2)
 gmpendel	= $0008	; delayed penalty has been called (93G gmpendel 3)
 gmhl		= $0010	; hilight mode (93G gmhl 4)
 gmoffs		= $0020	; offsides on (93G gmoffs 5)
@@ -379,6 +398,7 @@ PenHold		= $24	; 93G holding
 PenFight	= $26	; fighting, also the penalty byte of a fight in the list (93G $26)
 PenFighting	= $28	; fighting * (93G PenFighting $28)
 PenInst		= $2A	; fight instigator (93G .inst)
+PenDelay	= $2C	; delayed penalty ref (93G $2C, 92 PenDelay)
 ; animations (offsets into the animation data; 93G value in the comment)
 SPAgready	= $0002	; 93G SPAgready 2
 SPAgskate	= $0344	; 93G SPAgskate $3F8
@@ -436,6 +456,7 @@ SFXoverglass	= $8C	; puck over the glass (93G $E)
 SFXpuckwall	= $95	; +0-2: puck off the boards by speed (93G $28-$2B)
 SFXpost		= $94	; puck off the post (93G 8 / $25)
 SFXsiren	= $A0	; goal siren (93G 0)
+SFXwhistle	= $89	; whistle (93G 3)
 SFXcheck	= $90	; +0/1: check (93G $1C-$1F)
 SFXplayerwall	= $9E	; +0/1: player hits the boards (93G $20)
 ; joypad bits (SNES)
@@ -450,6 +471,7 @@ TMPDBENCH	= $FFFE	; on the bench (93G -2)
 TMPDOUT		= $FFFD	; out of the game (93G -3)
 TMPDINJ		= $1000	; injured: box time with this bit has no penalty (93G tmpdst bit 12)
 
+OFFSCREEN	= $4E20	; projxy: d1 for a point off the screen (20000)
 ; --- addresses: puck fields (need puckobj above) ---
 puckx		= Xpos+puckobj	; 93G puckx
 pucky		= Ypos+puckobj	; 93G pucky

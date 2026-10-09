@@ -1556,7 +1556,7 @@ FallDown:		;auto: CODE_80D933. 93G FallDown (hockey93_03): player a2 falls, X is
 	lda.w #PenRough2		; $80DAF1: A9 12 00
 	sta.b d0		; $80DAF4: 85 53
 	jsl.l AddPenalty2		; $80DAF6: 22 B0 C1 80
-	jmp.w $E7F7		; $80DAFA: 4C F7 E7  Stop4Pen
+	jmp.w Stop4Pen		; $80DAFA: 4C F7 E7
 .snd:
 	ldy.b a2		; $80DAFD: A4 3B  home player fell: boo, else cheer
 	lda.w #SFXcrowdcheer		; $80DAFF: A9 8A 00
@@ -2089,7 +2089,7 @@ SetInst:		;auto: CODE_80DE89. 93G SetInst (hockey93_04): d0 = fight rating X nee
 	stx.b a3		; $80DF3C: 86 3F
 	rtl		; $80DF3E: 6B
 doinput:		;auto: CODE_80DF3F. 93G doinput (logic93_1): controller input for player X. d0 = dpad, d1 = new buttons, d4 = controller 0/2
-	jsl.l $80E0E1		; $80DF3F: 22 E1 E0 80  setpads; Start: pause, setpads (d4 = pad index)
+	jsl.l setpads		; $80DF3F: 22 E1 E0 80  setpads; Start: pause
 	lda.b d1		; $80DF43: A5 57
 	bit.w #JOYSTART		; $80DF45: 89 00 10
 	beq .nostart		; $80DF48: F0 0C

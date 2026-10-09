@@ -821,7 +821,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sta.b fadein		; $80B6D2: 85 08
 	rtl		; $80B6D4: 6B
 setplayercolors:		;auto: CODE_80B6D5. 93G setplayercolors (hockey93_06): team colors into palbuffer, then the whole palette to CGRAM
-	stz.w colorflag0		; $80B6D5: 9C 06 01
+	stz.w ffoframe+6		; $80B6D5: 9C 06 01  pad 3 frame = 0
 	stz.w colorflag1		; $80B6D8: 9C B7 08
 	stz.w colorflag2		; $80B6DB: 9C B9 08
 	jsl.l SetTeamColors		; $80B6DE: 22 06 B7 80
@@ -979,11 +979,11 @@ SprSort:		;auto: CODE_80B76C. 93G SprSort (hockey93_06): sort the objects by y (
 DoGameFrame:		;auto: CODE_80B7FA. 93G DoGameFrame (hockey93_01): one frame of game logic (d7 = elapsed frames, set by the caller)
 	jsl.l periodicevents		; $80B7FA: 22 0D B8 80  periodicevents
 	jsl.l updateplayers		; $80B7FE: 22 6D C4 80  updateplayers
-	jsl.l $80E1E8		; $80B802: 22 E8 E1 80  checkwindow, checkwindow
+	jsl.l checkwindow		; $80B802: 22 E8 E1 80  checkwindow
 	jsl.l updatereplay		; $80B806: 22 B4 C2 80  updatereplay
-	jmp.w $E35E		; $80B80A: 4C 5E E3  setvideo
+	jmp.w setvideo		; $80B80A: 4C 5E E3
 periodicevents:		;auto: CODE_80B80D. 93G periodicevents (hockey93_01): every game loop; once a second (lldisp) the slower checks
-	jsl.l $80E6C7		; $80B80D: 22 C7 E6 80  PenaltyManager, PenaltyManager
+	jsl.l PenaltyManager		; $80B80D: 22 C7 E6 80  PenaltyManager
 	jsl.l updatecrowdf		; $80B811: 22 D1 BE 80  updatecrowdf
 	jsl.l $8D865A		; $80B815: 22 5A 86 8D  updatesound, bank $8D: 93G updatesound
 	jsl.l $8F8B11		; $80B819: 22 11 8B 8F  clockcont, bank $8F: 93G clockcont

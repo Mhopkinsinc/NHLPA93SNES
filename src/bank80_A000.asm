@@ -560,7 +560,7 @@ puckfaceoff:		;auto: asstab $1B. 93G puckfaceoff (logic93_4): this is where the 
 	lda.w gmode		; $80A58A: AD 88 12
 	bit.w #gmpendel		; $80A58D: 89 08 00  gmpendel: Stop4Pen
 	beq .rg		; $80A590: F0 03
-	jmp.w $E7F7		; $80A592: 4C F7 E7  Stop4Pen
+	jmp.w Stop4Pen		; $80A592: 4C F7 E7
 .rg:
 	jsl.l ReturnGoalies		; $80A595: 22 47 BE 80  ReturnGoalies
 	lda.w #$FFFF		; $80A599: A9 FF FF  temp1/temp2 = -1: no lc box timers
@@ -986,7 +986,7 @@ puckfaceoff2:		;auto: asstab $1C. 93G puckfaceoff2 (logic93_4): face off control
 	lda.w #$0064		; $80A940: A9 64 00
 	sta.b d4		; $80A943: 85 63
 .cw:		;scroll to the faceoff spot
-	jsl.l $80E1E8		; $80A945: 22 E8 E1 80  checkwindow
+	jsl.l checkwindow		; $80A945: 22 E8 E1 80
 	dec.b d4		; $80A949: C6 63
 	bpl .cw		; $80A94B: 10 F8
 	lda.w #$003C		; $80A94D: A9 3C 00  yleader = 60
