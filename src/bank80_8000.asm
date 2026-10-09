@@ -166,7 +166,7 @@ vb2_main:		;auto: CODE_8080E5. common vblank tail: vcount, sound tick (93G p_mus
 	rti		; $80812E: 40
 VBlank_long:		;auto: CODE_80812F. vbint target (set by bank $80E3B3): jml into VBlank so it runs from the FastROM bank $80
 	jml.l VBlank		; $80812F: 5C 33 81 80
-VBlank:		;auto: CODE_808133. 93G VBlank / DumpSprites2+DoDMAList role: forced blank, run DMAList (ch7), BG2 scroll from Hpos/Oldrow/Vpos, OAM dma from Satt; one shot: sets vbint back to vb2
+VBlank:		;auto: CODE_808133. 93G VBlank / DumpSprites2+DoDMAList role: forced blank, run DMAList (ch7), BG2 scroll from Hscroll/vramrow/Vscroll, OAM dma from Satt; one shot: sets vbint back to vb2
 	sep #$20		; $808133: E2 20
 	lda.b #$80		; $808135: A9 80
 	sta.w INIDISP		; $808137: 8D 00 21
@@ -196,21 +196,21 @@ VBlank:		;auto: CODE_808133. 93G VBlank / DumpSprites2+DoDMAList role: forced bl
 	bpl .dmaloop		; $808168: 10 D4
 	rep #$30		; $80816A: C2 30
 	stz.b DMAListend		; $80816C: 64 A3
-	lda.w Hpos		; $80816E: AD 56 01
+	lda.w Hscroll		; $80816E: AD 56 01
 	clc		; $808171: 18
-	adc.w #$00C0		; $808172: 69 C0 00  BG2 h-scroll = Hpos + 192
+	adc.w #$00C0		; $808172: 69 C0 00  BG2 h-scroll = Hscroll + 192
 	sep #$20		; $808175: E2 20
 	sta.w BG2HOFS		; $808177: 8D 0F 21
 	xba		; $80817A: EB
 	sta.w BG2HOFS		; $80817B: 8D 0F 21
-	lda.w Vpos		; $80817E: AD E1 08
+	lda.w Vscroll		; $80817E: AD E1 08
 	and.b #$07		; $808181: 29 07  fine row
 	pha		; $808183: 48
 	rep #$30		; $808184: C2 30
-	lda.w Oldrow		; $808186: AD 9D 04
+	lda.w vramrow		; $808186: AD 9D 04
 	asl a		; $808189: 0A
 	asl a		; $80818A: 0A
-	asl a		; $80818B: 0A  Oldrow*8 | (Vpos&7)
+	asl a		; $80818B: 0A  vramrow*8 | (Vscroll&7)
 	sep #$20		; $80818C: E2 20
 	ora.b $01,s		; $80818E: 03 01
 	sta.w BG2VOFS		; $808190: 8D 10 21
@@ -364,7 +364,7 @@ VBlank_VScroll:		;auto: CODE_808293. vbint target (bank $88): BG1VOFS = d0, then
 	lda.w #vb2		; $8082D8: A9 DE 80
 	sta.b vbint		; $8082DB: 85 14
 	jmp.w vb2		; $8082DD: 4C DE 80
-VBlank_Cram:		;auto: CODE_8082E0. vbint target (bank $88): DMAList, BG1 fine h-scroll Hpos&7, BG1VOFS 0, CGRAM 0-127 from palbuffer; then VBlank_CramOnly every frame
+VBlank_Cram:		;auto: CODE_8082E0. vbint target (bank $88): DMAList, BG1 fine h-scroll Hscroll&7, BG1VOFS 0, CGRAM 0-127 from palbuffer; then VBlank_CramOnly every frame
 	sep #$20		; $8082E0: E2 20
 	lda.b #$80		; $8082E2: A9 80
 	sta.w INIDISP		; $8082E4: 8D 00 21
@@ -395,9 +395,9 @@ VBlank_Cram:		;auto: CODE_8082E0. vbint target (bank $88): DMAList, BG1 fine h-s
 	rep #$30		; $808317: C2 30
 	stz.b DMAListend		; $808319: 64 A3
 	sep #$20		; $80831B: E2 20
-	lda.w Hpos		; $80831D: AD 56 01
+	lda.w Hscroll		; $80831D: AD 56 01
 	and.b #$07		; $808320: 29 07
-	sta.w BG1HOFS		; $808322: 8D 0D 21  BG1HOFS = Hpos&7
+	sta.w BG1HOFS		; $808322: 8D 0D 21  BG1HOFS = Hscroll&7
 	stz.w BG1HOFS		; $808325: 9C 0D 21
 	stz.w BG1VOFS		; $808328: 9C 0E 21
 	stz.w BG1VOFS		; $80832B: 9C 0E 21
@@ -940,7 +940,7 @@ chk4shot:		;auto: CODE_8086E3. 93G chk4shot (logic93_3): computer player X looks
 	lsr.b d4		; $80876D: 46 63
 	lsr.b d4		; $80876F: 46 63
 	lsr.b d4		; $808771: 46 63
-	jsl.l $80AFA8		; $808773: 22 A8 AF 80  vtoa: d0/d1 = x/y distance -> direction d0 (8 = none)
+	jsl.l vtoa		; $808773: 22 A8 AF 80
 	sta.b d5		; $808777: 85 67
 	lda.w #$0005		; $808779: A9 05 00
 	sta.b d3		; $80877C: 85 5F
@@ -961,7 +961,7 @@ chk4shot:		;auto: CODE_8086E3. 93G chk4shot (logic93_3): computer player X looks
 	sec		; $80879D: 38
 	sbc.w pucky		; $80879E: ED 7B 09
 	sta.b d1		; $8087A1: 85 57
-	jsl.l $80AFA8		; $8087A3: 22 A8 AF 80  vtoa: d0/d1 = x/y distance -> direction d0 (8 = none)
+	jsl.l vtoa		; $8087A3: 22 A8 AF 80
 	cmp.b d5		; $8087A7: C5 67
 	bne .co1		; $8087A9: D0 10
 	asl.b d4		; $8087AB: 06 63
@@ -979,7 +979,7 @@ chk4shot:		;auto: CODE_8086E3. 93G chk4shot (logic93_3): computer player X looks
 	bpl .co0		; $8087C1: 10 C7
 .no1:
 	lda.b d4		; $8087C3: A5 63
-	jsl.l $80AE8B		; $8087C5: 22 8B AE 80  randomd0: A = random 0..A-1
+	jsl.l randoma		; $8087C5: 22 8B AE 80
 	cmp.w #$0009		; $8087C9: C9 09 00  no shot if random(d4) > 8
 	bcs .rts		; $8087CC: B0 28
 	lda.w pucky		; $8087CE: AD 7B 09
@@ -1415,11 +1415,11 @@ check4check:		;auto: CODE_808B15. 93G check4check (logic93_4): look for a good c
 	asl.b d0		; $808B23: 06 53
 .nopen:
 	lda.b d0		; $808B25: A5 53
-	jsl.l $80AE8B		; $808B27: 22 8B AE 80  randomd0: A = random 0..A-1
+	jsl.l randoma		; $808B27: 22 8B AE 80
 	cmp.w #$0004		; $808B2B: C9 04 00
 	bcc .go		; $808B2E: 90 0B
 	lda.b d0		; $808B30: A5 53
-	jsl.l $80AE8B		; $808B32: 22 8B AE 80  randomd0: A = random 0..A-1
+	jsl.l randoma		; $808B32: 22 8B AE 80
 	cmp.w #$0004		; $808B36: C9 04 00
 	bcs .rts		; $808B39: B0 71
 .go:
@@ -1460,7 +1460,7 @@ check4check:		;auto: CODE_808B15. 93G check4check (logic93_4): look for a good c
 .dy:
 	cmp.w #$001F		; $808B86: C9 1F 00
 	bcs .next		; $808B89: B0 19
-	jsl.l $80AFA8		; $808B8B: 22 A8 AF 80  vtoa: d0/d1 = x/y distance -> direction d0 (8 = none)
+	jsl.l vtoa		; $808B8B: 22 A8 AF 80
 	lda.b d0		; $808B8F: A5 53
 	cmp.w facedir,x		; $808B91: DD BF 0D  opponent in the facing direction
 	bne .next		; $808B94: D0 0E
@@ -1585,7 +1585,7 @@ skatetopuck:		;auto: CODE_808C2D. 93G skatetopuck (logic93_5): player X skates t
 	sta.b d1		; $808C8E: 85 57
 	pla		; $808C90: 68
 	pla		; $808C91: 68
-	jsl.l $80AFA8		; $808C92: 22 A8 AF 80  vtoa: d0/d1 = x/y distance -> direction d0 (8 = none)
+	jsl.l vtoa		; $808C92: 22 A8 AF 80
 	lda.b d0		; $808C96: A5 53
 	sta.w temp2b,x		; $808C98: 9D FF 0C  temp2b = direction to the puck
 	lda.w position,x		; $808C9B: BD 9F 0B
@@ -1594,7 +1594,7 @@ skatetopuck:		;auto: CODE_808C2D. 93G skatetopuck (logic93_5): player X skates t
 	sta.b d0		; $808CA3: 85 53
 	lda.w puckvy		; $808CA5: AD 1B 0B
 	sta.b d1		; $808CA8: 85 57
-	jsl.l $80AFA8		; $808CAA: 22 A8 AF 80  vtoa: d0/d1 = x/y distance -> direction d0 (8 = none)
+	jsl.l vtoa		; $808CAA: 22 A8 AF 80
 	lda.b d0		; $808CAE: A5 53
 	eor.w #$0004		; $808CB0: 49 04 00  puck coming toward the player
 	cmp.w facedir,x		; $808CB3: DD BF 0D
@@ -1609,7 +1609,7 @@ skatetopuck:		;auto: CODE_808C2D. 93G skatetopuck (logic93_5): player X skates t
 	sbc.w Xpos,x		; $808CC6: FD FF 08
 	sta.b d0		; $808CC9: 85 53
 	pha		; $808CCB: 48
-	jsl.l $80AFA8		; $808CCC: 22 A8 AF 80  vtoa: d0/d1 = x/y distance -> direction d0 (8 = none)
+	jsl.l vtoa		; $808CCC: 22 A8 AF 80
 	lda.b d0		; $808CD0: A5 53
 	sta.b tmp0		; $808CD2: 85 73
 	pla		; $808CD4: 68
@@ -1765,7 +1765,7 @@ SetShotMode:		;auto: CODE_808DE9. 93G SetShotMode (logic93_1): start a shot by p
 	sec		; $808E10: 38
 	sbc.w Ypos,x		; $808E11: FD 5F 09
 	sta.b d1		; $808E14: 85 57
-	jsl.l $80AFA8		; $808E16: 22 A8 AF 80  vtoa: d0/d1 = x/y distance -> direction d0 (8 = none)
+	jsl.l vtoa		; $808E16: 22 A8 AF 80
 	lda.w #$000F		; $808E1A: A9 0F 00  minimum shot speed
 	sta.w passspeed		; $808E1D: 8D 3D 04
 	lda.w #SPAshotf		; $808E20: A9 A8 07  93G SPAshotf $81C
@@ -1871,7 +1871,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	lda.w shotspd,x		; $808EF4: BD DF 0F
 	sta.b d0		; $808EF7: 85 53
 	stx.b a0		; $808EF9: 86 33
-	jsl.l $80A1B4		; $808EFB: 22 B4 A1 80  makepde: d0 = rating d0 scaled by the energy of player a0
+	jsl.l makepde		; $808EFB: 22 B4 A1 80
 	adc.w #$0014		; $808EFF: 69 14 00
 	sta.b mulb		; $808F02: 85 83
 	lda.w passspeed		; $808F04: AD 3D 04
@@ -1950,7 +1950,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	bcs .notperf		; $808FA1: B0 0F
 	lda.w #$0010		; $808FA3: A9 10 00
 	adc.w shotacc,x		; $808FA6: 7D FF 0F
-	jsl.l $80AE8B		; $808FA9: 22 8B AE 80  randomd0: A = random 0..A-1
+	jsl.l randoma		; $808FA9: 22 8B AE 80
 	cmp.w #$000F		; $808FAD: C9 0F 00  chance of a perfect shot
 	bcs .perf		; $808FB0: B0 6A
 .notperf:		;aim error from passspeed, shotacc and distance
@@ -2007,7 +2007,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	sta.b $05,s		; $809010: 83 05
 	pla		; $809012: 68
 	lsr a		; $809013: 4A
-	jsl.l $80AE8B		; $809014: 22 8B AE 80  randomd0: A = random 0..A-1
+	jsl.l randoma		; $809014: 22 8B AE 80
 	adc.b $05,s		; $809018: 63 05
 	sta.b $05,s		; $80901A: 83 05
 .perf:		;puckvx/puckvy = passspeed*$44*dx/d3 and dy/d3; puckvz from the height

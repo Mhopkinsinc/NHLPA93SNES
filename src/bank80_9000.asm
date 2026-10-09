@@ -811,7 +811,7 @@ assfaceoffp1:		;auto: asstab $17. 93G assfaceoffp1 (logic93_2): assignment for t
 	jmp.w assexit		; $8097A0: 4C F9 96
 randomd0:		;auto: CODE_8097A3. 93G randomd0: d0 = random 0..d0-1 (via randoma)
 	lda.b d0		; $8097A3: A5 53
-	jsl.l $80AE8B		; $8097A5: 22 8B AE 80  randoma: A = random 0..A-1
+	jsl.l randoma		; $8097A5: 22 8B AE 80
 	sta.b d0		; $8097A9: 85 53
 	rtl		; $8097AB: 6B
 pucknorm:		;auto: asstab $18. 93G pucknorm (logic93_4): assignment for the puck most of the time. X = puck, d7 = elapsed frames
@@ -910,7 +910,7 @@ pucknorm:		;auto: asstab $18. 93G pucknorm (logic93_4): assignment for the puck 
 	beq .flat		; $80987E: F0 03
 	jmp.w checkpuckcoll		; $809880: 4C 17 9D
 .flat:
-	jsl.l $80A52A		; $809883: 22 2A A5 80  pucknothing: stop spinning, pucknothing
+	jsl.l pucknothing		; $809883: 22 2A A5 80  pucknothing: stop spinning
 	jmp.w checkpuckcoll		; $809887: 4C 17 9D  93G bra checkpuckcoll
 findpc:		;auto: CODE_80988A. 93G findpc (logic93_5): when and where will the puck cross each goal line
 	stx.b xsave		; $80988A: 86 0A
@@ -1737,7 +1737,7 @@ checkpuckcoll_ccx:		;auto: CODE_809D8A. 93G checkpuckcoll .ccx: d4 = object inde
 	lda.b d0+2		; $809EC7: A5 55
 	sbc.w #$0000		; $809EC9: E9 00 00
 	bcs .exit		; $809ECC: B0 04
-	jsl.l $80A21A		; $809ECE: 22 1A A2 80  puckbody
+	jsl.l puckbody		; $809ECE: 22 1A A2 80
 .exit:
 	stx.b xsave		; $809ED2: 86 0A
 	ldx.w #$001A		; $809ED4: A2 1A 00
@@ -1772,7 +1772,7 @@ checkpuckcoll_ccx:		;auto: CODE_809D8A. 93G checkpuckcoll .ccx: d4 = object inde
 .gy:
 	cmp.w #$000D		; $809F0A: C9 0D 00
 	bcs .exit		; $809F0D: B0 C3
-	jsl.l $80A2FA		; $809F0F: 22 FA A2 80  puckgoalie
+	jsl.l puckgoalie		; $809F0F: 22 FA A2 80
 	bra .exit		; $809F13: 80 BD
 puckstick:		;auto: CODE_809F15. 93G puckstick (hockey93_05): puck hits the stick of player a2. d0 = distance^2 (from checkpuckcoll_ccx)
 	ldy.b a2		; $809F15: A4 3B
@@ -1823,7 +1823,7 @@ puckstick:		;auto: CODE_809F15. 93G puckstick (hockey93_05): puck hits the stick
 .rnd:
 	lda.w stickhand,y		; $809F75: B9 7F 10
 	sta.b d0		; $809F78: 85 53
-	jsl.l $80A1B4		; $809F7A: 22 B4 A1 80  makepde: d0 = rating d0 scaled by the energy of player a0
+	jsl.l makepde		; $809F7A: 22 B4 A1 80
 	lda.b d0		; $809F7E: A5 53
 	pha		; $809F80: 48
 	lda.b a0		; $809F81: A5 33
@@ -1832,7 +1832,7 @@ puckstick:		;auto: CODE_809F15. 93G puckstick (hockey93_05): puck hits the stick
 	sty.b a0		; $809F87: 84 33
 	lda.w stickhand,y		; $809F89: B9 7F 10
 	sta.b d0		; $809F8C: 85 53
-	jsl.l $80A1B4		; $809F8E: 22 B4 A1 80  makepde: d0 = rating d0 scaled by the energy of player a0
+	jsl.l makepde		; $809F8E: 22 B4 A1 80
 	lda.b a0		; $809F92: A5 33
 	ldy.b a2		; $809F94: A4 3B
 	sta.b a2		; $809F96: 85 3B
@@ -1842,14 +1842,14 @@ puckstick:		;auto: CODE_809F15. 93G puckstick (hockey93_05): puck hits the stick
 	sbc.b d0		; $809F9C: E5 53
 	clc		; $809F9E: 18
 	adc.w #$0024		; $809F9F: 69 24 00
-	jsl.l $80AE8B		; $809FA2: 22 8B AE 80  randoma: A = random 0..A-1
+	jsl.l randoma		; $809FA2: 22 8B AE 80
 	cmp.w #$0003		; $809FA6: C9 03 00  steal fails
 	bcs .rtl		; $809FA9: B0 5B
 .steal:
 	ldy.b a0		; $809FAB: A4 33
 	lda.w stickhand,y		; $809FAD: B9 7F 10
 	sta.b d0		; $809FB0: 85 53
-	jsl.l $80A1B4		; $809FB2: 22 B4 A1 80  makepde: d0 = rating d0 scaled by the energy of player a0
+	jsl.l makepde		; $809FB2: 22 B4 A1 80
 	lda.b d0		; $809FB6: A5 53
 	clc		; $809FB8: 18
 	adc.w #$0014		; $809FB9: 69 14 00  nopuck = makepde(stickhand) + 20 for both
@@ -1861,7 +1861,7 @@ puckstick:		;auto: CODE_809F15. 93G puckstick (hockey93_05): puck hits the stick
 	sty.b a0		; $809FC7: 84 33
 	lda.w stickhand,y		; $809FC9: B9 7F 10
 	sta.b d0		; $809FCC: 85 53
-	jsl.l $80A1B4		; $809FCE: 22 B4 A1 80  makepde: d0 = rating d0 scaled by the energy of player a0
+	jsl.l makepde		; $809FCE: 22 B4 A1 80
 	lda.b d0		; $809FD2: A5 53
 	clc		; $809FD4: 18
 	adc.w #$0014		; $809FD5: 69 14 00
@@ -1884,7 +1884,7 @@ puckstick:		;auto: CODE_809F15. 93G puckstick (hockey93_05): puck hits the stick
 	pha		; $809FFA: 48
 	jsl.l $80C28B		; $809FFB: 22 8B C2 80  sfx (sound number pushed)
 	jsl.l a2touchpuck		; $809FFF: 22 C7 99 80
-	jmp.w $A121		; $80A003: 4C 21 A1  deflect, deflect
+	jmp.w deflect		; $80A003: 4C 21 A1  deflect
 .rtl:
 	rtl		; $80A006: 6B
 .nosteal:
