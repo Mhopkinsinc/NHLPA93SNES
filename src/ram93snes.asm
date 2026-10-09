@@ -48,10 +48,14 @@ sprslotlife	= $C1	; frames a sprite VRAM slot stays reserved after it was last u
 textdirtylo	= $D0	; lowest changed word of textmap (sent at the next vblank); $D2 = highest
 textdirtyhi	= $D2	; highest changed word of textmap
 printm		= $D4	; byte offset of the print map in textmap (map number from the print control code). 93G printm
+collflag	= $D8	; a player collision happened: checkcoll restores the old position. 93G collflag
 crowdcnt	= $DA	; count down to the next crowd animation step. 93G crowdcnt
 crowdframe	= $DC	; crowd frame: low byte = random extra frame (loud crowd), high byte ($DD) = frame from cd0. 93G crowdframe
 crowdlevel	= $DE	; level of crowd excitement (+$50 per punch, +$258 for a won fight, +$C8 for a faceoff win). 93G crowdlevel
 crowdstep	= $E0	; animation step for the crowd (0-$1E). 93G crowdstep
+impactstep	= $E2	; d7*2: impact decay this game frame (game loop)
+velstep		= $E4	; d7*16: velocity to position scale this game frame (93G d4 in updateplayers)
+gravstep	= $E6	; d7*96: gravity this game frame (93G 2*d4 + 4*d4)
 ThirdPBonus	= $F0	; setplayer: +2 when tied or trailing late in the 3rd period. 93G ThirdPBonus
 fobox		= $F4	; nonzero while the faceoff box is on screen (puckfaceoff2 .. Endfaceoff): SetLCmode2 keeps its area. 93G disflags bit 4
 
@@ -70,9 +74,14 @@ Hpos		= $0154	; ice rink horizontal position. 93G Hpos
 Hscroll		= $0156	; horizontal scroll: BG2HOFS = Hscroll+$C0 (VBlank). 93G Hscroll
 HmAwBonus	= $015A	; setplayer: home bonus / visitor penalty. 93G HmAwBonus
 iflags		= $015C	; icing flags (if* masks); high byte ($015D) = icingPlayer (SCnum). 93G iflags/icingPlayer
-sfxretjml	= $0178	; RAM trampoline: $5C (jml opcode, set by Start); sfx writes its return address at +1..+3 and jumps here
+joypad1		= $015E	; controller 1 buttons (SNES joypad bits, JOY* masks)
+joypad2		= $0160	; controller 2 buttons
+jmlvector	= $0178	; RAM jml trampoline: $5C (jml opcode, set by Start), target at +1..+3. sfx returns through it, updateplayers calls the assignment through it
+lastsfx		= $017F	; last sound effect requested. 93G lastsfx
 carriedy	= $0181	; pucky while the puck is carried: the y a shot was taken from (puckgoalie)
 lcplayer	= $0183	; SCnum of the player who opened the line change box ($FFFE = take the next one)
+lj1		= $0185	; last controller 1 buttons (debounce). 93G lj1
+lj2		= $0187	; 93G lj2
 lldisp		= $0189	; count down for the once-a-second screen/game updates ($18 frames). 93G lldisp
 ltplayer	= $018B	; last touch player (SCnum). 93G ltplayer
 ltx		= $018D	; last touch x. 93G ltx
@@ -84,6 +93,7 @@ printx		= $047B	; x cordinate for printing (text map column). 93G printx
 printy		= $047D	; y cordinate for printing. 93G printy
 PadControlBits	= $0431	; SCnum nibbles of the pad-controlled players ($FFFF = none). 93G PadControlBits
 padcont		= $0433	; 4 words. 93G padcont
+oldvcount	= $0427	; vcount at the last game frame (d7 = vcount - oldvcount). 93G oldvcount
 goalcue		= $0429	; nonzero: home team just scored (lead 0-2): assfaceoff plays the goal music cue at the next faceoff
 percue		= $042B	; nonzero: period just started: assfaceoff plays the period music cue
 midpercue	= $042F	; gameclock value (half the period) at which assfaceoff plays the mid-period music cue (0 = done)
@@ -96,11 +106,13 @@ PPBonus		= $0475	; setplayer: power play bonus. 93G PPBonus
 printa		= $0477	; attribute (palette/priority bits) for print characters. 93G printa
 printfont	= $0479	; font number (0-3) from the print control code
 puckcross	= $0489	; 2 entries of (x, frames): where/when the puck crosses the top / bottom goal line ($FFFF frames = never). 93G puckcross
+ReplayBufferPtr	= $0495	; long pointer to the next replay frame record (bank $7E, wraps at $7EFF41 to $7E8174). 93G ReplayBufferPtr
 Oldrow		= $049B	; last rink map row (vertical scrolling of the map data; 999 = redraw all). 93G Oldrow
 vramrow		= $049D	; BG2 tile map row (0-31) at the top of the ring buffer: BG2VOFS = vramrow*8 + (Vscroll&7)
 rndb1		= $0491	; copy of seed byte 1 after each random (8-bit random for other code)
 rndb2		= $0493	; high byte of the new seed after each random
 seed		= $04A1	; 32-bit random seed (randomd0). 92 seed, 93G StanleyCupTimer. Its low bits also serve as a quick random
+sfxmutetime	= $04A7	; vcount when sound effects were cut off: sfx are dropped for 180 frames after it
 shotplayer	= $04A5	; SCnum of the player who shot last. 93G shotplayer
 cuetimer	= $04A9	; frames left of a music cue; sfx are dropped while it runs
 sprslottime	= $04AB	; 512 words: sprclock value when each 32-byte VRAM sprite tile slot was last used
@@ -114,22 +126,32 @@ vcountmark	= $08FB	; 32-bit vcount snapshot: elapsed time base (setupice sets it
 zamx		= $08DD	; cleared by setupice (93G st zamx: zamboni x cord)
 Vpos		= $08DF	; ice rink vertical position. 93G Vpos
 Vscroll		= $08E1	; vertical scroll (low 3 bits = BG2 fine scroll). 93G Vscroll
+wcradiusx	= $08E3	; wall collision radius x. 93G wcradiusx
+wcradiusy	= $08E5	; wall collision radius y. 93G wcradiusy
 
 ; Sort objects (93G SortCords): structure of arrays, one word per object, 16 objects ($20 bytes per field).
 ; Index with X/Y = SCnum*2. The 93G byte fields (pnum ... handed) are each a word array here.
 ; Fields from Xvel on are in the 93G struct order; the gaps are fields not met yet.
 Xpos		= $08FF	; 93G Xpos (integer part)
+Xfrac		= $091F	; fraction of Xpos (93G Xpos low word)
 frame		= $093F	; sprite frame number. 93G frame
 Ypos		= $095F	; 93G Ypos (integer part)
+Yfrac		= $097F	; fraction of Ypos
 Zpos		= $099F	; 93G Zpos (height)
+Zfrac		= $09BF	; fraction of Zpos
 attribute	= $09DF	; frame attribute bits (attrxflip, attryflip). 93G attribute
 oldframe	= $09FF	; last frame. 93G oldframe
 OldXpos		= $0A1F	; 93G OldXpos
+OldXfrac	= $0A3F	; 93G OldXpos low word
 OldYpos		= $0A5F	; 93G OldYpos
+OldYfrac	= $0A7F
+OldZpos		= $0A9F	; 93G OldZpos
+OldZfrac	= $0ABF
 Xvel		= $0ADF	; 93G Xvel
 Yvel		= $0AFF	; 93G Yvel
 Zvel		= $0B1F	; 93G Zvel
 impactp		= $0B3F	; last player to cause impact (SCnum). 93G impactp
+limpact		= $0B5F	; last impact value. 93G limpact
 impact		= $0B7F	; impact value. 93G impact
 position	= $0B9F	; player's position (0=goalie,1=l.def,2=r.def,3=l.wing,4=center,5=r.wing; negative = none). 93G position
 assnum		= $0BBF	; index to current assignment (0-7). 93G assnum
@@ -140,12 +162,17 @@ temp3		= $0C9F	; 93G temp3
 temp4		= $0CBF	; 93G temp4
 temp5		= $0CDF	; 93G temp5
 temp2b		= $0CFF	; 93G temp2+1 (low byte; the port also uses it where 93G uses temp2 as a word: swing time, pass wait)
+radiusx		= $0D1F	; width of this graphic (wall collision). 93G radiusx
+radiusy		= $0D3F	; 93G radiusy
+Wallcos		= $0D5F	; cos of the angle of the last wall collision. 93G Wallcos
+Wallsin		= $0D7F	; 93G Wallsin
 SCnum		= $0D9F	; index number of this object (X/2). 93G SCnum
 facedir		= $0DBF	; direction of facing 0-7. 93G facedir
 SPA		= $0DFF	; current animation (offset into the animation data). 93G SPA
 SPAnum		= $0E1F	; index into animation (4 per frame). 93G SPAnum
 SPAcnt		= $0E3F	; count down to the next animation frame (-1 = restart). 93G SPAcnt
 nopuck		= $0E5F	; no puck collision until zero. 93G nopuck
+nopuckb		= $0E7F	; second count down (93G byte $5F)
 newpos		= $0E9F	; requested next position (negative = none). 93G newpos
 newpnum		= $0EBF	; requested next roster player (negative = none). 93G newpnum
 pflags		= $0EDF	; 93G pflags (bits 0-7) and pflags2 (bit n at bit n+10); some flags have their own arrays below
@@ -188,7 +215,8 @@ c1playernum	= $1292	; player on controller 1 (negative = none). 93G c1playernum
 c2playernum	= $1294	; 93G c2playernum
 cont1team	= $1296	; team on controller 1 (0 none, 1 home, 2 away). 93G cont1team
 cont2team	= $1298	; 93G cont2team
-PenaltyBufferEnd	= $129C	; penalty list base: entries (penalty byte, player byte) start at +2. 93G PenaltyBufferEnd
+PenaltyBufferEnd	= $129C	; word before PenBuf. 93G PenaltyBufferEnd
+PenBuf		= $129E	; up to 32 penalties: (penalty number, SCnum) byte pairs, 0 = free. 93G PenBuf
 Pencntdwn	= $12E0	; penalty/fight count down (negative = fight over). 93G Pencntdwn
 PBnum		= $12E4	; players in the penalty boxes: home*16 + visitors. 93G PBnum
 InjCntDown	= $12E6	; 93G InjCntDown
@@ -259,6 +287,7 @@ gmendper	= $0040	; end the period at the next faceoff (93G gmode bit 6)
 sfpz		= $0001	; pause mode (93G sfpz 0)
 sfspdir		= $0004	; set pass dir mode (93G sfspdir 2)
 sfssdir		= $0008	; set shot dir mode (93G sfssdir 3)
+sfwrap		= $0010	; replay has wrapped around (93G sfwrap 4)
 sfslock		= $0040	; scroll lock to xc1/yc1 (93G sfslock 6)
 sf2faceoff	= $0100	; face off in progress (93G sf2faceoff 0)
 sf2refref	= $0200	; ref needs refresh (93G sf2refref 1)
@@ -279,6 +308,7 @@ pf2inj		= $0004	; injured (93G pflags2 bit 6, kept in pflags bit 2 here)
 ; sflags3 bits
 sf3llcs		= $0001	; lower line change box on screen (93G sf3llcs 0)
 sf3fo		= $0010	; face off just ended: the next puck pickup wins it (93G sflags3 bit 4)
+sf3icetime	= $0020	; count frames on ice per player (93G sflags3 bit 6)
 ; iflags bits
 ifcgl		= $0001	; puck crossed the goal line (93G ifcgl 0)
 ifdir		= $0002	; icing toward the top goal (93G ifdir 1)
@@ -306,6 +336,7 @@ awingd		= $03	; 93G awingd
 acenterd	= $05	; 93G acenterd
 aeben		= $09	; 93G aeben (from the bench)
 aepen		= $0A	; 93G aepen (from the penalty box)
+apenalty	= $0C	; 93G apenalty
 agoalie		= $0E	; 93G agoalie
 apassrec	= $13	; 93G apassrec
 afaceoff	= $16	; 93G afaceoff
@@ -313,7 +344,7 @@ afaceoffpl	= $17	; 93G afaceoffpl (assfaceoffp1)
 pnorm		= $18	; 93G pnorm (pucknorm)
 pfaceoff2	= $1C	; 93G pfaceoff2
 ; penalties (93G PenaltyList numbers)
-PenHold6	= $06	; loose puck not moving for 120 calls (93G AddPenalty2 d0 = 6)
+PenOOP		= $06	; face off / out of play (93G penalty 6, 92 PenOOP): puck still too long, puck over the glass
 PenIcing	= $0C	; 93G PenIcing
 PenOffsides	= $10	; 93G PenOffsides
 PenFight	= $26	; penalty byte of a fight in the penalty list (93G $26)
@@ -340,6 +371,9 @@ SPAfaceoffr	= $10C0	; 93G SPAfaceoffr $11CE
 SPAffall	= $1156	; 93G SPAffall $10CE
 SPAg314		= $1490	; goalie animation (93G SPA $314: temp5 = 5 instead of 140 after a save)
 SPAslowhit	= $1418	; player hit by a slow puck (93G SPA $128A)
+SPApflip	= $03D6	; puck spin (93G SPApflip $48A)
+SPAglass	= $146A	; the puck shadow when the puck flies over the glass (93G SPA $1232)
+SPAnomove	= $1502	; animation with no movement and no bounce (93G SPA $1616)
 ; sprite frames (93G SPF numbers, same values)
 SPFfight	= $0162	; first fight frame (93G SPFfight)
 SPFpuck		= $0189	; puck frame (93G SPFpuck $18A)
@@ -357,6 +391,11 @@ SFXhitlow	= $93	; 93G SFXhitlow $A
 SFXpuckbody	= $90	; +0/1: puck hits a body (93G $24)
 SFXsavehome	= $8A	; hard shot saved by the home goalie (93G song $B)
 SFXsaveaway	= $8C	; hard shot saved by the visiting goalie (93G song $D)
+SFXoverglass	= $8C	; puck over the glass (93G $E)
+SFXpuckwall	= $95	; +0-2: puck off the boards by speed (93G $28-$2B)
+SFXplayerwall	= $9E	; +0/1: player hits the boards (93G $20)
+; joypad bits (SNES)
+JOYSTART	= $1000	; Start (93G sbut)
 ; injury
 INJfight	= $112C	; tmpdst value for a player injured in a fight (93G $112C)
 ; tmpdst values

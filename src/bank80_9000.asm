@@ -423,7 +423,7 @@ chkhit:		;auto: CODE_809330. 93G chkhit (logic93_2): part of the fight, is playe
 	jsl.l SetSPA		; $809459: 22 06 B0 80
 	lda.w #SFXhithigh		; $80945D: A9 92 00
 	pha		; $809460: 48
-	jsl.l $80C28B		; $809461: 22 8B C2 80  sfx (sound number pushed)
+	jsl.l sfx		; $809461: 22 8B C2 80
 	jmp.w .ex		; $809465: 4C B8 93
 .hitlow:
 	ldx.b a0		; $809468: A6 33
@@ -440,7 +440,7 @@ chkhit:		;auto: CODE_809330. 93G chkhit (logic93_2): part of the fight, is playe
 	jsl.l SetSPA		; $809484: 22 06 B0 80
 	lda.w #SFXhitlow		; $809488: A9 93 00
 	pha		; $80948B: 48
-	jsl.l $80C28B		; $80948C: 22 8B C2 80  sfx (sound number pushed)
+	jsl.l sfx		; $80948C: 22 8B C2 80
 	jmp.w .ex		; $809490: 4C B8 93
 CwdFight:		;auto: CODE_809493. 93G chkhit .cwd (IDA CwdFight): crowd reacts to a punch; push the hit player X back by the puncher (a0) strength
 	ldy.b a0		; $809493: A4 33
@@ -559,7 +559,7 @@ FightFall:		;auto: CODE_8094CB. 93G chkhit .fall (IDA FightFall): X lost the fig
 	lda.w #SFXcrowdboo		; $809589: A9 8B 00
 	sta.b $01,s		; $80958C: 83 01
 .snd:
-	jsl.l $80C28B		; $80958E: 22 8B C2 80  sfx (sound number pushed)
+	jsl.l sfx		; $80958E: 22 8B C2 80
 	jmp.w chkhit_ex		; $809592: 4C B8 93
 assfwatch:		;auto: asstab $15. 93G assfwatch (logic93_2): for a player watching a fight: skate to a spot 80 pixels from the fight
 	lda.w pfalock,x		; $809595: BD 7F 11
@@ -609,7 +609,7 @@ assfwatch:		;auto: asstab $15. 93G assfwatch (logic93_2): for a player watching 
 	lda.b mulres+2		; $8095F6: A5 95
 	adc.b d0+2		; $8095F8: 65 55
 	sta.b d0+2		; $8095FA: 85 55
-	jsl.l $80CBB1		; $8095FC: 22 B1 CB 80  distance to the fight, sroot: A = sqrt(d0 32-bit)
+	jsl.l sroot		; $8095FC: 22 B1 CB 80  distance to the fight
 	lda.b d0		; $809600: A5 53
 	bne .d		; $809602: D0 03
 	lda.w #$0001		; $809604: A9 01 00
@@ -893,11 +893,11 @@ pucknorm:		;auto: asstab $18. 93G pucknorm (logic93_4): assignment for the puck 
 	lda.w pucky		; $809857: AD 7B 09
 	cmp.w OldYpos+puckobj		; $80985A: CD 7B 0A
 	bne .mv		; $80985D: D0 10
-	lda.w #PenHold6		; $80985F: A9 06 00  PenHold6
+	lda.w #PenOOP		; $80985F: A9 06 00  PenOOP: whistle
 	sta.b d0		; $809862: 85 53
 	dec.w temp2b+puckobj		; $809864: CE 1B 0D
 	bpl .np		; $809867: 10 04
-	jsl.l $80C1B0		; $809869: 22 B0 C1 80  AddPenalty2 (d0 = penalty)
+	jsl.l AddPenalty2		; $809869: 22 B0 C1 80
 .np:
 	bra .z		; $80986D: 80 06
 .mv:		;reset the still puck timer
@@ -1146,7 +1146,7 @@ a2touchpuck:		;auto: CODE_8099C7. 93G a2touchpuck (logic93_5): player a2 touches
 	tax		; $809A52: AA
 	lda.w #PenIcing		; $809A53: A9 0C 00  PenIcing
 	sta.b d0		; $809A56: 85 53
-	jsl.l $80C18F		; $809A58: 22 8F C1 80  AddPenalty, AddPenalty (d0 = penalty, X = player)
+	jsl.l AddPenalty		; $809A58: 22 8F C1 80  AddPenalty
 	plx		; $809A5C: FA
 	stx.b a3		; $809A5D: 86 3F
 .rtl:		;auto: CODE_809A5F
@@ -1230,7 +1230,7 @@ a2offsides:		;auto: CODE_809AA8. 93G a2offsides (logic93_5): player a2 touched t
 	sty.b a2		; $809AF6: 84 3B
 	lda.w #PenOffsides		; $809AF8: A9 10 00  PenOffsides
 	sta.b d0		; $809AFB: 85 53
-	jsl.l $80C18F		; $809AFD: 22 8F C1 80  AddPenalty, AddPenalty (d0 = penalty, X = player)
+	jsl.l AddPenalty		; $809AFD: 22 8F C1 80  AddPenalty
 	ldx.b a2		; $809B01: A6 3B
 	ldy.b a3		; $809B03: A4 3F
 	stx.b a3		; $809B05: 86 3F
@@ -1882,7 +1882,7 @@ puckstick:		;auto: CODE_809F15. 93G puckstick (hockey93_05): puck hits the stick
 	clc		; $809FF6: 18
 	adc.w #SFXshotwiff		; $809FF7: 69 98 00
 	pha		; $809FFA: 48
-	jsl.l $80C28B		; $809FFB: 22 8B C2 80  sfx (sound number pushed)
+	jsl.l sfx		; $809FFB: 22 8B C2 80
 	jsl.l a2touchpuck		; $809FFF: 22 C7 99 80
 	jmp.w deflect		; $80A003: 4C 21 A1  deflect
 .rtl:
@@ -1945,7 +1945,7 @@ puckglue:		;auto: CODE_80A07D. 93G puckglue (hockey93_05 IDA loc_10F8A): player 
 	clc		; $80A083: 18
 	adc.w #SFXshotwiff		; $80A084: 69 98 00
 	pha		; $80A087: 48
-	jsl.l $80C28B		; $80A088: 22 8B C2 80  sfx (sound number pushed)
+	jsl.l sfx		; $80A088: 22 8B C2 80
 	ldy.b a2		; $80A08C: A4 3B
 	tya		; $80A08E: 98
 	lsr a		; $80A08F: 4A

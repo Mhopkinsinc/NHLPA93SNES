@@ -14,7 +14,7 @@ deflect:		;auto: CODE_80A121. 93G deflect (hockey93_05): random puck direction o
 	lda.w #$1000		; $80A13B: A9 00 10
 	jsl.l randoma		; $80A13E: 22 8B AE 80
 	sta.w puckvz		; $80A142: 8D 3B 0B
-	jmp.w $CEC9		; $80A145: 4C C9 CE  puckflip, puckflip
+	jmp.w puckflip		; $80A145: 4C C9 CE  puckflip
 setc1player:		;auto: CODE_80A148. 93G setc1player (logic93_1): restore the old player and give controller 1 to player d0
 	lda.b d0		; $80A148: A5 53
 	cmp.w c1playernum		; $80A14A: CD 92 12
@@ -152,7 +152,7 @@ puckbody:		;auto: CODE_80A21A. 93G puckbody (hockey93_05): puck (X) hits player 
 	clc		; $80A23F: 18
 	adc.w #SFXpuckbody		; $80A240: 69 90 00
 	pha		; $80A243: 48
-	jsl.l $80C28B		; $80A244: 22 8B C2 80  sfx (sound number pushed)
+	jsl.l sfx		; $80A244: 22 8B C2 80
 	stz.w Zvel,x		; $80A248: 9E 1F 0B  Zvel = 0, nopuck(a2) = 8
 	ldy.b a2		; $80A24B: A4 3B
 	lda.w #$0008		; $80A24D: A9 08 00
@@ -179,7 +179,7 @@ puckbody:		;auto: CODE_80A21A. 93G puckbody (hockey93_05): puck (X) hits player 
 	lda.b d1		; $80A27D: A5 57
 	sta.w Yvel+1,x		; $80A27F: 9D 00 0B
 	rep #$30		; $80A282: C2 30
-	jsl.l $80CEC9		; $80A284: 22 C9 CE 80  puckflip, puckflip
+	jsl.l puckflip		; $80A284: 22 C9 CE 80  puckflip
 	lda.w Zpos,x		; $80A288: BD 9F 09
 	sec		; $80A28B: 38
 	sbc.w #$0008		; $80A28C: E9 08 00
@@ -365,7 +365,7 @@ puckgoalie:		;auto: CODE_80A2FA. 93G puckgoalie (hockey93_05): puck (X) hits goa
 	clc		; $80A3FB: 18
 	adc.w #SFXpuckbody		; $80A3FC: 69 90 00
 	pha		; $80A3FF: 48
-	jsl.l $80C28B		; $80A400: 22 8B C2 80  sfx (sound number pushed)
+	jsl.l sfx		; $80A400: 22 8B C2 80
 	lda.w puckvy		; $80A404: AD 1B 0B
 	bit.w #$8000		; $80A407: 89 00 80
 	beq .vy		; $80A40A: F0 04
@@ -382,7 +382,7 @@ puckgoalie:		;auto: CODE_80A2FA. 93G puckgoalie (hockey93_05): puck (X) hits goa
 	lda.w #SFXsaveaway		; $80A420: A9 8C 00
 	sta.b $01,s		; $80A423: 83 01
 .song:
-	jsl.l $80C28B		; $80A425: 22 8B C2 80  sfx (sound number pushed)
+	jsl.l sfx		; $80A425: 22 8B C2 80
 .nosong:
 	lda.w puckc		; $80A429: AD BB 0E
 	sta.b d2		; $80A42C: 85 5B
@@ -447,7 +447,7 @@ puckgoalie:		;auto: CODE_80A2FA. 93G puckgoalie (hockey93_05): puck (X) hits goa
 	lda.b d1		; $80A4A9: A5 57
 	sta.w Yvel+1,x		; $80A4AB: 9D 00 0B
 	rep #$20		; $80A4AE: C2 20
-	jmp.w $CEC9		; $80A4B0: 4C C9 CE  puckflip
+	jmp.w puckflip		; $80A4B0: 4C C9 CE
 .rtl:
 	rtl		; $80A4B3: 6B
 .nopc:		;loose puck: the goalie holds it if it is slow enough
@@ -530,7 +530,7 @@ pucknothing:		;auto: asstab $1A. 93G pucknothing / puckunflip (logic93_4 / logic
 	tsb.w facedir+puckobj		; $80A543: 0C DB 0D
 	stz.w SPAnum+puckobj		; $80A546: 9C 3B 0E  SPAnum = 0, SPAcnt = -1 (restart)
 	lda.w #$FFFF		; $80A549: A9 FF FF
-	sta.w SPAnum+puckobj+$20		; $80A54C: 8D 5B 0E
+	sta.w SPAcnt+puckobj		; $80A54C: 8D 5B 0E
 	rtl		; $80A54F: 6B
 puckfaceoff:		;auto: asstab $1B. 93G puckfaceoff (logic93_4): this is where the action starts: period end checks, goalies, line change boxes, then pfaceoff2
 	lda.w pflags,x		; $80A550: BD DF 0E
@@ -1453,7 +1453,7 @@ Endfaceoff:		;auto: CODE_80AD34. 93G Endfaceoff (logic93_4): drop the puck: pick
 	clc		; $80AD3A: 18
 	adc.w #SFXshotwiff		; $80AD3B: 69 98 00
 	pha		; $80AD3E: 48
-	jsl.l $80C28B		; $80AD3F: 22 8B C2 80  sfx (sound number pushed)
+	jsl.l sfx		; $80AD3F: 22 8B C2 80
 	lda.w #sf2faceoff		; $80AD43: A9 00 01  faceoff over, fobox off, replay record on, clock running
 	trb.w sflags		; $80AD46: 1C 8C 12
 	stz.b fobox		; $80AD49: 64 F4

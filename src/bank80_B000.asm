@@ -978,9 +978,9 @@ SprSort:		;auto: CODE_80B76C. 93G SprSort (hockey93_06): sort the objects by y (
 	rtl		; $80B7F9: 6B
 DoGameFrame:		;auto: CODE_80B7FA. 93G DoGameFrame (hockey93_01): one frame of game logic (d7 = elapsed frames, set by the caller)
 	jsl.l periodicevents		; $80B7FA: 22 0D B8 80  periodicevents
-	jsl.l $80C46D		; $80B7FE: 22 6D C4 80  updateplayers, updateplayers
+	jsl.l updateplayers		; $80B7FE: 22 6D C4 80  updateplayers
 	jsl.l $80E1E8		; $80B802: 22 E8 E1 80  checkwindow, checkwindow
-	jsl.l $80C2B4		; $80B806: 22 B4 C2 80  updatereplay, updatereplay
+	jsl.l updatereplay		; $80B806: 22 B4 C2 80  updatereplay
 	jmp.w $E35E		; $80B80A: 4C 5E E3  setvideo
 periodicevents:		;auto: CODE_80B80D. 93G periodicevents (hockey93_01): every game loop; once a second (lldisp) the slower checks
 	jsl.l $80E6C7		; $80B80D: 22 C7 E6 80  PenaltyManager, PenaltyManager

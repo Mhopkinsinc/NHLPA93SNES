@@ -27,8 +27,8 @@ Start:		;auto: CODE_808000. 93G main93 Start + hockey93_01 Begin (RAM clear). Re
 	sta.b vbint		; $808022: 85 14
 	lda.w #HBdefault		; $808024: A9 A3 83
 	sta.b hbint		; $808027: 85 16
-	lda.w #JMLOPCODE		; $808029: A9 5C 00  jml opcode for the sfx return trampoline
-	sta.w sfxretjml		; $80802C: 8D 78 01
+	lda.w #JMLOPCODE		; $808029: A9 5C 00  jml opcode for the jmlvector trampoline
+	sta.w jmlvector		; $80802C: 8D 78 01
 	lda.w #$0012		; $80802F: A9 12 00  sprite VRAM slots stay reserved 18 frames
 	sta.b sprslotlife		; $808032: 85 C1
 	lda.b sprclock		; $808034: A5 A7
@@ -534,7 +534,7 @@ dostop:		;auto: CODE_808404. 93G dostop (logic93_5 IDA loc_D538): player X stops
 	clc		; $80843D: 18
 	adc.w #SFXstop		; $80843E: 69 9C 00
 	pha		; $808441: 48
-	jsl.l $80C28B		; $808442: 22 8B C2 80  sfx (sound number pushed)
+	jsl.l sfx		; $808442: 22 8B C2 80
 .stopanim:
 	lda.w #SPAstop		; $808446: A9 72 06  93G SPAstop $6E6, pf2aip
 	sta.b d1		; $808449: 85 57
@@ -1935,7 +1935,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	lda.b mulres+2		; $808F82: A5 95
 	adc.b d0+2		; $808F84: 65 55
 	sta.b d0+2		; $808F86: 85 55
-	jsl.l $80CBB1		; $808F88: 22 B1 CB 80  sroot: A = sqrt(d0 32-bit)
+	jsl.l sroot		; $808F88: 22 B1 CB 80
 	bne .dist		; $808F8C: D0 01
 	inc a		; $808F8E: 1A
 .dist:
@@ -2048,7 +2048,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	jsl.l $888942		; $809071: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
 	lda.b d3		; $809075: A5 5F
 	sta.b mula		; $809077: 85 7D
-	jsl.l $80CBE5		; $809079: 22 E5 CB 80  divu: A = mulb (32-bit)/mula
+	jsl.l divu		; $809079: 22 E5 CB 80
 	asl a		; $80907D: 0A
 	sta.b d1		; $80907E: 85 57
 	lda.w #$0B33		; $809080: A9 33 0B
@@ -2058,7 +2058,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	jsl.l $888942		; $809089: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
 	lda.w passspeed		; $80908D: AD 3D 04
 	sta.b mula		; $809090: 85 7D
-	jsl.l $80CBE5		; $809092: 22 E5 CB 80  divu: A = mulb (32-bit)/mula
+	jsl.l divu		; $809092: 22 E5 CB 80
 	lsr a		; $809096: 4A
 	adc.b d1		; $809097: 65 57
 	cmp.w #$1801		; $809099: C9 01 18
@@ -2067,7 +2067,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 .noup:
 	sta.w puckvz		; $8090A1: 8D 3B 0B
 .ex:		;play the sound, movem the registers back
-	jsl.l $80C28B		; $8090A4: 22 8B C2 80  sfx (sound number pushed)
+	jsl.l sfx		; $8090A4: 22 8B C2 80
 	stx.b xsave		; $8090A8: 86 0A
 	ldx.w #$000E		; $8090AA: A2 0E 00
 .popa:

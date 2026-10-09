@@ -1,5 +1,157 @@
-; $80D002-$80DFFF  ROM $05002  (from src/bank80.asm; quick pass, TODO segment agents refine)
-org $80D002
+; $80CEE7-$80DFFF  ROM $04EE7 (from src/bank80.asm; quick pass, TODO segment agents refine). Starts at checkgoal (boundary moved from $80D002)
+org $80CEE7
+	lda.w $099F,x		; $80CEE7: BD 9F 09
+	sec		; $80CEEA: 38
+	sbc.w #$000D		; $80CEEB: E9 0D 00
+	beq CODE_80CEF9		; $80CEEE: F0 09
+	bmi CODE_80CEF7		; $80CEF0: 30 05
+	bvs CODE_80CEF9		; $80CEF2: 70 05
+CODE_80CEF4:		; M=16 X=16
+	jmp.w $D113		; $80CEF4: 4C 13 D1
+CODE_80CEF7:		; M=16 X=16
+	bvs CODE_80CEF4		; $80CEF7: 70 FB
+CODE_80CEF9:		; M=16 X=16
+	cpx.w #$001C		; $80CEF9: E0 1C 00
+	beq CODE_80CF01		; $80CEFC: F0 03
+	jmp.w $D3D3		; $80CEFE: 4C D3 D3
+CODE_80CF01:		; M=16 X=16
+	ldy.b $3B		; $80CF01: A4 3B
+	lda.w #$0010		; $80CF03: A9 10 00
+	clc		; $80CF06: 18
+	adc.w $08E3		; $80CF07: 6D E3 08
+	sta.b $63		; $80CF0A: 85 63
+	lda.b $5B		; $80CF0C: A5 5B
+	sec		; $80CF0E: 38
+	sbc.w $08FF,y		; $80CF0F: F9 FF 08
+	sta.b $5B		; $80CF12: 85 5B
+	sec		; $80CF14: 38
+	sbc.b $63		; $80CF15: E5 63
+	beq CODE_80CF22		; $80CF17: F0 09
+	bmi CODE_80CF20		; $80CF19: 30 05
+	bvs CODE_80CF22		; $80CF1B: 70 05
+CODE_80CF1D:		; M=16 X=16
+	jmp.w $D113		; $80CF1D: 4C 13 D1
+CODE_80CF20:		; M=16 X=16
+	bvs CODE_80CF1D		; $80CF20: 70 FB
+CODE_80CF22:		; M=16 X=16
+	lda.b $63		; $80CF22: A5 63
+	eor.w #$FFFF		; $80CF24: 49 FF FF
+	inc a		; $80CF27: 1A
+	sta.b $63		; $80CF28: 85 63
+	lda.b $5B		; $80CF2A: A5 5B
+	sec		; $80CF2C: 38
+	sbc.b $63		; $80CF2D: E5 63
+	bmi CODE_80CF36		; $80CF2F: 30 05
+	bvc CODE_80CF38		; $80CF31: 50 05
+CODE_80CF33:		; M=16 X=16
+	jmp.w $D113		; $80CF33: 4C 13 D1
+CODE_80CF36:		; M=16 X=16
+	bvc CODE_80CF33		; $80CF36: 50 FB
+CODE_80CF38:		; M=16 X=16
+	lda.w #$0004		; $80CF38: A9 04 00
+	clc		; $80CF3B: 18
+	adc.w $08E5		; $80CF3C: 6D E5 08
+	sta.b $67		; $80CF3F: 85 67
+	lda.b $5F		; $80CF41: A5 5F
+	sec		; $80CF43: 38
+	sbc.w $095F,y		; $80CF44: F9 5F 09
+	sta.b $5F		; $80CF47: 85 5F
+	sec		; $80CF49: 38
+	sbc.b $67		; $80CF4A: E5 67
+	beq CODE_80CF57		; $80CF4C: F0 09
+	bmi CODE_80CF55		; $80CF4E: 30 05
+	bvs CODE_80CF57		; $80CF50: 70 05
+CODE_80CF52:		; M=16 X=16
+	jmp.w $D113		; $80CF52: 4C 13 D1
+CODE_80CF55:		; M=16 X=16
+	bvs CODE_80CF52		; $80CF55: 70 FB
+CODE_80CF57:		; M=16 X=16
+	lda.b $67		; $80CF57: A5 67
+	eor.w #$FFFF		; $80CF59: 49 FF FF
+	inc a		; $80CF5C: 1A
+	sta.b $67		; $80CF5D: 85 67
+	lda.b $5F		; $80CF5F: A5 5F
+	sec		; $80CF61: 38
+	sbc.b $67		; $80CF62: E5 67
+	bmi CODE_80CF6B		; $80CF64: 30 05
+	bvc CODE_80CF6D		; $80CF66: 50 05
+CODE_80CF68:		; M=16 X=16
+	jmp.w $D113		; $80CF68: 4C 13 D1
+CODE_80CF6B:		; M=16 X=16
+	bvc CODE_80CF68		; $80CF6B: 50 FB
+CODE_80CF6D:		; M=16 X=16
+	lda.w #$FFFF		; $80CF6D: A9 FF FF
+	sta.b $D8		; $80CF70: 85 D8
+	lda.w $0ABB		; $80CF72: AD BB 0A
+	sec		; $80CF75: 38
+	sbc.w #$000D		; $80CF76: E9 0D 00
+	bmi CODE_80CF7F		; $80CF79: 30 04
+	bvc CODE_80CF81		; $80CF7B: 50 04
+	bra CODE_80CF8A		; $80CF7D: 80 0B
+CODE_80CF7F:		; M=16 X=16
+	bvc CODE_80CF8A		; $80CF7F: 50 09
+CODE_80CF81:		; M=16 X=16
+	lda.w $0ABB		; $80CF81: AD BB 0A
+	sta.w $09BB		; $80CF84: 8D BB 09
+	jmp.w $D104		; $80CF87: 4C 04 D1
+CODE_80CF8A:		; M=16 X=16
+	stz.w $115B		; $80CF8A: 9C 5B 11
+	lda.w $0EBB		; $80CF8D: AD BB 0E
+	bmi CODE_80CFBC		; $80CF90: 30 2A
+	asl a		; $80CF92: 0A
+	tay		; $80CF93: A8
+	lda.w #$FFFF		; $80CF94: A9 FF FF
+	sta.w $0EBB		; $80CF97: 8D BB 0E
+	lda.w #$0008		; $80CF9A: A9 08 00
+	sta.w $0E5F,y		; $80CF9D: 99 5F 0E
+	lda.w $097B		; $80CFA0: AD 7B 09
+	sta.b $57		; $80CFA3: 85 57
+	lda.w $113F,y		; $80CFA5: B9 3F 11
+	bne CODE_80CFB2		; $80CFA8: D0 08
+	lda.b $57		; $80CFAA: A5 57
+	eor.w #$FFFF		; $80CFAC: 49 FF FF
+	inc a		; $80CFAF: 1A
+	sta.b $57		; $80CFB0: 85 57
+CODE_80CFB2:		; M=16 X=16
+	lda.b $57		; $80CFB2: A5 57
+	bpl CODE_80CFBC		; $80CFB4: 10 06
+	lda.w #$0001		; $80CFB6: A9 01 00
+	sta.w $115B		; $80CFB9: 8D 5B 11
+CODE_80CFBC:		; M=16 X=16
+	lda.w #$FF00		; $80CFBC: A9 00 FF
+	sta.b $53		; $80CFBF: 85 53
+	lda.w $097F,x		; $80CFC1: BD 7F 09
+	sec		; $80CFC4: 38
+	sbc.w $0A7F,x		; $80CFC5: FD 7F 0A
+	sta.b $57		; $80CFC8: 85 57
+	lda.w $095F,x		; $80CFCA: BD 5F 09
+	sbc.w $0A5F,x		; $80CFCD: FD 5F 0A
+	sta.b $59		; $80CFD0: 85 59
+	lda.b $58		; $80CFD2: A5 58
+	sta.b $57		; $80CFD4: 85 57
+	bne CODE_80CFDB		; $80CFD6: D0 03
+	jmp.w $D114		; $80CFD8: 4C 14 D1
+CODE_80CFDB:		; M=16 X=16
+	bmi CODE_80CFED		; $80CFDB: 30 10
+	lda.b $53		; $80CFDD: A5 53
+	eor.w #$FFFF		; $80CFDF: 49 FF FF
+	inc a		; $80CFE2: 1A
+	sta.b $53		; $80CFE3: 85 53
+	lda.b $67		; $80CFE5: A5 67
+	eor.w #$FFFF		; $80CFE7: 49 FF FF
+	inc a		; $80CFEA: 1A
+	sta.b $67		; $80CFEB: 85 67
+CODE_80CFED:		; M=16 X=16
+	lda.b $67		; $80CFED: A5 67
+	clc		; $80CFEF: 18
+	adc.b $5F		; $80CFF0: 65 5F
+	sta.b $67		; $80CFF2: 85 67
+	sta.b $83		; $80CFF4: 85 83
+	lda.w $091F,x		; $80CFF6: BD 1F 09
+	sec		; $80CFF9: 38
+	sbc.w $0A3F,x		; $80CFFA: FD 3F 0A
+	sta.b $5F		; $80CFFD: 85 5F
+	lda.w $08FF,x		; $80CFFF: BD FF 08
 	sbc.w $0A1F,x		; $80D002: FD 1F 0A
 	sta.b $61		; $80D005: 85 61
 	lda.b $60		; $80D007: A5 60
