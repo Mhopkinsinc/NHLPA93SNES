@@ -102,7 +102,7 @@ UpdateScores:		;auto: CODE_82F9D1. 93G UpdateScores (penalty93_2): update the ti
 	sta.w gsflags,y		; $82F9EC: 99 EF 15
 	bit.w #gsfso		; $82F9EF: 89 04 00
 	bne .next		; $82F9F2: D0 04
-	jsl.l $8AFE21		; $82F9F4: 22 21 FE 8A  bank $8A: 93G SetScore
+	jsl.l SetScore		; $82F9F4: 22 21 FE 8A  bank $8A: 93G SetScore
 .next:
 	dec.b a0		; $82F9F8: C6 33
 	dec.b a0		; $82F9FA: C6 33

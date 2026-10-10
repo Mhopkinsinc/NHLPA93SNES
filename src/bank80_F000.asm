@@ -52,7 +52,7 @@ setlccords:		;auto: CODE_80F391. 93G setlccords (logic93_1): printx/printy for t
 	sta.w printy		; $80F3C1: 8D 7D 04
 	lda.w #$0002		; $80F3C4: A9 02 00  getlchoice 2: no third choice: 2 rows
 	sta.b d0		; $80F3C7: 85 53
-	jsl.l $8AFD6D		; $80F3C9: 22 6D FD 8A  bank $8A: 93G getlchoice (d0 = possible line, -1 = none)
+	jsl.l getlchoice		; $80F3C9: 22 6D FD 8A  bank $8A: 93G getlchoice (d0 = possible line, -1 = none)
 	lda.w #$0006		; $80F3CD: A9 06 00
 	sta.b d1		; $80F3D0: 85 57
 	lda.b d0		; $80F3D2: A5 53

@@ -8,7 +8,7 @@ BootSamplesEnd:
 	dw $0000, SPCDRIVER		; $86FA3A end block: length 0, start the driver at $0400
 DecompressGraphics:		;auto: CODE_86FA3E. SNES: unpack the stream at [tmp0] to $7F0000 (output pointer tmp1+1..+3, copy distance tmp2+2). Control byte: $00-$1F copy n+1 bytes; $2x n+1 zeros; $3x n+3
 		;   times the next byte; $40-$7F, $8x, $9x, $Ax, $Bx copy from earlier output going up; $C0-$DF, $Ex, $Fx going down; $E0 $00 ends
-	stz.b tmp1+1		; $86FA3E: 64 76
+	stz.b tmp1+1		; $86FA3E: 64 76  output pointer = $7F0000
 	lda.w #TestList>>16		; $86FA40: A9 7F 00
 	sta.b tmp1+3		; $86FA43: 85 78
 .next:
@@ -225,7 +225,7 @@ DecompressGraphics:		;auto: CODE_86FA3E. SNES: unpack the stream at [tmp0] to $7
 UpdateLineChange:		;auto: CODE_86FB96. 93G UpdateLineChange (hockey93_01): once a second with line changes on, players on the bench (TMPDBENCH) regain 10 energy up to $1000, both teams
 	lda.w OptLine		; $86FB96: AD 0C 16
 	bne .rtl		; $86FB99: D0 45
-	stz.b a2		; $86FB9B: 64 3B
+	stz.b a2		; $86FB9B: 64 3B  home team, then the away team
 	jsl.l .tm		; $86FB9D: 22 A6 FB 86
 	lda.w #$0002		; $86FBA1: A9 02 00
 	sta.b a2		; $86FBA4: 85 3B
@@ -240,7 +240,7 @@ UpdateLineChange:		;auto: CODE_86FB96. 93G UpdateLineChange (hockey93_01): once 
 	clc		; $86FBB2: 18
 	adc.b d0		; $86FBB3: 65 53
 	tay		; $86FBB5: A8
-	lda.w tmpdst,y		; $86FBB6: B9 E2 14
+	lda.w tmpdst,y		; $86FBB6: B9 E2 14  on the bench?
 	cmp.w #TMPDBENCH		; $86FBB9: C9 FE FF
 	bne .next		; $86FBBC: D0 1C
 	lda.w tmpde,y		; $86FBBE: B9 7A 14
@@ -272,7 +272,7 @@ StartSong6:		;auto: CODE_86FBE1. SNES: start song 6 (the title screen music: Tit
 	beq .cmd		; $86FBEF: F0 04
 	jsl.l SPCBootUpload		; $86FBF1: 22 31 FA 82
 .cmd:
-	sep #$20		; $86FBF5: E2 20
+	sep #$20		; $86FBF5: E2 20  APUIO0 = 3: play song 6
 	lda.b #$03		; $86FBF7: A9 03
 	sta.w APUIO0		; $86FBF9: 8D 40 21
 	rep #$30		; $86FBFC: C2 30
@@ -298,7 +298,7 @@ StartSong7:		;auto: CODE_86FC05. SNES: start song 7 (driver command 2); no calle
 .rtl:
 	rtl		; $86FC28: 6B
 setteams:		;auto: CODE_86FC29. 93G setteams (hockey93_06) with InitTeamSructure: use HomeTeam/VisTeam to set the team structs (tmsort, tmteam, tmdata from TeamList). Falls in from ClearTeamStats
-	stz.w tmsort		; $86FC29: 9C D2 13
+	stz.w tmsort		; $86FC29: 9C D2 13  home: tmsort 0, away: tmsort $0C
 	lda.w #$000C		; $86FC2C: A9 0C 00
 	sta.w tmsort+2		; $86FC2F: 8D D4 13
 	lda.w HomeTeam		; $86FC32: AD 9A 12
@@ -321,7 +321,7 @@ ProcessInputWithRepeat:		;auto: CODE_86FC53. 93G ProcessInputWithRepeat (middle9
 	jsl.l nullrtl85		; $86FC53: 22 96 FF 85
 	lda.b d3		; $86FC57: A5 5F
 	beq .rtl		; $86FC59: F0 13
-	lda.b d2		; $86FC5B: A5 5B
+	lda.b d2		; $86FC5B: A5 5B  d2 = changed buttons
 	bne .chg		; $86FC5D: D0 10
 	dec.w repeatdelay		; $86FC5F: CE 99 04
 	bpl .rtl		; $86FC62: 10 0A
@@ -346,7 +346,7 @@ ScoutNamePos:		;auto: CODE_86FC76. SNES: print position of a showcased player na
 .rtl:
 	rtl		; $86FC89: 6B
 GetPeriodTimeRemaining:		;auto: CODE_86FC8A. 93G GetPeriodTimeRemaining (hockey93_04): d0 = (gsp << 14 | PerTimeTotal) - gameclock (Goal and InProgress log it)
-	lda.w gsp		; $86FC8A: AD F0 12
+	lda.w gsp		; $86FC8A: AD F0 12  gsp in bits 14-15
 	xba		; $86FC8D: EB
 	and.w #$FF00		; $86FC8E: 29 00 FF
 	asl a		; $86FC91: 0A
@@ -392,7 +392,7 @@ lcfound2:		;auto: CODE_86FCB7. 93G lcfound2 (logic93_1): close the line change b
 	bne .ps		; $86FCD9: D0 04
 	jsl.l $8D847C		; $86FCDB: 22 7C 84 8D  bank $8D: 92G eraser
 .ps:
-	jml.l printscores1		; $86FCDF: 5C 5D E9 89  bank $89: 93G printscores1
+	jml.l printscores1		; $86FCDF: 5C 5D E9 89
 PickStartingGoalie:		;auto: CODE_86FCE3. SNES: tmgoalie of team a2 = 0 ($8B807D); a computer team in the later playoff rounds (gamelevel >= 2, line changes on) picks the goalie by its scouting
 		;   report ($8FF4D8, $8FE3B0)
 	stx.b xsave		; $86FCE3: 86 0A
@@ -424,7 +424,7 @@ PickStartingGoalie:		;auto: CODE_86FCE3. SNES: tmgoalie of team a2 = 0 ($8B807D)
 	lsr a		; $86FD14: 4A
 	inc a		; $86FD15: 1A
 	sta.b d0		; $86FD16: 85 53
-	cmp.w cont1team		; $86FD18: CD 96 12
+	cmp.w cont1team		; $86FD18: CD 96 12  a controller team: keep goalie 0
 	beq .ex		; $86FD1B: F0 4C
 	cmp.w cont2team		; $86FD1D: CD 98 12
 	beq .ex		; $86FD20: F0 47
@@ -483,7 +483,7 @@ PickStartingGoalie:		;auto: CODE_86FCE3. SNES: tmgoalie of team a2 = 0 ($8B807D)
 	ldx.b xsave		; $86FD83: A6 0A
 	rtl		; $86FD85: 6B
 assscore:		;auto: CODE_86FD86 (asstab 7). 93G assscore (logic93_2): player X celebrates, the scorer pumps his arm. SNES: velocities * 3/4 each frame, the carrier drops the puck (nopuck 1800)
-	lda.w Xvel,x		; $86FD86: BD DF 0A
+	lda.w Xvel,x		; $86FD86: BD DF 0A  Xvel, Yvel *= $C0/256
 	sta.b mula		; $86FD89: 85 7D
 	lda.w #$00C0		; $86FD8B: A9 C0 00
 	sta.b mulb		; $86FD8E: 85 83
@@ -497,7 +497,7 @@ assscore:		;auto: CODE_86FD86 (asstab 7). 93G assscore (logic93_2): player X cel
 	jsl.l muls32		; $86FDA3: 22 DB FC 82
 	lda.b mulres+1		; $86FDA7: A5 94
 	sta.w Yvel,x		; $86FDA9: 9D FF 0A
-	txa		; $86FDAC: 8A
+	txa		; $86FDAC: 8A  the carrier drops the puck
 	lsr a		; $86FDAD: 4A
 	cmp.w puckc		; $86FDAE: CD BB 0E
 	bne .al		; $86FDB1: D0 0C
@@ -509,7 +509,7 @@ assscore:		;auto: CODE_86FD86 (asstab 7). 93G assscore (logic93_2): player X cel
 	lda.w pfalock,x		; $86FDBF: BD 7F 11
 	bne .rtl		; $86FDC2: D0 73
 	lda.w pflags,x		; $86FDC4: BD DF 0E
-	bit.w #pfna		; $86FDC7: 89 02 00
+	bit.w #pfna		; $86FDC7: 89 02 00  new assignment: spot (+-90, Vpos)
 	beq .nna		; $86FDCA: F0 2A
 	and.w #~pfna&$FFFF		; $86FDCC: 29 FD FF
 	sta.w pflags,x		; $86FDCF: 9D DF 0E
@@ -535,7 +535,7 @@ assscore:		;auto: CODE_86FD86 (asstab 7). 93G assscore (logic93_2): player X cel
 	sta.b d0		; $86FE03: 85 53
 	lda.w temp4,x		; $86FE05: BD BF 0C
 	sta.b d1		; $86FE08: 85 57
-	lda.w temp1,x		; $86FE0A: BD 5F 0C
+	lda.w temp1,x		; $86FE0A: BD 5F 0C  temp1 runs out: celebrate (SPApump for the scorer)
 	sec		; $86FE0D: 38
 	sbc.b d7		; $86FE0E: E5 6F
 	sta.w temp1,x		; $86FE10: 9D 5F 0C
@@ -561,7 +561,7 @@ assscore:		;auto: CODE_86FD86 (asstab 7). 93G assscore (logic93_2): player X cel
 	lda.w pflags,x		; $86FE38: BD DF 0E
 	bit.w #pfjoycon		; $86FE3B: 89 08 00
 	bne .rtl2		; $86FE3E: D0 04
-	jml.l skateto		; $86FE40: 5C D0 FD 88  bank $88: 93G skateto
+	jml.l skateto		; $86FE40: 5C D0 FD 88
 .rtl2:
 	rtl		; $86FE44: 6B
 unusedFF86:		;unused, $FF fill to the end of the bank

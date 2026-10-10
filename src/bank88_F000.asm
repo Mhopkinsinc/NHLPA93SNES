@@ -4,7 +4,7 @@
 org $88EF9C
 GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password screen on the game setup backdrop: pick characters from the PasstoText grid; Start decodes it (DecodePW), a bad one
 		;   offers retry or the setup screen
-	lda.w #$0080		; $88EF9C: A9 80 00
+	lda.w #$0080		; $88EF9C: A9 80 00  show the password again
 	trb.w PassWord		; $88EF9F: 1C 10 16
 	jsl.l Readjoy12		; $88EFA2: 22 D2 FA 84
 	jsl.l DrawGameSetupBack		; $88EFA6: 22 C3 88 88
@@ -18,7 +18,7 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	sta.b d0		; $88EFC2: 85 53
 	lda.w #5		; $88EFC4: A9 05 00
 	sta.b d1		; $88EFC7: 85 57
-	jsl.l $8FD69F		; $88EFC9: 22 9F D6 8F  bank $8F: 93G Framer (d0 x d1)
+	jsl.l $8FD69F		; $88EFC9: 22 9F D6 8F  Framer 17 x 5, bank $8F: 93G Framer (d0 x d1)
 	lda.w #PasswordText		; $88EFCD: A9 8F F2
 	sta.b a1		; $88EFD0: 85 37
 	lda.w #PasswordText>>16		; $88EFD2: A9 88 00
@@ -29,9 +29,9 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	lda.b [a1],y		; $88EFDE: B7 37
 	and.w #$00FF		; $88EFE0: 29 FF 00
 	bne .textlp		; $88EFE3: D0 F2
-	dec.w printx		; $88EFE5: CE 7B 04
+	dec.w printx		; $88EFE5: CE 7B 04  cursor back over the blanks
 	dec.w printx		; $88EFE8: CE 7B 04
-	lda.w #PasstoText		; $88EFEB: A9 A6 FB
+	lda.w #PasstoText		; $88EFEB: A9 A6 FB  a0 = PasstoText
 	sta.b a0		; $88EFEE: 85 33
 	lda.w #PasstoText>>16		; $88EFF0: A9 82 00
 	sta.b a0+2		; $88EFF3: 85 35
@@ -40,7 +40,7 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 .top2:		;5 rows
 	lda.w #5		; $88EFFA: A9 05 00
 	sta.b d1		; $88EFFD: 85 57
-	lda.w #mesarea		; $88EFFF: A9 91 01
+	lda.w #mesarea		; $88EFFF: A9 91 01  a1 = mesarea, length 13
 	sta.b a1		; $88F002: 85 37
 	lda.w #$0000		; $88F004: A9 00 00
 	sta.b a1+2		; $88F007: 85 39
@@ -73,7 +73,7 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	bpl .top2		; $88F045: 10 B3
 	stz.b d4		; $88F047: 64 63
 	stz.b d5		; $88F049: 64 67
-	jsl.l .setd4		; $88F04B: 22 9F F1 88
+	jsl.l .setd4		; $88F04B: 22 9F F1 88  cursor at character 0, frame around grid character 0
 	jsl.l .setd5		; $88F04F: 22 BB F1 88
 	jsl.l $8FD69F		; $88F053: 22 9F D6 8F  bank $8F: 93G Framer (d0 x d1)
 .topx:
@@ -105,38 +105,38 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	ora.w padnew1+2		; $88F0C0: 0D 70 01
 	beq .pad		; $88F0C3: F0 F4
 	sta.b d1		; $88F0C5: 85 57
-	bit.w #JOYSTART		; $88F0C7: 89 00 10
+	bit.w #JOYSTART		; $88F0C7: 89 00 10  Start: done
 	beq .keys		; $88F0CA: F0 03
 	jmp.w .exit		; $88F0CC: 4C EB F1
 .keys:
 	stz.b d0		; $88F0CF: 64 53
 	dec.b d0		; $88F0D1: C6 53
-	bit.w #abut		; $88F0D3: 89 00 40
+	bit.w #abut		; $88F0D3: 89 00 40  Y: left
 	bne .pwl		; $88F0D6: D0 2D
 	stz.b d0		; $88F0D8: 64 53
 	inc.b d0		; $88F0DA: E6 53
-	bit.w #JOYA		; $88F0DC: 89 80 00
+	bit.w #JOYA		; $88F0DC: 89 80 00  A: right
 	bne .pwl		; $88F0DF: D0 24
-	bit.w #JOYRIGHT		; $88F0E1: 89 00 01
+	bit.w #JOYRIGHT		; $88F0E1: 89 00 01  right: next character
 	bne .pws		; $88F0E4: D0 4C
 	stz.b d0		; $88F0E6: 64 53
 	dec.b d0		; $88F0E8: C6 53
-	bit.w #JOYLEFT		; $88F0EA: 89 00 02
+	bit.w #JOYLEFT		; $88F0EA: 89 00 02  left
 	bne .pws		; $88F0ED: D0 43
 	ldy.w #6		; $88F0EF: A0 06 00
 	sty.b d0		; $88F0F2: 84 53
-	bit.w #JOYDOWN		; $88F0F4: 89 00 04
+	bit.w #JOYDOWN		; $88F0F4: 89 00 04  down: 6 on
 	bne .pws		; $88F0F7: D0 39
 	ldy.w #-6		; $88F0F9: A0 FA FF
 	sty.b d0		; $88F0FC: 84 53
-	bit.w #JOYUP		; $88F0FE: 89 00 08
+	bit.w #JOYUP		; $88F0FE: 89 00 08  up: 6 back
 	bne .pws		; $88F101: D0 2F
 	bra .input		; $88F103: 80 93
 .pwl:		;Y/A: cursor d4 left/right
 	lda.b d4		; $88F105: A5 63
 	clc		; $88F107: 18
 	adc.b d0		; $88F108: 65 53
-	cmp.w #16		; $88F10A: C9 10 00
+	cmp.w #16		; $88F10A: C9 10 00  PWlength-1
 	bcs .input		; $88F10D: B0 89
 	sta.b d4		; $88F10F: 85 63
 	jsl.l .setd4		; $88F111: 22 9F F1 88
@@ -148,7 +148,7 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	ldy.b d4		; $88F121: A4 63
 	lda.b [a0],y		; $88F123: B7 33
 	and.w #$00FF		; $88F125: 29 FF 00
-	cmp.w #PWrange		; $88F128: C9 1E 00
+	cmp.w #PWrange		; $88F128: C9 1E 00  pwrange: a set character
 	bcs .pws		; $88F12B: B0 05
 	sec		; $88F12D: 38
 	sbc.b d5		; $88F12E: E5 67
@@ -157,14 +157,14 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	lda.b d5		; $88F132: A5 67
 	clc		; $88F134: 18
 	adc.b d0		; $88F135: 65 53
-	cmp.w #PWrange		; $88F137: C9 1E 00
+	cmp.w #PWrange		; $88F137: C9 1E 00  PWrange
 	bcc .pwset		; $88F13A: 90 03
 	jmp.w .input		; $88F13C: 4C 98 F0
 .pwset:
 	pha		; $88F13F: 48
 	jsl.l .setd5		; $88F140: 22 BB F1 88
 	phx		; $88F144: DA
-	lda.w printy		; $88F145: AD 7D 04
+	lda.w printy		; $88F145: AD 7D 04  erase the old frame (3 x 3 blanks in backmap)
 	asl a		; $88F148: 0A
 	asl a		; $88F149: 0A
 	asl a		; $88F14A: 0A
@@ -194,7 +194,7 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	lda.w #$0000		; $88F18D: A9 00 00
 	sta.b a0+2		; $88F190: 85 35
 	ldy.b d4		; $88F192: A4 63
-	sep #$20		; $88F194: E2 20
+	sep #$20		; $88F194: E2 20  PassWord[d4] = d5
 	lda.b d5		; $88F196: A5 67
 	sta.b [a0],y		; $88F198: 97 33
 	rep #$30		; $88F19A: C2 30
@@ -219,7 +219,7 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	sta.b mulb		; $88F1C6: 85 83
 	lda.w #6		; $88F1C8: A9 06 00
 	sta.b mula		; $88F1CB: 85 7D
-	jsl.l divu16		; $88F1CD: 22 D8 B8 80
+	jsl.l divu16		; $88F1CD: 22 D8 B8 80  grid row/column of d5 (6 per row)
 	asl a		; $88F1D1: 0A
 	adc.w printy		; $88F1D2: 6D 7D 04
 	sta.w printy		; $88F1D5: 8D 7D 04
@@ -236,7 +236,7 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	rtl		; $88F1EA: 6B
 .exit:		;Start
 	jsl.l DecodePW		; $88F1EB: 22 EA F5 80
-	lda.w postarts		; $88F1EF: AD 51 04
+	lda.w postarts		; $88F1EF: AD 51 04  no error: exit
 	bpl .rtl		; $88F1F2: 10 F6
 	jsl.l printz		; $88F1F4: 22 0C B9 80
 	dw $0013		; $88F1F8  printz inline string: length (counts itself), then control bytes / text
@@ -261,9 +261,9 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	ora.w padnew1+2		; $88F255: 0D 70 01
 	beq .notok		; $88F258: F0 F4
 	sta.b d1		; $88F25A: 85 57
-	bit.w #abut		; $88F25C: 89 00 40
+	bit.w #abut		; $88F25C: 89 00 40  Y: setup screen
 	bne .setup		; $88F25F: D0 24
-	bit.w #JOYA		; $88F261: 89 80 00
+	bit.w #JOYA		; $88F261: 89 80 00  A: retry
 	beq .notok		; $88F264: F0 E8
 	jsl.l printz		; $88F266: 22 0C B9 80
 	dw $0005		; $88F26A  printz inline string: length (counts itself), then control bytes / text
@@ -274,7 +274,7 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	sta.b d1		; $88F277: 85 57
 	lda.w blankchar		; $88F279: AD E7 1B
 	sta.b d2		; $88F27C: 85 5B
-	jsl.l $8D847C		; $88F27E: 22 7C 84 8D  bank $8D: 93G eraser (d0 x d1, tile d2)
+	jsl.l $8D847C		; $88F27E: 22 7C 84 8D  erase the message box, bank $8D: 93G eraser (d0 x d1, tile d2)
 	jmp.w .topx		; $88F282: 4C 57 F0
 .setup:		;Y: back to the setup screen (new playoffs)
 	lda.w #2		; $88F285: A9 02 00
@@ -285,8 +285,8 @@ PasswordText:		;92G GetPassWord .text: "Password" at 2, 14, "Press Start" at 10,
 	db $FF,2,14,"Password",$FF,10,24,"Press Start",$FF,21,14
 	dw 3		; $88F2AD
 	db 0
-TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): Title1Map backdrop, StartSong6, then the credits ($8AFAA8) scroll up 6 rows at a time; Start leaves
-	lda.w #$0198		; $88F2B0: A9 98 01
+TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): Title1Map backdrop, StartSong6, then the Credits scroll up 6 rows at a time; Start leaves
+	lda.w #$0198		; $88F2B0: A9 98 01  the blank tile and the small font above the title tiles
 	sta.w blankchar		; $88F2B3: 8D E7 1B
 	inc a		; $88F2B6: 1A
 	sta.w smallfontchars		; $88F2B7: 8D D7 1B
@@ -319,12 +319,12 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	dex		; $88F2FD: CA
 	dex		; $88F2FE: CA
 	bpl .clr		; $88F2FF: 10 F8
-	lda.w #Title1Map		; $88F301: A9 C0 D5
+	lda.w #Title1Map		; $88F301: A9 C0 D5  Title1Map (packed): map $700, palette $700, tiles $800
 	sta.b tmp0		; $88F304: 85 73
 	lda.w #Title1Map>>16		; $88F306: A9 85 00
 	sta.b tmp1		; $88F309: 85 75
 	jsl.l DecompressGraphics		; $88F30B: 22 3E FA 86
-	lda.l TestList		; $88F30F: AF 00 00 7F
+	lda.l TestList		; $88F30F: AF 00 00 7F  first map word fills backmap
 	ldx.w #$07FE		; $88F313: A2 FE 07
 .fill:
 	sta.l backmap,x		; $88F316: 9F 74 76 7E
@@ -338,7 +338,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	dex		; $88F329: CA
 	dex		; $88F32A: CA
 	bpl .map		; $88F32B: 10 F4
-	ldx.w #$057E		; $88F32D: A2 7E 05
+	ldx.w #$057E		; $88F32D: A2 7E 05  rows 0-21: priority
 .prio:
 	lda.l backmap,x		; $88F330: BF 74 76 7E
 	ora.w #$2000		; $88F334: 09 00 20
@@ -371,7 +371,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	stz.w VMDATAL		; $88F370: 9C 18 21
 	dex		; $88F373: CA
 	bne .zero		; $88F374: D0 FA
-	lda.w #BigFontTiles		; $88F376: A9 D8 C6
+	lda.w #BigFontTiles		; $88F376: A9 D8 C6  BigFontTiles, remapped with the table at $8FE154
 	sta.b tmp0		; $88F379: 85 73
 	lda.w #BigFontTiles>>16		; $88F37B: A9 83 00
 	sta.b tmp1		; $88F37E: 85 75
@@ -392,11 +392,11 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	dw $0005		; $88F3A9  printz inline string: length (counts itself), then control bytes / text
 	db $CF,$00,$1C
 	stz.b d0		; $88F3AE: 64 53
-	lda.w #$FAA8		; $88F3B0: A9 A8 FA
+	lda.w #Credits		; $88F3B0: A9 A8 FA  a0 = the credits text ($8AFAA8)
 	sta.b a0		; $88F3B3: 85 33
-	lda.w #$008A		; $88F3B5: A9 8A 00
+	lda.w #Credits>>16		; $88F3B5: A9 8A 00
 	sta.b a0+2		; $88F3B8: 85 35
-	lda.w #textmap		; $88F3BA: A9 74 6E
+	lda.w #textmap		; $88F3BA: A9 74 6E  DMAList: textmap ($7E6E74) $1000 bytes to vram 0 each frame
 	sta.w DMAList		; $88F3BD: 8D 53 16
 	lda.w #textmap>>16		; $88F3C0: A9 7E 00
 	sta.w DMAList+dmabank		; $88F3C3: 8D 55 16
@@ -405,7 +405,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	stz.w DMAList+dmavram		; $88F3CC: 9C 58 16
 	lda.w #dmasize		; $88F3CF: A9 07 00
 	sta.b DMAListend		; $88F3D2: 85 A3
-	lda.w #$8293		; $88F3D4: A9 93 82
+	lda.w #$8293		; $88F3D4: A9 93 82  title vblank handler $8293
 	sta.b vbint		; $88F3D7: 85 14
 	lda.w #$0001		; $88F3D9: A9 01 00
 	sta.b fadein		; $88F3DC: 85 08
@@ -416,7 +416,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	ldy.w #$0002		; $88F3E2: A0 02 00
 	lda.b [a0],y		; $88F3E5: B7 33
 	and.w #$00FF		; $88F3E7: 29 FF 00
-	cmp.w #$00FF		; $88F3EA: C9 FF 00
+	cmp.w #$00FF		; $88F3EA: C9 FF 00  end of the credits
 	bne .top4		; $88F3ED: D0 03
 	jmp.w .exit		; $88F3EF: 4C E8 F4
 .top4:		;93G .top4: blank the 6 rows below the screen
@@ -440,7 +440,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	lda.b $01,s		; $88F417: A3 01
 	sta.w printy		; $88F419: 8D 7D 04
 .top4x:		;print the page lines centred
-	lda.w #34		; $88F41C: A9 22 00
+	lda.w #34		; $88F41C: A9 22 00  printx = (34 - length) / 2
 	sec		; $88F41F: 38
 	sbc.b [a0]		; $88F420: E7 33
 	lsr a		; $88F422: 4A
@@ -462,7 +462,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	lda.b [a0],y		; $88F446: B7 33
 	and.w #$00FF		; $88F448: 29 FF 00
 	sta.b d3		; $88F44B: 85 5F
-	cmp.w #$00FE		; $88F44D: C9 FE 00
+	cmp.w #$00FE		; $88F44D: C9 FE 00  $FE: last page, $FF: end
 	beq .scroll		; $88F450: F0 05
 	cmp.w #$00FF		; $88F452: C9 FF 00
 	bne .top4x		; $88F455: D0 C5
@@ -476,7 +476,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	adc.w #6		; $88F460: 69 06 00
 	and.w #$001F		; $88F463: 29 1F 00
 	sta.w printy		; $88F466: 8D 7D 04
-	sec		; $88F469: 38
+	sec		; $88F469: 38  scroll target
 	sbc.w #28		; $88F46A: E9 1C 00
 	and.w #$001F		; $88F46D: 29 1F 00
 	asl a		; $88F470: 0A
@@ -496,7 +496,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	beq .wait		; $88F488: F0 FC
 	jsl.l ReadPads		; $88F48A: 22 E8 F3 80
 	lda.b d3		; $88F48E: A5 5F
-	cmp.w #$00FE		; $88F490: C9 FE 00
+	cmp.w #$00FE		; $88F490: C9 FE 00  $FE: no Start (copyright page)
 	bne .nopause		; $88F493: D0 06
 	stz.w padnew1		; $88F495: 9C 6E 01
 	stz.w padnew1+2		; $88F498: 9C 70 01
@@ -508,14 +508,14 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	lda.b d0		; $88F4A6: A5 53
 	cmp.b d1		; $88F4A8: C5 57
 	bne .top5		; $88F4AA: D0 CD
-	lda.b vcount		; $88F4AC: A5 00
+	lda.b vcount		; $88F4AC: A5 00  90 frames
 	clc		; $88F4AE: 18
 	adc.w #90		; $88F4AF: 69 5A 00
 	sta.b d2		; $88F4B2: 85 5B
 	lda.b d3		; $88F4B4: A5 5F
 	cmp.w #$00FE		; $88F4B6: C9 FE 00
 	bne .top6s		; $88F4B9: D0 19
-	lda.b vcount		; $88F4BB: A5 00
+	lda.b vcount		; $88F4BB: A5 00  180 frames for the copyright page
 	clc		; $88F4BD: 18
 	adc.w #180		; $88F4BE: 69 B4 00
 	sta.b d2		; $88F4C1: 85 5B
@@ -537,7 +537,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	jmp.w .top2		; $88F4E5: 4C E2 F3
 .exit:		;wait for the default vblank handler, return
 	lda.b vbint		; $88F4E8: A5 14
-	cmp.w #$80DE		; $88F4EA: C9 DE 80
+	cmp.w #$80DE		; $88F4EA: C9 DE 80  the default vblank handler $80DE
 	bne .exit		; $88F4ED: D0 F9
 	rtl		; $88F4EF: 6B
 CreditsBlank:		;print string of 32 blanks: TitleScreen erases the rows below the credits with it
@@ -545,7 +545,7 @@ CreditsBlank:		;print string of 32 blanks: TitleScreen erases the rows below the
 	db "                                "
 PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G PlayoffScreen (hockey93_06): set the font tile bases; in playoff mode draw the tree (PlayoffTreeSetup by gamelevel: team
 		;   blocks, arrows, series scores) with the NHLPA logo, PWprint; scroll with left/right until Start
-	lda.w #6		; $88F512: A9 06 00
+	lda.w #6		; $88F512: A9 06 00  tile bases: small font 6, big font +100, score/team blocks +100, NHLPA logo +405
 	sta.w smallfontchars		; $88F515: 8D D7 1B
 	clc		; $88F518: 18
 	adc.w #100		; $88F519: 69 64 00
@@ -556,7 +556,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	sta.w logochars		; $88F528: 8D DD 1B
 	stz.w charofs		; $88F52B: 9C CD 1B
 	stz.w charofs2		; $88F52E: 9C CF 1B
-	lda.w OptPlayMode		; $88F531: AD 00 16
+	lda.w OptPlayMode		; $88F531: AD 00 16  not in playoff mode: done
 	bne .po		; $88F534: D0 03
 	jmp.w .rtl		; $88F536: 4C 04 F7
 .po:
@@ -573,7 +573,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	rep #$30		; $88F553: C2 30
 	lda.w #$1000		; $88F555: A9 00 10
 	sta.w VMADDL		; $88F558: 8D 16 21
-	lda.w #PlayoffTiles		; $88F55B: A9 9D F7
+	lda.w #PlayoffTiles		; $88F55B: A9 9D F7  PlayoffTiles ($84F79D): 128 colours, then 6 tiles
 	sta.b tmp0		; $88F55E: 85 73
 	lda.w #PlayoffTiles>>16		; $88F560: A9 84 00
 	sta.b tmp1		; $88F563: 85 75
@@ -594,7 +594,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	inx		; $88F586: E8
 	cpx.w #$0100		; $88F587: E0 00 01
 	bne .pl		; $88F58A: D0 F1
-	lda.w #BigFontTiles		; $88F58C: A9 D8 C6
+	lda.w #BigFontTiles		; $88F58C: A9 D8 C6  BigFontTiles twice: remapped with $8FE154, then with PixelRemap83
 	sta.b tmp0		; $88F58F: 85 73
 	lda.w #BigFontTiles>>16		; $88F591: A9 83 00
 	sta.b tmp1		; $88F594: 85 75
@@ -626,7 +626,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	lda.w #$0064		; $88F5D9: A9 64 00
 	sta.b d0		; $88F5DC: 85 53
 	jsl.l $8FE0E4		; $88F5DE: 22 E4 E0 8F  bank $8F: remap the 4bpp pixels ([a0] data, [a1] table, d0 tiles)
-	lda.w #TeamBlocksTiles		; $88F5E2: A9 73 9B
+	lda.w #TeamBlocksTiles		; $88F5E2: A9 73 9B  TeamBlocksTiles
 	sta.b tmp0		; $88F5E5: 85 73
 	lda.w #TeamBlocksTiles>>16		; $88F5E7: A9 88 00
 	sta.b tmp1		; $88F5EA: 85 75
@@ -639,18 +639,18 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	inx		; $88F5FB: E8
 	cpx.w #$32A0		; $88F5FC: E0 A0 32
 	bne .tb		; $88F5FF: D0 F2
-	lda.w #$0000		; $88F601: A9 00 00
+	lda.w #$0000		; $88F601: A9 00 00  clear textmap and backmap (128 x 32 map)
 	ldx.w #$1FFE		; $88F604: A2 FE 1F
 .clr:
 	sta.l textmap,x		; $88F607: 9F 74 6E 7E
 	dex		; $88F60B: CA
 	dex		; $88F60C: CA
 	bpl .clr		; $88F60D: 10 F8
-	lda.w #potree		; $88F60F: A9 53 04
+	lda.w #potree		; $88F60F: A9 53 04  a1 = potree
 	sta.b a1		; $88F612: 85 37
 	lda.w #$0000		; $88F614: A9 00 00
 	sta.b a1+2		; $88F617: 85 39
-	lda.w #PlayoffTreeSetup		; $88F619: A9 FB F9
+	lda.w #PlayoffTreeSetup		; $88F619: A9 FB F9  a0 = PlayoffTreeSetup level gamelevel
 	sta.b a0		; $88F61C: 85 33
 	lda.w #PlayoffTreeSetup>>16		; $88F61E: A9 88 00
 	sta.b a0+2		; $88F621: 85 35
@@ -674,18 +674,18 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	inc.b a0		; $88F646: E6 33
 	and.w #$00FF		; $88F648: 29 FF 00
 	sta.w printy		; $88F64B: 8D 7D 04
-	lda.b [a1]		; $88F64E: A7 37
+	lda.b [a1]		; $88F64E: A7 37  team of the slot
 	inc.b a1		; $88F650: E6 37
 	and.w #$00FF		; $88F652: 29 FF 00
 	sta.b mula		; $88F655: 85 7D
-	ldy.w potreeteam		; $88F657: AC 73 04
+	ldy.w potreeteam		; $88F657: AC 73 04  the user's team: palette 7
 	eor.w potree,y		; $88F65A: 59 53 04
 	and.w #$00FF		; $88F65D: 29 FF 00
 	bne .other		; $88F660: D0 06
 	lda.w #$1C00		; $88F662: A9 00 1C
 	sta.w printa		; $88F665: 8D 77 04
 .other:
-	lda.w #36		; $88F668: A9 24 00
+	lda.w #36		; $88F668: A9 24 00  36 bytes per TeamBlocksMap entry
 	sta.b mulb		; $88F66B: 85 83
 	jsl.l $8D871C		; $88F66D: 22 1C 87 8D  bank $8D: 16-bit multiply
 	tay		; $88F671: A8
@@ -693,7 +693,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	sta.b a2		; $88F675: 85 3B
 	lda.w #TeamBlocksMap>>16		; $88F677: A9 87 00
 	sta.b a2+2		; $88F67A: 85 3D
-	lda.w printy		; $88F67C: AD 7D 04
+	lda.w printy		; $88F67C: AD 7D 04  textmap offset (y * 128 + x) * 2
 	asl a		; $88F67F: 0A
 	asl a		; $88F680: 0A
 	asl a		; $88F681: 0A
@@ -736,16 +736,16 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	dec.b d4		; $88F6C2: C6 63
 	beq .arrow		; $88F6C4: F0 03
 	jmp.w .team		; $88F6C6: 4C 37 F6
-.arrow:		;DrawPlayoffBracket: arrow column (24 rows from $8AF880) at x; $FF ends
+.arrow:		;DrawPlayoffBracket: arrow column (23 rows of PlayoffBracketMap) at x; $FF ends
 	lda.b [a0]		; $88F6C9: A7 33
 	inc.b a0		; $88F6CB: E6 33
 	and.w #$00FF		; $88F6CD: 29 FF 00
 	cmp.w #$00FF		; $88F6D0: C9 FF 00
 	beq .scores		; $88F6D3: F0 30
-	asl a		; $88F6D5: 0A
-	adc.w #$F880		; $88F6D6: 69 80 F8
+	asl a		; $88F6D5: 0A  column n of PlayoffBracketMap (23 rows of 12 words)
+	adc.w #PlayoffBracketMap		; $88F6D6: 69 80 F8
 	sta.b tmp0		; $88F6D9: 85 73
-	lda.w #$008A		; $88F6DB: A9 8A 00
+	lda.w #PlayoffBracketMap>>16		; $88F6DB: A9 8A 00
 	sta.b tmp1		; $88F6DE: 85 75
 	lda.b [a0]		; $88F6E0: A7 33
 	inc.b a0		; $88F6E2: E6 33
@@ -769,7 +769,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 .rtl:
 	rtl		; $88F704: 6B
 .scores:		;scroll limits, then the series scores (not for single games)
-	lda.b [a0]		; $88F705: A7 33
+	lda.b [a0]		; $88F705: A7 33  Hscroll limits (x8)
 	inc.b a0		; $88F707: E6 33
 	and.w #$00FF		; $88F709: 29 FF 00
 	asl a		; $88F70C: 0A
@@ -787,7 +787,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	jsl.l printz		; $88F71F: 22 0C B9 80
 	dw $0005		; $88F723  printz inline string: length (counts itself), then control bytes / text
 	db $EF,$00,$00
-	lda.b bosgames		; $88F728: A5 D6
+	lda.b bosgames		; $88F728: A5 D6  single games: no scores
 	cmp.w #7		; $88F72A: C9 07 00
 	beq .logo		; $88F72D: F0 59
 	lda.b [a0]		; $88F72F: A7 33
@@ -811,7 +811,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	sta.b a1		; $88F755: 85 37
 	lda.w #$0000		; $88F757: A9 00 00
 	sta.b a1+2		; $88F75A: 85 39
-	lda.w #5		; $88F75C: A9 05 00
+	lda.w #5		; $88F75C: A9 05 00  mesarea "<home wins>-<away wins>"
 	sta.w mesarea		; $88F75F: 8D 91 01
 	ldx.b a2		; $88F762: A6 3B
 	lda.w gspotwins,x		; $88F764: BD 9F 15
@@ -833,14 +833,14 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	lda.w #$008C		; $88F78D: A9 8C 00
 	sta.b tmp1		; $88F790: 85 75
 	jsl.l DecompressGraphics		; $88F792: 22 3E FA 86
-	ldx.w #$001E		; $88F796: A2 1E 00
+	ldx.w #$001E		; $88F796: A2 1E 00  logo palette to palette row 2
 .lp:
 	lda.l TestList+$A0,x		; $88F799: BF A0 00 7F
 	sta.l palbuffer+$C0,x		; $88F79D: 9F 34 6D 7E
 	dex		; $88F7A1: CA
 	dex		; $88F7A2: CA
 	bpl .lp		; $88F7A3: 10 F4
-	lda.w logochars		; $88F7A5: AD DD 1B
+	lda.w logochars		; $88F7A5: AD DD 1B  logo tiles to vram logochars
 	asl a		; $88F7A8: 0A
 	asl a		; $88F7A9: 0A
 	asl a		; $88F7AA: 0A
@@ -869,7 +869,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	tax		; $88F7D7: AA
 	lda.l TestList,x		; $88F7D8: BF 00 00 7F
 	adc.w logochars		; $88F7DC: 6D DD 1B
-	ora.w #$1800		; $88F7DF: 09 00 18
+	ora.w #$1800		; $88F7DF: 09 00 18  palette 6, priority
 	pha		; $88F7E2: 48
 	lda.b tmp1		; $88F7E3: A5 75
 	asl a		; $88F7E5: 0A
@@ -897,7 +897,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	dw $0005		; $88F80F  printz inline string: length (counts itself), then control bytes / text
 	db $EF,"8d"
 	jsl.l PWprint		; $88F814: 22 F7 85 88
-	lda.w #$0180		; $88F818: A9 80 01
+	lda.w #$0180		; $88F818: A9 80 01  start in the middle
 	sta.w Hscroll		; $88F81B: 8D 56 01
 	stz.w printx		; $88F81E: 9C 7B 04
 	stz.w printy		; $88F821: 9C 7D 04
@@ -905,7 +905,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	sta.b d0		; $88F827: 85 53
 	lda.w #4		; $88F829: A9 04 00
 	sta.b d1		; $88F82C: 85 57
-	lda.w BigFontChars		; $88F82E: AD D1 1B
+	lda.w BigFontChars		; $88F82E: AD D1 1B  blank the top and bottom rows with big font tile 0
 	ora.w #$1000		; $88F831: 09 00 10
 	sta.b d2		; $88F834: 85 5B
 	jsl.l $8D847C		; $88F836: 22 7C 84 8D  bank $8D: 93G eraser (d0 x d1, tile d2)
@@ -920,7 +920,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	ora.w #$1000		; $88F850: 09 00 10
 	sta.b d2		; $88F853: 85 5B
 	jsl.l $8D847C		; $88F855: 22 7C 84 8D  bank $8D: 93G eraser (d0 x d1, tile d2)
-	jsl.l StartSong9		; $88F859: 22 8F FB 89  the playoff screen music
+	jsl.l StartSong9		; $88F859: 22 8F FB 89  keep the music going
 .scroll:		;clamp Hscroll, queue the 128-column map window, wait a frame
 	lda.w Hscroll		; $88F85D: AD 56 01
 	cmp.b d2+2		; $88F860: C5 5D
@@ -936,7 +936,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	lsr a		; $88F870: 4A
 	lsr a		; $88F871: 4A
 	asl a		; $88F872: 0A
-	adc.w #textmap		; $88F873: 69 74 6E
+	adc.w #textmap		; $88F873: 69 74 6E  source column in textmap
 	sta.b tmp0		; $88F876: 85 73
 	stz.b tmp1		; $88F878: 64 75
 	ldy.w #$0000		; $88F87A: A0 00 00
@@ -964,10 +964,10 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	tya		; $88F8B3: 98
 	adc.w #2*dmasize		; $88F8B4: 69 0E 00
 	tay		; $88F8B7: A8
-	cpy.w #32*2*dmasize		; $88F8B8: C0 C0 01
+	cpy.w #32*2*dmasize		; $88F8B8: C0 C0 01  32 rows: 2 dma entries each
 	bne .dma		; $88F8BB: D0 C0
 	sty.b DMAListend		; $88F8BD: 84 A3
-	lda.w #$82E0		; $88F8BF: A9 E0 82
+	lda.w #$82E0		; $88F8BF: A9 E0 82  playoff vblank handler $82E0
 	sta.b vbint		; $88F8C2: 85 14
 .wait:
 	cmp.b vbint		; $88F8C4: C5 14
@@ -984,7 +984,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	cmp.b d7		; $88F8DC: C5 6F
 	beq .pad		; $88F8DE: F0 E8
 	sta.b d7		; $88F8E0: 85 6F
-	sta.b mulb		; $88F8E2: 85 83
+	sta.b mulb		; $88F8E2: 85 83  vcount mod 30, then the half
 	lda.w #30		; $88F8E4: A9 1E 00
 	sta.b mula		; $88F8E7: 85 7D
 	jsl.l divu16		; $88F8E9: 22 D8 B8 80
@@ -1073,7 +1073,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	and.w #$001F		; $88F99B: 29 1F 00
 	ora.b tmp2		; $88F99E: 05 77
 	sta.l palbuffer+$E2		; $88F9A0: 8F 56 6D 7E
-	lda.w joypad1		; $88F9A4: AD 5E 01
+	lda.w joypad1		; $88F9A4: AD 5E 01  held: left/right scroll
 	ora.w joypad2		; $88F9A7: 0D 60 01
 	cmp.w #JOYLEFT		; $88F9AA: C9 00 02
 	beq .left		; $88F9AD: F0 3C

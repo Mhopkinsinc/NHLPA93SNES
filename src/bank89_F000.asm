@@ -204,7 +204,7 @@ MesAreaDone:		;auto: CODE_89FCFD. SNES: end a string built in mesarea: length = 
 	rtl		; $89FD0B: 6B
 StartGame:		;auto: CODE_89FD0C (from $8B8176). 93G StartGame (hockey93_01): reset the game state (gmode, offsides option, team stats, scores, gsp), restoreteams, then on to the period start
 	stz.w gmode		; $89FD0C: 9C 88 12
-	lda.w OptPen		; $89FD0F: AD 0A 16
+	lda.w OptPen		; $89FD0F: AD 0A 16  OptPen 1: offsides on
 	cmp.w #1		; $89FD12: C9 01 00
 	bne .go		; $89FD15: D0 06
 	lda.w #gmoffs		; $89FD17: A9 20 00
@@ -237,7 +237,7 @@ restoreteams:		;auto: CODE_89FD3A. 93G restoreteams (hockey93_01): both rosters 
 	clc		; $89FD59: 18
 	adc.b d0		; $89FD5A: 65 53
 	tay		; $89FD5C: A8
-	lda.w #TMPDBENCH		; $89FD5D: A9 FE FF
+	lda.w #TMPDBENCH		; $89FD5D: A9 FE FF  TMPDBENCH
 	sta.w tmpdst,y		; $89FD60: 99 E2 14
 	dec.b d0		; $89FD63: C6 53
 	dec.b d0		; $89FD65: C6 53
@@ -246,7 +246,7 @@ restoreteams:		;auto: CODE_89FD3A. 93G restoreteams (hockey93_01): both rosters 
 EvadePC:		;auto: CODE_89FD6A (skateto avoidance routine). 93G EvadePC (logic93_3, the 92G form): within 40 of the puck carrier (after one frame of both velocities) d0 = direction away from him
 	lda.w puckc		; $89FD6A: AD BB 0E
 	bmi .rtl		; $89FD6D: 30 66
-	lda.w Xvel+1,x		; $89FD6F: BD E0 0A
+	lda.w Xvel+1,x		; $89FD6F: BD E0 0A  x after one frame, relative to the puck carrier
 	sec		; $89FD72: 38
 	sbc.w puckvx+1		; $89FD73: ED FC 0A
 	and.w #$00FF		; $89FD76: 29 FF 00
@@ -330,7 +330,7 @@ asswingd:		;auto: CODE_89FDD6 (asstab 3). 93G asswingd (logic93_2): wing on defe
 	lda.w #$0000		; $89FE1E: A9 00 00
 .t1:
 	sta.w temp1,x		; $89FE21: 9D 5F 0C
-	lda.w puckc		; $89FE24: AD BB 0E
+	lda.w puckc		; $89FE24: AD BB 0E  our team has the puck: awingo
 	bmi .nodec		; $89FE27: 30 1B
 	sec		; $89FE29: 38
 	sbc.w #6		; $89FE2A: E9 06 00
@@ -346,7 +346,7 @@ asswingd:		;auto: CODE_89FDD6 (asstab 3). 93G asswingd (logic93_2): wing on defe
 	bmi .nodec		; $89FE3E: 30 04
 	jml.l assreplace		; $89FE40: 5C A7 B4 80
 .nodec:
-	lda.w #100		; $89FE44: A9 64 00
+	lda.w #100		; $89FE44: A9 64 00  x 100 (left wing -100)
 	sta.b d0		; $89FE47: 85 53
 	lda.w position,x		; $89FE49: BD 9F 0B
 	cmp.w #5		; $89FE4C: C9 05 00
@@ -356,7 +356,7 @@ asswingd:		;auto: CODE_89FDD6 (asstab 3). 93G asswingd (logic93_2): wing on defe
 .zero:		;93G .0
 	lda.w #158		; $89FE56: A9 9E 00
 	sta.b d1		; $89FE59: 85 57
-	lda.w pfgoal,x		; $89FE5B: BD 3F 11
+	lda.w pfgoal,x		; $89FE5B: BD 3F 11  pfgoal: defending the top goal
 	beq .up		; $89FE5E: F0 47
 	lda.b d0		; $89FE60: A5 53
 	eor.w #$FFFF		; $89FE62: 49 FF FF
@@ -367,7 +367,7 @@ asswingd:		;auto: CODE_89FDD6 (asstab 3). 93G asswingd (logic93_2): wing on defe
 	lda.w #-78		; $89FE6D: A9 B2 FF
 	sta.b d2		; $89FE70: 85 5B
 	ldy.b a2		; $89FE72: A4 3B
-	lda.w tmflags,y		; $89FE74: B9 0A 14
+	lda.w tmflags,y		; $89FE74: B9 0A 14  offsides: stay at the blue line
 	bit.w #tmfoffside		; $89FE77: 89 10 00
 	bne .set		; $89FE7A: D0 62
 	lda.b d2		; $89FE7C: A5 5B
@@ -431,7 +431,7 @@ asswingd:		;auto: CODE_89FDD6 (asstab 3). 93G asswingd (logic93_2): wing on defe
 	lda.b d2		; $89FEDE: A5 5B
 	sta.b d1		; $89FEE0: 85 57
 .go2:		;93G .go
-	lda.w #rtss		; $89FEE2: A9 E6 84
+	lda.w #rtss		; $89FEE2: A9 E6 84  a0 = rtss: no avoidance
 	sta.b a0		; $89FEE5: 85 33
 	lda.w #rtss>>16		; $89FEE7: A9 80 00
 	sta.b a0+2		; $89FEEA: 85 35

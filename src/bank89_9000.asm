@@ -8,10 +8,10 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 		;   rewinds, B steps (slow motion), L/R one frame, Start leaves
 	stz.b DMAListend		; $8990F0: 64 A3
 	stz.b crowdlevel		; $8990F2: 64 DE
-	lda.w #sf2replay		; $8990F4: A9 00 08
+	lda.w #sf2replay		; $8990F4: A9 00 08  sf2replay: replay on
 	tsb.w sflags		; $8990F7: 0C 8C 12
 	jsl.l ClrHor		; $8990FA: 22 28 A8 80
-	stz.w VMADDL		; $8990FE: 9C 16 21
+	stz.w VMADDL		; $8990FE: 9C 16 21  clear the text layer map in vram
 	lda.w #$FFFF		; $899101: A9 FF FF
 	sta.b textdirtylo		; $899104: 85 D0
 	stz.b textdirtyhi		; $899106: 64 D2
@@ -23,7 +23,7 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	sta.w VMDATAL		; $899112: 8D 18 21
 	dex		; $899115: CA
 	bne .clr		; $899116: D0 FA
-	lda.w #$0042		; $899118: A9 42 00
+	lda.w #$0042		; $899118: A9 42 00  the replay icon from the IceRinkMap data, 8 x 4 at vram $42
 	sta.b tmp0		; $89911B: 85 73
 	ldx.w #$2020		; $89911D: A2 20 20
 	lda.w #$0004		; $899120: A9 04 00
@@ -51,13 +51,13 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	tax		; $89914C: AA
 	dec.b tmp1		; $89914D: C6 75
 	bne .icon		; $89914F: D0 D4
-	lda.w #sfscrl		; $899151: A9 20 00
+	lda.w #sfscrl		; $899151: A9 20 00  manual scroll off
 	trb.w sflags		; $899154: 1C 8C 12
 	lda.w Vpos		; $899157: AD DF 08
 	pha		; $89915A: 48
 	lda.w Hpos		; $89915B: AD 54 01
 	pha		; $89915E: 48
-	lda.w ReplayBufferPtr		; $89915F: AD 95 04
+	lda.w ReplayBufferPtr		; $89915F: AD 95 04  ReplayBufferPtr must be inside ReplayBufferStart..ReplayBufferEnd on a frame boundary
 	cmp.w #ReplayBufferStart		; $899162: C9 74 81
 	lda.w ReplayBufferPtr+2		; $899165: AD 97 04
 	sbc.w #ReplayBufferStart>>16		; $899168: E9 7E 00
@@ -113,7 +113,7 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	pla		; $8991CE: 68
 	jsl.l SprSort		; $8991CF: 22 6C B7 80
 	jsl.l setvideo		; $8991D3: 22 5E E3 80
-	lda.w #sf3rmplay		; $8991D7: A9 02 00
+	lda.w #sf3rmplay		; $8991D7: A9 02 00  play mode off
 	trb.w sflags3		; $8991DA: 1C 90 12
 	lda.w #$0001		; $8991DD: A9 01 00
 	sta.b d7		; $8991E0: 85 6F
@@ -129,7 +129,7 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	jsl.l ReadPads		; $8991F4: 22 E8 F3 80
 	lda.w #$0001		; $8991F8: A9 01 00
 	sta.b d7		; $8991FB: 85 6F
-	jsl.l getpzjoy		; $8991FD: 22 0E FF 85
+	jsl.l getpzjoy		; $8991FD: 22 0E FF 85  d0 = dpad direction (8 = none), d1 = new buttons, d3 = held
 	lda.b d0		; $899201: A5 53
 	bit.w #$0008		; $899203: 89 08 00
 	beq .man		; $899206: F0 03
@@ -137,11 +137,11 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 .man:		;dpad: scroll by hand
 	and.w #$0007		; $89920B: 29 07 00
 	sta.b d0		; $89920E: 85 53
-	lda.w #sfscrl		; $899210: A9 20 00
+	lda.w #sfscrl		; $899210: A9 20 00  sfscrl
 	tsb.w sflags		; $899213: 0C 8C 12
 	asl.b d0		; $899216: 06 53
 	asl.b d0		; $899218: 06 53
-	lda.w #.stab		; $89921A: A9 7E 92
+	lda.w #.stab		; $89921A: A9 7E 92  a0 = .stab
 	sta.b a0		; $89921D: 85 33
 	lda.w #.stab>>16		; $89921F: A9 89 00
 	sta.b a0+2		; $899222: 85 35
@@ -154,7 +154,7 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	eor.w #$FFFF		; $899232: 49 FF FF
 	inc a		; $899235: 1A
 .ax:
-	cmp.w #$0041		; $899236: C9 41 00
+	cmp.w #$0041		; $899236: C9 41 00  x step within the screen
 	bcs .nox		; $899239: B0 05
 	lda.b d1		; $89923B: A5 57
 	sta.w Hpos		; $89923D: 8D 54 01
@@ -186,7 +186,7 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	lda.b d1		; $899266: A5 57
 	sta.w Vpos		; $899268: 8D DF 08
 .noy:
-	lda.w PadControlBits		; $89926B: AD 31 04
+	lda.w PadControlBits		; $89926B: AD 31 04  PadControlBits $E000: no player marker
 	and.w #$0FFF		; $89926E: 29 FF 0F
 	ora.w #$E000		; $899271: 09 00 E0
 	sta.w PadControlBits		; $899274: 8D 31 04
@@ -196,19 +196,19 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	dw 0,1,1,1,1,0,1,-1		; $89927E
 	dw 0,-1,-1,-1,-1,0,-1,1		; $89928E
 .nomans:
-	lda.b d1		; $89929E: A5 57
+	lda.b d1		; $89929E: A5 57  A: switch play mode
 	bit.w #JOYA		; $8992A0: 89 80 00
 	beq .b00		; $8992A3: F0 09
 	lda.w sflags3		; $8992A5: AD 90 12
 	eor.w #sf3rmplay		; $8992A8: 49 02 00
 	sta.w sflags3		; $8992AB: 8D 90 12
 .b00:
-	lda.b d1		; $8992AE: A5 57
+	lda.b d1		; $8992AE: A5 57  L/R: one frame back/on
 	bit.w #JOYL		; $8992B0: 89 20 00
 	bne .r1		; $8992B3: D0 1D
 	bit.w #JOYR		; $8992B5: 89 10 00
 	bne .f2		; $8992B8: D0 44
-	lda.b d3		; $8992BA: A5 5F
+	lda.b d3		; $8992BA: A5 5F  Y held: rewind (one frame per vblank)
 	bit.w #abut		; $8992BC: 89 00 40
 	beq .f0		; $8992BF: F0 28
 	jsl.l $8F8E54		; $8992C1: 22 54 8E 8F  bank $8F: 93G suba4 (one replay frame back)
@@ -229,10 +229,10 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	lda.w #sf3rmplay		; $8992E3: A9 02 00
 	trb.w sflags3		; $8992E6: 1C 90 12
 .f0:		;93G .0: B steps
-	lda.b d3		; $8992E9: A5 5F
+	lda.b d3		; $8992E9: A5 5F  B: step
 	bit.w #bbut		; $8992EB: 89 00 80
 	beq .pl		; $8992EE: F0 28
-	bit.w #abut		; $8992F0: 89 00 40
+	bit.w #abut		; $8992F0: 89 00 40  Y+B: manual scroll off (93G hidden feature)
 	beq .f1		; $8992F3: F0 0F
 	lda.w #sfscrl		; $8992F5: A9 20 00
 	trb.w sflags		; $8992F8: 1C 8C 12
@@ -251,7 +251,7 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	lda.w sflags3		; $899318: AD 90 12
 	bit.w #sf3rmplay		; $89931B: 89 02 00
 	beq .noplay		; $89931E: F0 19
-	stz.w lastsfx		; $899320: 9C 7F 01
+	stz.w lastsfx		; $899320: 9C 7F 01  lastsfx = 0: play the frame's sound
 	jsl.l $8F8EAF		; $899323: 22 AF 8E 8F  bank $8F: 93G adda4 (one replay frame on)
 	lda.w lastsfx		; $899327: AD 7F 01
 	beq .nosfx		; $89932A: F0 05
@@ -261,7 +261,7 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	jsl.l SprSort		; $899331: 22 6C B7 80
 	jsl.l setvideo		; $899335: 22 5E E3 80
 .noplay:
-	lda.b d1		; $899339: A5 57
+	lda.b d1		; $899339: A5 57  Start: leave
 	bit.w #JOYSTART		; $89933B: 89 00 10
 	bne .exit		; $89933E: D0 03
 	jmp.w .top		; $899340: 4C E2 91
@@ -271,7 +271,7 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	tsb.w PadControlBits		; $89934A: 0C 31 04
 	lda.w #sfscrl		; $89934D: A9 20 00
 	trb.w sflags		; $899350: 1C 8C 12
-	lda.w ReplayBufferPtr		; $899353: AD 95 04
+	lda.w ReplayBufferPtr		; $899353: AD 95 04  back to the current frame
 	sta.b a4		; $899356: 85 43
 	lda.w ReplayBufferPtr+2		; $899358: AD 97 04
 	sta.b a4+2		; $89935B: 85 45

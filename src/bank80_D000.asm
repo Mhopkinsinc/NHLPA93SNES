@@ -2125,7 +2125,7 @@ doinput:		;auto: CODE_80DF3F. 93G doinput (logic93_1): controller input for play
 	lda.w pflags,x		; $80DF74: BD DF 0E  line change interface
 	bit.w #pf2lcm		; $80DF77: 89 00 20
 	beq .nolcm		; $80DF7A: F0 04
-	jml.l $8AFD0C		; $80DF7C: 5C 0C FD 8A  bank $8A: 93G lineinput
+	jml.l lineinput		; $80DF7C: 5C 0C FD 8A  bank $8A: 93G lineinput
 .nolcm:
 	bit.w #pfjoycon		; $80DF80: 89 08 00  not joystick controlled: exit
 	bne .joy		; $80DF83: D0 03

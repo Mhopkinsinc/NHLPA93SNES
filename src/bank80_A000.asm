@@ -801,7 +801,7 @@ SetLCmode2:		;auto: CODE_80A748. 93G SetLCmode2 (logic93_1 IDA showfaceoff): a2 
 	sta.w printx		; $80A798: 8D 7B 04
 	lda.b d4		; $80A79B: A5 63
 	sta.b d0		; $80A79D: 85 53
-	jsl.l $8AFD6D		; $80A79F: 22 6D FD 8A  bank $8A: 93G getlchoice
+	jsl.l getlchoice		; $80A79F: 22 6D FD 8A  bank $8A: 93G getlchoice
 	lda.b d0		; $80A7A3: A5 53
 	bmi .next		; $80A7A5: 30 57
 	ldy.b a2		; $80A7A7: A4 3B

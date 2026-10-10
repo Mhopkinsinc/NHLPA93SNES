@@ -157,14 +157,14 @@ getlinee:		;auto: CODE_888405. 93G getlinee (penalty93_2): d0 = line number, a2 
 	ldy.b a2		; $888427: A4 3B
 	lda.w tmdata,y		; $888429: B9 CE 13
 	sta.b a1		; $88842C: 85 37
-	lda.w #$0083		; $88842E: A9 83 00
+	lda.w #$0083		; $88842E: A9 83 00  a1 = the team data (bank $83)
 	sta.b a1+2		; $888431: 85 39
-	ldy.w #$0006		; $888433: A0 06 00
+	ldy.w #$0006		; $888433: A0 06 00  + offset of the line sets
 	lda.b [a1],y		; $888436: B7 37
 	clc		; $888438: 18
 	adc.b a1		; $888439: 65 37
 	sta.b a1		; $88843B: 85 37
-	lda.b d0		; $88843D: A5 53
+	lda.b d0		; $88843D: A5 53  line d0: 8 bytes
 	asl a		; $88843F: 0A
 	asl a		; $888440: 0A
 	asl a		; $888441: 0A
@@ -172,11 +172,11 @@ getlinee:		;auto: CODE_888405. 93G getlinee (penalty93_2): d0 = line number, a2 
 	sta.b a1		; $888444: 85 37
 	stz.b mulb		; $888446: 64 83
 	stz.b mula		; $888448: 64 7D
-	lda.w #$F820		; $88844A: A9 20 F8
+	lda.w #$F820		; $88844A: A9 20 F8  a0 = priolist ($8FF820)
 	sta.b a0		; $88844D: 85 33
 	lda.w #$008F		; $88844F: A9 8F 00
 	sta.b a0+2		; $888452: 85 35
-	ldy.b a2		; $888454: A4 3B
+	ldy.b a2		; $888454: A4 3B  tmap: positions - 1
 	lda.w tmap,y		; $888456: B9 EE 13
 	sta.b d4		; $888459: 85 63
 	bra .next		; $88845B: 80 25
@@ -185,7 +185,7 @@ getlinee:		;auto: CODE_888405. 93G getlinee (penalty93_2): d0 = line number, a2 
 	lda.b [a0],y		; $88845F: B7 33
 	and.w #$00FF		; $888461: 29 FF 00
 	beq .next		; $888464: F0 1C
-	tay		; $888466: A8
+	tay		; $888466: A8  player number
 	lda.b [a1],y		; $888467: B7 37
 	and.w #$00FF		; $888469: 29 FF 00
 	asl a		; $88846C: 0A
@@ -203,7 +203,7 @@ getlinee:		;auto: CODE_888405. 93G getlinee (penalty93_2): d0 = line number, a2 
 .next:
 	dec.b d4		; $888482: C6 63
 	bpl .loop		; $888484: 10 D7
-	jsl.l divu16		; $888486: 22 D8 B8 80
+	jsl.l divu16		; $888486: 22 D8 B8 80  d0 = energy sum / players
 	sta.b d0		; $88848A: 85 53
 	stx.b xsave		; $88848C: 86 0A
 	ldx.w #$0006		; $88848E: A2 06 00
@@ -227,7 +227,7 @@ getlinee:		;auto: CODE_888405. 93G getlinee (penalty93_2): d0 = line number, a2 
 WritePassBits:		;auto: CODE_8884A9. 92G WritePassBits: playoff state into passbits (PushBits with each range), then the 9-bit checksum of the values (d7) with range 512
 	jsl.l ClrPassBits		; $8884A9: 22 EA FB 82
 	stz.b d7		; $8884AD: 64 6F
-	lda.w postarts		; $8884AF: AD 51 04
+	lda.w postarts		; $8884AF: AD 51 04  PushBits ranges: postarts 32, bosgames 8, gamelevel 4, potreeteam 16, pojoy 4, WinBits $4000
 	sta.b d0		; $8884B2: 85 53
 	lda.w #32		; $8884B4: A9 20 00
 	sta.b d1		; $8884B7: 85 57
@@ -275,7 +275,7 @@ WritePassBits:		;auto: CODE_8884A9. 92G WritePassBits: playoff state into passbi
 	inc.b a1		; $888526: E6 37
 	dec.b d2		; $888528: C6 5B
 	bpl .gs		; $88852A: 10 E2
-	lda.b d7		; $88852C: A5 6F
+	lda.b d7		; $88852C: A5 6F  checksum
 	and.w #$01FF		; $88852E: 29 FF 01
 	sta.b d0		; $888531: 85 53
 	lda.w #512		; $888533: A9 00 02
@@ -289,7 +289,7 @@ WritePassBits:		;auto: CODE_8884A9. 92G WritePassBits: playoff state into passbi
 	sta.b d7		; $888542: 85 6F
 	jml.l PushBits		; $888544: 5C 03 FC 82
 noturn0:		;auto: CODE_888548 (from doplayeracc). 93G noturn0 (logic93_5): wanted direction needs no turn; glide/stop/skate animation, then revplayeracc (93G noturn). d0 = direction - facedir
-	lda.w #$0002		; $888548: A9 02 00
+	lda.w #$0002		; $888548: A9 02 00  d4 (here d2) = 2, 6 skating backwards
 	sta.b d4		; $88854B: 85 63
 	lda.w pfrev,x		; $88854D: BD BF 11
 	beq .zero		; $888550: F0 0C
@@ -301,7 +301,7 @@ noturn0:		;auto: CODE_888548 (from doplayeracc). 93G noturn0 (logic93_5): wanted
 .zero:		;93G .0
 	lda.b d0		; $88855E: A5 53
 	beq .nochg		; $888560: F0 59
-	lda.w Xvel,x		; $888562: BD DF 0A
+	lda.w Xvel,x		; $888562: BD DF 0A  moving: stop if the direction is more than 90 degrees off
 	sta.b d0		; $888565: 85 53
 	lda.w Yvel,x		; $888567: BD FF 0A
 	sta.b d1		; $88856A: 85 57
@@ -318,7 +318,7 @@ noturn0:		;auto: CODE_888548 (from doplayeracc). 93G noturn0 (logic93_5): wanted
 	bcs .nostop		; $888584: B0 04
 	jml.l dostop		; $888586: 5C 04 84 80
 .nostop:
-	inc.w facedir,x		; $88858A: FE BF 0D
+	inc.w facedir,x		; $88858A: FE BF 0D  turn one step
 	lda.w attribute,x		; $88858D: BD DF 09
 	bit.w #$0800		; $888590: 89 00 08
 	beq .nos0		; $888593: F0 06
@@ -338,19 +338,19 @@ noturn0:		;auto: CODE_888548 (from doplayeracc). 93G noturn0 (logic93_5): wanted
 	sta.b d1		; $8885B5: 85 57
 	jml.l SetSPA		; $8885B7: 5C 06 B0 80
 .nochg:
-	lda.w #SPAskateback		; $8885BB: A9 FE 09
+	lda.w #SPAskateback		; $8885BB: A9 FE 09  no change: skate
 	sta.b d1		; $8885BE: 85 57
 	lda.w pfrev,x		; $8885C0: BD BF 11
 	bne .ns		; $8885C3: D0 21
 	lda.w #SPAskate		; $8885C5: A9 5C 05
 	sta.b d1		; $8885C8: 85 57
-	lda.w pflags,x		; $8885CA: BD DF 0E
+	lda.w pflags,x		; $8885CA: BD DF 0E  pflags $0004 (93G pflags2 bit 6): stumble
 	bit.w #$0004		; $8885CD: 89 04 00
 	beq .nb6		; $8885D0: F0 05
 	lda.w #SPAstumble		; $8885D2: A9 A2 12
 	sta.b d1		; $8885D5: 85 57
 .nb6:
-	lda.w puckc		; $8885D7: AD BB 0E
+	lda.w puckc		; $8885D7: AD BB 0E  carrier: skate with the puck
 	sta.b d4		; $8885DA: 85 63
 	cmp.w SCnum,x		; $8885DC: DD 9F 0D
 	bne .ns		; $8885DF: D0 05
@@ -389,11 +389,11 @@ PWprint:		;auto: CODE_8885F7. 92G PWprint: print the 16 password characters (Pas
 	cpx.w #$000C		; $88861D: E0 0C 00
 	bne .pusha		; $888620: D0 F6
 	ldx.b xsave		; $888622: A6 0A
-	lda.w #PasstoText		; $888624: A9 A6 FB
+	lda.w #PasstoText		; $888624: A9 A6 FB  a2 = PasstoText
 	sta.b a2		; $888627: 85 3B
 	lda.w #PasstoText>>16		; $888629: A9 82 00
 	sta.b a2+2		; $88862C: 85 3D
-	lda.w #mesarea		; $88862E: A9 91 01
+	lda.w #mesarea		; $88862E: A9 91 01  a1 = mesarea
 	sta.b a1		; $888631: 85 37
 	lda.w #$0000		; $888633: A9 00 00
 	sta.b a1+2		; $888636: 85 39
@@ -401,7 +401,7 @@ PWprint:		;auto: CODE_8885F7. 92G PWprint: print the 16 password characters (Pas
 	sta.b a0		; $88863B: 85 33
 	lda.w #$0000		; $88863D: A9 00 00
 	sta.b a0+2		; $888640: 85 35
-	lda.w #18		; $888642: A9 12 00
+	lda.w #18		; $888642: A9 12 00  length 18: 16 characters
 	sta.b [a1]		; $888645: 87 37
 	inc.b a1		; $888647: E6 37
 	inc.b a1		; $888649: E6 37
@@ -451,12 +451,12 @@ EncodePW:		;auto: CODE_88868D. 92G EncodePW (Rev A): after a playoff game, Resol
 	sta.w OptPlayMode		; $888698: 8D 00 16
 	jsl.l $8B8253		; $88869B: 22 53 82 8B  bank $8B: 92G ResolveGames
 	jsl.l $8D8000		; $88869F: 22 00 80 8D  bank $8D: maketree
-	lda.w gamelevel		; $8886A3: AD 4A 01
+	lda.w gamelevel		; $8886A3: AD 4A 01  finished playoffs
 	cmp.w #$0004		; $8886A6: C9 04 00
 	beq .userwon		; $8886A9: F0 53
-	lda.w gamenum		; $8886AB: AD 4C 01
+	lda.w gamenum		; $8886AB: AD 4C 01  gamenum >= 0: player 1 won
 	bpl .nofail		; $8886AE: 10 29
-	lda.w pojoy		; $8886B0: AD 4F 04
+	lda.w pojoy		; $8886B0: AD 4F 04  pojoy < 2: one player or teammates
 	sec		; $8886B3: 38
 	sbc.w #$0002		; $8886B4: E9 02 00
 	bmi .lt		; $8886B7: 30 04
@@ -477,7 +477,7 @@ EncodePW:		;auto: CODE_88868D. 92G EncodePW (Rev A): after a playoff game, Resol
 .nofail:
 	jsl.l WritePassBits		; $8886D9: 22 A9 84 88
 	jsl.l BitstoPW		; $8886DD: 22 01 FA 82
-	lda.w sflags3		; $8886E1: AD 90 12
+	lda.w sflags3		; $8886E1: AD 90 12  sf3alttree: passbits before all games were resolved
 	bit.w #sf3alttree		; $8886E4: 89 04 00
 	beq .tree		; $8886E7: F0 11
 	ldy.w #$000E		; $8886E9: A0 0E 00
@@ -493,7 +493,7 @@ EncodePW:		;auto: CODE_88868D. 92G EncodePW (Rev A): after a playoff game, Resol
 .userwon:
 	jsl.l $8F9073		; $8886FE: 22 73 90 8F  bank $8F: 92G ResetPassWord
 .userfailed:
-	lda.w #$0080		; $888702: A9 80 00
+	lda.w #$0080		; $888702: A9 80 00  PassWord bit 7: no password
 	tsb.w PassWord		; $888705: 0C 10 16
 	lda.w #$0002		; $888708: A9 02 00
 	sta.w OptPlayMode		; $88870B: 8D 00 16
@@ -526,7 +526,7 @@ showcrowd:		;auto: CODE_8887AE. 93G showcrowd (video93_1): crowd sprites: up to 
 	stz.b d0		; $8887C9: 64 53
 	lda.w PBnum		; $8887CB: AD E4 12
 	sta.b d2		; $8887CE: 85 5B
-	lda.w #$001A		; $8887D0: A9 1A 00
+	lda.w #$001A		; $8887D0: A9 1A 00  frames 26+
 	sta.b d3		; $8887D3: 85 5F
 	jsl.l .pb		; $8887D5: 22 FE 87 88
 	lda.w PBnum		; $8887D9: AD E4 12
@@ -535,7 +535,7 @@ showcrowd:		;auto: CODE_8887AE. 93G showcrowd (video93_1): crowd sprites: up to 
 	lsr a		; $8887DE: 4A
 	lsr a		; $8887DF: 4A
 	sta.b d2		; $8887E0: 85 5B
-	lda.w #$001D		; $8887E2: A9 1D 00
+	lda.w #$001D		; $8887E2: A9 1D 00  frames 29+
 	sta.b d3		; $8887E5: 85 5F
 	jsl.l .pb		; $8887E7: 22 FE 87 88
 	lda.w sfhormode		; $8887EB: AD 8E 12
@@ -568,7 +568,7 @@ showcrowd:		;auto: CODE_8887AE. 93G showcrowd (video93_1): crowd sprites: up to 
 .rtl:
 	rtl		; $888820: 6B
 .sc:		;d0 = frame (0 = none): sprite frame $292 + d0 (+31 horizontal) at the rink scroll position
-	lda.b d0		; $888821: A5 53
+	lda.b d0		; $888821: A5 53  frame byte
 	and.w #$00FF		; $888823: 29 FF 00
 	sta.b d0		; $888826: 85 53
 	beq .rtl		; $888828: F0 F6
@@ -581,13 +581,13 @@ showcrowd:		;auto: CODE_8887AE. 93G showcrowd (video93_1): crowd sprites: up to 
 .chk:
 	lda.b d0		; $888837: A5 53
 	clc		; $888839: 18
-	adc.w #$0292		; $88883A: 69 92 02
+	adc.w #$0292		; $88883A: 69 92 02  crowd frames start at $293
 	sta.b sprframe		; $88883D: 85 C3
-	lda.w #$FFC0		; $88883F: A9 C0 FF
+	lda.w #$FFC0		; $88883F: A9 C0 FF  x = $FFC0 - Hpos
 	sec		; $888842: 38
 	sbc.b d4		; $888843: E5 63
 	sta.b sprx		; $888845: 85 C9
-	lda.w #$FEFF		; $888847: A9 FF FE
+	lda.w #$FEFF		; $888847: A9 FF FE  y = Vpos - $101
 	clc		; $88884A: 18
 	adc.b d5		; $88884B: 65 67
 	sta.b spry		; $88884D: 85 CB
@@ -596,7 +596,7 @@ SuperMult:		;auto: CODE_888853. 92G SuperMult: passbits (8 words) *= d0, by shif
 	phx		; $888853: DA
 	ldx.w #$000E		; $888854: A2 0E 00
 .copy:
-	lda.w passbits,x		; $888857: BD 24 16
+	lda.w passbits,x		; $888857: BD 24 16  copy passbits, clear passbits
 	sta.b mulres,x		; $88885A: 95 93
 	stz.w passbits,x		; $88885C: 9E 24 16
 	dex		; $88885F: CA
@@ -662,7 +662,7 @@ DrawGameSetupBack:		;auto: CODE_8888C3. SNES: game setup screen backdrop: textma
 	ldx.w #$07FE		; $8888DF: A2 FE 07
 .map:
 	lda.l TestList,x		; $8888E2: BF 00 00 7F
-	and.w #$DFFF		; $8888E6: 29 FF DF
+	and.w #$DFFF		; $8888E6: 29 FF DF  priority bit off
 	sta.l backmap,x		; $8888E9: 9F 74 76 7E
 	dex		; $8888ED: CA
 	dex		; $8888EE: CA
@@ -670,7 +670,7 @@ DrawGameSetupBack:		;auto: CODE_8888C3. SNES: game setup screen backdrop: textma
 	stz.b textdirtylo		; $8888F1: 64 D0
 	lda.w #$03FF		; $8888F3: A9 FF 03
 	sta.b textdirtyhi		; $8888F6: 85 D2
-	lda.w #$8000		; $8888F8: A9 00 80
+	lda.w #$8000		; $8888F8: A9 00 80  the NHLPA logo (packed at $8C8000)
 	sta.b tmp0		; $8888FB: 85 73
 	lda.w #$008C		; $8888FD: A9 8C 00
 	sta.b tmp1		; $888900: 85 75
@@ -687,7 +687,7 @@ DrawGameSetupBack:		;auto: CODE_8888C3. SNES: game setup screen backdrop: textma
 	sta.b mulb		; $888917: 85 83
 	jsl.l $8D871C		; $888919: 22 1C 87 8D  bank $8D: 16-bit multiply
 	adc.b tmp0		; $88891D: 65 73
-	asl a		; $88891F: 0A
+	asl a		; $88891F: 0A  logo map word + logochars
 	tax		; $888920: AA
 	lda.l TestList,x		; $888921: BF 00 00 7F
 	adc.w logochars		; $888925: 6D DD 1B
@@ -697,7 +697,7 @@ DrawGameSetupBack:		;auto: CODE_8888C3. SNES: game setup screen backdrop: textma
 	asl a		; $88892C: 0A
 	asl a		; $88892D: 0A
 	asl a		; $88892E: 0A
-	asl a		; $88892F: 0A
+	asl a		; $88892F: 0A  textmap row y * 32 + x + 12
 	adc.b tmp0		; $888930: 65 73
 	asl a		; $888932: 0A
 	tax		; $888933: AA
@@ -709,7 +709,7 @@ DrawGameSetupBack:		;auto: CODE_8888C3. SNES: game setup screen backdrop: textma
 	bpl .row		; $88893F: 10 CA
 	rtl		; $888941: 6B
 mulu:		;auto: CODE_888942. 68k mulu.w: mulres (32-bit) = mula * mulb; mula/mulb also get the result. A byte factor uses the mode 7 multiplier (M7A/M7B)
-	lda.b mula		; $888942: A5 7D
+	lda.b mula		; $888942: A5 7D  mula >= $80 needs mulb < $80
 	bmi .full		; $888944: 30 5F
 	cmp.w #$0080		; $888946: C9 80 00
 	bcc .byteb		; $888949: 90 30
@@ -735,7 +735,7 @@ mulu:		;auto: CODE_888942. 68k mulu.w: mulres (32-bit) = mula * mulb; mula/mulb 
 	sta.b mulres		; $888978: 85 93
 	rtl		; $88897A: 6B
 .byteb:
-	lda.b mulb		; $88897B: A5 83
+	lda.b mulb		; $88897B: A5 83  mula < $80: byte factor
 	bmi .full		; $88897D: 30 26
 	sep #$20		; $88897F: E2 20
 	sta.w M7A		; $888981: 8D 1B 21

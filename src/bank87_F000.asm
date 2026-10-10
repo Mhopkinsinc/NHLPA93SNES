@@ -26,7 +26,7 @@ RestoreReplayFrame:		;auto: CODE_87F3E9. 93G RestoreReplayFrame (hockey93_02): r
 	cpx.w #$0004		; $87F404: E0 04 00
 	bne .pusha		; $87F407: D0 F6
 	ldx.b xsave		; $87F409: A6 0A
-	lda.b a4		; $87F40B: A5 43
+	lda.b a4		; $87F40B: A5 43  a0 = a4 (the record)
 	sta.b a0		; $87F40D: 85 33
 	lda.b a4+2		; $87F40F: A5 45
 	sta.b a0+2		; $87F411: 85 35
@@ -134,7 +134,7 @@ RestoreReplayFrame:		;auto: CODE_87F3E9. 93G RestoreReplayFrame (hockey93_02): r
 	inc.b a0		; $87F4E5: E6 33
 	and.w #$00FF		; $87F4E7: 29 FF 00
 	sta.b d7		; $87F4EA: 85 6F
-	lda.w PadControlBits		; $87F4EC: AD 31 04
+	lda.w PadControlBits		; $87F4EC: AD 31 04  PadControlBits low 12 bits
 	and.w #$F000		; $87F4EF: 29 00 F0
 	sta.w PadControlBits		; $87F4F2: 8D 31 04
 	lda.b [a0]		; $87F4F5: A7 33
@@ -159,7 +159,7 @@ RestoreReplayFrame:		;auto: CODE_87F3E9. 93G RestoreReplayFrame (hockey93_02): r
 	ora.w #$FF00		; $87F521: 09 00 FF
 .pb:
 	sta.w PBnum		; $87F524: 8D E4 12
-	lda.w sflags		; $87F527: AD 8C 12
+	lda.w sflags		; $87F527: AD 8C 12  sfscrl: keep Hpos/Vpos
 	bit.w #sfscrl		; $87F52A: 89 20 00
 	bne .x		; $87F52D: D0 0E
 	lda.b [a0]		; $87F52F: A7 33

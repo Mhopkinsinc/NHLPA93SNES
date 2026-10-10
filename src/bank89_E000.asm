@@ -25,7 +25,7 @@ printscores1:		;auto: CODE_89E95D. 93G printscores1 (penalty93_2): scoreboard. V
 	cpx.w #$0010		; $89E978: E0 10 00
 	bne .pusha		; $89E97B: D0 F6
 	ldx.b xsave		; $89E97D: A6 0A
-	lda.w sfhormode		; $89E97F: AD 8E 12
+	lda.w sfhormode		; $89E97F: AD 8E 12  horizontal rink
 	beq .v		; $89E982: F0 03
 	jmp.w .sbscreen		; $89E984: 4C 58 EA
 .v:
@@ -36,19 +36,19 @@ printscores1:		;auto: CODE_89E95D. 93G printscores1 (penalty93_2): scoreboard. V
 	sta.b d0		; $89E993: 85 53
 	lda.w #5		; $89E995: A9 05 00
 	sta.b d1		; $89E998: 85 57
-	jsl.l $8FD69F		; $89E99A: 22 9F D6 8F  bank $8F: 93G Framer (d0 x d1)
+	jsl.l $8FD69F		; $89E99A: 22 9F D6 8F  Framer 9 x 5, bank $8F: 93G Framer (d0 x d1)
 	jsl.l printz		; $89E99E: 22 0C B9 80
 	dw $0005		; $89E9A2  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$01,$18
 	lda.w gsp		; $89E9A7: AD F0 12
 	sta.b d0		; $89E9AA: 85 53
-	lda.w #$8236		; $89E9AC: A9 36 82
+	lda.w #$8236		; $89E9AC: A9 36 82  period name
 	sta.b a1		; $89E9AF: 85 37
 	lda.w #$008F		; $89E9B1: A9 8F 00
 	sta.b a1+2		; $89E9B4: 85 39
 	jsl.l $8FD68C		; $89E9B6: 22 8C D6 8F  bank $8F: 93G PrintStringFromList
-	jsl.l $8D8549		; $89E9BA: 22 49 85 8D  bank $8D: 93G EASNLogo
-	lda.w sflags3		; $89E9BE: AD 90 12
+	jsl.l $8D8549		; $89E9BA: 22 49 85 8D  EASNLogo, bank $8D: 93G EASNLogo
+	lda.w sflags3		; $89E9BE: AD 90 12  lower line change box is up
 	bit.w #sf3llcs		; $89E9C1: 89 01 00
 	bne .ex		; $89E9C4: D0 73
 	jsl.l printz		; $89E9C6: 22 0C B9 80
@@ -62,7 +62,7 @@ printscores1:		;auto: CODE_89E95D. 93G printscores1 (penalty93_2): scoreboard. V
 	jsl.l printz		; $89E9DD: 22 0C B9 80
 	dw $0005		; $89E9E1  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$1C,$18
-	stz.b d3		; $89E9E6: 64 5F
+	stz.b d3		; $89E9E6: 64 5F  home team on the lower row
 	stz.b a2		; $89E9E8: 64 3B
 	jsl.l PrintTeamNameAndScore		; $89E9EA: 22 D7 EA 89
 	jsl.l printz		; $89E9EE: 22 0C B9 80
@@ -73,7 +73,7 @@ printscores1:		;auto: CODE_89E95D. 93G printscores1 (penalty93_2): scoreboard. V
 	inc.b a2		; $89E9FB: E6 3B
 	jsl.l PrintTeamNameAndScore		; $89E9FD: 22 D7 EA 89
 	stz.b a2		; $89EA01: 64 3B
-	lda.w #2		; $89EA03: A9 02 00
+	lda.w #2		; $89EA03: A9 02 00  a2/a3: the team at the top / bottom end by gmdir
 	sta.b a3		; $89EA06: 85 3F
 	lda.w gmode		; $89EA08: AD 88 12
 	bit.w #gmdir		; $89EA0B: 89 02 00
@@ -123,14 +123,14 @@ printscores1:		;auto: CODE_89E95D. 93G printscores1 (penalty93_2): scoreboard. V
 	jsl.l printz		; $89EA65: 22 0C B9 80
 	dw $0005		; $89EA69  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$17,$04
-	lda.w tmscore		; $89EA6E: AD D6 13
+	lda.w tmscore		; $89EA6E: AD D6 13  home score in big font
 	sta.b d0		; $89EA71: 85 53
 	jsl.l $8F8682		; $89EA73: 22 82 86 8F  bank $8F: 93G pushnumber
 	jsl.l $8BFCCE		; $89EA77: 22 CE FC 8B  bank $8B: 93G printbig
 	jsl.l printz		; $89EA7B: 22 0C B9 80
 	dw $0005		; $89EA7F  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$07,$04
-	lda.w tmscore+2		; $89EA84: AD D8 13
+	lda.w tmscore+2		; $89EA84: AD D8 13  away score
 	sta.b d0		; $89EA87: 85 53
 	jsl.l $8F8682		; $89EA89: 22 82 86 8F  bank $8F: 93G pushnumber
 	jsl.l $8BFCCE		; $89EA8D: 22 CE FC 8B  bank $8B: 93G printbig
@@ -172,7 +172,7 @@ PrintTeamNameAndScore:		;auto: CODE_89EAD7. 93G PrintTeamNameAndScore: team name
 	sta.b a1+2		; $89EAE3: 85 39
 	lda.w #4		; $89EAE5: A9 04 00
 	sta.b [a1]		; $89EAE8: 87 37
-	lda.w #' '		; $89EAEA: A9 20 00
+	lda.w #' '		; $89EAEA: A9 20 00  blank tens
 	sta.w mesarea+2		; $89EAED: 8D 93 01
 	ldy.b a2		; $89EAF0: A4 3B
 	lda.w tmscore,y		; $89EAF2: B9 D6 13
@@ -191,12 +191,12 @@ PrintTeamNameAndScore:		;auto: CODE_89EAD7. 93G PrintTeamNameAndScore: team name
 nullrtl89:		;auto: CODE_89EB14. does nothing (printscores1 calls it)
 	rtl		; $89EB14: 6B
 p_music_vblank:		;auto: CODE_89EB15 (from vblank). 93G p_music_vblank role: every other frame send the next queued sound command (sndqueue) to APUIO0, a counter to APUIO1
-	lda.w sndsettle		; $89EB15: AD 9F 04
+	lda.w sndsettle		; $89EB15: AD 9F 04  wait after the sample upload
 	bne .settle		; $89EB18: D0 27
 	sep #$30		; $89EB1A: E2 30
 	lda.b sndlock		; $89EB1C: A5 21
 	bne .ex		; $89EB1E: D0 1E
-	lda.b vcount		; $89EB20: A5 00
+	lda.b vcount		; $89EB20: A5 00  every other frame
 	lsr a		; $89EB22: 4A
 	bcc .ex		; $89EB23: 90 19
 	ldx.b sndqout		; $89EB25: A6 1F
@@ -204,7 +204,7 @@ p_music_vblank:		;auto: CODE_89EB15 (from vblank). 93G p_music_vblank role: ever
 	beq .ex		; $89EB29: F0 13
 	lda.b sndqueue,x		; $89EB2B: B5 23
 	sta.w APUIO0		; $89EB2D: 8D 40 21
-	inc.b sndptr		; $89EB30: E6 1A
+	inc.b sndptr		; $89EB30: E6 1A  sndptr (low byte) doubles as the command counter here
 	lda.b sndptr		; $89EB32: A5 1A
 	sta.w APUIO1		; $89EB34: 8D 41 21
 	txa		; $89EB37: 8A

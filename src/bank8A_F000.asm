@@ -134,13 +134,13 @@ lineinput:		;auto: CODE_8AFD0C (from $80DF7C). 93G lineinput (logic93_1): line c
 	lda.b d1		; $8AFD0C: A5 57
 	pha		; $8AFD0E: 48
 	stz.b a2		; $8AFD0F: 64 3B
-	lda.w pfteam,x		; $8AFD11: BD 9F 11
+	lda.w pfteam,x		; $8AFD11: BD 9F 11  a2 = the team of player X
 	beq .zero		; $8AFD14: F0 04
 	inc.b a2		; $8AFD16: E6 3B
 	inc.b a2		; $8AFD18: E6 3B
 .zero:		;93G .0
 	ldy.b a2		; $8AFD1A: A4 3B
-	lda.w tmflags,y		; $8AFD1C: B9 0A 14
+	lda.w tmflags,y		; $8AFD1C: B9 0A 14  tmflags bit 0: start line change mode
 	bit.w #tmfstartlc		; $8AFD1F: 89 01 00
 	beq .one		; $8AFD22: F0 0E
 	and.w #~tmfstartlc&$FFFF		; $8AFD24: 29 FE FF
@@ -151,21 +151,21 @@ lineinput:		;auto: CODE_8AFD0C (from $80DF7C). 93G lineinput (logic93_1): line c
 	pla		; $8AFD32: 68
 	sta.b d1		; $8AFD33: 85 57
 	stz.b d2		; $8AFD35: 64 5B
-	bit.w #abut		; $8AFD37: 89 00 40
+	bit.w #abut		; $8AFD37: 89 00 40  Y: choice 0
 	beq .b		; $8AFD3A: F0 04
 	jml.l $8F8DC7		; $8AFD3C: 5C C7 8D 8F  bank $8F: 93G lcfound (d2 = choice)
 .b:
 	inc.b d2		; $8AFD40: E6 5B
-	bit.w #bbut		; $8AFD42: 89 00 80
+	bit.w #bbut		; $8AFD42: 89 00 80  B: choice 1
 	beq .a		; $8AFD45: F0 04
 	jml.l $8F8DC7		; $8AFD47: 5C C7 8D 8F  bank $8F: 93G lcfound (d2 = choice)
 .a:
 	inc.b d2		; $8AFD4B: E6 5B
-	bit.w #JOYA		; $8AFD4D: 89 80 00
+	bit.w #JOYA		; $8AFD4D: 89 80 00  A: choice 2
 	beq .dpad		; $8AFD50: F0 04
 	jml.l $8F8DC7		; $8AFD52: 5C C7 8D 8F  bank $8F: 93G lcfound (d2 = choice)
 .dpad:
-	lda.w pflags,x		; $8AFD56: BD DF 0E
+	lda.w pflags,x		; $8AFD56: BD DF 0E  joystick controlled, not locked or fighting: skate
 	bit.w #pfjoycon		; $8AFD59: 89 08 00
 	beq .x		; $8AFD5C: F0 0E
 	lda.w pfalock,x		; $8AFD5E: BD 7F 11
@@ -186,7 +186,7 @@ getlchoice:		;auto: CODE_8AFD6D. 93G getlchoice (logic93_1): d0 = choice 0-2 of 
 	cpx.w #$0008		; $8AFD77: E0 08 00
 	bne .pushd		; $8AFD7A: D0 F6
 	ldx.b xsave		; $8AFD7C: A6 0A
-	lda.b a2		; $8AFD7E: A5 3B
+	lda.b a2		; $8AFD7E: A5 3B  d2 = other tmap - our tmap: players short
 	eor.w #2		; $8AFD80: 49 02 00
 	tay		; $8AFD83: A8
 	lda.w tmap,y		; $8AFD84: B9 EE 13
@@ -195,18 +195,18 @@ getlchoice:		;auto: CODE_8AFD6D. 93G getlchoice (logic93_1): d0 = choice 0-2 of 
 	sbc.w tmap,y		; $8AFD8A: F9 EE 13
 	sta.b d2		; $8AFD8D: 85 5B
 	beq .one		; $8AFD8F: F0 14
-	lda.b d0		; $8AFD91: A5 53
+	lda.b d0		; $8AFD91: A5 53  penalty killing: +21
 	clc		; $8AFD93: 18
 	adc.w #21		; $8AFD94: 69 15 00
 	sta.b d0		; $8AFD97: 85 53
 	lda.b d2		; $8AFD99: A5 5B
 	bmi .one		; $8AFD9B: 30 08
-	lda.b d0		; $8AFD9D: A5 53
+	lda.b d0		; $8AFD9D: A5 53  power play: +21 more
 	clc		; $8AFD9F: 18
 	adc.w #21		; $8AFDA0: 69 15 00
 	sta.b d0		; $8AFDA3: 85 53
 .one:		;93G .1
-	ldy.b a2		; $8AFDA5: A4 3B
+	ldy.b a2		; $8AFDA5: A4 3B  + 3 * tmline
 	lda.w tmline,y		; $8AFDA7: B9 DE 13
 	sta.b d1		; $8AFDAA: 85 57
 	lda.b d0		; $8AFDAC: A5 53
@@ -273,9 +273,9 @@ SetScore:		;auto: CODE_8AFE21 (from UpdateScores $82F9F4, $8F9062). 93G SetScore
 	ldx.b xsave		; $8AFE4E: A6 0A
 	ldy.b a0		; $8AFE50: A4 33
 	lda.w gsper,y		; $8AFE52: B9 BF 15
-	cmp.w #3		; $8AFE55: C9 03 00
+	cmp.w #3		; $8AFE55: C9 03 00  after period 3
 	bne .zero		; $8AFE58: D0 2C
-	lda.w #5		; $8AFE5A: A9 05 00
+	lda.w #5		; $8AFE5A: A9 05 00  final
 	sta.w gsper,y		; $8AFE5D: 99 BF 15
 	lda.w gss1,y		; $8AFE60: B9 CF 15
 	sec		; $8AFE63: 38
@@ -287,10 +287,10 @@ SetScore:		;auto: CODE_8AFE21 (from UpdateScores $82F9F4, $8F9062). 93G SetScore
 .diff:
 	cmp.w #2		; $8AFE70: C9 02 00
 	bcs .ex		; $8AFE73: B0 4A
-	lda.w #3		; $8AFE75: A9 03 00
+	lda.w #3		; $8AFE75: A9 03 00  within one goal: overtime
 	sta.w gsper,y		; $8AFE78: 99 BF 15
 	lda.w gsflags,y		; $8AFE7B: B9 EF 15
-	ora.w #gsfhl		; $8AFE7E: 09 02 00
+	ora.w #gsfhl		; $8AFE7E: 09 02 00  gsfhl: show it in the ticker
 	sta.w gsflags,y		; $8AFE81: 99 EF 15
 	bra .ex		; $8AFE84: 80 39
 .zero:		;93G .0
@@ -341,18 +341,18 @@ SetScore:		;auto: CODE_8AFE21 (from UpdateScores $82F9F4, $8F9062). 93G SetScore
 .getscore:		;93G .getscore: d0 = scoring team, d1 = other team; nibblebuffer = the .sctab rows of both ScoreOdds nibbles; returns d0 = goals 0-3
 	asl.b d0		; $8AFEDC: 06 53
 	asl.b d0		; $8AFEDE: 06 53
-	lda.w #TeamList		; $8AFEE0: A9 00 80
+	lda.w #TeamList		; $8AFEE0: A9 00 80  TeamList entry of team d0
 	sta.b a1		; $8AFEE3: 85 37
 	lda.w #TeamList>>16		; $8AFEE5: A9 83 00
 	sta.b a1+2		; $8AFEE8: 85 39
 	ldy.b d0		; $8AFEEA: A4 53
 	lda.b [a1],y		; $8AFEEC: B7 37
 	sta.b a1		; $8AFEEE: 85 37
-	ldy.w #8		; $8AFEF0: A0 08 00
+	ldy.w #8		; $8AFEF0: A0 08 00  + ScoreOdds offset (team record +8)
 	adc.b [a1],y		; $8AFEF3: 77 37
 	sta.b a1		; $8AFEF5: 85 37
 	lda.b [a1]		; $8AFEF7: A7 37
-	and.w #$0070		; $8AFEF9: 29 70 00
+	and.w #$0070		; $8AFEF9: 29 70 00  bits 4-6: row of the scoring team
 	lsr a		; $8AFEFC: 4A
 	adc.w #.sctab		; $8AFEFD: 69 83 FF
 	sta.b a1		; $8AFF00: 85 37
@@ -382,7 +382,7 @@ SetScore:		;auto: CODE_8AFE21 (from UpdateScores $82F9F4, $8F9062). 93G SetScore
 	adc.b [a1],y		; $8AFF3B: 77 37
 	sta.b a1		; $8AFF3D: 85 37
 	lda.b [a1]		; $8AFF3F: A7 37
-	and.w #$0007		; $8AFF41: 29 07 00
+	and.w #$0007		; $8AFF41: 29 07 00  bits 0-2: row of the other team
 	asl a		; $8AFF44: 0A
 	asl a		; $8AFF45: 0A
 	asl a		; $8AFF46: 0A
@@ -405,7 +405,7 @@ SetScore:		;auto: CODE_8AFE21 (from UpdateScores $82F9F4, $8F9062). 93G SetScore
 	lda.b [a1],y		; $8AFF72: B7 37
 	adc.w nibblebuffer+6		; $8AFF74: 6D 25 04
 	sta.w nibblebuffer+6		; $8AFF77: 8D 25 04
-	lda.w #4		; $8AFF7A: A9 04 00
+	lda.w #4		; $8AFF7A: A9 04 00  4 weights
 	sta.b d0		; $8AFF7D: 85 53
 	jml.l $8FE3B0		; $8AFF7F: 5C B0 E3 8F  bank $8F: 93G WeightedRandomSelect (d0 weights in nibblebuffer)
 .sctab:		;93G .sctab: weights for 0, 1, 2, 3 goals by ScoreOdds row
