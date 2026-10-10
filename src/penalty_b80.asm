@@ -1,381 +1,9 @@
-; $80E0E1-$80ED37  ROM $060E1-$06D37: setpads (logic93_1), updateanim, checkwindow (hockey93_02), setvideo, show_rink, checkfo
-; (video93_1), setsortcords, setffo, uppads (video93_2) with the SNES projxy, PenaltyManager, chkatop, checkfornewpen, Stop4Pen,
-; limitfo, chkprogress, InProgress, coinsearch, UpdatePA, SetPA (penalty93_1). Starts at setpads (boundary moved from $80E001),
-; ends before the compressed block at $80ED38 (now in bank80_F000).
-org $80E0E1
-setpads:		;copy info into pad cont so graphics knows which player/number. (93G logic93_1)
-		;   SNES: d4 = pad index (-2 puck carrier, 0/2 controllers, 4 replay target): put SCnum of X in that nibble of PadControlBits
-	stx.b xsave
-	ldx.w #$0000
-.push:
-	lda.b d0,x
-	pha
-	inx
-	inx
-	cpx.w #$0008
-	bne .push
-	ldx.b xsave
-	lda.w #$0002		; d0 = (2 + d4) * 2 = nibble shift
-	clc
-	adc.b d4
-	asl a
-	sta.b d0
-	sta.b tmp0
-	lda.w #$FFF0
-	sta.b d1
-.m1:		;d1 = $FFF0 rotated left by d0
-	lda.b tmp0
-	beq .and
-	dec.b tmp0
-	asl.b d1
-	bcc .m2
-	inc.b d1
-.m2:
-	bra .m1
-.and:
-	lda.w PadControlBits
-	and.b d1
-	sta.w PadControlBits
-	lda.w SCnum,x
-	sta.b d1
-.sh:		;d1 = SCnum << d0
-	lda.b d0
-	beq .or
-	dec.b d0
-	asl.b d1
-	bra .sh
-.or:
-	lda.w PadControlBits
-	ora.b d1
-	sta.w PadControlBits
-	stx.b xsave
-	ldx.w #$0006
-.pop:
-	pla
-	sta.b d0,x
-	dex
-	dex
-	bpl .pop
-	ldx.b xsave
-	rtl
-updateanim:		;frame switch control on struct a3. Also called from (93G hockey93_02)
-		;   SNES: SPA = offset in SPAList; next frame when SPAcnt runs out (d7), loops or ends the animation
-	lda.w SPA,x		; no animation: clear pfalock, pf2aip
-	bne .ia
-	stz.w pf2aip,x
-	stz.w pfalock,x
-	rtl
-.ia:
-	clc		; a0 = SPAList + SPA; d1 = attributes (+$10)
-	adc.w #SPAList&$FFFF
-	sta.b a0
-	lda.w #SPAList>>16
-	sta.b a0+2
-	ldy.w #$0010
-	lda.b [a0],y
-	sta.b d1
-	lda.w facedir,x
-	sta.b d0
-	lda.w sfhormode		; horizontal rink: players turn 90 degrees
-	beq .nhor
-	cpx.w #$0018
-	bcs .nhor
-	lda.b d0
-	dec a
-	dec a
-	and.w #$0007
-	sta.b d0
-.nhor:
-	lda.w attribute,x		; x flip: mirror the direction
-	bit.w #$0800
-	beq .nox
-	lda.b d0
-	eor.w #$FFFF
-	inc a
-	and.w #$0007
-	sta.b d0
-.nox:
-	lda.b d0		; a0 += direction table entry; d2 = new frame
-	asl a
-	tay
-	lda.b [a0],y
-	adc.b a0
-	sta.b a0
-	ldy.w SPAnum,x
-	sty.b d0
-	lda.b [a0],y
-	sta.b d2
-	lda.w SPAcnt,x		; SPAcnt negative: hold the frame
-	bmi .one
-	sec
-	sbc.b d7
-	sta.w SPAcnt,x
-	bpl .cframe
-	lda.w SPAnum,x		; next frame (4 bytes); a negative frame ends the list
-	clc
-	adc.w #$0004
-	sta.w SPAnum,x
-	iny
-	iny
-	iny
-	iny
-	sty.b d0
-	dey
-	dey
-	lda.b [a0],y
-	bpl .one
-	stz.b d0		; end: restart, clear pfalock/pf2aip; d1 bit 0 = looper, else SPA = 0
-	stz.w SPAnum,x
-	stz.w pf2aip,x
-	stz.w pfalock,x
-	lda.b d1
-	lsr a
-	bcs .one
-	stz.w SPA,x
-.one:		;93G .1: SPAcnt = |delay|
-	ldy.b d0
-	iny
-	iny
-	lda.b [a0],y
-	bit.w #$8000
-	beq .zero
-	eor.w #$FFFF
-	inc a
-.zero:
-	sta.w SPAcnt,x
-.cframe:		;frame = new frame (93G also has a minimum switch time)
-	lda.b d2
-	sta.w frame,x
-	rtl
-checkwindow:		;set hpos and vpos according to how screen should follow puck (93G hockey93_02)
-		;   SNES: set Hpos/Vpos so the screen follows the puck (or xc1/yc1 when sfslock)
-	lda.w yc1
-	sta.b d2
-	lda.w xc1
-	sta.b d3
-	lda.w sflags		; sfslock: use xc1/yc1
-	bit.w #sfslock
-	bne .dd
-	ldx.w #puckobj		; follow the puck, or its carrier with yleader
-	lda.w puckc
-	bmi .ok
-	asl a
-	tax
-	lda.w pfgoal,x		; carrier goes up: yleader up to 50, else down to -50
-	beq .gd
-	lda.w yleader
-	adc.b impactstep
-	sta.w yleader
-	sec
-	sbc.w #$0032
-	bmi .v1
-	bvc .ylmax
-	bra .ok
-.v1:
-	bvc .ok
-.ylmax:
-	lda.w #$0032
-	sta.w yleader
-	bra .ok
-.gd:
-	lda.w yleader
-	sec
-	sbc.b impactstep
-	sta.w yleader
-	sec
-	sbc.w #$FFCE
-	beq .ylmin
-	bmi .v2
-	bvs .ylmin
-	bra .ok
-.v2:
-	bvs .ok
-.ylmin:
-	lda.w #$FFCE
-	sta.w yleader
-.ok:		;d2 = Ypos + Yvel/128 + yleader, d3 = Xpos
-	lda.w Yvel,x
-	lsr a
-	lsr a
-	lsr a
-	lsr a
-	lsr a
-	lsr a
-	lsr a
-	bit.w #$0100
-	beq .sy
-	ora.w #$FE00
-.sy:
-	clc
-	adc.w Ypos,x
-	clc
-	adc.w yleader
-	sta.b d2
-	sta.w yc1
-	lda.w Xpos,x
-	sta.b d3
-	sta.w xc1
-.dd:
-	lda.b d2		; |target - Vpos| > 10: scroll
-	sec
-	sbc.w Vpos
-	sta.b d0
-	sec
-	sbc.w #$FFF6
-	bmi .v3
-	bvs .up
-	bra .one
-.v3:
-	bvs .one
-.up:
-	lda.b d2
-	sec
-	sbc.w #$FFF6
-	sta.b d1
-	sec
-	sbc.w #$FF39
-	beq .yslimd
-	bmi .v4
-	bvs .yslimd
-	bra .two
-.v4:
-	bvs .two
-.yslimd:
-	lda.w #$FF39
-	sta.b d1
-	bra .two
-.one:		;93G .1
-	lda.b d0
-	sec
-	sbc.w #$000A
-	beq .twox
-	bmi .v5
-	bvc .down
-	bra .twox
-.v5:
-	bvc .twox
-.down:
-	lda.b d2
-	sec
-	sbc.w #$000A
-	sta.b d1
-	sec
-	sbc.w #$0100
-	bmi .v6
-	bvc .yslimu
-	bra .two
-.v6:
-	bvc .two
-.yslimu:
-	lda.w #$0100
-	sta.b d1
-.two:		;93G .2: Vpos += (target - Vpos) / 8 (at least 1)
-	lda.b d1
-	sec
-	sbc.w Vpos
-	beq .twox
-	lsr a
-	lsr a
-	lsr a
-	bit.w #$1000
-	beq .s2
-	ora.w #$E000
-.s2:
-	cmp.w #$0000
-	bne .v2b
-	inc a
-.v2b:
-	clc
-	adc.w Vpos
-	sta.w Vpos
-.twox:		;93G .2x
-	lda.b d3		; |target - Hpos| > 40: scroll
-	sec
-	sbc.w Hpos
-	sta.b d0
-	sec
-	sbc.w #$FFD8
-	bmi .v7
-	bvs .left
-	bra .three
-.v7:
-	bvs .three
-.left:
-	lda.b d3
-	sec
-	sbc.w #$FFD8
-	sta.b d1
-	sec
-	sbc.w #$FFC4
-	bmi .v8
-	bvs .xslimn
-	bra .four
-.v8:
-	bvs .four
-.xslimn:
-	lda.w #$FFC4
-	sta.b d1
-	bra .four
-.three:		;93G .3
-	lda.b d0
-	sec
-	sbc.w #$0028
-	beq .rtl
-	bmi .v9
-	bvc .right
-	bra .rtl
-.v9:
-	bvc .rtl
-.right:
-	lda.b d3
-	sec
-	sbc.w #$0028
-	sta.b d1
-	sec
-	sbc.w #$003C
-	beq .four
-	bmi .v10
-	bvc .xslim
-	bra .four
-.v10:
-	bvc .four
-.xslim:
-	lda.w #$003C
-	sta.b d1
-.four:		;93G .4: Hpos += (target - Hpos) / 8 (at least 1)
-	lda.b d1
-	sec
-	sbc.w Hpos
-	beq .rtl
-	lsr a
-	lsr a
-	lsr a
-	bit.w #$1000
-	beq .s4
-	ora.w #$E000
-.s4:
-	cmp.w #$0000
-	bne .h2
-	inc a
-.h2:
-	clc
-	adc.w Hpos
-	sta.w Hpos
-.rtl:
-	rtl
-setvideo:		;this is not vblank code but sets up ram for vblank transfers. (93G video93_1)
-		;   SNES: once per game frame, if vblank is idle (vb2 / vb2_blank): build the sprite table and the dma list, then hand VBlank_long to vbint
-	lda.b vbint		; vblank busy with a list: skip this frame
-	cmp.w #vb2
-	beq .go
-	cmp.w #vb2_blank
-	bne .rtl
-	lda.b fadein		; first time after vb2_blank: fade in
-	bne .go
-	stz.b brightness
-	inc.b fadein
-.go:		;clear the sprite table
-	jsl.l ClearSprites		; bank $8F: clear the sprite table (all sprites off screen)
+; penalty_b80: 93G penalty93_1/penalty93_2: penalties, scoreboard, ticker, intermission.
+; Bank $80. Each block keeps its ROM address with org; blocks of other modules sit between them.
+
+org $80A828
+ClrHor:		;revert the graphics back to vertical ice rink mode. 93 does not remap the fonts (93G penalty93_1)
+		;   SNES: revert to the vertical ice rink: clear sfhormode, Oldrow, SprSort, clear the text map, printscores1
 	stx.b xsave
 	ldx.w #$0000
 .push:
@@ -386,414 +14,510 @@ setvideo:		;this is not vblank code but sets up ram for vblank transfers. (93G v
 	cpx.w #$003C
 	bne .push
 	ldx.b xsave
-	jsl.l show_rink		; show_rink, checkfo, checksso, setsortcords, setffo, showclock, showzam, showcrowd, showref
-	jsl.l checkfo
-	jsl.l checksso		; bank $8C: 93G checksso
-	jsl.l setsortcords
-	jsl.l setffo
-	jsl.l showclock		; bank $8F: 93G showclock
-	jsl.l showzam		; bank $8F: 93G showzam (elapsed time from vcountmark)
-	jsl.l showcrowd		; bank $88: 93G showcrowd
-	jsl.l showref		; bank $8B: 93G showref (clears sf2refref)
-	jsl.l ShowRinkRows		; bank $8F: queue the rink map rows for Vscroll (93G show_rink rows)
-	jsl.l QueueTextDMA		; bank $8F: queue the changed textmap words (textdirtylo/hi)
-	lda.w #VBlank_long		; VBlank sends it all next vblank
-	sta.b vbint
+	stz.w sfhormode		; vertical
+	lda.w #999		; Oldrow = 999: redraw the rink rows
+	sta.w Oldrow
+	jsl.l SprSort
+	lda.w sflags
+	bit.w #sfpz		; paused: keep the text
+	bne .pop
+	lda.w blankchar		; clear the text map
+	clc
+	adc.w charofs
+	ldx.w #$07FE
+.clr:
+	sta.l textmap,x
+	dex
+	dex
+	bpl .clr
+	stz.b textdirtylo		; whole text map dirty
+	lda.w #$03FF
+	sta.b textdirtyhi
+	jsl.l printscores1		; bank $89: 93G printscores1
+.pop:
 	stx.b xsave
 	ldx.w #$003A
-.pop:
+.popl:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .pop
+	bpl .popl
 	ldx.b xsave
 	ldx.b a3
-.rtl:
 	rtl
-show_rink:		;using hpos and vpos set scroll cords; queue rink map rows on the dma list (a5) (93G video93_1)
-		;   SNES: vertical rink: Hscroll = Hpos - 128, Vscroll = -Vpos - 112 (the rows are sent elsewhere)
-	lda.w sfhormode
-	bne .rtl
-	lda.w Hpos
-	sec
-	sbc.w #$0080
-	sta.w Hscroll
-	lda.w Vpos
-	eor.w #$FFFF
-	inc a
-	sec
-	sbc.w #$0070
-	sta.w Vscroll
-.rtl:
-	rtl
-checkfo:		;check for face off sprites. Called from setvideo. Falls into checkfo2 (93G video93_1)
-		;   SNES: checkfo2 (video93_1): face off sprites: the three fofdata2 entries (frame, flags) at fodropx/fodropy, priority $30
-	lda.w sflags		; not in pause, face off only
-	bit.w #sfpz
-	bne .rtl
-	lda.w sflags
-	bit.w #sf2faceoff
-	beq .rtl
-	lda.w #$0030		; faceoff sprites above the players
-	sta.b sprpriority
+
+org $80B84C
+AvgCline:		;return d0 = average energy of current line on team a2 (93G penalty93_2)
+		;   SNES: d0 = average energy of the current line of team a2
+	stx.b xsave
 	ldx.w #$0000
-.top:
-	lda.w fodropx
-	sta.b sprx
-	lda.w fodropy
-	sta.b spry
-	lda.w fofdata2,x		; frame + faceoff sprite base $213
-	clc
-	adc.w #$0213
-	sta.b sprframe
-	lda.w fofdata2+2,x
-	and.w #$0800
-	sta.b sprhflip
-	cpx.w #$0004		; third entry (the ref): sprflag
-	bne .add
-	lda.w #$8000
-	sta.b sprflag
-.add:
-	phx
-	jsl.l addframe		; bank $8F: 93G addframe (sprframe at sprx/spry)
-	plx
-	inx
-	inx
+.pushd:
+	lda.b d1,x
+	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .top
-	lda.w #$0020
-	sta.b sprpriority
-.rtl:
-	rtl
-setsortcords:		;setup sort cord graphics: addframe for the 16 objects in OOlist order. (93G video93_2)
-		;   SNES: addframe for the 16 objects in OOlist order (hidden when Zpos < 0 or off the screen)
-	lda.w #OOlist		; a4 = OOlist
-	sta.b a4
-.top:
-	lda.b (a4)
-	and.w #$00FF
-	tax
-	lda.w Zpos,x
-	bmi .next
-	sta.b d2
-	lda.w Xpos,x
-	sta.b d0
-	lda.w Ypos,x
-	sta.b d1
-	jsl.l projxy
-	cmp.w #OFFSCREEN		; off the screen
-	beq .next
-	sta.b spry
-	lda.b d0
-	sta.b sprx
-	lda.w frame,x		; oldframe = frame
-	sta.w oldframe,x
-	sta.b sprframe
-	lda.w attribute,x
-	and.w #$0800
-	sta.b sprhflip
-	lda.w attribute,x
-	and.w #$1000
-	sta.b sprvflip
-	lda.w attribute,x		; attribute bit 0: sprflag
-	lsr a
-	bcc .add
-	lda.w #$8000
-	sta.b sprflag
-.add:
-	jsl.l addframe		; bank $8F: 93G addframe (sprframe at sprx/spry)
-.next:
-	inc.b a4
-	lda.b a4
-	cmp.w #OOlist+$10
-	bne .top
-	rtl
-projxy:		;SNES (93G addframe position math): rink d0/d1/d2 = x/y/z to screen: d0 = x - Hpos + 128, d1 = 112 - (y - Vpos + 1.5*z); d1 = OFFSCREEN when |x| or |y| > 144. Horizontal
-		;   rink: x = -y, y = x - 197
-	lda.w sfhormode
-	beq .nhor
-	lda.b d0
-	pha
-	lda.b d1
-	eor.w #$FFFF
-	inc a
-	sta.b d0
-	pla
-	sec
-	sbc.w #$00C5
-	sta.b d1
-	bra .cx
-.nhor:
-	lda.b d0
-	sec
-	sbc.w Hpos
-	sta.b d0
-	lda.b d1
-	sec
-	sbc.w Vpos
-	sta.b d1
-.cx:
-	lda.b d0
-	bit.w #$8000
-	beq .ax
-	eor.w #$FFFF
-	inc a
-.ax:
-	cmp.w #$0091		; |x| > 144: off
-	bcs .off
-	lda.b d0
-	adc.w #$0080
-	sta.b d0
-	lda.b d2		; d1 += 1.5 * z
-	asl a
-	clc
-	adc.b d2
-	pha
-	asl a
-	pla
-	ror a
-	clc
-	adc.b d1
-	sta.b d1
-	bit.w #$8000
-	beq .ay
-	eor.w #$FFFF
-	inc a
-.ay:
-	cmp.w #$0091
-	bcs .off
-	lda.w #$0070
-	sec
-	sbc.b d1
-	sta.b d1
-	rtl
-.off:
-	lda.w #OFFSCREEN
-	sta.b d1
-	rtl
-setffo:		;draw the 5 objects tied to icerink scrolling (pads ...). Called from setvideo. (93G video93_2)
-		;   SNES: uppads, then draw the 5 objects tied to rink scrolling (pads 0-2 with their 3 character label, gloves; pad 3 skipped)
-	jsl.l uppads
+	bne .pushd
+	ldx.b xsave
+	stx.b xsave
 	ldx.w #$0000
-.top:
-	cpx.w #$0006
-	bne .obj
-	jmp.w .next		; pad 3: not drawn
-.obj:
-	lda.w ffox,x
-	sta.b d0
-	lda.w ffoy,x
-	sta.b d1
-	lda.w ffoz,x		; hidden
-	bpl .shown
-	jmp.w .next
-.shown:
+.pusha:
+	lda.b a0,x
+	pha
+	inx
+	inx
+	cpx.w #$0004
+	bne .pusha
+	ldx.b xsave
+	stz.b d0
+	stz.b d1
+	lda.w #$0005
 	sta.b d2
-	jsl.l projxy
-	cmp.w #OFFSCREEN
-	bne .add
-	jmp.w .next
-.add:
-	sta.b spry
-	lda.b d0
-	sta.b sprx
-	lda.w ffoframe,x		; frame, flip bits from ffoattr
-	sta.b sprframe
-	lda.b ffoattr,x
-	and.w #$0800
-	sta.b sprhflip
-	lda.b ffoattr,x
-	and.w #$1000
-	sta.b sprvflip
-	phx
-	jsl.l addframe		; bank $8F: 93G addframe (sprframe at sprx/spry)
-	plx
-	cpx.w #$0006		; gloves: no label
-	bcc .label
-	jmp.w .next
-.label:		;label: two digits (rostnum, $A+ = blank) and a position letter
-	ldy.w #$0000		; mesarea+2 = label tiles, mesarea = count; d0 moves left 4 per digit
-	lda.w padcont,x
-	lsr a
-	lsr a
-	lsr a
-	lsr a
-	and.w #$000F
-	beq .lo
-	cmp.w #$000A
-	bcc .hi
-	jmp.w .next
-.hi:
-	sta.w mesarea+2,y
-	iny
-	dec.b d0
-	dec.b d0
-	dec.b d0
-	dec.b d0
-.lo:
-	lda.w padcont,x
-	and.w #$000F
-	cmp.w #$000A
-	bcs .next
-	sta.w mesarea+2,y
-	iny
-	dec.b d0
-	dec.b d0
-	dec.b d0
-	dec.b d0
-	lda.w padcont+1,x		; position letter from ButtonLabelCharTable, after a blank
-	and.w #$0007
-	beq .draw
-	adc.w #ButtonLabelCharTable-1
-	sta.b a4
-	lda.w #ButtonLabelCharTable>>16
-	sta.b a4+2
-	lda.b d0
-	sec
-	sbc.w #$0006
-	sta.b d0
-	lda.w #$FFFF
-	sta.w mesarea+2,y
-	iny
-	lda.b [a4]
-	sta.w mesarea+2,y
-	iny
-.draw:
-	sty.w mesarea
-	stz.b d0+2
-.ch:
-	ldy.b d0+2
-	cpy.w mesarea
+	ldy.b a2
+	lda.w tmsort,y
+	sta.b a0
+.loop:
+	ldy.b a0
+	lda.w position,y
 	beq .next
-	lda.w mesarea+2,y
+	bmi .next
+	lda.w pnum,y
 	and.w #$00FF
-	cmp.w #$00FF
-	beq .sp
-	adc.w #$021E		; small font sprite base $21E
-	sta.b sprframe
-	lda.b d0
-	sta.b sprx
-	lda.b d1
-	clc
-	adc.w #$000A
-	sta.b spry
-	phx
-	jsl.l addframe		; bank $8F: 93G addframe (sprframe at sprx/spry)
-	plx
-	inc.b d0
-	inc.b d0
-	inc.b d0
-	inc.b d0
-.sp:		;blank: 4 pixels
-	inc.b d0
-	inc.b d0
-	inc.b d0
-	inc.b d0
-	inc.b d0+2
-	bra .ch
+	asl a
+	sta.b d3
+	lda.b a2
+	beq .idx
+	lda.w #$0034
+.idx:
+	adc.b d3
+	tay
+	lda.w tmpde,y
+	adc.b d0
+	sta.b d0
+	inc.b d1
 .next:
-	inx
-	inx
-	cpx.w #$000A
+	inc.b a0
+	inc.b a0
+	dec.b d2
+	bpl .loop
+	lda.b d1		; players counted
+	beq .ex
+	sta.b mula
+	lda.b d0
+	sta.b mulb
+	jsl.l divu16
+	sta.b d0
+.ex:
+	stx.b xsave
+	ldx.w #$0002
+.popa:
+	pla
+	sta.b a0,x
+	dex
+	dex
+	bpl .popa
+	ldx.b xsave
+	stx.b xsave
+	ldx.w #$000A
+.popd:
+	pla
+	sta.b d1,x
+	dex
+	dex
+	bpl .popd
+	ldx.b xsave
+	rtl
+
+org $80B9F4
+updatepwrplay:		;show graphic and time remaining for power plays. 93: plays song $33 at the start of a home power play, then prints the time and the team on the power play (93G penalty93_1)
+		;   SNES: show the power play box: time left and the team on the power play
+	stz.b a2		; a2 = home, a3 = away
+	lda.w #$0002
+	sta.b a3
+	lda.w tmap
+	sec
+	sbc.w tmap+2
+	sta.b d0
+	bne .neg
+	jmp.w updatepwrplay_clr
+.neg:
+	bpl .t0
+	lda.w sflags
+	bit.w #sf2pwrtm		; sf2pwrtm
+	bne .upp
+	jsl.l updatepwrplay_clr
+	lda.w #sf2pwrtm
+	tsb.w sflags
+	bra .upp
+.t0:
+	ldx.b a2
+	ldy.b a3
+	stx.b a3
+	sty.b a2
+	lda.w sflags
+	bit.w #sf2pwrtm
+	beq .upp
+	jsl.l updatepwrplay_clr
+	lda.w #sf2pwrtm
+	trb.w sflags
+.upp:
+	lda.w #sf2pwrplay		; sf2pwrplay; new: tmPwrPlays + 1
+	tsb.w sflags
+	bne .uppt
+	ldx.b a3
+	inc.w tmPwrPlays,x
+.uppt:
+	jsl.l printz
+	dw $0012		; printz inline string: length (counts itself), then control bytes / text
+	db $BF,$01,$19,"   ",$16,$17,$18,$19,$BF,$01,$1A,"   "
+	jsl.l GetLowestPen		; bank $8D: 93G GetLowestPen
+	jsl.l PushTime		; bank $8F: 93G PushTime
+	jsl.l print
+	ldx.b a3
+	lda.w tmdata,x		; team name (bank $83)
+	sta.b a0
+	lda.w #TeamList>>16
+	sta.b a0+2
+	lda.w #mesarea		; a3 = mesarea, length 2
+	sta.b a3
+	lda.w #mesarea>>16
+	sta.b a3+2
+	lda.w #$0002
+	sta.b [a3]
+	jsl.l appendz		; appendz (bank $82)
+	dw $0005		; printz inline string: length (counts itself), then control bytes / text
+	db $BF,$01,$19
+	lda.b a0
+	ldy.w #$0004
+	clc
+	adc.b [a0],y
+	sta.b a0
+	adc.b [a0]
+	sta.b a0
+	sta.b a1
+	lda.b a0+2
+	sta.b a1+2
+	jsl.l appstring		; appstring, bank $8F: 93G appstring
+	lda.b a3
+	sta.b a1
+	lda.b a3+2
+	sta.b a1+2
+	jmp.w print
+updatepwrplay_clr:		;93G updatepwrplay .clrpwrplay: power play over, EASN logo back
+	lda.w #sf2pwrplay
+	trb.w sflags
 	beq .rtl
-	jmp.w .top
+	jml.l EASNLogo		; EASNLogo, bank $8D: 93G EASNLogo
 .rtl:
 	rtl
-ButtonLabelCharTable:		;93G ButtonLabelCharTable (video93_2): tile of the position letter in the pad label, by position 1-6
-	db $0B,$0B,$0C,$0A,$0D,$0E		; tiles by position (index 1-6)
-uppads:		;update the gloves object and the 4 pad objects, and queue new pad labels. (93G video93_2)
-		;   SNES: gloves object from glovecords, and the 4 pad objects from the PadControlBits nibbles ($E = stays, $F = hidden); padcont = label code (position <<
-		;   8 | rostnum)
-	ldy.w #$0008		; gloves (ffo 4): hidden unless glovecords
-	lda.w #$FFFF
-	sta.w ffoz,y
-	lda.w glovecords
-	and.w #$00FF
-	beq .nogloves
-	and.w #$00FF
-	bit.w #$0080
-	beq .gx
-	ora.w #$FF00
-.gx:
-	asl a
-	asl a
-	sta.w ffox,y
-	lda.w glovecords+1
-	and.w #$00FF
-	bit.w #$0080
-	beq .gy
-	ora.w #$FF00
-.gy:
-	asl a
-	asl a
-	sta.w ffoy,y
-	lda.w #$0000
-	sta.w ffoz,y
-.nogloves:
-	lda.w #$0003		; 4 pads: a0 = ffo index, a1 = padcont, d3 = PadControlBits
-	sta.b d4
-	stz.b a0
-	lda.w #padcont
+printteamname:		;print the team name of team d3 (0 home) at printx/printy, then printy += 2
+	lda.w printx
+	pha
+	lda.w tmdata		; tmdata of team d3
 	sta.b a1
-	lda.w #$0000
+	lda.w #TeamList>>16
 	sta.b a1+2
-	stz.b a2
-	lda.w PadControlBits
-	sta.b d3
-.top:
 	lda.b d3
-	and.w #$000F
-	sta.b d0
-	lda.w #$000F		; label code for $E
+	beq .name
+	lda.w tmdata+2
+	sta.b a1
+.name:
+	ldy.w #Teamname
+	lda.b [a1],y
+	clc
+	adc.b a1
+	sta.b a1
+	lda.b [a1]
+	adc.b a1
+	sta.b a1
+	jsl.l print
+	pla
+	sta.w printx
+	inc.w printy
+	inc.w printy
+	rtl
+
+org $80C18F
+AddPenalty:		;93G AddPenalty (penalty93_1): add penalty d0 (PenaltyList offset) for player X. Ignored while the clock is stopped, when penalties are off, or offsides when offsides
+		;   are off. Falls into AddPenalty2
+	lda.w gmclock		; clock stopped
+	bne .rtl
+	lda.b d0
+	cmp.w #PenIcing		; icing always counts
+	beq AddPenalty2
+	lda.w OptPen		; penalties off
+	beq .rtl
+	lda.w gmode
+	bit.w #gmoffs		; offsides on: all count
+	bne AddPenalty2
+	lda.b d0
+	cmp.w #PenOffsides		; offsides off: no offsides penalty
+	bne AddPenalty2
+.rtl:
+	rtl
+AddPenalty2:		;93G AddPenalty2 (penalty93_1): forced penalties like face off and game over. d0 = penalty, X = player or a player of the penalized team
+	lda.w sfhormode		; horizontal rink: none
+	beq .go
+	jmp.w .rtl
+.go:
+	stx.b xsave
+	ldx.w #$0000
+.pushd:
+	lda.b d1,x
+	pha
+	inx
+	inx
+	cpx.w #$0004
+	bne .pushd
+	ldx.b xsave
+	stx.b xsave
+	ldx.w #$0000
+.pusha:
+	lda.b a0,x
+	pha
+	inx
+	inx
+	cpx.w #$0008
+	bne .pusha
+	ldx.b xsave
+	lda.b d0
+	sec
+	sbc.w #$000E		; goal (93G $E) and up
+	bmi .v1
+	bvc .snd
+	bra .nosnd
+.v1:
+	bvc .nosnd
+.snd:		;goal and up: crowd and a sound
+	lda.b crowdlevel		; crowd +200
+	clc
+	adc.w #$00C8
+	sta.b crowdlevel
+	lda.w #SFXcrowdboo		; home penalized: boo; visitors: cheer
+	pha
+	lda.w pfteam,x
+	beq .sfx
+	lda.w #SFXcrowdcheer
+	sta.b $01,s
+.sfx:
+	jsl.l sfx
+.nosnd:
+	lda.w #PenBuf		; a1 = PenBuf, 32 slots
+	sta.b a1
+	lda.w #PenBuf>>16
+	sta.b a1+2
+	lda.w #$001F
 	sta.b d1
-	lda.b d0
-	cmp.w #$000E
-	beq .chg
-	ldy.b a0		; hidden
-	lda.w #$FFFF
-	sta.w ffoz,y
-	lda.b d0
-	cmp.w #$000F
-	beq .next
-	asl.b d0		; pad at the player
-	ldy.b d0
-	lda.w Xpos,y
-	ldy.b a0
-	sta.w ffox,y
-	ldy.b d0
-	lda.w Ypos,y
-	ldy.b a0
-	sta.w ffoy,y
-	lda.w #$0000
-	sta.w ffoz,y
-	ldy.b d0
-	lda.w position,y
+.find:		;find a free PenBuf slot
+	lda.b [a1]
+	inc.b a1
+	inc.b a1
+	tay
+	beq .put
+	dec.b d1
+	bpl .find
+	bra .noplayer
+.put:
+	dec.b a1
+	dec.b a1
+	txa		; store (SCnum << 8) | penalty
+	lsr a
 	xba
 	and.w #$FF00
-	sta.b d1
-	lda.w rostnum,y
-	and.w #$00FF
-	tsb.b d1
-.chg:
-	lda.b d1
+	ora.b d0
 	sta.b [a1]
-.next:
-	lda.b d3
-	lsr a
-	lsr a
-	lsr a
-	lsr a
-	sta.b d3
-	inc.b a0
-	inc.b a0
-	inc.b a1
-	inc.b a1
-	dec.b d4
-	bpl .top
+	lda.w #PenaltyList>>16		; a0 = PenaltyList + [d0]
+	sta.b a0+2
+	lda.w #PenaltyList
+	sta.b a0
+	ldy.b d0
+	clc
+	adc.b [a0],y
+	sta.b a0
+	lda.b [a0]		; penalty minutes
+	and.w #$00FF
+	beq .noplayer
+	lda.w pflags,x
+	pha
+	ora.w #pf2pen		; pf2pen; already set: drop this one
+	sta.w pflags,x
+	pla
+	bit.w #pf2pen
+	beq .noplayer
+	lda.w #$0000
+	sta.b [a1]
+.noplayer:
+	stx.b xsave
+	ldx.w #$0006
+.popa:
+	pla
+	sta.b a0,x
+	dex
+	dex
+	bpl .popa
+	ldx.b xsave
+	stx.b xsave
+	ldx.w #$0002
+.popd:
+	pla
+	sta.b d1,x
+	dex
+	dex
+	bpl .popd
+	ldx.b xsave
+.rtl:
 	rtl
+
+org $80D12E
+ChkShotStat:		;add to shot stat if a shot was taken. 93 also raises the crowd and counts the shot for the shooter and against the other team's goalie (93G penalty93_2)
+		;   SNES: if a shot was taken (sf2shot, cleared here), add 1 to the shooting team tmshots
+	lda.w #sf2shot
+	trb.w sflags
+	beq .rtl
+	stx.b xsave
+	ldx.w #$0000
+.push:
+	lda.b d0,x
+	pha
+	inx
+	inx
+	cpx.w #$0008
+	bne .push
+	ldx.b xsave
+	phx
+	lda.w shotplayer
+	asl a
+	tax
+	stx.b a3		; a3 = the shooter
+	lda.w #$0001
+	sta.b d0
+	lda.w #tmshots
+	sta.b d1
+	jsl.l addteamstat
+	plx
+	stx.b a3
+	stx.b xsave
+	ldx.w #$0006
+.pop:
+	pla
+	sta.b d0,x
+	dex
+	dex
+	bpl .pop
+	ldx.b xsave
+.rtl:
+	rtl
+addteamstat:		;add d0 to the team word stat at d1 (+2 for team 2, pfteam of X). 93G inline in ChkShotStat
+	ldy.b d1		; pfteam: team 2 word
+	lda.w pfteam,x
+	beq .add
+	iny
+	iny
+.add:
+	lda.w $0000,y		; absolute stat address in d1 (+$0000,y)
+	clc
+	adc.b d0
+	sta.w $0000,y
+	rtl
+
+org $80D329
+PenGoalStuff:		;do this stuff after a goal. a1 = scored on team, a2 = scoring team. If the scoring team had more players on ice, the first scored on player in the box without a coincidental
+		;   penalty is released (93G penalty93_1)
+		;   SNES: a1 = scored on team, a2 = scoring team. If the scoring team had more players on the ice, release the first scored on
+		;   player in the box without a coincidental penalty
+	stx.b xsave
+	ldx.w #$0000
+.pushd:
+	lda.b d0,x
+	pha
+	inx
+	inx
+	cpx.w #$000C
+	bne .pushd
+	ldx.b xsave
+	stx.b xsave
+	ldx.w #$0000
+.pusha:
+	lda.b a0,x
+	pha
+	inx
+	inx
+	cpx.w #$0004
+	bne .pusha
+	ldx.b xsave
+	jsl.l ClearPenaltyBuffer		; ClearPenaltyBuffer, bank $8F: 93G ClearPenaltyBuffer
+	ldy.b a2
+	lda.w tmap,y		; tmap(a2) - tmap(a1) > 0?
+	ldy.b a1
+	sec
+	sbc.w tmap,y
+	beq .ex
+	bmi .v1
+	bvc .more
+	bra .ex
+.v1:
+	bvc .ex
+.more:		;scoring team had more players on the ice
+	lda.b a1
+	beq .lst
+	lda.w #$001A
+.lst:
+	sta.b a0
+.loop:		;next player in the box list (negative = end)
+	ldy.b a0
+	lda.w tmboxlist,y
+	inc.b a0
+	and.w #$00FF
+	sta.b d2
+	bit.w #$0080
+	bne .ex
+	lda.b a1
+	beq .tm
+	lda.w #$0034
+.tm:
+	clc
+	adc.b d2
+	tay
+	lda.w tmpdst,y		; coincidental penalty: skip
+	bit.w #$4000
+	bne .loop
+	lda.w #$0000		; out of the box, one more on the ice, power play goal
+	sta.w tmpdst,y
+	jsl.l RemovePlayerFromList		; bank $8F: 93G RemovePlayerFromList
+	ldy.b a1
+	lda.w tmap,y
+	inc a
+	sta.w tmap,y
+	ldy.b a2
+	lda.w tmPwrGoals,y
+	inc a
+	sta.w tmPwrGoals,y
+	lda.w #tmflcc
+	tsb.w tmflags		; line change box redraw
+	tsb.w tmflags+2
+.ex:
+	stx.b xsave
+	ldx.w #$0002
+.popa:
+	pla
+	sta.b a0,x
+	dex
+	dex
+	bpl .popa
+	ldx.b xsave
+	stx.b xsave
+	ldx.w #$000A
+.popd:
+	pla
+	sta.b d0,x
+	dex
+	dex
+	bpl .popd
+	ldx.b xsave
+	rtl
+
+org $80E6C7
 PenaltyManager:		;called periodically. d7 = elapsed time since last call (93G penalty93_1)
 		;   SNES: updatepentime, checkfornewpen, chkprogress, UpdatePA
 	jsl.l updatepentime		; updatepentime, checkfornewpen, chkprogress, then UpdatePA, bank $8F: 93G updatepentime
@@ -1643,3 +1367,68 @@ SetPA:		;start ref animation. d0 = animation (penalty number). 93: goal also cal
 	sta.w penmsgtimer
 .pa2:
 	jml.l SetPA2
+
+org $80FED1
+reenergizeteam:		;set all players to max energy on team a2. 93 also moves players marked -3 in tmpdst to the bench (-2). Called from SetupTeamForIntermission and StartHL2 .setteam (93G
+		;   penalty93_2)
+		;   SNES: max energy for every player of team a2; TMPDOUT players go to the bench
+	lda.w #$0032
+	sta.b d0
+.top:
+	lda.b a2
+	beq .tm
+	lda.w #$0034
+.tm:
+	clc
+	adc.b d0
+	tay
+	lda.w #$1000		; max energy
+	sta.w tmpde,y
+	lda.w tmpdst,y		; out: back to the bench
+	cmp.w #TMPDOUT
+	bne .nb
+	lda.w #TMPDBENCH
+	sta.w tmpdst,y
+.nb:
+	dec.b d0
+	dec.b d0
+	bpl .top
+	rtl
+unusedFF:		;unused, $FF fill up to the internal header
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF
+	db "NHLPA Hockey '93     "		; title (21 bytes)
+	db $30		; map mode: LoROM, FastROM
+	db $00		; cartridge type: ROM only
+	db $09		; ROM size: 512 KB
+	db $00		; SRAM size: none
+	db $01		; country: USA
+	db $69		; licensee: Electronic Arts
+	db $00		; version
+	dw $B75A		; checksum complement
+	dw $48A5		; checksum
+	db $FF,$FF,$FF,$FF		; native mode vectors:
+	dw VBjsr&$FFFF		; COP
+	dw BRKHalt&$FFFF		; BRK
+	dw VBjsr&$FFFF		; ABORT
+	dw VBjsr&$FFFF		; NMI
+	dw Start&$FFFF		; (unused)
+	dw HBjsr&$FFFF		; IRQ
+	db $FF,$FF,$FF,$FF		; emulation mode vectors:
+	dw VBjsr&$FFFF		; COP
+	dw VBjsr&$FFFF		; (unused)
+	dw VBjsr&$FFFF		; ABORT
+	dw VBjsr&$FFFF		; NMI
+	dw Start&$FFFF		; RESET
+	dw HBjsr&$FFFF		; IRQ/BRK

@@ -1,4 +1,4 @@
-; NHLPA Hockey '93 (SNES) - full ROM include list, in ROM order.
+; NHLPA Hockey '93 (SNES) - top level: hardware registers, macros, RAM names, then the module files (docs/file_map.md).
 ; LoROM + FastROM (map mode $30), 4 Mbit, 16 banks mapped at $80-$8F.
 asar 1.91
 lorom
@@ -6,14 +6,15 @@ check bankcross off
 incsrc "inc/snes_regs.asm"
 incsrc "macros/snes93.mac"
 incsrc "ram93snes.asm"
-incsrc "bank80_8000.asm"
-incsrc "bank80_9000.asm"
-incsrc "bank80_A000.asm"
-incsrc "bank80_B000.asm"
-incsrc "bank80_C000.asm"
-incsrc "bank80_D000.asm"
-incsrc "bank80_E000.asm"
-incsrc "bank80_F000.asm"
+; Module files (93G source file names, one per module per bank). Every block has its own org, so this order
+; does not move any byte; it follows the ROM address of each file's first block.
+incsrc "main.asm"
+incsrc "video_b80.asm"
+incsrc "logic_b80.asm"
+incsrc "middle_b80.asm"
+incsrc "hockey_b80.asm"
+incsrc "penalty_b80.asm"
+incsrc "gfx/graphics_b80.asm"
 incsrc "bank81_8000.asm"
 incsrc "bank81_9000.asm"
 incsrc "bank81_A000.asm"
