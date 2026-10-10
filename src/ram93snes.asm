@@ -161,7 +161,7 @@ rndb2		= $0493	; high byte of the new seed after each random
 seed		= $04A1	; 32-bit random seed (randomd0). 92 seed, 93G StanleyCupTimer. Its low bits also serve as a quick random
 sfxmutetime	= $04A7	; vcount when sound effects were cut off: sfx are dropped for 180 frames after it
 shotplayer	= $04A5	; SCnum of the player who shot last. 93G shotplayer
-sndsettle	= $049F	; set to 10 after the in-game sample upload (no reader found)
+sndsettle	= $049F	; set to 10 after the in-game sample upload: p_music_vblank sends no commands until it counts down
 cuetimer	= $04A9	; frames left of a music cue; sfx are dropped while it runs
 sprslottime	= $04AB	; 512 words: sprclock value when each 32-byte VRAM sprite tile slot was last used
 colorflag1	= $08B7	; cleared by setplayercolors (no reader found)
@@ -184,6 +184,7 @@ xc1		= $08F5	; scroll lock x (fight). 93G xc1
 yc1		= $08F7	; scroll lock y. 93G yc1
 yleader		= $08F9	; lead distance on scrolling. 93G yleader
 vcountmark	= $08FB	; 32-bit vcount snapshot: elapsed time base (setupice sets it 2*$10000 frames back)
+lastframevc	= $08DB	; vcount at the last replay frame shown (ReplayMode, bank $8F); not read
 zamx		= $08DD	; cleared by setupice (93G st zamx: zamboni x cord)
 Vpos		= $08DF	; ice rink vertical position. 93G Vpos
 Vscroll		= $08E1	; vertical scroll (low 3 bits = BG2 fine scroll). 93G Vscroll
@@ -426,6 +427,7 @@ sfslock		= $0040	; scroll lock to xc1/yc1 (93G sfslock 6)
 sf2faceoff	= $0100	; face off in progress (93G sf2faceoff 0)
 sf2refref	= $0200	; ref needs refresh (93G sf2refref 1)
 sf2drec		= $0400	; disable replay record (93G sf2drec 2)
+sf2replay	= $0800	; replay in progress (93G sf2replay 3)
 sf2shot		= $1000	; shot was taken (93G sf2shot 4)
 sf2pwrplay	= $2000	; power play in progress (93G sf2pwrplay 5)
 sf2pwrtm	= $4000	; 0 for team 1 in power play (93G sf2pwrtm 6)
@@ -441,6 +443,7 @@ pf2npc		= $8000	; no player collision (93G pflags2 bit 5)
 pf2inj		= $0004	; injured (93G pflags2 bit 6, kept in pflags bit 2 here)
 ; sflags3 bits
 sf3llcs		= $0001	; lower line change box on screen (93G sf3llcs 0)
+sf3rmplay	= $0002	; replay play mode on (93G sf3rmplay 1)
 sf3fo		= $0010	; face off just ended: the next puck pickup wins it (93G sflags3 bit 4)
 sf3icetime	= $0020	; count frames on ice per player (93G sflags3 bit 6)
 ; iflags bits
