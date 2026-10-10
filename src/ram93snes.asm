@@ -108,6 +108,7 @@ lldisp		= $0189	; count down for the once-a-second screen/game updates ($18 fram
 ltplayer	= $018B	; last touch player (SCnum). 93G ltplayer
 ltx		= $018D	; last touch x. 93G ltx
 lty		= $018F	; last touch y. 93G lty
+gamelevel	= $014A	; 0-3: depth into the playoff tree (4 = finished). 93G gamelevel
 gamenum		= $014C	; index of the user game in the playoff game arrays (-1 = none). 93G gamenum
 mesarea		= $0191	; temp area for print strings (length word, then characters). 93G mesarea
 lastplayer	= $017D	; SCnum of the last player who touched the puck (doshot). 93G lastplayer
