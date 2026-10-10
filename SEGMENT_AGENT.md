@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-Bank $89 done (bank89_8000 .. bank89_F000 matched). Waiting for the user before the next bank (`bank8A_8000`). <- CURRENT
+`bank8A_9000` ($8A9000-$8A9FFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -153,8 +153,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank89_D000 | matched | $89D000 | $89DFFF | data | SpriteSet13 tiles |
 | bank89_E000 | matched | $89E000 | $89F009 | 100% | SpriteSet13 end, printscores1, PrintPerLabel, PrintTeamNameAndScore, nullrtl89, p_music_vblank, RefTilesHor start (data/RefHor.chr.pak) |
 | bank89_F000 | matched | $89F00A | $89FFFF | 100% | RefTilesHor end, RefsMapHor (data/RefsHor.snesmap), StartSong1-5/8/9, CopyWords, EraseScoutName, GetPlayerRecord, MesAreaDone, StartGame, restoreteams, EvadePC, asswingd |
-| bank8A_8000 | not matched <- CURRENT | $8A8000 | $8A8FFF | 0% |  |
-| bank8A_9000 | not matched | $8A9000 | $8A9FFF | 0% |  |
+| bank8A_8000 | matched | $8A8000 | $8A8FFF | data | SpriteSet12 (frame set 12) header, pieces, tiles |
+| bank8A_9000 | not matched <- CURRENT | $8A9000 | $8A9FFF | 0% |  |
 | bank8A_A000 | not matched | $8AA000 | $8AAFFF | 0% |  |
 | bank8A_B000 | not matched | $8AB000 | $8ABFFF | 0% |  |
 | bank8A_C000 | not matched | $8AC000 | $8ACFFF | 0% |  |
@@ -289,3 +289,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank89_D000: matched $89D000-$89DFFF (4096 bytes): SpriteSet13 tiles. MATCH.
 - bank89_E000: matched $89E000-$89F009 (4106 bytes; bank89_F000 starts at $89F00A as before). printscores1 is 93G (penalty93_2); $89EB45 is the packed ref window tile set of the horizontal rink (RefTilesHor, 104 tiles = refcharshor). Rendering the setupice tile sets in vram order showed RinkSideTiles1 is the faceoff box (renamed FaceOffTiles, data/FaceOff.chr.pak) and RinkSideTiles2 the vertical rink ref window tiles (RefTiles, data/Ref.chr.pak). MATCH.
 - bank89_F000: matched $89F00A-$89FFFF (4086 bytes): RefsMapHor = 17 ref window frames for the horizontal rink (PushRef uses it with sfhormode); the music cue starters (song 4 and 8 have no caller); StartGame/restoreteams are 93G hockey93_01, EvadePC the 92G form. Bank $89 complete. MATCH.
+- bank8A_8000: matched $8A8000-$8A8FFF (4096 bytes): SpriteSet12 = frame set 12, frames 532-605 (with SPFflip, SPFstumble, SPFhook); tiles run to $8AF87F. MATCH.
