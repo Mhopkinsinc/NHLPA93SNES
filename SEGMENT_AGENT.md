@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank83_9000` ($838D83-$839FFF). <- CURRENT
+`bank83_A000` ($839D7D-$83AFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -98,8 +98,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank82_E000 | matched | $82E000 | $82F93B | data | 6460 bytes $82E000-$82F93B (end moved to the end of the packed stream). IceRinkTiles continued: incbin data/IceRinkTiles.pak $1260..$2B9C, IceRinkTilesEnd (size asserted) |
 | bank82_F000 | matched | $82F93C | $82FFFF | 100% | 1732 bytes $82F93C-$82FFFF (start moved by bank82_E000). 93G SetPA2, UpdateScores, PushBits, asscentero (.dedata), PrintPenaltyMessagesString, startpause2; 92G BitstoPW, PasstoText, PWtoBits, ClrPassBits; SNES sndqreset, SPCBootUpload, SPCGameUpload, SPCUpload, QueueSound, BitMaskTable, ContinuePlayoffs, far8DF888, PixelRemap8D/83, marktextlo/hi, muls32, addframe_hi, revplayeracc, ClearTeamStats, printz8B, appendz; $FF fill |
 | bank83_8000 | matched | $838000 | $838D82 | data | 3459 bytes $838000-$838D82 (end moved to the end of Calgary). TeamList (26 long pointers), team records AllStarsEast, AllStarsWest, Boston, Buffalo, Calgary in 93G teamdata93.asm form (macros Player, String, hex2); palettes data/Pals/*.pal |
-| bank83_9000 | not matched <- CURRENT | $838D83 | $839FFF | 0% | Teamdata (92G Teamdata.asm) continues |
-| bank83_A000 | not matched | $83A000 | $83AFFF | 0% | Teamdata (92G Teamdata.asm) continues |
+| bank83_9000 | matched | $838D83 | $839D7C | data | 4090 bytes $838D83-$839D7C (boundaries moved to the team records). Team records Chicago .. LongIsland in 93G teamdata93.asm form |
+| bank83_A000 | not matched <- CURRENT | $839D7D | $83AFFF | 0% | Teamdata (92G Teamdata.asm) continues |
 | bank83_B000 | not matched | $83B000 | $83BFFF | 0% | Teamdata (92G Teamdata.asm) continues |
 | bank83_C000 | not matched | $83C000 | $83CFFF | 0% | Teamdata (92G Teamdata.asm) continues |
 | bank83_D000 | not matched | $83D000 | $83DFFF | 0% | Scouting report intro text $D630 (93G $2CEC8) |
@@ -232,3 +232,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank82_E000: matched $82E000-$82F93B (6460 bytes; bank82_F000 now starts at the code $82F93C): the rest of the packed rink tiles. MATCH.
 - bank82_F000: matched $82F93C-$82FFFF (1732 bytes). Entries from every jsl/jml into the bank and asstab 6 (asscentero). The SNES password code is 92G (PassWord $1610, passbits $1624 = 8 words, PasstoText, SuperDiv/SuperMult/SuperAdd): bank80 divbig/bignum/far8B817A renamed SuperDiv/passbits/DecodePW. New RAM: options OptPlayMode..OptPerlen, gamenum, TickerNum, the playoff game arrays gst1..gsflags (word per game), sndptr, cursong, sndsettle, mulneg, farptr, sprsetofs; constants gsfhl, gsfso, PWrange, pwlength, sf3alttree. Bank $82 complete. MATCH.
 - bank83_8000: matched $838000-$838D82 (3459 bytes; bank83_9000 now starts at Chicago). Bank $83 starts with the team data, identical in every value to 93G teamdata93.asm (same 26 teams, ratings, line sets, odds, names, ROM order; only the palettes are SNES BGR555 and words little-endian). TeamList, macros Player/String/hex2, constants Playerdata..ScoreOdds, NumofTeams; SNES palettes extracted to data/Pals with the 93G file names. TeamList entries of later segments stay raw addresses until those teams are named. MATCH.
+- bank83_9000: matched $838D83-$839D7C (4090 bytes): team records Chicago .. LongIsland, same values as 93G. MATCH.
