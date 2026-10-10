@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank8E_B000` ($8EB00B-$8EBFFF). <- CURRENT
+`bank8E_C000` ($8EC00B-$8ECFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -188,8 +188,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank8E_8000 | matched | $8E8000 | $8E900A | 100% | Gameloop (.cheat unreached), PlayerShortName, assbench, SpriteSet3 header |
 | bank8E_9000 | matched | $8E900B | $8EA00A | data | SpriteSet3 tiles |
 | bank8E_A000 | matched | $8EA00B | $8EB00A | data | SpriteSet3 tiles |
-| bank8E_B000 | not matched <- CURRENT | $8EB00B | $8EBFFF | 0% |  |
-| bank8E_C000 | not matched | $8EC00B | $8ECFFF | 0% |  |
+| bank8E_B000 | matched | $8EB00B | $8EC00A | data | SpriteSet3 tiles |
+| bank8E_C000 | not matched <- CURRENT | $8EC00B | $8ECFFF | 0% |  |
 | bank8E_D000 | not matched | $8ED00B | $8EDFFF | 0% |  |
 | bank8E_E000 | not matched | $8EE00B | $8EEFFF | 0% |  |
 | bank8E_F000 | not matched | $8EF00B | $8EFFFF | 0% |  |
@@ -324,3 +324,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank8E_8000: matched $8E8000-$8E900A (4107 bytes): Gameloop (93G, with the SNES clock fraction, cue timers and crowd cheers), PlayerShortName, assbench (93G); $8E80C4 is unreached cheat code (L, A, X: score 9). SpriteSet3 = frame set 3, frames 185-224 (SPFcelebrate, SPFpump, SPFcup). RAM: cheercnt, cheervc, cheatpads. MATCH.
 - bank8E_9000: matched $8E900B-$8EA00A (4096 bytes): SpriteSet3 tiles. MATCH.
 - bank8E_A000: matched $8EA00B-$8EB00A (4096 bytes): SpriteSet3 tiles. MATCH.
+- bank8E_B000: matched $8EB00B-$8EC00A (4096 bytes): SpriteSet3 tiles. MATCH.
