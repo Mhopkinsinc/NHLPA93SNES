@@ -1,45 +1,7 @@
-; $84E949-$84EF3B  ROM $26949-$26F3B: FaceOffMap, then the SNES scouting report extras: PutDigits2, the two showcased
-; players who skate in with their number and name (ScoutPlayersRun: one per team, picked from the line sets in ScoutLineOrder,
-; animated with the ScoutScripts chosen from their ratings), and the roster helpers. The team stat words are scratch during the
-; scouting report: tmshots = team shown, tmPwrGoals = ScoutLineOrder index, tmPwrPlays = roster player, tmPenalties = line slot,
-; tmPenmin = script, tmATOP = script step. Starts after ScoutingReportText (boundary moved), ends before HotList.
-org $84E949
-FaceOffMap:		;93G FaceOffMap (92G FaceOffMap): the 12 x 10 faceoff box map (tiles from FaceOffTiles, attribute $20), copied into textmap by puckfaceoff2 ($80A3F4)
-	dw $2000,$2001,$2002,$2003,$2004,$2005,$2006,$2007,$2008,$2009,$200A,$200B
-	dw $200C,$200D,$200E,$200F,$2010,$2011,$2012,$2013,$2014,$2015,$2016,$2017
-	dw $2018,$2019,$201A,$2019,$2019,$2019,$201B,$201C,$2019,$2019,$2019,$201D
-	dw $201E,$201F,$2020,$201F,$201F,$201F,$2021,$2022,$601F,$601F,$601F,$2023
-	dw $2024,$2025,$2026,$2025,$2025,$2025,$2027,$2028,$2025,$2025,$2025,$2029
-	dw $2024,$2025,$2025,$2025,$2025,$2025,$202A,$202B,$202C,$2025,$2025,$2029
-	dw $2024,$2025,$2025,$2025,$2025,$2025,$202D,$202E,$202F,$2025,$2025,$2029
-	dw $2024,$2025,$2025,$2025,$2025,$2025,$2030,$2031,$2032,$2033,$2025,$2029
-	dw $2024,$2025,$2025,$2025,$2025,$2025,$2025,$2025,$2025,$2025,$2025,$2029
-	dw $2034,$2035,$2035,$2035,$2035,$2035,$2035,$2035,$2035,$2035,$2035,$2036
-PutDigits2:		;SNES: write the 2 digit number d0 (BCD byte, blank leading zero) as 2 characters at [a1], a1 += 2
-	lda.w #$2020		; blank, then the tens digit when d0 >= 10
-	sta.b tmp0
-	lda.b d0
-	and.w #$00FF
-	cmp.w #$000A
-	bcc .lo
-	lsr a
-	lsr a
-	lsr a
-	lsr a
-	clc
-	adc.w #$0030
-	sta.b tmp0
-.lo:
-	lda.b d0
-	and.w #$000F
-	clc
-	adc.w #$0030
-	sta.b tmp0+1
-	lda.b tmp0
-	sta.b [a1]
-	inc.b a1
-	inc.b a1
-	rtl
+; hockey_b84: 93G hockey93_01..hockey93_11: the game, screens, menus, password, playoffs.
+; Bank $84. Each block keeps its ROM address with org; blocks of other modules sit between them.
+
+org $84EA66
 ScoutPlayersRun:		;SNES scouting report: one frame of the two showcased players (home a2 = 0, away a2 = 2), then draw them
 	stx.b xsave
 	ldx.w #$0000
@@ -506,3 +468,322 @@ DrawScoutPlayer:		;SNES: addframe for object X at (Xpos + OldXpos - 144, Ypos - 
 	sta.b sprflag
 .add:
 	jml.l addframe		; bank $8F: 93G addframe
+
+org $84F532
+UpdateScoutingDisplay:		;called every frame by ScoutingReport. When ScoutingReportTimer runs out (at once if asv (93G hockey93_07)
+		;   SNES: ~ { } [ ] print
+		;   a team or goalie name
+	lda.w ScoutingReportTimer		; text finished ($7FFF)
+	sec
+	sbc.w #$1000
+	beq .tm
+	bmi .v1
+	bvs .tm
+	bra .rtl
+.v1:
+	bvs .rtl
+.tm:
+	lda.w asv		; asv: no delay
+	bmi .go
+	dec.w ScoutingReportTimer
+	bpl .rtl
+.go:
+	lda.w #ScoutingReportText
+	sta.b a1
+	lda.w #ScoutingReportText>>16
+	sta.b a1+2
+	lda.w PlayerScrollCtr
+	sta.b d0
+	bpl .cont
+	stz.w DispAttribCtr		; next paragraph number from TestList; -1: stop typing, leave the screen in 480 frames
+	ldy.w SelectedPlayerIdx
+	inc.w SelectedPlayerIdx
+	inc.w SelectedPlayerIdx
+	lda.w #$0000
+	sta.b a0
+	lda.w #TestList>>16
+	sta.b a0+2
+	lda.b [a0],y
+	sta.b d0
+	bpl .para
+	lda.w #$7FFF
+	sta.w ScoutingReportTimer
+	lda.w #$01E0
+	sta.w screentimer
+.rtl:
+	rtl
+.para:		;blank line between paragraphs
+	jsl.l ScrollDisplayUp
+	lda.b a1
+	sta.b a2
+	lda.b a1+2
+	sta.b a2+2
+	bra .cnt
+.find:
+	lda.b [a2]
+	inc.b a2
+	and.w #$00FF
+	cmp.w #$000D
+	bne .find
+.cnt:
+	dec.b d0
+	bpl .find
+	lda.b a2
+	sec
+	sbc.b a1
+	sta.b d0
+.cont:
+	lda.b a1
+	clc
+	adc.b d0
+	sta.b a2
+	lda.b a1+2
+	sta.b a2+2
+	lda.w #$000A		; 10 frames per word
+	sta.w ScoutingReportTimer
+	lda.w DispAttribCtr
+	sta.b d0
+	lda.b [a2]
+	and.w #$00FF
+	cmp.w #'~'
+	bne .c2
+	jmp.w .arena
+.c2:
+	cmp.w #'{'
+	bne .c3
+	jmp.w .home
+.c3:
+	cmp.w #'}'
+	bne .c4
+	jmp.w .away
+.c4:
+	cmp.w #'['
+	bne .c5
+	jmp.w .hmtm
+.c5:
+	cmp.w #']'
+	bne .word
+	jmp.w .awtm
+.word:		;copy the word and its trailing spaces to mesarea+2
+	lda.w #$FFFF
+	sta.w PlayerScrollCtr
+	lda.w #mesarea+2
+	sta.b a0
+	lda.w #$0000
+	sta.b a0+2
+	stz.b d1
+.wd:
+	lda.b [a2]
+	and.w #$00FF
+	cmp.w #$000D
+	beq .eol
+	inc.b d0
+.copy:
+	sep #$20
+	lda.b [a2]
+	sta.b [a0]
+	rep #$30
+	inc.b a0
+	inc.b d1
+	lda.b [a2]
+	and.w #$00FF
+	cmp.w #','
+	beq .pause
+	cmp.w #'.'
+	bne .nopause
+.pause:		;40 more frames after punctuation
+	lda.w ScoutingReportTimer
+	clc
+	adc.w #$0028
+	sta.w ScoutingReportTimer
+.nopause:
+	lda.b [a2]
+	inc.b a2
+	and.w #$00FF
+	cmp.w #' '
+	bne .wd
+	lda.b [a2]
+	and.w #$00FF
+	cmp.w #' '
+	beq .copy
+	dec.b d0
+	lda.b a2
+	sec
+	sbc.b a1
+	sta.b a2
+	sta.w PlayerScrollCtr
+.eol:		;make a String at mesarea
+	lda.b d1
+	inc a
+	inc a
+	sta.w mesarea
+	lda.w #mesarea
+	sta.b a1
+	lda.w #$0000
+	sta.b a1+2
+.print:		;past column 20: ScrollDisplayUp
+	lda.b d0
+	sec
+	sbc.w #$0014
+	beq .noscr
+	bmi .v2
+	bvs .noscr
+.scr:
+	jsl.l ScrollDisplayUp
+	bra .noscr
+.v2:
+	bvs .scr
+.noscr:
+	jsl.l printz		; print at column + DispAttribCtr, line + VertLineScrolling
+	dw $0005		; printz inline string: length (counts itself), then control bytes / text
+	db $FF,$0A,$04
+	lda.w DispAttribCtr
+	clc
+	adc.w printx
+	sta.w printx
+	lda.w VertLineScrolling
+	clc
+	adc.w printy
+	sta.w printy
+	jsl.l print
+	lda.w DispAttribCtr
+	clc
+	adc.b d1
+	sta.w DispAttribCtr
+	rtl
+.awtm:		;away goalie
+	lda.w #$0002
+	sta.b a1
+	bra .team
+.hmtm:		;home goalie
+	stz.b a1
+.team:
+	ldy.b a1
+	lda.w tmgoalie,y
+	sta.b d1
+	lda.w tmdata,y
+	sta.b a1
+	lda.w #TeamList>>16
+	sta.b a1+2
+	ldy.w #Playerdata
+	lda.b a1
+	clc
+	adc.b [a1],y
+	sta.b a1
+	bra .pn
+.pl:
+	lda.b a1
+	clc
+	adc.b [a1]
+	adc.w #$0008
+	sta.b a1
+.pn:
+	dec.b d1
+	bpl .pl
+	bra .name
+.away:		;away team name
+	lda.w tmdata+2
+	sta.b a1
+	lda.w #TeamList>>16
+	sta.b a1+2
+	bra .tname
+.arena:		;~: the home team (Montreal for the All-Star teams)
+	lda.w #TeamList>>16
+	sta.b a1+2
+	lda.w tmdata
+	cmp.w #AllStarsEast
+	beq .mtl
+	cmp.w #AllStarsWest
+	bne .ar
+.mtl:
+	lda.w #Montreal
+.ar:
+	sta.b a1
+	bra .tname
+.home:		;home team name
+	lda.w tmdata
+	sta.b a1
+	lda.w #TeamList>>16
+	sta.b a1+2
+.tname:
+	ldy.w #Teamname
+	lda.b a1
+	clc
+	adc.b [a1],y
+	sta.b a1
+.name:
+	inc.w PlayerScrollCtr
+	lda.b d0
+	clc
+	adc.b [a1]
+	dec a
+	sta.b d0
+	lda.b [a1]
+	dec a
+	tay
+	dec a
+	sta.b d1
+	lda.b [a1],y
+	and.w #$00FF
+	beq .pad
+	jmp.w .print
+.pad:
+	dec.b d1
+	jmp.w .print
+ScrollDisplayUp:		;next text line for UpdateScoutingDisplay (column 0). After line 7, move the text box up (93G hockey93_07)
+		;   SNES: next text line (column 0); after line 7 move the text box up one row ($89FC8F copies 8 textmap rows)
+	stz.w DispAttribCtr
+	inc.w VertLineScrolling
+	lda.w VertLineScrolling
+	sec
+	sbc.w #$0007
+	bmi .v1
+	bvc .up
+.ex1:
+	jmp.w UpdateScoutingDisplay_rtl
+.v1:
+	bvc .ex1
+.up:
+	dec.w VertLineScrolling
+	stx.b xsave
+	ldx.w #$0000
+.push:
+	lda.b d0,x
+	pha
+	inx
+	inx
+	cpx.w #$0010
+	bne .push
+	ldx.b xsave
+	lda.w #$0007
+	sta.b d3
+	lda.w #textmap+$114		; textmap+$114: the text box
+	sta.b d1
+	lda.w #textmap>>16
+	sta.b d1+2
+.loop:
+	lda.w #$0028
+	sta.b d0
+	lda.b d1
+	clc
+	adc.w #$0040
+	sta.b d2
+	lda.b d1+2
+	sta.b d2+2
+	jsl.l CopyWords		; bank $89: copy a textmap row
+	lda.b d2
+	sta.b d1
+	lda.b d2+2
+	sta.b d1+2
+	dec.b d3
+	bpl .loop
+	stx.b xsave
+	ldx.w #$000E
+.pop:
+	pla
+	sta.b d0,x
+	dex
+	dex
+	bpl .pop
+	ldx.b xsave
+	rtl
