@@ -145,6 +145,7 @@ PPBonus		= $0475	; setplayer: power play bonus. 93G PPBonus
 printa		= $0477	; attribute (palette/priority bits) for print characters. 93G printa
 printfont	= $0479	; font number (0-3) from the print control code
 puckcross	= $0489	; 2 entries of (x, frames): where/when the puck crosses the top / bottom goal line ($FFFF frames = never). 93G puckcross
+repeatdelay	= $0499	; ProcessInputWithRepeat: frames to the next key repeat
 ReplayBufferPtr	= $0495	; long pointer to the next replay frame record (bank $7E, wraps at $7EFF41 to $7E8174). 93G ReplayBufferPtr
 Oldrow		= $049B	; last rink map row (vertical scrolling of the map data; 999 = redraw all). 93G Oldrow
 vramrow		= $049D	; BG2 tile map row (0-31) at the top of the ring buffer: BG2VOFS = vramrow*8 + (Vscroll&7)
@@ -304,7 +305,7 @@ tmtouch2	= $13E6	; second last touch (93G $1A)
 tmtouch3	= $13EA	; third last touch (93G $1C)
 tmap		= $13EE	; active players on ice. 93G tmap
 tmgoalie	= $13F2	; goalie: low byte = goalie 0/1, $FFxx = pulled (xx = goalie to return, $FF = stays out). 93G tmgoalie
-tmscoutpl	= $13F6	; scouting report: roster player of the team shown skating in (SNES)
+tmteam		= $13F6	; team number (TeamList index) of the team struct (93G team struct byte $28, set by setteams)
 tmnear		= $13FA	; 32-bit (tmnear = low word, +4 = high word): nearest distance^2 to the puck (assnearest). 93G team long $2A
 tmchecks	= $1402	; checks stat (93G team word $10)
 tmpasscomp	= $1406	; completed passes (93G team word $14)

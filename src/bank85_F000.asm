@@ -518,7 +518,7 @@ PrintTeamNames:		;auto: CODE_85FF1E. SNES: regular season: HomeTeam/VisTeam from
 	lda.w HomeTeam		; $85FF6C: AD 9A 12
 	sta.b d1		; $85FF6F: 85 57
 	jsl.l $8D84E2		; $85FF71: 22 E2 84 8D  bank $8D: print team d1 name
-	jsl.l $86FC29		; $85FF75: 22 29 FC 86  bank $86
+	jsl.l setteams		; $85FF75: 22 29 FC 86
 	stx.b xsave		; $85FF79: 86 0A
 	ldx.w #$000A		; $85FF7B: A2 0A 00
 .popa:
@@ -541,7 +541,7 @@ PrintTeamNames:		;auto: CODE_85FF1E. SNES: regular season: HomeTeam/VisTeam from
 nullrtl85:		;auto: CODE_85FF96. does nothing
 	rtl		; $85FF96: 6B
 ResetClock:		;auto: CODE_85FF97. 93G ResetClock (hockey93_01): set the period length (GetPeriodTime; regular season overtime is 10:00) and stop the clock
-	jsl.l $86FCA1		; $85FF97: 22 A1 FC 86  bank $86: 93G GetPeriodTime (d0 = seconds)
+	jsl.l GetPeriodTime		; $85FF97: 22 A1 FC 86
 	lda.w gsp		; $85FF9B: AD F0 12  gsp >= 3 (overtime) and OptPlayMode 0: 600 seconds
 	sec		; $85FF9E: 38
 	sbc.w #$0003		; $85FF9F: E9 03 00

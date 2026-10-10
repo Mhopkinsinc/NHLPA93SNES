@@ -1342,7 +1342,7 @@ InProgress:		;auto: CODE_80EA40. 93G InProgress (penalty93_1): ref in progress. 
 	cpx.w #$0010		; $80EB02: E0 10 00
 	bne .pusha2		; $80EB05: D0 F6
 	ldx.b xsave		; $80EB07: A6 0A
-	jsl.l $86FC8A		; $80EB09: 22 8A FC 86  GetPeriodTimeRemaining, bank $86: 93G GetPeriodTimeRemaining (d0)
+	jsl.l GetPeriodTimeRemaining		; $80EB09: 22 8A FC 86  GetPeriodTimeRemaining
 	lda.b [a0]		; $80EB0D: A7 33
 	xba		; $80EB0F: EB
 	and.w #$00FF		; $80EB10: 29 FF 00

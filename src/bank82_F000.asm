@@ -553,7 +553,7 @@ ClearTeamStats:		;auto: CODE_82FD6B. SNES: clear the team stats $13B2-$157D exce
 	lda.w #$FFFF		; $82FD88: A9 FF FF  both penalty box lists empty
 	sta.w tmboxlist		; $82FD8B: 8D 4A 15
 	sta.w tmboxlist+$1A		; $82FD8E: 8D 64 15
-	jml.l $86FC29		; $82FD91: 5C 29 FC 86  bank $86
+	jml.l setteams		; $82FD91: 5C 29 FC 86
 PrintPenaltyMessagesString:		;auto: CODE_82FD95. 93G PrintPenaltyMessagesString (penalty93_1): blank the horizontal mode penalty message line (22 spaces at x 5, y $B)
 	jsl.l printz		; $82FD95: 22 0C B9 80
 	dw $001B		; $82FD99  printz inline string: length (counts itself), then control bytes / text

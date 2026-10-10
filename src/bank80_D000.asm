@@ -417,7 +417,7 @@ Goal:		;auto: CODE_80D182. 93G Goal (hockey93_04): puck in the goal. Score +1 fo
 	lda.w ScoreSumbytes		; $80D200: AD FC 12
 	adc.w #$0006		; $80D203: 69 06 00
 	sta.w ScoreSumbytes		; $80D206: 8D FC 12
-	jsl.l $86FC8A		; $80D209: 22 8A FC 86  entry word 0 = time, bank $86: 93G GetPeriodTimeRemaining (d0)
+	jsl.l GetPeriodTimeRemaining		; $80D209: 22 8A FC 86  entry word 0 = time
 	lda.b d0		; $80D20D: A5 53
 	sta.b [a0]		; $80D20F: 87 33
 	inc.b a0		; $80D211: E6 33

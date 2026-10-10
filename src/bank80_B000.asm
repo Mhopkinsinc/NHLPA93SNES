@@ -305,7 +305,7 @@ setplayer:		;auto: CODE_80B15D. 93G setplayer (hockey93_05): bring roster player
 .v2:
 	bvs .score		; $80B25F: 70 16
 .half:
-	jsl.l $86FCA1		; $80B261: 22 A1 FC 86  GetPeriodTime, bank $86: 93G GetPeriodTime
+	jsl.l GetPeriodTime		; $80B261: 22 A1 FC 86  GetPeriodTime
 	lsr.b d0		; $80B265: 46 53
 	lda.b d0		; $80B267: A5 53
 	sec		; $80B269: 38
@@ -672,7 +672,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sta.b tmp0		; $80B55E: 85 73
 	lda.w #IceRinkTiles>>16		; $80B560: A9 82 00
 	sta.b tmp1		; $80B563: 85 75
-	jsl.l $86FA3E		; $80B565: 22 3E FA 86  bank $86: 93G DecompressGraphics ([tmp0] -> $7F0000)
+	jsl.l DecompressGraphics		; $80B565: 22 3E FA 86
 	lda.w #$1000		; $80B569: A9 00 10  vram $1000
 	sta.w VMADDL		; $80B56C: 8D 16 21
 	ldx.w #$0000		; $80B56F: A2 00 00
@@ -687,7 +687,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sta.b tmp0		; $80B583: 85 73
 	lda.w #$0087		; $80B585: A9 87 00
 	sta.b tmp1		; $80B588: 85 75
-	jsl.l $86FA3E		; $80B58A: 22 3E FA 86  bank $86: 93G DecompressGraphics ([tmp0] -> $7F0000)
+	jsl.l DecompressGraphics		; $80B58A: 22 3E FA 86
 	ldx.w #$0000		; $80B58E: A2 00 00
 .up2:
 	lda.l $7F0000,x		; $80B591: BF 00 00 7F
@@ -700,7 +700,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sta.b tmp0		; $80B5A2: 85 73
 	lda.w #$0084		; $80B5A4: A9 84 00
 	sta.b tmp1		; $80B5A7: 85 75
-	jsl.l $86FA3E		; $80B5A9: 22 3E FA 86  bank $86: 93G DecompressGraphics ([tmp0] -> $7F0000)
+	jsl.l DecompressGraphics		; $80B5A9: 22 3E FA 86
 	ldx.w #$0000		; $80B5AD: A2 00 00
 .up3:
 	lda.l $7F0000,x		; $80B5B0: BF 00 00 7F
@@ -713,7 +713,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sta.b tmp0		; $80B5C1: 85 73
 	lda.w #$0089		; $80B5C3: A9 89 00
 	sta.b tmp1		; $80B5C6: 85 75
-	jsl.l $86FA3E		; $80B5C8: 22 3E FA 86  bank $86: 93G DecompressGraphics ([tmp0] -> $7F0000)
+	jsl.l DecompressGraphics		; $80B5C8: 22 3E FA 86
 	ldx.w #$0000		; $80B5CC: A2 00 00
 .up4:
 	lda.l $7F0000,x		; $80B5CF: BF 00 00 7F
@@ -726,7 +726,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sta.b tmp0		; $80B5E0: 85 73
 	lda.w #$0087		; $80B5E2: A9 87 00
 	sta.b tmp1		; $80B5E5: 85 75
-	jsl.l $86FA3E		; $80B5E7: 22 3E FA 86  bank $86: 93G DecompressGraphics ([tmp0] -> $7F0000)
+	jsl.l DecompressGraphics		; $80B5E7: 22 3E FA 86
 	ldx.w #$0000		; $80B5EB: A2 00 00
 .up5:
 	lda.l $7F0000,x		; $80B5EE: BF 00 00 7F
@@ -744,7 +744,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sta.b tmp0		; $80B608: 85 73
 	lda.w #BigFontTiles>>16		; $80B60A: A9 83 00
 	sta.b tmp1		; $80B60D: 85 75
-	jsl.l $86FA3E		; $80B60F: 22 3E FA 86  bank $86: 93G DecompressGraphics ([tmp0] -> $7F0000)
+	jsl.l DecompressGraphics		; $80B60F: 22 3E FA 86
 	stz.b a0		; $80B613: 64 33  sprite frame list from the $7F0000 data
 	lda.w #$007F		; $80B615: A9 7F 00
 	sta.b a0+2		; $80B618: 85 35
@@ -770,7 +770,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sta.b tmp0		; $80B64D: 85 73
 	lda.w #$008D		; $80B64F: A9 8D 00
 	sta.b tmp1		; $80B652: 85 75
-	jsl.l $86FA3E		; $80B654: 22 3E FA 86  bank $86: 93G DecompressGraphics ([tmp0] -> $7F0000)
+	jsl.l DecompressGraphics		; $80B654: 22 3E FA 86
 	stz.b a0		; $80B658: 64 33
 	lda.w #$007F		; $80B65A: A9 7F 00
 	sta.b a0+2		; $80B65D: 85 35
@@ -1000,7 +1000,7 @@ periodicevents:		;auto: CODE_80B80D. 93G periodicevents (hockey93_01): every gam
 	jsl.l ChkGoalies		; $80B834: 22 F2 BA 80  ChkGoalies
 	jsl.l $8FDBF7		; $80B838: 22 F7 DB 8F  UpdateCwdExcite, bank $8F: 93G UpdateCwdExcite
 	jsl.l $8FDBF8		; $80B83C: 22 F8 DB 8F  CheckPeriodEnd, bank $8F: 93G CheckPeriodEnd
-	jsl.l $86FB96		; $80B840: 22 96 FB 86  UpdateLineChange, bank $86: 93G UpdateLineChange
+	jsl.l UpdateLineChange		; $80B840: 22 96 FB 86  UpdateLineChange
 	jsl.l $8FF741		; $80B844: 22 41 F7 8F  CheckInjury, bank $8F: 93G CheckInjury
 	jmp.w updatepwrplay		; $80B848: 4C F4 B9
 .rtl:

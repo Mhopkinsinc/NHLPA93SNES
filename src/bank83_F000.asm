@@ -150,7 +150,7 @@ PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB
 	sta.b tmp0		; $83F97E: 85 73
 	lda.w #BigFontTiles>>16		; $83F980: A9 83 00
 	sta.b tmp1		; $83F983: 85 75
-	jsl.l $86FA3E		; $83F985: 22 3E FA 86  bank $86: 93G DecompressGraphics ([tmp0] -> $7F0000)
+	jsl.l DecompressGraphics		; $83F985: 22 3E FA 86
 	stz.b a0		; $83F989: 64 33
 	lda.w #$007F		; $83F98B: A9 7F 00
 	sta.b a0+2		; $83F98E: 85 35

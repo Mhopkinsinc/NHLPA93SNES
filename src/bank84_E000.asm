@@ -1,7 +1,7 @@
 ; $84E949-$84EF3B  ROM $26949-$26F3B: ScoutPicMap, then the SNES scouting report extras: PutDigits2, the two showcased
 ; players who skate in with their number and name (ScoutPlayersRun: one per team, picked from the line sets in ScoutLineOrder,
 ; animated with the ScoutScripts chosen from their ratings), and the roster helpers. The team stat words are scratch during the
-; scouting report: tmshots = player shown, tmPwrGoals = ScoutLineOrder index, tmPwrPlays = roster player, tmPenalties = line slot,
+; scouting report: tmshots = team shown, tmPwrGoals = ScoutLineOrder index, tmPwrPlays = roster player, tmPenalties = line slot,
 ; tmPenmin = script, tmATOP = script step. Starts after ScoutingReportText (boundary moved), ends before HotList.
 org $84E949
 ScoutPicMap:		;a 12 x 10 tile picture map, sequential tiles with attribute $20 (no reference found; the size of the 93G RonBarrMap picture on the scouting report)
@@ -89,14 +89,14 @@ ScoutPlayersRun:		;auto: CODE_84EA66. SNES scouting report: one frame of the two
 	ldx.b xsave		; $84EABA: A6 0A
 	ldx.b a3		; $84EABC: A6 3F
 	rtl		; $84EABE: 6B
-ScoutTeamStep:		;auto: CODE_84EABF. SNES: step the showcased player of team a2: a new tmscoutpl restarts (ScoutPlayerExit); skating out to the side (tmflags bit 1) ends at x 40 (ScoutNextPlayer); else the next script step (SPA, facedir) every 9 frames, then print his number and name
+ScoutTeamStep:		;auto: CODE_84EABF. SNES: step the showcased player of team a2: a new team (tmteam changed) picks its goalie and restarts the order (ScoutPlayerExit); skating out to the side (tmflags bit 1) ends at x 40 (ScoutNextPlayer); else the next script step (SPA, facedir) every 9 frames, then print his number and name
 	ldy.b a2		; $84EABF: A4 3B
-	lda.w tmscoutpl,y		; $84EAC1: B9 F6 13  new player for this team?
+	lda.w tmteam,y		; $84EAC1: B9 F6 13  team changed?
 	sta.b d0		; $84EAC4: 85 53
 	cmp.w tmshots,y		; $84EAC6: D9 B2 13
 	beq .cur		; $84EAC9: F0 13
 	sta.w tmshots,y		; $84EACB: 99 B2 13
-	jsl.l $86FCE3		; $84EACE: 22 E3 FC 86  bank $86
+	jsl.l PickStartingGoalie		; $84EACE: 22 E3 FC 86
 	ldy.b a2		; $84EAD2: A4 3B
 	lda.w #$0000		; $84EAD4: A9 00 00
 	sta.w tmPwrGoals,y		; $84EAD7: 99 B6 13
@@ -176,7 +176,7 @@ ScoutTeamStep:		;auto: CODE_84EABF. SNES: step the showcased player of team a2: 
 	lda.w tmPwrPlays,y		; $84EB79: B9 BA 13
 	sta.b d0		; $84EB7C: 85 53
 	jsl.l GetRosterEntry		; $84EB7E: 22 96 ED 84  mesarea = number and the first name, centered in 11 columns
-	jsl.l $86FC76		; $84EB82: 22 76 FC 86  bank $86
+	jsl.l ScoutNamePos		; $84EB82: 22 76 FC 86
 	lda.w printx		; $84EB86: AD 7B 04
 	pha		; $84EB89: 48
 	lda.w #mesarea+2		; $84EB8A: A9 93 01
