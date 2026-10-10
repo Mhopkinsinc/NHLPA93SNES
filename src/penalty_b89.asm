@@ -1,9 +1,7 @@
-; $89E000-$89F009  ROM $4E000-$4F009: the last SpriteSet13 tiles, printscores1 (penalty93_2) with PrintPerLabel and PrintTeamNameAndScore,
-; p_music_vblank (the sound command sender), then RefTilesHor (packed ref window tiles for the horizontal rink), continued in bank89_F000.
-org $89E000
-	incbin "../data/Sprites/set13.chr":$46A3..$5000		; $89E000-$89E95C
-SpriteSet13End:
-	assert SpriteSet13End-SpriteSet13 == $5DA+640*32
+; penalty_b89: 93G penalty93_1/penalty93_2: penalties, scoreboard, ticker, intermission.
+; Bank $89. Each block keeps its ROM address with org; blocks of other modules sit between them.
+
+org $89E95D
 printscores1:		;draw scoreboard. Vertical rink: period box and the score box (team names and scores). Horizontal rink (.sbscreen): period and both team logos with big scores. Called from
 		;   USBoard, Pausemode, lcfound2 and others (93G penalty93_2)
 		;   SNES: Vertical rink: period box and score box (team names and scores); horizontal rink (.sbscreen): period, team names, scores
@@ -193,34 +191,3 @@ PrintTeamNameAndScore:		;print the team name of team a2 at printx/printy, then i
 	jml.l print
 nullrtl89:		;does nothing (printscores1 calls it)
 	rtl
-p_music_vblank:		;92 name (vblank handler). Clear the change bits, run the 8 track slots (d7 = track 7-0), (93G sound93)
-		;   SNES: role: every other frame send the next queued sound command (sndqueue) to APUIO0, a counter to APUIO1
-	lda.w sndsettle		; wait after the sample upload
-	bne .settle
-	sep #$30
-	lda.b sndlock
-	bne .ex
-	lda.b vcount		; every other frame
-	lsr a
-	bcc .ex
-	ldx.b sndqout
-	cpx.b sndqin
-	beq .ex
-	lda.b sndqueue,x
-	sta.w APUIO0
-	inc.b sndptr		; sndptr (low byte) doubles as the command counter here
-	lda.b sndptr
-	sta.w APUIO1
-	txa
-	inc a
-	inc a
-	and.b #$0F
-	sta.b sndqout
-.ex:
-	rep #$30
-	rtl
-.settle:
-	dec.w sndsettle
-	rtl
-RefTilesHor:		;packed ref window tiles for the horizontal rink (104 tiles, data/RefHor.chr.pak): setupice sends them to refcharshor
-	incbin "../data/RefHor.chr.pak":0..$4C5		; $89EB45-$89F009
