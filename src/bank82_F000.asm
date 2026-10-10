@@ -348,12 +348,12 @@ PWtoBits:		;auto: CODE_82FBC5. 92G PWtoBits: convert the password text into pass
 .zero:
 	lda.w #PWrange		; $82FBCC: A9 1E 00  passbits = passbits * PWrange + PassWord[x]
 	sta.b d0		; $82FBCF: 85 53
-	jsl.l $888853		; $82FBD1: 22 53 88 88  bank $88: 92G SuperMult (passbits *= d0)
+	jsl.l SuperMult		; $82FBD1: 22 53 88 88  bank $88: 92G SuperMult (passbits *= d0)
 	lda.w PassWord,x		; $82FBD5: BD 10 16
 	and.w #$00FF		; $82FBD8: 29 FF 00
 	sta.b d0		; $82FBDB: 85 53
 	stz.b d0+2		; $82FBDD: 64 55
-	jsl.l $88FDB2		; $82FBDF: 22 B2 FD 88  bank $88: 92G SuperAdd (passbits += d0)
+	jsl.l SuperAdd		; $82FBDF: 22 B2 FD 88  bank $88: 92G SuperAdd (passbits += d0)
 	inx		; $82FBE3: E8
 	cpx.w #pwlength		; $82FBE4: E0 10 00
 	bne .zero		; $82FBE7: D0 E3
@@ -383,11 +383,11 @@ PushBits:		;auto: CODE_82FC03. 93G PushBits (hockey93_09, IDA EncodeValueToPassw
 	ldx.b d1		; $82FC16: A6 57
 	sta.b d1		; $82FC18: 85 57
 	stx.b d0		; $82FC1A: 86 53
-	jsl.l $888853		; $82FC1C: 22 53 88 88  bank $88: 92G SuperMult (passbits *= d0)
+	jsl.l SuperMult		; $82FC1C: 22 53 88 88  bank $88: 92G SuperMult (passbits *= d0)
 	stz.b d0+2		; $82FC20: 64 55
 	lda.b d1		; $82FC22: A5 57
 	sta.b d0		; $82FC24: 85 53
-	jsl.l $88FDB2		; $82FC26: 22 B2 FD 88  bank $88: 92G SuperAdd (passbits += d0)
+	jsl.l SuperAdd		; $82FC26: 22 B2 FD 88  bank $88: 92G SuperAdd (passbits += d0)
 	stx.b xsave		; $82FC2A: 86 0A
 	ldx.w #$0006		; $82FC2C: A2 06 00
 .pop:
@@ -401,9 +401,10 @@ PushBits:		;auto: CODE_82FC03. 93G PushBits (hockey93_09, IDA EncodeValueToPassw
 BitMaskTable:		;SNES: the 16 bit masks 1 << n (read by the playoff bit code in bank $8B)
 	dw $0001,$0002,$0004,$0008,$0010,$0020,$0040,$0080		; $82FC39
 	dw $0100,$0200,$0400,$0800,$1000,$2000,$4000,$8000		; $82FC49
-ContinuePlayoffs:		;auto: CODE_82FC59. SNES: "continue playoffs" chosen (OptPlayMode 1, gamenum set): DecodePW the password, then the playoff tree (sf3alttree picks the path); else back to $83FA87
-	jsl.l $88868D		; $82FC59: 22 8D 86 88  bank $88
-	jsl.l $88F512		; $82FC5D: 22 12 F5 88  bank $88: font tile bases
+ContinuePlayoffs:		;auto: CODE_82FC59. SNES: after a game: EncodePW and PlayoffScreen; when the playoffs go on with a user game (OptPlayMode 1, gamenum set) DecodePW the new password and maketree
+		;   (sf3alttree picks the path); else back to $83FA87
+	jsl.l EncodePW		; $82FC59: 22 8D 86 88  bank $88
+	jsl.l PlayoffScreen		; $82FC5D: 22 12 F5 88  bank $88: 93G PlayoffScreen (font tile bases, the playoff tree)
 	lda.w OptPlayMode		; $82FC61: AD 00 16  not continuing playoffs, or no user game: $83FA87
 	cmp.w #$0001		; $82FC64: C9 01 00
 	beq .po		; $82FC67: F0 04
@@ -472,7 +473,7 @@ muls32:		;auto: CODE_82FCDB. 68k muls.w with a 32-bit result: A/mulres = low wor
 	sta.b mulb		; $82FCF1: 85 83
 	inc.b mulneg		; $82FCF3: E6 98
 .mul:
-	jsl.l $888942		; $82FCF5: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
+	jsl.l mulu		; $82FCF5: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
 	lsr.b mulneg		; $82FCF9: 46 98  odd: negate the 32-bit result
 	bcc .rtl		; $82FCFB: 90 19
 	lda.w #$0000		; $82FCFD: A9 00 00
@@ -738,7 +739,7 @@ asscentero:		;auto: CODE_82FDE7 (asstab 6). 93G asscentero (logic93_3): player X
 	sta.b a0		; $82FF0A: 85 33
 	lda.w #$0089		; $82FF0C: A9 89 00
 	sta.b a0+2		; $82FF0F: 85 35
-	jml.l $88FDD0		; $82FF11: 5C D0 FD 88  bank $88: 93G skateto (d0/d1 = target, a0 = callback; $89FD6A = 93G EvadePC)
+	jml.l skateto		; $82FF11: 5C D0 FD 88  bank $88: 93G skateto (d0/d1 = target, a0 = callback; $89FD6A = 93G EvadePC)
 .rtl:
 	rtl		; $82FF15: 6B
 .dedata:		;IDA unk_B14E: per zone (x, random x range, y, random y range)

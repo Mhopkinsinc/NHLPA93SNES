@@ -389,7 +389,7 @@ setvideo:		;auto: CODE_80E35E. 93G setvideo (video93_1): once per game frame, if
 	jsl.l setffo		; $80E397: 22 01 E5 80
 	jsl.l $8F82A4		; $80E39B: 22 A4 82 8F  bank $8F: 93G showclock
 	jsl.l $8F8ABC		; $80E39F: 22 BC 8A 8F  bank $8F: 93G showzam (elapsed time from vcountmark)
-	jsl.l $8887AE		; $80E3A3: 22 AE 87 88  bank $88: 93G showcrowd
+	jsl.l showcrowd		; $80E3A3: 22 AE 87 88  bank $88: 93G showcrowd
 	jsl.l $8BFFCC		; $80E3A7: 22 CC FF 8B  bank $8B: 93G showref (clears sf2refref)
 	jsl.l $8F8F4A		; $80E3AB: 22 4A 8F 8F  bank $8F: queue the rink map rows for Vscroll (93G show_rink rows)
 	jsl.l $8F8EF7		; $80E3AF: 22 F7 8E 8F  bank $8F: queue the changed textmap words (textdirtylo/hi)

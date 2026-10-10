@@ -755,9 +755,9 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	lda.w #$0064		; $80B624: A9 64 00
 	sta.b d0		; $80B627: 85 53
 	jsl.l $8FE0E4		; $80B629: 22 E4 E0 8F  bank $8F: build a sprite frame list ([a0] data, [a1] table, d0 count)
-	lda.w #$872E		; $80B62D: A9 2E 87
+	lda.w #FramerTiles		; $80B62D: A9 2E 87
 	sta.b a0		; $80B630: 85 33
-	lda.w #$0088		; $80B632: A9 88 00
+	lda.w #FramerTiles>>16		; $80B632: A9 88 00
 	sta.b a0+2		; $80B635: 85 35
 	lda.w #PixelRemap87		; $80B637: A9 5A F5
 	sta.b a1		; $80B63A: 85 37
@@ -1168,7 +1168,7 @@ print:		;auto: CODE_80B92D. 93G print (middle93_2): [a1] = string (length word, 
 	phx		; $80B961: DA
 	asl a		; $80B962: 0A
 	tax		; $80B963: AA
-	lda.l $88822F,x		; $80B964: BF 2F 82 88  char -> tile (bank $88 table) + font + printa
+	lda.l SmallFontMap,x		; $80B964: BF 2F 82 88  char -> tile (bank $88 table) + font + printa
 	adc.w smallfontchars		; $80B968: 6D D7 1B
 	adc.w printfontset		; $80B96B: 6D CB 1B
 	ora.w printa		; $80B96E: 0D 77 04

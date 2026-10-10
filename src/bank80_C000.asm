@@ -1317,7 +1317,7 @@ sroot:		;auto: CODE_80CBB1. 93G sroot (middle93_1): d0 = sqrt(d0, 32-bit) by bin
 	sta.b tmp2		; $80CBC2: 85 77
 	sta.b mula		; $80CBC4: 85 7D
 	sta.b mulb		; $80CBC6: 85 83
-	jsl.l $888942		; $80CBC8: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
+	jsl.l mulu		; $80CBC8: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
 	lda.b d0		; $80CBCC: A5 53
 	cmp.b mulres		; $80CBCE: C5 93
 	lda.b d0+2		; $80CBD0: A5 55

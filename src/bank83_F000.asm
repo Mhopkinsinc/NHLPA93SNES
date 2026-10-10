@@ -163,9 +163,9 @@ PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB
 	lda.w #$0064		; $83F99A: A9 64 00
 	sta.b d0		; $83F99D: 85 53
 	jsl.l $8FE0E4		; $83F99F: 22 E4 E0 8F  bank $8F: remap the 4bpp pixels of the unpacked tiles ([a0] data, [a1] table, d0 tiles)
-	lda.w #$872E		; $83F9A3: A9 2E 87
+	lda.w #FramerTiles		; $83F9A3: A9 2E 87
 	sta.b a0		; $83F9A6: 85 33
-	lda.w #$0088		; $83F9A8: A9 88 00
+	lda.w #FramerTiles>>16		; $83F9A8: A9 88 00
 	sta.b a0+2		; $83F9AB: 85 35
 	lda.w #PixelRemap87		; $83F9AD: A9 5A F5
 	sta.b a1		; $83F9B0: 85 37

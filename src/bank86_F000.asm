@@ -561,7 +561,7 @@ assscore:		;auto: CODE_86FD86 (asstab 7). 93G assscore (logic93_2): player X cel
 	lda.w pflags,x		; $86FE38: BD DF 0E
 	bit.w #pfjoycon		; $86FE3B: 89 08 00
 	bne .rtl2		; $86FE3E: D0 04
-	jml.l $88FDD0		; $86FE40: 5C D0 FD 88  bank $88: 93G skateto
+	jml.l skateto		; $86FE40: 5C D0 FD 88  bank $88: 93G skateto
 .rtl2:
 	rtl		; $86FE44: 6B
 unusedFF86:		;unused, $FF fill to the end of the bank

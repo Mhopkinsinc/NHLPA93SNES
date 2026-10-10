@@ -849,7 +849,7 @@ AttribRating:		;auto: CODE_84FE1D. 93G AttribRating: sum d0 of d1/15 ratings as 
 	sta.b mula		; $84FE20: 85 7D
 	lda.b d0		; $84FE22: A5 53
 	sta.b mulb		; $84FE24: 85 83
-	jsl.l $888942		; $84FE26: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
+	jsl.l mulu		; $84FE26: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
 	lda.b d1		; $84FE2A: A5 57
 	sta.b mula		; $84FE2C: 85 7D
 	jsl.l divu		; $84FE2E: 22 E5 CB 80

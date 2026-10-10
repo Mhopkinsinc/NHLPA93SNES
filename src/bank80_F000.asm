@@ -197,7 +197,7 @@ asspuckc:		;auto: CODE_80F45B (asstab $10). 93G asspuckc (logic93_3): player X i
 	sta.b a0		; $80F50E: 85 33
 	lda.w #.chkdir>>16		; $80F510: A9 80 00
 	sta.b a0+2		; $80F513: 85 35
-	jml.l $88FDD0		; $80F515: 5C D0 FD 88  bank $88: 93G skateto (d0/d1 = target, a0 = callback)
+	jml.l skateto		; $80F515: 5C D0 FD 88  bank $88: 93G skateto (d0/d1 = target, a0 = callback)
 .rtl:
 	rtl		; $80F519: 6B
 .chkdir:		;IDA asspuckc_chkdir: skateto callback. d0 = direction; turn away from an opponent within 20 of where the puck will be (threat = count)
@@ -301,8 +301,8 @@ asspuckc:		;auto: CODE_80F45B (asstab $10). 93G asspuckc (logic93_3): player X i
 DecodePW:		;auto: CODE_80F5EA. 92G DecodePW: translate the password in PassWord to game variables: PWtoBits, then ReadPassBits ($8B817A)
 	jsl.l PWtoBits		; $80F5EA: 22 C5 FB 82
 	jml.l $8B817A		; $80F5EE: 5C 7A 81 8B  bank $8B
-far8B8172:		;auto: CODE_80F5F2. far trampoline: $88F512 (font tile bases), then on at $8B8172
-	jsl.l $88F512		; $80F5F2: 22 12 F5 88  bank $88: font tile bases
+far8B8172:		;auto: CODE_80F5F2. far trampoline: PlayoffScreen ($88F512), then on at $8B8172
+	jsl.l PlayoffScreen		; $80F5F2: 22 12 F5 88  bank $88: 93G PlayoffScreen (font tile bases, the playoff tree)
 	jml.l $8B8172		; $80F5F6: 5C 72 81 8B  bank $8B
 SuperDiv:		;auto: CODE_80F5FA. 92G SuperDiv: passbits (128 bits) / d0: quotient in passbits, remainder in d0. Shift-subtract over 128 bits with the divisor in mula+0..+16 and the remainder in
 		;   mulres+0..+14
@@ -454,7 +454,7 @@ assgoalie:		;auto: CODE_80F6AD (asstab $E). 93G assgoalie (logic93_3): goalie X.
 	lda.w #$FF1C		; $80F723: A9 1C FF
 	sta.b d1		; $80F726: 85 57
 .sk:
-	jml.l $88FDD0		; $80F728: 5C D0 FD 88  bank $88: 93G skateto (d0/d1 = target, a0 = callback)
+	jml.l skateto		; $80F728: 5C D0 FD 88  bank $88: 93G skateto (d0/d1 = target, a0 = callback)
 .noskate:
 	lda.w pf2aip,x		; $80F72C: BD DF 11  pf2aip: nothing
 	beq .gready		; $80F72F: F0 03

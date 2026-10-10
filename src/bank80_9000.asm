@@ -692,7 +692,7 @@ assfwatch:		;auto: asstab $15. 93G assfwatch (logic93_2): for a player watching 
 	pla		; $80969B: 68
 	ror a		; $80969C: 6A
 	sta.w Yvel,x		; $80969D: 9D FF 0A
-	jsl.l $88FDD0		; $8096A0: 22 D0 FD 88  bank $88: 93G skateto (d0/d1 = spot, [a0] = arrival routine)
+	jsl.l skateto		; $8096A0: 22 D0 FD 88  bank $88: 93G skateto (d0/d1 = spot, [a0] = arrival routine)
 	jmp.w check4check		; $8096A4: 4C 15 8B
 .rts:
 	rtl		; $8096A7: 6B
@@ -1930,7 +1930,7 @@ puckstick:		;auto: CODE_809F15. 93G puckstick (hockey93_05): puck hits the stick
 	adc.w #$32C8		; $80A05F: 69 C8 32  + 13000
 	sta.b mula		; $80A062: 85 7D
 	sta.b mulb		; $80A064: 85 83
-	jsl.l $888942		; $80A066: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
+	jsl.l mulu		; $80A066: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
 	cmp.b d0		; $80A06A: C5 53
 	lda.b mulres+2		; $80A06C: A5 95
 	sbc.b d0+2		; $80A06E: E5 55

@@ -1401,7 +1401,7 @@ assnearest:		;auto: CODE_808834 (asstab $11). 93G assnearest (logic93_4): assign
 	sta.b a0		; $808B00: 85 33
 	lda.w #rtss>>16		; $808B02: A9 80 00
 	sta.b a0+2		; $808B05: 85 35
-	jsl.l $88FDD0		; $808B07: 22 D0 FD 88  bank $88: 93G skateto (d0/d1 = spot, [a0] = arrival routine)
+	jsl.l skateto		; $808B07: 22 D0 FD 88  bank $88: 93G skateto (d0/d1 = spot, [a0] = arrival routine)
 	jmp.w check4check		; $808B0B: 4C 15 8B
 .topuck:
 	jsl.l skatetopuck		; $808B0E: 22 2D 8C 80
@@ -1491,7 +1491,7 @@ burst:		;auto: CODE_808BAD. 93G burst (logic93_1): check button: speed burst in 
 	sta.b mula		; $808BC4: 85 7D
 	lda.w #$0233		; $808BC6: A9 33 02
 	sta.b mulb		; $808BC9: 85 83
-	jsl.l $888942		; $808BCB: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
+	jsl.l mulu		; $808BCB: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
 	lda.b mulres+2		; $808BCF: A5 95
 	sta.b mulb		; $808BD1: 85 83
 	pha		; $808BD3: 48
@@ -1880,7 +1880,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	jsl.l $8D871C		; $808F09: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
 	lda.w #$2570		; $808F0D: A9 70 25
 	sta.b mula		; $808F10: 85 7D
-	jsl.l $888942		; $808F12: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
+	jsl.l mulu		; $808F12: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
 	lda.b mulres+2		; $808F16: A5 95
 	sta.w passspeed		; $808F18: 8D 3D 04
 	lda.w #$FFFF		; $808F1B: A9 FF FF  puck loose
@@ -2046,7 +2046,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	jsl.l $8D871C		; $809068: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
 	lda.w #$0044		; $80906C: A9 44 00
 	sta.b mula		; $80906F: 85 7D
-	jsl.l $888942		; $809071: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
+	jsl.l mulu		; $809071: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
 	lda.b d3		; $809075: A5 5F
 	sta.b mula		; $809077: 85 7D
 	jsl.l divu		; $809079: 22 E5 CB 80
@@ -2056,7 +2056,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	sta.b mula		; $809083: 85 7D
 	lda.b d3		; $809085: A5 5F
 	sta.b mulb		; $809087: 85 83
-	jsl.l $888942		; $809089: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
+	jsl.l mulu		; $809089: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
 	lda.w passspeed		; $80908D: AD 3D 04
 	sta.b mula		; $809090: 85 7D
 	jsl.l divu		; $809092: 22 E5 CB 80

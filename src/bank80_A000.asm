@@ -1573,7 +1573,7 @@ random:		;auto: CODE_80AE56. 93G randomd0 seed step: seed = seed*$BB40E62D+1 (32
 	sta.b mulb		; $80AE63: 85 83
 	lda.w #$BB40		; $80AE65: A9 40 BB
 	sta.b mulb+2		; $80AE68: 85 85
-	jsl.l $88832F		; $80AE6A: 22 2F 83 88  bank $88: mulu 32-bit
+	jsl.l mulu32		; $80AE6A: 22 2F 83 88  bank $88: mulu 32-bit
 	adc.w #$0001		; $80AE6E: 69 01 00
 	sta.w seed		; $80AE71: 8D A1 04
 	lda.b mulres+2		; $80AE74: A5 95
@@ -1592,7 +1592,7 @@ randoma:		;auto: CODE_80AE8B. 93G randomd0 with A = range: returns A = random 0.
 	sta.b mula		; $80AE90: 85 7D
 	pla		; $80AE92: 68
 	sta.b mulb		; $80AE93: 85 83
-	jsl.l $888942		; $80AE95: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
+	jsl.l mulu		; $80AE95: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
 	lda.b mulres+2		; $80AE99: A5 95
 	clc		; $80AE9B: 18
 	rtl		; $80AE9C: 6B
