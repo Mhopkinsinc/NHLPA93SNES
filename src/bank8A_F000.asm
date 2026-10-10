@@ -348,7 +348,7 @@ SetScore:		;auto: CODE_8AFE21 (from UpdateScores $82F9F4, $8F9062). 93G SetScore
 	ldy.b d0
 	lda.b [a1],y
 	sta.b a1
-	ldy.w #8		; + ScoreOdds offset (team record +8)
+	ldy.w #ScoutReport		; 93G 8(a1): the 92G ScoreOdds offset, ScoutReport in the 93G record
 	adc.b [a1],y
 	sta.b a1
 	lda.b [a1]
@@ -378,7 +378,7 @@ SetScore:		;auto: CODE_8AFE21 (from UpdateScores $82F9F4, $8F9062). 93G SetScore
 	ldy.b d1
 	lda.b [a1],y
 	sta.b a1
-	ldy.w #8
+	ldy.w #ScoutReport
 	adc.b [a1],y
 	sta.b a1
 	lda.b [a1]

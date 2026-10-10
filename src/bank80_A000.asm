@@ -853,7 +853,7 @@ SetLCmode2:		;auto: CODE_80A748. 93G SetLCmode2 (logic93_1 IDA showfaceoff): a2 
 	sta.b a1+2
 	lda.w tmdata,y
 	sta.b a1
-	ldy.w #$0004
+	ldy.w #Teamname
 	clc
 	adc.b [a1],y
 	sta.b a1

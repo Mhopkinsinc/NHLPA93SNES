@@ -159,7 +159,7 @@ getlinee:		;auto: CODE_888405. 93G getlinee (penalty93_2): d0 = line number, a2 
 	sta.b a1
 	lda.w #TeamList>>16		; a1 = the team data (bank $83)
 	sta.b a1+2
-	ldy.w #$0006		; + offset of the line sets
+	ldy.w #LineSets		; + offset of the line sets
 	lda.b [a1],y
 	clc
 	adc.b a1

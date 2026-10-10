@@ -94,9 +94,9 @@ unusedEnergyBar:		;auto: CODE_8F8130. SNES: no caller found: a 4-character energ
 	lda.w #$0C00
 	tsb.w printa
 .l7:
-	lda.w #$0191
+	lda.w #mesarea
 	sta.b a1
-	lda.w #$0000
+	lda.w #mesarea>>16
 	sta.b a1+2
 	lda.w printx
 	sec
@@ -104,9 +104,9 @@ unusedEnergyBar:		;auto: CODE_8F8130. SNES: no caller found: a 4-character energ
 	sta.w printx
 	lda.w #$4000
 	tsb.w printa
-	lda.w #$0191
+	lda.w #mesarea
 	sta.b a1
-	lda.w #$0000
+	lda.w #mesarea>>16
 	sta.b a1+2
 	sep #$20
 	lda.w mesarea+5
@@ -226,9 +226,9 @@ showclock:		;auto: CODE_8F82A4 (from setvideo). 93G showclock (video93_2): the g
 	cmp.w #$0004
 	beq .l4
 .l3:
-	lda.w #$0191
+	lda.w #mesarea
 	sta.b a1
-	lda.w #$0000
+	lda.w #mesarea>>16
 	sta.b a1+2
 	jml.l print
 .l4:
@@ -312,7 +312,7 @@ PushRef:		;auto: CODE_8F83A7. 93G PushRef: ref window frame d0 (RefsMap or RefsM
 	sta.b a0
 	lda.w #RefsMap>>16
 	sta.b a0+2
-	lda.w #$0084
+	lda.w #(2*32+2)*2		; textmap offset of the window: row 2, column 2
 	sta.b tmp1
 	lda.w refchars
 	sta.b tmp0
@@ -320,7 +320,7 @@ PushRef:		;auto: CODE_8F83A7. 93G PushRef: ref window frame d0 (RefsMap or RefsM
 	beq .l4
 	lda.w refcharshor
 	sta.b tmp0
-	lda.w #$03DA
+	lda.w #(15*32+13)*2		; horizontal rink: row 15, column 13
 	sta.b tmp1
 	lda.w #RefsMapHor
 	sta.b a0
@@ -600,7 +600,7 @@ pplpen:		;auto: CODE_8F85FA. 93G pplpen: one penalty box line: player number and
 	ldy.b a2
 	lda.w tmdata,y
 	sta.b a1
-	ldy.w #$0000
+	ldy.w #Playerdata
 	adc.b [a1],y
 	sta.b a1
 	lsr.b d0
@@ -621,14 +621,14 @@ pplpen:		;auto: CODE_8F85FA. 93G pplpen: one penalty box line: player number and
 	sta.b d0
 	lda.w printx
 	pha
-	lda.w #$0193
+	lda.w #mesarea+2
 	sta.b a1
-	lda.w #$0000
+	lda.w #mesarea>>16
 	sta.b a1+2
 	jsl.l PutDigits2
-	lda.w #$0191
+	lda.w #mesarea
 	sta.b a1
-	lda.w #$0000
+	lda.w #mesarea>>16
 	sta.b a1+2
 	lda.w #$0004
 	sta.b [a1]
@@ -643,9 +643,9 @@ pplpen:		;auto: CODE_8F85FA. 93G pplpen: one penalty box line: player number and
 	inc.w printy
 	rtl
 pushnumber:		;auto: CODE_8F8682. 93G pushnumber: mesarea string of the decimal number d0 (built backward from $1AF)
-	lda.w #$01AF
+	lda.w #mesarea+30
 	sta.b a1
-	lda.w #$0000
+	lda.w #mesarea>>16
 	sta.b a1+2
 	lda.b d0
 .l1:
@@ -816,9 +816,9 @@ appstring:		;auto: CODE_8F87C9. 93G appstring: append string [a1] to the string 
 	sta.b [a3]
 	rtl
 PushTime:		;auto: CODE_8F87EA. 93G PushTime: mesarea string m:ss of the time d0 (seconds)
-	lda.w #$01AF
+	lda.w #mesarea+30
 	sta.b a1
-	lda.w #$0000
+	lda.w #mesarea>>16
 	sta.b a1+2
 	lda.b d0
 	sta.b mulb
@@ -985,7 +985,7 @@ TickerTeam:		;auto: CODE_8F8960. SNES: ticker line: team d0 name (TeamList recor
 	sta.b a1
 	lda.w #TeamList>>16
 	sta.b a1+2
-	ldy.w #$0004
+	ldy.w #Teamname
 	lda.b [a1],y
 	adc.b a1
 	sta.b a1
@@ -1268,9 +1268,9 @@ updatepentime:		;auto: CODE_8F8C72. 93G updatepentime: once a second count down 
 	lda.w #$001A
 .l1:
 	sta.b a0
-	lda.w #$0191
+	lda.w #mesarea
 	sta.b a1
-	lda.w #$0000
+	lda.w #mesarea>>16
 	sta.b a1+2
 	lda.w #$0002
 	sta.b d1
@@ -1387,9 +1387,9 @@ linebar:		;auto: CODE_8F8D68 (line change box). 93G linebar: energy bar of line 
 	sta.w mesarea+4
 	sta.w mesarea+5
 	sta.w mesarea+6
-	lda.w #$0191
+	lda.w #mesarea
 	sta.b a1
-	lda.w #$0000
+	lda.w #mesarea>>16
 	sta.b a1+2
 	lda.b d0
 	sta.b mula

@@ -1341,7 +1341,7 @@ TeamRoster:		;auto: CODE_8FE825 (pause menu). SNES Team Roster screen: the team 
 	sta.b a3+2
 	lda.w tmdata,y
 	sta.b a3
-	ldy.w #$0006
+	ldy.w #LineSets
 	clc
 	adc.b [a3],y
 	sec
@@ -1481,9 +1481,9 @@ Pmenu:		;auto: CODE_8FECAB (from Pausemode, StartHL2). 92G Pausemode .Pmenu: the
 	jsl.l printz
 	dw $0016		; printz inline string: length (counts itself), then control bytes / text
 	db "                    "
-	lda.w #$0191
+	lda.w #mesarea
 	sta.b a1
-	lda.w #$0000
+	lda.w #mesarea>>16
 	sta.b a1+2
 	ldy.w #$001E
 .l3:
@@ -1526,7 +1526,7 @@ Pmenu:		;auto: CODE_8FECAB (from Pausemode, StartHL2). 92G Pausemode .Pmenu: the
 	sta.b a4
 	lda.w #TeamList>>16
 	sta.b a4+2
-	ldy.w #$0000
+	ldy.w #Playerdata
 	lda.b [a4],y
 	clc
 	adc.b a4

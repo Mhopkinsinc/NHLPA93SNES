@@ -455,7 +455,7 @@ setoptions:		;auto: CODE_8FEE83 (jsl from bank $83). 93G setoptions (hockey93_08
 	sta.b a1+2
 	lda.b [a1],y
 	sta.b a1
-	ldy.w #$0004
+	ldy.w #Teamname
 	clc
 	adc.b [a1],y
 	sta.b a1
@@ -1371,7 +1371,7 @@ GetPlayerCount:		;auto: CODE_8FFAF3. 93G GetPlayerCount: d0 = roster players of 
 	sta.b a0
 	lda.w #TeamList>>16
 	sta.b a0+2
-	ldy.w #$0000
+	ldy.w #Playerdata
 	lda.b [a0],y
 	clc
 	adc.b a0

@@ -1343,7 +1343,7 @@ printteamname:		;auto: CODE_80BABC. print the team name of team d3 (0 home) at p
 	lda.w tmdata+2
 	sta.b a1
 .name:
-	ldy.w #$0004
+	ldy.w #Teamname
 	lda.b [a1],y
 	clc
 	adc.b a1
@@ -1610,7 +1610,7 @@ SetPlList:		;auto: CODE_80BCB0. 93G SetPlList (hockey93_05): make PlList, the pl
 	sta.b a1
 	lda.w #TeamList>>16
 	sta.b a1+2
-	ldy.w #$0006
+	ldy.w #LineSets
 	lda.b [a1],y
 	clc
 	adc.b a1
@@ -1694,7 +1694,7 @@ SetPlList:		;auto: CODE_80BCB0. 93G SetPlList (hockey93_05): make PlList, the pl
 	sta.b a1
 	lda.w #TeamList>>16
 	sta.b a1+2
-	ldy.w #$0006
+	ldy.w #LineSets
 	lda.b [a1],y
 	clc
 	adc.b a1

@@ -313,7 +313,7 @@ GoalieCount:		;auto: CODE_8FD76B. SNES: d0 = goalies of team a2 (nibbles of its 
 	sta.b tmp1
 	lda.w tmdata,y
 	sta.b tmp0
-	ldy.w #$000A
+	ldy.w #ScoreOdds
 	clc
 	adc.b [tmp0],y
 	sta.b tmp0
@@ -938,7 +938,7 @@ ScoutingReport:		;auto: CODE_8FDC0D (from Opening4). 93G ScoutingReport (hockey9
 	sta.b a2+2
 	lda.w tmdata+2
 	sta.b a2
-	ldy.w #$0008
+	ldy.w #ScoutReport
 	lda.b [a0],y
 	clc
 	adc.b a0

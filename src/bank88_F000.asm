@@ -807,9 +807,9 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	asl a
 	asl a
 	sta.w printy
-	lda.w #$0191
+	lda.w #mesarea
 	sta.b a1
-	lda.w #$0000
+	lda.w #mesarea>>16
 	sta.b a1+2
 	lda.w #5		; mesarea "<home wins>-<away wins>"
 	sta.w mesarea

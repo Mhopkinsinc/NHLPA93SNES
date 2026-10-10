@@ -179,7 +179,7 @@ GetPlayerRecord:		;auto: CODE_89FCD8. SNES: a0 = roster record of player d0 of t
 	ldy.b a2
 	lda.w tmdata,y
 	sta.b a0
-	ldy.w #$0000
+	ldy.w #Playerdata
 	clc
 	adc.b [a0]
 	sta.b a0
@@ -199,7 +199,7 @@ MesAreaDone:		;auto: CODE_89FCFD. SNES: end a string built in mesarea: length = 
 	sec
 	sbc.w #$0191
 	sta.w mesarea
-	lda.w #$0191
+	lda.w #mesarea
 	sta.b a1
 	rtl
 StartGame:		;auto: CODE_89FD0C (from $8B8176). 93G StartGame (hockey93_01): reset the game state (gmode, offsides option, team stats, scores, gsp), restoreteams, then on to the period start
