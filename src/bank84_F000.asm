@@ -303,7 +303,7 @@ ScrollDisplayUp:		;auto: CODE_84F734. 93G ScrollDisplayUp (hockey93_07): next te
 	sta.b d2		; $84F778: 85 5B
 	lda.b d1+2		; $84F77A: A5 59
 	sta.b d2+2		; $84F77C: 85 5D
-	jsl.l $89FC8F		; $84F77E: 22 8F FC 89  bank $89: copy a textmap row
+	jsl.l CopyWords		; $84F77E: 22 8F FC 89  bank $89: copy a textmap row
 	lda.b d2		; $84F782: A5 5B
 	sta.b d1		; $84F784: 85 57
 	lda.b d2+2		; $84F786: A5 5D

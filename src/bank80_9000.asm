@@ -709,7 +709,7 @@ assfaceoff:		;auto: asstab $16. 93G assfaceoff (logic93_2): players do nothing u
 	sta.b sndlock		; $8096C0: 85 21
 	stz.b sndqin		; $8096C2: 64 1D
 	stz.b sndqout		; $8096C4: 64 1F
-	jsl.l $89FBB3		; $8096C6: 22 B3 FB 89  bank $89: home goal music cue
+	jsl.l StartSong1		; $8096C6: 22 B3 FB 89  bank $89: home goal music cue
 .per:
 	lda.w percue		; $8096CA: AD 2B 04  period start music cue
 	beq .mid		; $8096CD: F0 10
@@ -718,7 +718,7 @@ assfaceoff:		;auto: asstab $16. 93G assfaceoff (logic93_2): players do nothing u
 	sta.b sndlock		; $8096D5: 85 21
 	stz.b sndqin		; $8096D7: 64 1D
 	stz.b sndqout		; $8096D9: 64 1F
-	jsl.l $89FBDF		; $8096DB: 22 DF FB 89  bank $89: period start music cue
+	jsl.l StartSong2		; $8096DB: 22 DF FB 89  bank $89: period start music cue
 .mid:
 	lda.w cuetimer		; $8096DF: AD A9 04  no cue playing, clock >= 60 and past midpercue: mid-period cue
 	bne .rts		; $8096E2: D0 14
@@ -728,7 +728,7 @@ assfaceoff:		;auto: asstab $16. 93G assfaceoff (logic93_2): players do nothing u
 	cmp.w midpercue		; $8096EC: CD 2F 04
 	bcs .rts		; $8096EF: B0 07
 	stz.w midpercue		; $8096F1: 9C 2F 04
-	jsl.l $89FC63		; $8096F4: 22 63 FC 89  bank $89: mid-period music cue
+	jsl.l StartSong5		; $8096F4: 22 63 FC 89  bank $89: mid-period music cue
 .rts:
 	rtl		; $8096F8: 6B
 assexit:		;auto: CODE_8096F9. 93G assexit (logic93_5): exit the current assignment of player X

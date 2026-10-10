@@ -469,7 +469,7 @@ Goal:		;auto: CODE_80D182. 93G Goal (hockey93_04): puck in the goal. Score +1 fo
 	rep #$20		; $80D26B: C2 20
 .noast:
 	jsl.l PenGoalStuff		; $80D26D: 22 29 D3 80  PenGoalStuff, printscores1, ascore for the scoring team
-	jsl.l $89E95D		; $80D271: 22 5D E9 89  bank $89: 93G printscores1
+	jsl.l printscores1		; $80D271: 22 5D E9 89  bank $89: 93G printscores1
 	lda.w #ascore		; $80D275: A9 07 00
 	sta.b d0		; $80D278: 85 53
 	jsl.l .setass		; $80D27A: 22 02 D3 80

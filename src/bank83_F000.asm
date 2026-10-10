@@ -38,7 +38,7 @@ Pausemode:		;auto: CODE_83F82B (called from $8E817B). 92G Pausemode: game is in 
 	lda.w #$0007		; $83F87A: A9 07 00
 	sta.b d1		; $83F87D: 85 57
 	jsl.l $8FD69F		; $83F87F: 22 9F D6 8F  bank $8F: 93G Framer (d0 x d1)
-	jsl.l $89E95D		; $83F883: 22 5D E9 89  bank $89: 93G printscores1
+	jsl.l printscores1		; $83F883: 22 5D E9 89  bank $89: 93G printscores1
 	jsl.l PauseMenu		; $83F887: 22 91 F8 83  nonzero: draw again
 	bne .top		; $83F88B: D0 D1
 	jml.l $8F8E0D		; $83F88D: 5C 0D 8E 8F  bank $8F: 92G PauseExit
@@ -96,7 +96,7 @@ PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB
 	dec a		; $83F900: 3A
 	dec a		; $83F901: 3A
 	sta.w vcountmark+2		; $83F902: 8D FD 08
-	jsl.l $8990F0		; $83F905: 22 F0 90 89  bank $89: 93G ReplayMode
+	jsl.l ReplayMode		; $83F905: 22 F0 90 89  bank $89: 93G ReplayMode
 	pla		; $83F909: 68
 	sta.b d7		; $83F90A: 85 6F
 .redraw:		;return 1: draw the pause screen again

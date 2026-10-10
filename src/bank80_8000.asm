@@ -128,7 +128,7 @@ vb2_main:		;auto: CODE_8080E5. common vblank tail: vcount, sound tick (93G p_mus
 	bne .tick		; $8080E9: D0 02
 	inc.b vcount+2		; $8080EB: E6 02
 .tick:
-	jsl.l $89EB15		; $8080ED: 22 15 EB 89  bank $89: 93G p_music_vblank (sound tick)
+	jsl.l p_music_vblank		; $8080ED: 22 15 EB 89  bank $89: 93G p_music_vblank (sound tick)
 	stz.b hcount		; $8080F1: 64 18  clear the IRQ count every frame
 	lda.b fadeout		; $8080F3: A5 06
 	beq .fadein		; $8080F5: F0 11
@@ -867,7 +867,7 @@ chk4lc:		;auto: CODE_808681. 93G chk4lc (logic93_3): should the computer call a 
 	bcs .rts		; $8086D1: B0 0F
 	jsl.l $8FE6BD		; $8086D3: 22 BD E6 8F  bank $8F: 93G CompLine
 	jsl.l setpersonel		; $8086D7: 22 5A BB 80
-	jsl.l $89E95D		; $8086DB: 22 5D E9 89  bank $89: 93G printscores1
+	jsl.l printscores1		; $8086DB: 22 5D E9 89  bank $89: 93G printscores1
 	jmp.w CompShoot		; $8086DF: 4C F7 87
 .rts:
 	rtl		; $8086E2: 6B

@@ -392,7 +392,7 @@ lcfound2:		;auto: CODE_86FCB7. 93G lcfound2 (logic93_1): close the line change b
 	bne .ps		; $86FCD9: D0 04
 	jsl.l $8D847C		; $86FCDB: 22 7C 84 8D  bank $8D: 92G eraser
 .ps:
-	jml.l $89E95D		; $86FCDF: 5C 5D E9 89  bank $89: 93G printscores1
+	jml.l printscores1		; $86FCDF: 5C 5D E9 89  bank $89: 93G printscores1
 PickStartingGoalie:		;auto: CODE_86FCE3. SNES: tmgoalie of team a2 = 0 ($8B807D); a computer team in the later playoff rounds (gamelevel >= 2, line changes on) picks the goalie by its scouting
 		;   report ($8FF4D8, $8FE3B0)
 	stx.b xsave		; $86FCE3: 86 0A

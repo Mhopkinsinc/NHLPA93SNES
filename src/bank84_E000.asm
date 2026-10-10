@@ -279,7 +279,7 @@ ScoutTeamStep:		;auto: CODE_84EABF. SNES: step the showcased player of team a2: 
 	sta.b a1		; $84EC46: 85 37
 	jml.l print		; $84EC48: 5C 2D B9 80
 ScoutPlayerExit:		;auto: CODE_84EC4C. SNES: the showcased player of team a2 skates off ($89FCC1, tmflags bit 1)
-	jsl.l $89FCC1		; $84EC4C: 22 C1 FC 89  bank $89
+	jsl.l EraseScoutName		; $84EC4C: 22 C1 FC 89  bank $89
 	ldy.b a2		; $84EC50: A4 3B
 	lda.w tmflags,y		; $84EC52: B9 0A 14
 	ora.w #$0002		; $84EC55: 09 02 00

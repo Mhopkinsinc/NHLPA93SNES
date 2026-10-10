@@ -920,7 +920,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	ora.w #$1000		; $88F850: 09 00 10
 	sta.b d2		; $88F853: 85 5B
 	jsl.l $8D847C		; $88F855: 22 7C 84 8D  bank $8D: 93G eraser (d0 x d1, tile d2)
-	jsl.l $89FB8F		; $88F859: 22 8F FB 89  bank $89: song check
+	jsl.l StartSong9		; $88F859: 22 8F FB 89  the playoff screen music
 .scroll:		;clamp Hscroll, queue the 128-column map window, wait a frame
 	lda.w Hscroll		; $88F85D: AD 56 01
 	cmp.b d2+2		; $88F860: C5 5D
@@ -1417,9 +1417,9 @@ assdefd:		;auto: CODE_88FBA6 (asstab 2). 93G assdefd (logic93_2): defenceman on 
 	sta.b d0		; $88FD99: 85 53
 	lda.w temp4,x		; $88FD9B: BD BF 0C
 	sta.b d1		; $88FD9E: 85 57
-	lda.w #$FD6A		; $88FDA0: A9 6A FD
+	lda.w #EvadePC		; $88FDA0: A9 6A FD
 	sta.b a0		; $88FDA3: 85 33
-	lda.w #$0089		; $88FDA5: A9 89 00
+	lda.w #EvadePC>>16		; $88FDA5: A9 89 00
 	sta.b a0+2		; $88FDA8: 85 35
 	jsl.l skateto		; $88FDAA: 22 D0 FD 88
 	jml.l check4check		; $88FDAE: 5C 15 8B 80

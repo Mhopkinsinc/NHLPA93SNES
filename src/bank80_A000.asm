@@ -616,7 +616,7 @@ puckfaceoff:		;auto: asstab $1B. 93G puckfaceoff (logic93_4): this is where the 
 	beq .rtl		; $80A60E: F0 5E
 	jsl.l $8FE6BD		; $80A610: 22 BD E6 8F  bank $8F: 93G CompLine
 	jsl.l setpersonel		; $80A614: 22 5A BB 80
-	jml.l $89E95D		; $80A618: 5C 5D E9 89  bank $89: 93G printscores1
+	jml.l printscores1		; $80A618: 5C 5D E9 89  bank $89: 93G printscores1
 .slc:		;controlled player d0 gets the line change box
 	ldy.b a3		; $80A61C: A4 3F
 	sty.b a2		; $80A61E: 84 3B
@@ -892,7 +892,7 @@ ClrHor:		;auto: CODE_80A828. 93G ClrHor (penalty93_1): revert to the vertical ic
 	stz.b textdirtylo		; $80A860: 64 D0  whole text map dirty
 	lda.w #$03FF		; $80A862: A9 FF 03
 	sta.b textdirtyhi		; $80A865: 85 D2
-	jsl.l $89E95D		; $80A867: 22 5D E9 89  bank $89: 93G printscores1
+	jsl.l printscores1		; $80A867: 22 5D E9 89  bank $89: 93G printscores1
 .pop:
 	stx.b xsave		; $80A86B: 86 0A
 	ldx.w #$003A		; $80A86D: A2 3A 00

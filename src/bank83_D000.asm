@@ -32,7 +32,7 @@ PlayerNumName:		;auto: CODE_83CC0C. SNES: mesarea = "<uniform number> <name>" of
 	cpx.w #$0004		; $83CC38: E0 04 00
 	bne .pusha		; $83CC3B: D0 F6
 	ldx.b xsave		; $83CC3D: A6 0A
-	jsl.l $89FCD8		; $83CC3F: 22 D8 FC 89  a0 = the player entry, bank $89: a0 = roster entry of player d0
+	jsl.l GetPlayerRecord		; $83CC3F: 22 D8 FC 89  a0 = the player entry, bank $89: a0 = roster entry of player d0
 	stx.b xsave		; $83CC43: 86 0A
 	ldx.w #$0000		; $83CC45: A2 00 00
 .push2:

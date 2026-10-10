@@ -735,9 +735,9 @@ asscentero:		;auto: CODE_82FDE7 (asstab 6). 93G asscentero (logic93_3): player X
 	inc a		; $82FF04: 1A
 	sta.b d1		; $82FF05: 85 57
 .zero:		;93G .0
-	lda.w #$FD6A		; $82FF07: A9 6A FD  skateto with the EvadePC callback
+	lda.w #EvadePC		; $82FF07: A9 6A FD  skateto with the EvadePC callback
 	sta.b a0		; $82FF0A: 85 33
-	lda.w #$0089		; $82FF0C: A9 89 00
+	lda.w #EvadePC>>16		; $82FF0C: A9 89 00
 	sta.b a0+2		; $82FF0F: 85 35
 	jml.l skateto		; $82FF11: 5C D0 FD 88  bank $88: 93G skateto (d0/d1 = target, a0 = callback; $89FD6A = 93G EvadePC)
 .rtl:
