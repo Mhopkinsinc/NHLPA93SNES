@@ -111,7 +111,7 @@ PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB
 	jsl.l $8F8757		; $83F91A: 22 57 87 8F  stats report screen, then back, bank $8F
 	jsl.l $8FF58D		; $83F91E: 22 8D F5 8F  bank $8F: 92G StatsReport
 	bra .redraw		; $83F922: 80 E8
-.ros:		;SNES Team Roster: show the roster, then rebuild the game screen (bg registers, palette, big font tiles, SetHor)
+.ros:		;SNES Team Roster: show the roster, then rebuild the game screen (bg registers, palette, small font tiles, SetHor)
 	lda.b d1		; $83F924: A5 57
 	bit.w #cbut		; $83F926: 89 80 00
 	bne .ros1		; $83F929: D0 03
@@ -148,9 +148,9 @@ PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB
 	asl a		; $83F974: 0A
 	adc.w #$1000		; $83F975: 69 00 10
 	sta.w VMADDL		; $83F978: 8D 16 21
-	lda.w #BigFontTiles		; $83F97B: A9 D8 C6
+	lda.w #SmallFontTiles		; $83F97B: A9 D8 C6
 	sta.b tmp0		; $83F97E: 85 73
-	lda.w #BigFontTiles>>16		; $83F980: A9 83 00
+	lda.w #SmallFontTiles>>16		; $83F980: A9 83 00
 	sta.b tmp1		; $83F983: 85 75
 	jsl.l DecompressGraphics		; $83F985: 22 3E FA 86
 	stz.b a0		; $83F989: 64 33

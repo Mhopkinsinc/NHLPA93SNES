@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank8D_E000` ($8DE00C-$8DEFFF). <- CURRENT
+`bank8D_F000` ($8DF00C-$8DFFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -183,8 +183,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank8D_B000 | matched | $8DB00C | $8DC00B | data | SpriteSet10 tiles |
 | bank8D_C000 | matched | $8DC00C | $8DD00B | data | SpriteSet10 tiles |
 | bank8D_D000 | matched | $8DD00C | $8DE00B | data | SpriteSet10 tiles |
-| bank8D_E000 | not matched <- CURRENT | $8DE00C | $8DEFFF | 0% |  |
-| bank8D_F000 | not matched | $8DF00C | $8CFFFF | -0% | penalty StartHL2 "Highlight from game:" $F8D7 (92G $AC98) |
+| bank8D_E000 | matched | $8DE00C | $8DF00B | 100% | SpriteSet10 end, BigFontTiles start (data/BigFont.chr.pak) |
+| bank8D_F000 | not matched <- CURRENT | $8DF00C | $8DFFFF | -0% | penalty StartHL2 "Highlight from game:" $F8D7 (92G $AC98) |
 | bank8E_8000 | not matched | $8E8000 | $8E8FFF | 14% | Tile data (4bpp planar composite) from about $8E89A7 (ROM $709A7) |
 | bank8E_9000 | not matched | $8E900B | $8E9FFF | 0% |  |
 | bank8E_A000 | not matched | $8EA00B | $8EAFFF | 0% |  |
@@ -319,3 +319,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank8D_B000: matched $8DB00C-$8DC00B (4096 bytes): SpriteSet10 tiles. MATCH.
 - bank8D_C000: matched $8DC00C-$8DD00B (4096 bytes): SpriteSet10 tiles. MATCH.
 - bank8D_D000: matched $8DD00C-$8DE00B (4096 bytes): SpriteSet10 tiles. MATCH.
+- bank8D_E000: matched $8DE00C-$8DF00B (4096 bytes): the last SpriteSet10 tiles, then the packed big font ($8DEEC8, 144 tiles = BigFontChars). Rendering showed the bank $83 BigFontTiles (100 tiles) is the small font: renamed SmallFontTiles (data/SmallFont.chr.pak); BigFontTiles/data/BigFont.chr.pak are now the real big font. MATCH.

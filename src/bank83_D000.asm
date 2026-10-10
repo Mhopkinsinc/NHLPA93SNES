@@ -1,5 +1,5 @@
 ; $83CC0C-$83DFFF  ROM $1CC0C-$1DFFF: PlayerNumName, then the start of IceRinkMap (vertical rink tile map, data/IceRink.snesmap,
-; continued in bank83_E000). Starts after the packed big font tiles (boundary moved from $83D000).
+; continued in bank83_E000). Starts after the packed small font tiles (boundary moved from $83D000).
 org $83CC0C
 PlayerNumName:		;auto: CODE_83CC0C. SNES: mesarea = "<uniform number> <name>" of the roster player d0 (team a2), like the 92G Pausemode .gnum digits. Returns X = mesarea
 	stx.b xsave		; $83CC0C: 86 0A

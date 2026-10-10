@@ -447,7 +447,7 @@ far8DF888:		;auto: CODE_82FC97. SNES: save d0-d7 and a0-a6 on the stack and go o
 	bne .pusha		; $82FCB5: D0 F6
 	ldx.b xsave		; $82FCB7: A6 0A
 	jml.l $8DF888		; $82FCB9: 5C 88 F8 8D  bank $8D (pulls the saved registers)
-PixelRemap8D:		;SNES: 4bpp pixel value remap for the $8DEEC8 tiles (setupice via $8FE0E4): colour 0 -> 7, the rest unchanged
+PixelRemap8D:		;SNES: 4bpp pixel value remap for BigFontTiles (setupice via $8FE0E4): colour 0 -> 7, the rest unchanged
 	db $07,$01,$02,$03,$04,$05,$06,$07,$08,$09,$0A,$0B,$0C,$0D,$0E,$0F		; $82FCBD
 marktextlo:		;auto: CODE_82FCCD. SNES: textdirtylo = min(textdirtylo, A)
 	cmp.b textdirtylo		; $82FCCD: C5 D0
@@ -455,7 +455,7 @@ marktextlo:		;auto: CODE_82FCCD. SNES: textdirtylo = min(textdirtylo, A)
 	sta.b textdirtylo		; $82FCD1: 85 D0
 .rtl:
 	rtl		; $82FCD3: 6B
-PixelRemap83:		;SNES: 4bpp pixel value remap for the $83C6D8 tiles (setupice, $83F990, $88F5CF via $8FE0E4). Only colours 0-6 occur: entries 7-15 would read the next bytes (muls32)
+PixelRemap83:		;SNES: 4bpp pixel value remap for SmallFontTiles (setupice, $83F990, PlayoffScreen via $8FE0E4). Only colours 0-6 occur: entries 7-15 would read the next bytes (muls32)
 	db $04,$03,$04,$03,$02,$01,$04		; $82FCD4
 muls32:		;auto: CODE_82FCDB. 68k muls.w with a 32-bit result: A/mulres = low word, mulres+2 = high word of mula*mulb (signs folded around mulu $888942)
 	stz.b mulneg		; $82FCDB: 64 98  mulneg = number of negative operands

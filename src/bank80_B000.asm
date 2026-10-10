@@ -740,9 +740,9 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	stz.w VMDATAL		; $80B5FF: 9C 18 21
 	dex		; $80B602: CA
 	bne .blank		; $80B603: D0 FA
-	lda.w #BigFontTiles		; $80B605: A9 D8 C6  packed big font tiles (bank83_C000)
+	lda.w #SmallFontTiles		; $80B605: A9 D8 C6  packed small font tiles (bank83_C000)
 	sta.b tmp0		; $80B608: 85 73
-	lda.w #BigFontTiles>>16		; $80B60A: A9 83 00
+	lda.w #SmallFontTiles>>16		; $80B60A: A9 83 00
 	sta.b tmp1		; $80B60D: 85 75
 	jsl.l DecompressGraphics		; $80B60F: 22 3E FA 86
 	stz.b a0		; $80B613: 64 33  sprite frame list from the $7F0000 data
@@ -766,9 +766,9 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	lda.w #$0004		; $80B641: A9 04 00
 	sta.b d0		; $80B644: 85 53
 	jsl.l $8FE0E4		; $80B646: 22 E4 E0 8F  bank $8F: build a sprite frame list ([a0] data, [a1] table, d0 count)
-	lda.w #$EEC8		; $80B64A: A9 C8 EE
+	lda.w #BigFontTiles		; $80B64A: A9 C8 EE  packed big font tiles (bank8D_E000)
 	sta.b tmp0		; $80B64D: 85 73
-	lda.w #$008D		; $80B64F: A9 8D 00
+	lda.w #BigFontTiles>>16		; $80B64F: A9 8D 00
 	sta.b tmp1		; $80B652: 85 75
 	jsl.l DecompressGraphics		; $80B654: 22 3E FA 86
 	stz.b a0		; $80B658: 64 33

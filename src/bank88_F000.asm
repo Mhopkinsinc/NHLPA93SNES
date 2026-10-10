@@ -371,9 +371,9 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	stz.w VMDATAL		; $88F370: 9C 18 21
 	dex		; $88F373: CA
 	bne .zero		; $88F374: D0 FA
-	lda.w #BigFontTiles		; $88F376: A9 D8 C6  BigFontTiles, remapped with the table at $8FE154
+	lda.w #SmallFontTiles		; $88F376: A9 D8 C6  SmallFontTiles, remapped with the table at $8FE154
 	sta.b tmp0		; $88F379: 85 73
-	lda.w #BigFontTiles>>16		; $88F37B: A9 83 00
+	lda.w #SmallFontTiles>>16		; $88F37B: A9 83 00
 	sta.b tmp1		; $88F37E: 85 75
 	jsl.l DecompressGraphics		; $88F380: 22 3E FA 86
 	lda.w #$0000		; $88F384: A9 00 00
@@ -594,9 +594,9 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	inx		; $88F586: E8
 	cpx.w #$0100		; $88F587: E0 00 01
 	bne .pl		; $88F58A: D0 F1
-	lda.w #BigFontTiles		; $88F58C: A9 D8 C6  BigFontTiles twice: remapped with $8FE154, then with PixelRemap83
+	lda.w #SmallFontTiles		; $88F58C: A9 D8 C6  SmallFontTiles twice: remapped with $8FE154, then with PixelRemap83
 	sta.b tmp0		; $88F58F: 85 73
-	lda.w #BigFontTiles>>16		; $88F591: A9 83 00
+	lda.w #SmallFontTiles>>16		; $88F591: A9 83 00
 	sta.b tmp1		; $88F594: 85 75
 	jsl.l DecompressGraphics		; $88F596: 22 3E FA 86
 	lda.w #$0000		; $88F59A: A9 00 00
@@ -610,9 +610,9 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	lda.w #$0064		; $88F5AE: A9 64 00
 	sta.b d0		; $88F5B1: 85 53
 	jsl.l $8FE0E4		; $88F5B3: 22 E4 E0 8F  bank $8F: remap the 4bpp pixels ([a0] data, [a1] table, d0 tiles)
-	lda.w #BigFontTiles		; $88F5B7: A9 D8 C6
+	lda.w #SmallFontTiles		; $88F5B7: A9 D8 C6
 	sta.b tmp0		; $88F5BA: 85 73
-	lda.w #BigFontTiles>>16		; $88F5BC: A9 83 00
+	lda.w #SmallFontTiles>>16		; $88F5BC: A9 83 00
 	sta.b tmp1		; $88F5BF: 85 75
 	jsl.l DecompressGraphics		; $88F5C1: 22 3E FA 86
 	lda.w #$0000		; $88F5C5: A9 00 00

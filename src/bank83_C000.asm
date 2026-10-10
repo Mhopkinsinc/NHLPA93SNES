@@ -1,5 +1,5 @@
 ; $83BCA8-$83CC0B  ROM $1BCA8-$1CC0B: team records Vancouver, Winnipeg, Washington (93G teamdata93.asm, see bank83_8000), playoffseats (93G teamdata93.asm,
-; same bytes), then BigFontTiles: the big font tiles packed for the decompressor $86FA3E (93G BigFont.map.jim chars). Starts at
+; same bytes), then SmallFontTiles: the small font tiles packed for the decompressor $86FA3E (93G SmallFont.map.jim chars). Starts at
 ; Vancouver, ends at the end of the packed tiles (boundaries moved); the code after it is in bank83_D000.
 org $83BCA8
 
@@ -184,6 +184,6 @@ playoffseats:		;93G playoffseats: 34 playoff trees, 16 team numbers each (maketr
 	db 3,18,4,19, 21,23,8,5, 10,6,0,13, 12,11,22,15		; $83C6C8 tree 33
 playoffseatsEnd:
 
-BigFontTiles:		;packed big font tiles (100 4bpp tiles; setupice and banks $83/$88/$8F unpack them, PixelRemap83)
-	incbin "../data/BigFont.chr.pak"		; $83C6D8-$83CC0B
-BigFontTilesEnd:
+SmallFontTiles:		;packed small font tiles (100 4bpp tiles, the print font of SmallFontMap; setupice and banks $83/$88/$8F unpack them, PixelRemap83)
+	incbin "../data/SmallFont.chr.pak"		; $83C6D8-$83CC0B
+SmallFontTilesEnd:
