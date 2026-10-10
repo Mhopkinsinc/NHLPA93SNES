@@ -1,6 +1,337 @@
-; $88EF9C-$88FFFF  ROM $46F9C-$47FFF: GetPassWord (92G, the password screen), TitleScreen (93G hockey93_07: title backdrop and scrolling credits),
-; PlayoffScreen (93G hockey93_06: the playoff tree) with PlayoffTreeSetup, assdefd (logic93_2, asstab 2), SuperAdd (92G), skateto (logic93_5),
-; $FF fill. Starts after SpriteSet7 (boundary moved from $88F002).
+; hockey_b88: 93G hockey93_01..hockey93_11: the game, screens, menus, password, playoffs.
+; Bank $88. Each block keeps its ROM address with org; blocks of other modules sit between them.
+
+org $8884A9
+WritePassBits:		;transfer game variables to the password bits at a3. 92 WritePassBits, without the checksum. (93G hockey93_09)
+		;   SNES: playoff state into passbits (PushBits with each range), then the 9-bit checksum of the values (d7) with range 512
+	jsl.l ClrPassBits
+	stz.b d7
+	lda.w postarts		; PushBits ranges: postarts 32, bosgames 8, gamelevel 4, potreeteam 16, pojoy 4, WinBits $4000
+	sta.b d0
+	lda.w #32
+	sta.b d1
+	jsl.l .pb
+	lda.b bosgames
+	sta.b d0
+	lda.w #8
+	sta.b d1
+	jsl.l .pb
+	lda.w gamelevel
+	sta.b d0
+	lda.w #4
+	sta.b d1
+	jsl.l .pb
+	lda.w potreeteam
+	sta.b d0
+	lda.w #16
+	sta.b d1
+	jsl.l .pb
+	lda.w pojoy
+	sta.b d0
+	lda.w #4
+	sta.b d1
+	jsl.l .pb
+	lda.w WinBits
+	sta.b d0
+	lda.w #$4000
+	sta.b d1
+	jsl.l .pb
+	lda.w #5
+	sta.b d1
+	lda.w #7
+	sta.b d2
+	stz.b a1
+.gs:		;93G .0: the 8 series scores, range 5
+	ldy.b a1
+	lda.w gspotwins,y
+	sta.b d0
+	jsl.l .pb
+	ldy.b a1
+	lda.w gspobwins,y
+	sta.b d0
+	jsl.l .pb
+	inc.b a1
+	inc.b a1
+	dec.b d2
+	bpl .gs
+	lda.b d7		; checksum
+	and.w #$01FF
+	sta.b d0
+	lda.w #512
+	sta.b d1
+	jsl.l PushBits
+	rtl
+.pb:		;92G .pb: d7 += d0, then PushBits
+	lda.b d7
+	clc
+	adc.b d0
+	sta.b d7
+	jml.l PushBits
+
+org $8885F7
+PWprint:		;print pass word (from PassWord (92G hockey)
+		;   SNES: print the 16 password characters (PassWord through PasstoText) at printx/printy, unless PassWord bit 7 hides it
+	lda.w PassWord
+	bit.w #$0080
+	beq .show
+	jmp.w .rtl
+.show:
+	stx.b xsave
+	ldx.w #$0000
+.pushd:
+	lda.b d0,x
+	pha
+	inx
+	inx
+	cpx.w #$0008
+	bne .pushd
+	ldx.b xsave
+	stx.b xsave
+	ldx.w #$0000
+.pusha:
+	lda.b a0,x
+	pha
+	inx
+	inx
+	cpx.w #$000C
+	bne .pusha
+	ldx.b xsave
+	lda.w #PasstoText		; a2 = PasstoText
+	sta.b a2
+	lda.w #PasstoText>>16
+	sta.b a2+2
+	lda.w #mesarea		; a1 = mesarea
+	sta.b a1
+	lda.w #$0000
+	sta.b a1+2
+	lda.w #PassWord
+	sta.b a0
+	lda.w #$0000
+	sta.b a0+2
+	lda.w #18		; length 18: 16 characters
+	sta.b [a1]
+	inc.b a1
+	inc.b a1
+	lda.w #15
+	sta.b d1
+.top:
+	lda.b [a0]
+	inc.b a0
+	and.w #$00FF
+	tay
+	lda.b [a2],y
+	sta.b [a1]
+	inc.b a1
+	dec.b d1
+	bpl .top
+	lda.w #mesarea
+	sta.b a1
+	lda.w #$0000
+	sta.b a1+2
+	jsl.l print
+	stx.b xsave
+	ldx.w #$000A
+.popa:
+	pla
+	sta.b a0,x
+	dex
+	dex
+	bpl .popa
+	ldx.b xsave
+	stx.b xsave
+	ldx.w #$0006
+.popd:
+	pla
+	sta.b d0,x
+	dex
+	dex
+	bpl .popd
+	ldx.b xsave
+.rtl:
+	rtl
+EncodePW:		;after playoff game compute winners and password if needed. Called from GameOver (hockey93_06). (93G hockey93_09)
+		;   SNES: after a playoff game, ResolveGames and maketree; then the new password, or new playoffs when the user won or went out
+	lda.w OptPlayMode
+	bne .po
+	jmp.w .rtl
+.po:
+	lda.w #$0001
+	sta.w OptPlayMode
+	jsl.l ResolveGames		; bank $8B: 92G ResolveGames
+	jsl.l maketree		; bank $8D: maketree
+	lda.w gamelevel		; finished playoffs
+	cmp.w #$0004
+	beq .userwon
+	lda.w gamenum		; gamenum >= 0: player 1 won
+	bpl .nofail
+	lda.w pojoy		; pojoy < 2: one player or teammates
+	sec
+	sbc.w #$0002
+	bmi .lt
+	bvc .two
+	bra .userfailed
+.lt:
+	bvc .userfailed
+.two:		;two players, first round: switch to the other team
+	lda.w gamelevel
+	cmp.w #$0001
+	bne .userfailed
+	lda.w potreeteam
+	eor.w #$0001
+	sta.w potreeteam
+	lda.w pojoy
+	eor.w #$0001
+	sta.w pojoy
+.nofail:
+	jsl.l WritePassBits
+	jsl.l BitstoPW
+	lda.w sflags3		; sf3alttree: passbits before all games were resolved
+	bit.w #sf3alttree
+	beq .tree
+	ldy.w #$000E
+.cp:
+	lda.w tpassbits,y
+	sta.w passbits,y
+	dey
+	dey
+	bpl .cp
+	jsl.l ReadPassBits		; bank $8B: 92G ReadPassBits
+.tree:
+	jml.l maketree		; bank $8D: maketree
+.userwon:
+	jsl.l ResetPassWord		; bank $8F: 92G ResetPassWord
+.userfailed:
+	lda.w #$0080		; PassWord bit 7: no password
+	tsb.w PassWord
+	lda.w #$0002
+	sta.w OptPlayMode
+	lda.b bosgames
+	cmp.w #$0007
+	beq .rtl
+	lda.w #$0003
+	sta.w OptPlayMode
+.rtl:
+	rtl
+
+org $888853
+SuperMult:		;1 word (d0) multiplied by the 5 words at a3. 92 SuperMult. (93G hockey93_09)
+		;   SNES: passbits (8 words) *= d0, by shift and add (mulres..mulres+15 hold the shifted copy)
+	phx
+	ldx.w #$000E
+.copy:
+	lda.w passbits,x		; copy passbits, clear passbits
+	sta.b mulres,x
+	stz.w passbits,x
+	dex
+	dex
+	bpl .copy
+	lda.b d0
+	sta.b mula
+.loop:
+	lsr.b mula
+	bcc .noadd
+	lda.w passbits
+	clc
+	adc.b mulres
+	sta.w passbits
+	lda.w passbits+2
+	adc.b mulres+2
+	sta.w passbits+2
+	lda.w passbits+4
+	adc.b mulres+4
+	sta.w passbits+4
+	lda.w passbits+6
+	adc.b mulres+6
+	sta.w passbits+6
+	lda.w passbits+8
+	adc.b mulres+8
+	sta.w passbits+8
+	lda.w passbits+10
+	adc.b mulres+10
+	sta.w passbits+10
+	lda.w passbits+12
+	adc.b mulres+12
+	sta.w passbits+12
+	lda.w passbits+14
+	adc.b mulres+14
+	sta.w passbits+14
+.noadd:
+	asl.b mulres
+	rol.b mulres+2
+	rol.b mulres+4
+	rol.b mulres+6
+	rol.b mulres+8
+	rol.b mulres+10
+	rol.b mulres+12
+	rol.b mulres+14
+	lda.b mula
+	bne .loop
+	plx
+	clc
+	rtl
+DrawGameSetupBack:		;SNES: game setup screen backdrop: textmap blank, GameSetupMap to backmap (priority off), the NHLPA logo map ($8C8000, 8 x 10) into textmap at x 12-19, y 0-9
+	lda.w blankchar
+	ldx.w #$07FE
+.clr:
+	sta.l textmap,x
+	dex
+	dex
+	bpl .clr
+	lda.w #GameSetupMap
+	sta.b tmp0
+	lda.w #GameSetupMap>>16
+	sta.b tmp1
+	jsl.l DecompressGraphics
+	ldx.w #$07FE
+.map:
+	lda.l TestList,x
+	and.w #$DFFF		; priority bit off
+	sta.l backmap,x
+	dex
+	dex
+	bpl .map
+	stz.b textdirtylo
+	lda.w #$03FF
+	sta.b textdirtyhi
+	lda.w #NHLPALogo		; the NHLPA logo (packed)
+	sta.b tmp0
+	lda.w #NHLPALogo>>16
+	sta.b tmp1
+	jsl.l DecompressGraphics
+	lda.w #$0009
+	sta.b tmp1
+.row:
+	lda.w #$0007
+	sta.b tmp0
+.col:
+	lda.b tmp1
+	sta.b mula
+	lda.w #$0008
+	sta.b mulb
+	jsl.l mulu16		; bank $8D: 16-bit multiply
+	adc.b tmp0
+	asl a		; logo map word + logochars
+	tax
+	lda.l TestList,x
+	adc.w logochars
+	pha
+	lda.b tmp1
+	asl a
+	asl a
+	asl a
+	asl a
+	asl a		; textmap row y * 32 + x + 12
+	adc.b tmp0
+	asl a
+	tax
+	pla
+	sta.l textmap+$18,x
+	dec.b tmp0
+	bpl .col
+	dec.b tmp1
+	bpl .row
+	rtl
+
 org $88EF9C
 GetPassWord:		;bring up password screen and get input (92G hockey)
 		;   SNES: the password screen on the game setup backdrop: pick characters from the PasstoText grid; Start decodes it (DecodePW), a bad one
@@ -1159,274 +1490,8 @@ PlayoffTreeSetup:		;93G PlayoffTreeSetup: playoff tree layout by gamelevel (offs
 	db 0,25,1,26,2,36,3,37,4,47,5,48,5,58,6,69,6,79,7,80,8,90,9,91,10,101,11,102,$FF		; arrows (graphics, x), $FF
 	db 11,85		; Hscroll min, max (x8)
 	db 0		; series scores (x, y)
-assdefd:		;asstab 2. player a3 is defensive player on defense (93G logic93_2)
-		;   SNES: defenceman on defence: stay between the furthest-up attacker and the goal, join the attack (adefo) when the puck is past the line
-	lda.w pfalock,x
-	beq .go
-	jmp.w .rtl
-.go:
-	lda.w gmclock
-	beq .gm
-	jml.l assnothing		; bank $8F: assnothing
-.gm:
-	jsl.l check4bench
-	lda.w pflags,x
-	bit.w #pfjoycon
-	beq .chk
-	jmp.w .rtl
-.chk:
-	bit.w #pfna
-	beq .nna
-	and.w #~pfna&$FFFF
-	sta.w pflags,x
-	stz.w temp1,x
-	stz.w temp2,x
-	lda.w #8
-	sta.w temp2b,x
-.nna:
-	lda.w temp1,x
-	sec
-	sbc.b d7
-	sta.w temp1,x
-	bmi .new
-	jmp.w .de3
-.new:
-	clc
-	adc.w aidef,x
-	bpl .t1
-	lda.w #$0000
-.t1:
-	sta.w temp1,x
-	lda.w pucky
-	sta.b d1
-	lda.w puckvy
-	lsr a
-	lsr a
-	lsr a
-	lsr a
-	lsr a
-	lsr a
-	bit.w #$0200
-	beq .sx
-	ora.w #$FC00
-.sx:
-	sta.b d3
-	lda.w pfgoal,x
-	bne .de00
-	lda.b d1
-	eor.w #$FFFF
-	inc a
-	sta.b d1
-	lda.b d3
-	eor.w #$FFFF
-	inc a
-	sta.b d3
-.de00:		;only lead when moving up ice
-	lda.b d3
-	bpl .v
-	stz.b d3
-.v:
-	lda.b d3
-	clc
-	adc.b d1
-	sta.b d3
-	sec
-	sbc.w #$58
-	bmi .lt
-	bvc .ge
-	bra .de0
-.lt:
-	bvc .de0
-.ge:
-	ldy.b a2
-	lda.w tmflags,y
-	bit.w #tmfoffside
-	bne .de0
-	lda.w puckc
-	sta.b d1
-	bmi .de0
-	jsl.l chkpk
-	beq .de0
-	lda.w #1
-	sta.b d0
-	lda.b d1
-	sec
-	sbc.w #6
-	sta.b d1
-	txa
-	lsr a
-	sec
-	sbc.w #6
-	sta.b d2
-	eor.b d1
-	sta.b d1
-	bmi .de0
-	jml.l assreplace
-.de0:
-	lda.w #65
-	sta.w temp3,x
-	lda.w position,x
-	cmp.w #$0002
-	beq .de1
-	lda.w #-65
-	sta.w temp3,x
-.de1:
-	stz.b a0
-	cpx.w #12
-	bcs .de2
-	lda.w #12
-	sta.b a0
-.de2:		;find the furthest-up attacker
-	lda.w #5
-	sta.b d2
-	lda.w #-1000
-	sta.b d0
-	lda.w pfgoal,x
-	beq .gdwn
-	lda.w #1000
-	sta.b d0
-.gup:
-	ldy.b a0
-	lda.w pflags,y
-	bit.w #$1000
-	bne .gu0
-	lda.w position,y
-	bmi .gu0
-	lda.w Yvel,y
-	bmi .gu2
-	lda.w #$0000
-.gu2:
-	lsr a
-	lsr a
-	lsr a
-	lsr a
-	bit.w #$0800
-	beq .gu2s
-	ora.w #$F000
-.gu2s:
-	clc
-	adc.w Ypos,y
-	sta.b d1
-	sec
-	sbc.b d0
-	beq .gu3
-	bmi .gt
-	bvs .gu3
-	bra .gu0
-.gt:
-	bvs .gu0
-.gu3:
-	lda.b d1
-	sta.b d0
-.gu0:
-	inc.b a0
-	inc.b a0
-	dec.b d2
-	bpl .gup
-	lda.b d0
-	sec
-	sbc.w #50
-	sta.b d0
-	sec
-	sbc.w #-190
-	beq .cl1
-	bmi .gt1
-	bvs .cl1
-	bra .gu1
-.gt1:
-	bvs .gu1
-.cl1:
-	lda.w #-220
-	sta.b d0
-.gu1:
-	lda.b d0
-	sta.w temp4,x
-	lda.w puckx
-	sta.b d0
-	lda.w temp3,x
-	eor.b d0
-	sta.b d1
-	bpl .de3
-	stz.w temp3,x
-	bra .de3
-.rtl:
-	rtl
-.gdwn:
-	ldy.b a0
-	lda.w pflags,y
-	bit.w #$1000
-	bne .gd0
-	lda.w position,y
-	bmi .gd0
-	lda.w Yvel,y
-	bpl .gd2
-	lda.w #$0000
-.gd2:
-	lsr a
-	lsr a
-	lsr a
-	lsr a
-	bit.w #$0800
-	beq .gd2s
-	ora.w #$F000
-.gd2s:
-	clc
-	adc.w Ypos,y
-	sta.b d1
-	sec
-	sbc.b d0
-	bmi .lt2
-	bvc .gd3
-	bra .gd0
-.lt2:
-	bvc .gd0
-.gd3:
-	lda.b d1
-	sta.b d0
-.gd0:
-	inc.b a0
-	inc.b a0
-	dec.b d2
-	bpl .gdwn
-	lda.b d0
-	clc
-	adc.w #50
-	sta.b d0
-	sec
-	sbc.w #190
-	bmi .lt3
-	bvc .cl2
-	bra .gd1
-.lt3:
-	bvc .gd1
-.cl2:
-	lda.w #220
-	sta.b d0
-.gd1:
-	lda.b d0
-	sta.w temp4,x
-	lda.w temp3,x
-	eor.w #$FFFF
-	inc a
-	sta.w temp3,x
-	lda.w puckx
-	sta.b d0
-	lda.w temp3,x
-	eor.b d0
-	sta.b d1
-	bpl .de3
-	stz.w temp3,x
-.de3:
-	lda.w temp3,x
-	sta.b d0
-	lda.w temp4,x
-	sta.b d1
-	lda.w #EvadePC
-	sta.b a0
-	lda.w #EvadePC>>16
-	sta.b a0+2
-	jsl.l skateto
-	jml.l check4check
+
+org $88FDB2
 SuperAdd:		;1 long (d0.L) added to the 5 words at a3. 92 SuperAdd. (93G hockey93_09)
 		;   SNES: passbits (8 words) += d0
 	phx
@@ -1447,210 +1512,3 @@ SuperAdd:		;1 long (d0.L) added to the 5 words at a3. 92 SuperAdd. (93G hockey93
 	plx
 	clc
 	rtl
-skateto:		;a0 = extra routine for collision avoidance, d0/d1 = x/y cord to skate to, d7 = elapse frames (93G logic93_5)
-		;   SNES: a0 = collision avoidance routine, d0/d1 = x/y to skate to, d7 = frames. SNES: a skater near the target (sum of distances < 55) slows to 7/8
-	lda.w position,x
-	beq .t2
-	lda.w pflags,x
-	and.w #$8000
-	ora.w sfhormode
-	bne .t2
-	lda.b d0
-	bit.w #$8000
-	beq .ax
-	eor.w #$FFFF
-	inc a
-.ax:
-	cmp.w #$0088
-	bcs .t2
-	lda.w Xpos,x
-	sec
-	sbc.b d0
-	bit.w #$8000
-	beq .dx
-	eor.w #$FFFF
-	inc a
-.dx:
-	sta.b tmp0
-	lda.w Ypos,x
-	sec
-	sbc.b d1
-	bit.w #$8000
-	beq .dy
-	eor.w #$FFFF
-	inc a
-.dy:
-	clc
-	adc.b tmp0
-	cmp.w #55
-	bcs .t2
-	lda.w Xvel,x
-	sta.b mula
-	lda.w #7
-	sta.b mulb
-	jsl.l muls32
-	lsr.b mulres+2
-	ror a
-	lsr.b mulres+2
-	ror a
-	lsr.b mulres+2
-	ror a
-	sta.w Xvel,x
-	lda.w Yvel,x
-	sta.b mula
-	lda.w #7
-	sta.b mulb
-	jsl.l muls32
-	lsr.b mulres+2
-	ror a
-	lsr.b mulres+2
-	ror a
-	lsr.b mulres+2
-	ror a
-	sta.w Yvel,x
-.t2:		;every 12/60 second
-	lda.w temp2,x
-	sec
-	sbc.b d7
-	sta.w temp2,x
-	bmi .go
-	jmp.w .ex
-.go:
-	adc.w #11
-	sta.w temp2,x
-	jsl.l avdgoal		; bank $8D: avdgoal
-	lda.w #13
-	sta.b d0+2
-	lda.b d0
-	bit.w #$8000
-	beq .near
-	eor.w #$FFFF
-	inc a
-.near:
-	cmp.w #$0088
-	bcs .av
-	lda.w #18
-	sta.b d0+2
-.av:
-	lda.b deltax
-	ora.b deltay
-	beq .lead
-	lda.b d0
-	sec
-	sbc.w Xpos,x
-	sta.b d0
-	lda.b d1
-	sec
-	sbc.w Ypos,x
-	sta.b d1
-	bra .vt
-.lead:		;aim ahead of the velocity
-	lda.w Xvel,x
-	xba
-	and.w #$00FF
-	bit.w #$0080
-	beq .lx
-	ora.w #$FF00
-.lx:
-	eor.w #$FFFF
-	inc a
-	clc
-	adc.b d0
-	sec
-	sbc.w Xpos,x
-	sta.b d0
-	lda.w Yvel,x
-	xba
-	and.w #$00FF
-	bit.w #$0080
-	beq .ly
-	ora.w #$FF00
-.ly:
-	eor.w #$FFFF
-	inc a
-	clc
-	adc.b d1
-	sec
-	sbc.w Ypos,x
-	sta.b d1
-	lda.b d0
-	bit.w #$8000
-	beq .cx
-	eor.w #$FFFF
-	inc a
-.cx:
-	cmp.b d0+2
-	bcs .vt
-	lda.b d1
-	bit.w #$8000
-	beq .cy
-	eor.w #$FFFF
-	inc a
-.cy:
-	cmp.b d0+2
-	bcs .vt
-	lda.w #9
-	sta.b d0
-	bra .nvt
-.vt:
-	jsl.l vtoa
-.nvt:		;jsr (a0) through jmlvector
-	lda.b a0
-	sta.w jmlvector+1
-	lda.b a0+1
-	sta.w jmlvector+2
-	jsl.l jmlvector
-	lda.b d0
-	sta.w temp2b,x
-	cmp.w #8
-	bcc .ex
-	lda.w Xvel,x
-	ora.w Yvel,x
-	bne .ex
-	lda.w puckx
-	sta.b d0
-	lda.w pucky
-	sta.b d1
-	lda.w pf2fight+puckobj
-	beq .nf
-	lda.w xc1
-	sta.b d0
-	lda.w yc1
-	sta.b d1
-.nf:
-	lda.b d0
-	sec
-	sbc.w Xpos,x
-	sta.b d0
-	lda.b d1
-	sec
-	sbc.w Ypos,x
-	sta.b d1
-	jsl.l vtoa
-	sec
-	sbc.w facedir,x
-	beq .ex
-	eor.w #$FFFF
-	inc a
-	and.w #$0004
-	lsr a
-	dec a
-	clc
-	adc.w facedir,x
-	and.w #$0007
-	sta.w facedir,x
-.ex:
-	lda.w temp2b,x
-	sta.b d0
-	jml.l doplayeracc		; bank $8F: doplayeracc
-unusedFF88:		;unused, $FF fill to the end of the bank
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
