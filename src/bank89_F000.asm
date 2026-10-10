@@ -1,358 +1,463 @@
-; $89F00A-$88FFFF  ROM $4F00A  (from src/bank89.asm; quick pass, TODO segment agents refine)
+; $89F00A-$89FFFF  ROM $4F00A-$4FFFF: the rest of RefTilesHor, RefsMapHor (ref window frames for the horizontal rink), the music cue starters
+; StartSong1-5/8/9, CopyWords, EraseScoutName, GetPlayerRecord, MesAreaDone, StartGame and restoreteams (hockey93_01), EvadePC (logic93_3),
+; asswingd (logic93_2, asstab 3), $FF fill.
 org $89F00A
-	db $C0,$23,$00,$01,$48,$01,$02,$03,$5C,$84,$0F,$40,$80,$DA,$7A,$21	; $89F00A
-	db $01,$30,$F0,$20,$0F,$91,$44,$55,$15,$54,$95,$54,$6C,$6D,$8F,$81	; $89F01A
-	db $17,$78,$FF,$40,$FF,$20,$00,$BB,$80,$E0,$48,$05,$9B,$01,$71,$0E	; $89F02A
-	db $F0,$0F,$80,$82,$0A,$30,$40,$50,$88,$D0,$30,$50,$08,$58,$B0,$B0	; $89F03A
-	db $20,$01,$40,$E0,$E1,$DA,$01,$10,$F8,$20,$48,$D4,$00,$50,$80,$A8	; $89F04A
-	db $05,$5B,$04,$1C,$01,$1C,$14,$20,$E0,$47,$82,$7E,$09,$40,$60,$1F	; $89F05A
-	db $23,$1D,$37,$08,$3F,$30,$3F,$20,$48,$81,$E0,$82,$D8,$58,$83,$C8	; $89F06A
-	db $30,$40,$30,$80,$80,$DB,$81,$11,$82,$E0,$25,$86,$E0,$01,$4E,$41	; $89F07A
-	db $8F,$E0,$23,$05,$18,$04,$07,$18,$07,$08,$C0,$27,$01,$03,$1C,$20	; $89F08A
-	db $00,$1F,$20,$00,$0F,$49,$20,$05,$10,$20,$95,$A0,$14,$44,$21,$05	; $89F09A
-	db $46,$0C,$38,$10,$46,$06,$20,$00,$80,$E1,$72,$00,$FB,$20,$00,$FF	; $89F0AA
-	db $59,$00,$EF,$20,$00,$F9,$78,$00,$80,$20,$05,$A0,$20,$20,$50,$40	; $89F0BA
-	db $80,$80,$BA,$83,$83,$00,$E0,$80,$74,$00,$B0,$20,$00,$70,$7B,$81	; $89F0CA
-	db $84,$01,$48,$CA,$20,$01,$15,$14,$88,$C0,$00,$BF,$20,$01,$3F,$01	; $89F0DA
-	db $E2,$BA,$85,$C0,$E7,$B6,$83,$C0,$E5,$B8,$89,$C0,$09,$08,$01,$06	; $89F0EA
-	db $02,$0D,$07,$08,$0D,$0A,$17,$22,$00,$07,$20,$00,$0F,$80,$AA,$00	; $89F0FA
-	db $0D,$71,$C4,$00,$18,$83,$B2,$81,$3E,$81,$37,$E1,$2D,$22,$83,$40	; $89F10A
-	db $81,$10,$00,$C0,$83,$58,$22,$00,$01,$53,$2A,$00,$01,$83,$10,$0A	; $89F11A
-	db $08,$08,$10,$38,$0A,$2A,$D2,$12,$28,$C8,$F0,$20,$04,$BA,$42,$18	; $89F12A
-	db $18,$1F,$20,$0C,$3F,$20,$35,$20,$3D,$C0,$1F,$E0,$0F,$F0,$05,$F8	; $89F13A
-	db $27,$81,$B4,$05,$A0,$28,$A0,$C0,$70,$90,$30,$10,$01,$A0,$20,$81	; $89F14A
-	db $E0,$00,$F0,$20,$02,$D8,$80,$F8,$20,$00,$E8,$49,$DE,$00,$15,$C0	; $89F15A
-	db $8A,$E0,$00,$3E,$8C,$E0,$82,$81,$88,$E0,$00,$E0,$8F,$E0,$20,$00	; $89F16A
-	db $01,$80,$8C,$03,$06,$07,$03,$03,$87,$9B,$00,$03,$80,$E6,$C6,$21	; $89F17A
-	db $10,$10,$50,$40,$51,$44,$55,$A5,$90,$B9,$A4,$DD,$C4,$44,$44,$19	; $89F18A
-	db $03,$7F,$20,$00,$BF,$20,$08,$BB,$01,$6B,$14,$43,$1C,$A3,$18,$FB	; $89F19A
-	db $20,$01,$26,$18,$80,$47,$0D,$40,$50,$40,$80,$F0,$30,$30,$20,$30	; $89F1AA
-	db $40,$70,$20,$C0,$C0,$80,$A2,$00,$B0,$80,$98,$00,$D0,$80,$9E,$00	; $89F1BA
-	db $B8,$79,$01,$1B,$24,$20,$00,$30,$89,$A0,$02,$07,$38,$0F,$81,$9C	; $89F1CA
-	db $86,$A0,$E9,$94,$81,$A0,$00,$F0,$E1,$94,$8C,$A0,$82,$93,$02,$01	; $89F1DA
-	db $02,$03,$E6,$A5,$81,$0F,$80,$9E,$4A,$81,$A0,$0B,$58,$45,$AD,$90	; $89F1EA
-	db $B1,$B0,$54,$54,$75,$04,$B5,$0C,$81,$A0,$04,$A3,$1D,$63,$1C,$4F	; $89F1FA
-	db $20,$00,$AB,$20,$04,$CB,$30,$C3,$38,$20,$83,$A0,$02,$E0,$D0,$D0	; $89F20A
-	db $81,$5F,$21,$00,$E0,$84,$A0,$00,$30,$79,$81,$64,$01,$85,$B4,$20	; $89F21A
-	db $00,$15,$89,$A0,$03,$CB,$30,$3F,$01,$8E,$A0,$83,$71,$E6,$84,$85	; $89F22A
-	db $0F,$D6,$10,$10,$50,$60,$11,$74,$85,$D5,$A5,$A7,$85,$51,$10,$10	; $89F23A
-	db $50,$80,$54,$7F,$20,$05,$9F,$60,$0A,$F1,$1B,$60,$78,$00,$FF,$4B	; $89F24A
-	db $20,$01,$80,$C0,$20,$80,$7B,$01,$E0,$20,$C0,$05,$E0,$C0,$10,$40	; $89F25A
-	db $60,$C0,$20,$02,$20,$C0,$30,$49,$00,$D0,$80,$16,$00,$F0,$49,$00	; $89F26A
-	db $15,$21,$8A,$80,$E0,$74,$8B,$80,$00,$20,$22,$81,$A9,$23,$30,$40	; $89F27A
-	db $82,$B6,$40,$82,$13,$00,$C0,$49,$23,$07,$A0,$41,$C1,$3A,$48,$39	; $89F28A
-	db $02,$01,$20,$00,$0F,$25,$06,$01,$E0,$1B,$E0,$17,$60,$1F,$20,$48	; $89F29A
-	db $00,$06,$80,$A0,$0A,$40,$51,$44,$55,$B5,$94,$B5,$34,$55,$54,$15	; $89F2AA
-	db $48,$01,$14,$7F,$20,$00,$BF,$20,$02,$BB,$01,$EB,$20,$00,$CB,$20	; $89F2BA
-	db $00,$AB,$CC,$20,$00,$6B,$80,$7D,$8B,$80,$00,$2B,$8D,$80,$2D,$E4	; $89F2CA
-	db $5B,$9A,$8F,$00,$21,$81,$AE,$2A,$00,$DF,$25,$0A,$11,$02,$0C,$04	; $89F2DA
-	db $1B,$0E,$11,$1B,$14,$EE,$C1,$21,$00,$0E,$20,$01,$1F,$11,$E0,$0B	; $89F2EA
-	db $71,$06,$01,$0E,$31,$0F,$01,$02,$03,$20,$48,$2A,$81,$0F,$88,$11	; $89F2FA
-	db $02,$1C,$0E,$81,$20,$01,$01,$03,$87,$68,$00,$F3,$20,$01,$7F,$80	; $89F30A
-	db $E0,$32,$28,$09,$10,$10,$80,$D1,$04,$D5,$75,$54,$35,$74,$80,$DE	; $89F31A
-	db $80,$E0,$00,$FF,$80,$B6,$02,$FB,$C1,$EB,$20,$00,$4B,$80,$DC,$48	; $89F32A
-	db $00,$2B,$24,$00,$01,$C0,$CB,$75,$7B,$C7,$61,$01,$10,$50,$20,$00	; $89F33A
-	db $51,$20,$02,$D5,$75,$44,$80,$40,$04,$15,$F5,$14,$55,$94,$E0,$3E	; $89F34A
-	db $48,$E0,$40,$00,$EB,$20,$00,$EA,$20,$03,$0A,$E1,$2A,$C1,$20,$00	; $89F35A
-	db $80,$20,$09,$40,$50,$40,$80,$F0,$20,$20,$60,$60,$C0,$20,$01,$40	; $89F36A
-	db $80,$58,$00,$E0,$20,$00,$B0,$20,$00,$F0,$20,$00,$D0,$20,$00,$90	; $89F37A
-	db $20,$01,$30,$C0,$20,$02,$C0,$94,$55,$20,$02,$15,$14,$14,$20,$00	; $89F38A
-	db $30,$24,$00,$40,$48,$04,$2A,$C1,$3F,$01,$3F,$20,$01,$3F,$30,$59	; $89F39A
-	db $80,$8A,$01,$7F,$40,$E0,$31,$21,$00,$80,$49,$23,$30,$40,$E0,$3F	; $89F3AA
-	db $20,$30,$80,$82,$13,$80,$3F,$8C,$A0,$25,$88,$A0,$20,$85,$A0,$07	; $89F3BA
-	db $A5,$54,$E5,$16,$55,$B6,$D5,$14,$85,$A0,$05,$0A,$F1,$08,$F3,$08	; $89F3CA
-	db $E3,$86,$A0,$01,$B0,$C0,$20,$02,$60,$A0,$10,$80,$4F,$85,$A0,$01	; $89F3DA
-	db $30,$C0,$4A,$00,$80,$E0,$99,$8B,$A0,$00,$2B,$E1,$9C,$88,$A0,$E0	; $89F3EA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F3FA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F40A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$01	; $89F41A
-	db $00,$02,$00,$00,$00,$00,$00,$00,$00,$00,$00,$03,$00,$04,$00,$05	; $89F42A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$06,$00,$07,$00,$08,$00,$00	; $89F43A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$09,$00,$0A,$00,$00,$00,$00	; $89F44A
-	db $00,$00,$00,$00,$00,$00,$00,$0B,$00,$0C,$00,$00,$00,$00,$00,$00	; $89F45A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F46A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F47A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$01	; $89F48A
-	db $00,$02,$00,$00,$00,$00,$00,$00,$00,$00,$00,$0D,$00,$0E,$00,$0F	; $89F49A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$10,$00,$11,$00,$12,$00,$00	; $89F4AA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$09,$00,$0A,$00,$00,$00,$00	; $89F4BA
-	db $00,$00,$00,$00,$00,$00,$00,$0B,$00,$0C,$00,$00,$00,$00,$00,$00	; $89F4CA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F4DA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F4EA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$01	; $89F4FA
-	db $00,$02,$00,$00,$00,$00,$00,$00,$00,$00,$00,$13,$00,$14,$00,$15	; $89F50A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$16,$00,$17,$00,$18,$00,$00	; $89F51A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$09,$00,$0A,$00,$00,$00,$00	; $89F52A
-	db $00,$00,$00,$00,$00,$00,$00,$0B,$00,$0C,$00,$00,$00,$00,$00,$00	; $89F53A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F54A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F55A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$01	; $89F56A
-	db $00,$02,$00,$00,$00,$00,$00,$00,$00,$00,$00,$19,$00,$1A,$00,$1B	; $89F57A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$1C,$00,$1D,$00,$18,$00,$00	; $89F58A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$09,$00,$0A,$00,$00,$00,$00	; $89F59A
-	db $00,$00,$00,$00,$00,$00,$00,$0B,$00,$0C,$00,$00,$00,$00,$00,$00	; $89F5AA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F5BA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F5CA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$1E	; $89F5DA
-	db $00,$1F,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$20,$00,$21	; $89F5EA
-	db $00,$22,$00,$00,$00,$00,$00,$00,$00,$23,$00,$24,$00,$25,$00,$26	; $89F5FA
-	db $00,$00,$00,$00,$00,$00,$00,$27,$00,$28,$00,$29,$00,$00,$00,$00	; $89F60A
-	db $00,$00,$00,$00,$00,$00,$00,$2A,$00,$2B,$00,$00,$00,$00,$00,$00	; $89F61A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F62A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F63A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$1E	; $89F64A
-	db $00,$1F,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$2C,$00,$21	; $89F65A
-	db $00,$22,$00,$00,$00,$00,$00,$00,$00,$2D,$00,$2E,$00,$25,$00,$26	; $89F66A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$28,$00,$29,$00,$00,$00,$00	; $89F67A
-	db $00,$00,$00,$00,$00,$00,$00,$2A,$00,$2B,$00,$00,$00,$00,$00,$00	; $89F68A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F69A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F6AA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$01	; $89F6BA
-	db $00,$02,$00,$00,$00,$00,$00,$00,$00,$00,$00,$2F,$00,$30,$00,$31	; $89F6CA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$32,$00,$33,$00,$00	; $89F6DA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$09,$00,$0A,$00,$00,$00,$00	; $89F6EA
-	db $00,$00,$00,$00,$00,$00,$00,$0B,$00,$0C,$00,$00,$00,$00,$00,$00	; $89F6FA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F70A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F71A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$34	; $89F72A
-	db $00,$35,$00,$00,$00,$00,$00,$00,$00,$00,$00,$36,$00,$37,$00,$38	; $89F73A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$39,$00,$3A,$00,$00	; $89F74A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$09,$00,$0A,$00,$00,$00,$00	; $89F75A
-	db $00,$00,$00,$00,$00,$00,$00,$0B,$00,$0C,$00,$00,$00,$00,$00,$00	; $89F76A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F77A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F78A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$3B	; $89F79A
-	db $00,$35,$00,$00,$00,$00,$00,$00,$00,$00,$00,$3C,$00,$3D,$00,$3E	; $89F7AA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$3F,$00,$40,$00,$00	; $89F7BA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$09,$00,$0A,$00,$00,$00,$00	; $89F7CA
-	db $00,$00,$00,$00,$00,$00,$00,$0B,$00,$0C,$00,$00,$00,$00,$00,$00	; $89F7DA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F7EA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F7FA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$41	; $89F80A
-	db $00,$42,$00,$00,$00,$00,$00,$00,$00,$00,$00,$43,$00,$44,$00,$45	; $89F81A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$46,$00,$47,$00,$00	; $89F82A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$09,$00,$0A,$00,$00,$00,$00	; $89F83A
-	db $00,$00,$00,$00,$00,$00,$00,$0B,$00,$0C,$00,$00,$00,$00,$00,$00	; $89F84A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F85A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F86A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$01	; $89F87A
-	db $00,$02,$00,$00,$00,$00,$00,$00,$00,$00,$00,$48,$00,$49,$00,$4A	; $89F88A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$4B,$00,$4C,$00,$00	; $89F89A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$09,$00,$0A,$00,$00,$00,$00	; $89F8AA
-	db $00,$00,$00,$00,$00,$00,$00,$0B,$00,$0C,$00,$00,$00,$00,$00,$00	; $89F8BA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F8CA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F8DA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$01	; $89F8EA
-	db $00,$02,$00,$00,$00,$00,$00,$00,$00,$00,$00,$4D,$00,$4E,$00,$4F	; $89F8FA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$02,$C0,$50,$00,$40,$00,$00	; $89F90A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$09,$00,$0A,$00,$00,$00,$00	; $89F91A
-	db $00,$00,$00,$00,$00,$00,$00,$0B,$00,$0C,$00,$00,$00,$00,$00,$00	; $89F92A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F93A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F94A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$01	; $89F95A
-	db $00,$02,$00,$00,$00,$00,$00,$00,$00,$00,$00,$51,$00,$52,$00,$53	; $89F96A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$54,$00,$55,$00,$00	; $89F97A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$09,$00,$0A,$00,$00,$00,$00	; $89F98A
-	db $00,$00,$00,$00,$00,$00,$00,$0B,$00,$0C,$00,$00,$00,$00,$00,$00	; $89F99A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F9AA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89F9BA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$01	; $89F9CA
-	db $00,$02,$00,$00,$00,$00,$00,$00,$00,$00,$00,$56,$00,$57,$00,$05	; $89F9DA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$58,$00,$08,$00,$00	; $89F9EA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$09,$00,$0A,$00,$00,$00,$00	; $89F9FA
-	db $00,$00,$00,$00,$00,$00,$00,$0B,$00,$0C,$00,$00,$00,$00,$00,$00	; $89FA0A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89FA1A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89FA2A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$59,$00,$5A,$00,$5B	; $89FA3A
-	db $00,$02,$00,$00,$00,$00,$00,$00,$00,$5C,$00,$5D,$00,$5E,$00,$05	; $89FA4A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$58,$00,$08,$00,$00	; $89FA5A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$09,$00,$0A,$00,$00,$00,$00	; $89FA6A
-	db $00,$00,$00,$00,$00,$00,$00,$0B,$00,$0C,$00,$00,$00,$00,$00,$00	; $89FA7A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89FA8A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89FA9A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$34	; $89FAAA
-	db $00,$02,$00,$00,$00,$00,$00,$00,$00,$00,$00,$5F,$00,$60,$00,$61	; $89FABA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$59,$80,$62,$00,$63,$00,$00	; $89FACA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$09,$00,$0A,$00,$00,$00,$00	; $89FADA
-	db $00,$00,$00,$00,$00,$00,$00,$0B,$00,$0C,$00,$00,$00,$00,$00,$00	; $89FAEA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89FAFA
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $89FB0A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$34	; $89FB1A
-	db $00,$02,$00,$00,$00,$00,$00,$00,$00,$00,$00,$64,$00,$65,$00,$66	; $89FB2A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$67,$00,$40,$00,$00	; $89FB3A
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$09,$00,$0A,$00,$00,$00,$00	; $89FB4A
-	db $00,$00,$00,$00,$00,$00,$00,$0B,$00,$0C,$00,$00,$00,$00,$00,$00	; $89FB5A
-	db $00,$AD,$51,$16,$C9,$08,$00,$F0,$1B,$AD,$4F,$16,$C9,$02,$00,$F0	; $89FB6A
-	db $04,$22,$31,$FA,$82,$E2,$20,$A9,$09,$8D,$40,$21,$C2,$30,$A9,$08	; $89FB7A
-	db $00,$8D,$51,$16,$6B	; $89FB8A
-CODE_89FB8F:		; M=16 X=16
-	lda.w $1651		; $89FB8F: AD 51 16
-	cmp.w #$0009		; $89FB92: C9 09 00
-	beq CODE_89FBB2		; $89FB95: F0 1B
-	lda.w $164F		; $89FB97: AD 4F 16
-	cmp.w #$0002		; $89FB9A: C9 02 00
-	beq CODE_89FBA3		; $89FB9D: F0 04
-	jsl.l $82FA31		; $89FB9F: 22 31 FA 82
-CODE_89FBA3:		; M=16 X=16
+	incbin "../data/RefHor.chr.pak":$4C5..$8B6		; $89F00A-$89F3FA
+RefTilesHorEnd:
+	assert RefTilesHorEnd-RefTilesHor == $8B6
+RefsMapHor:		;ref window frames for the horizontal rink, 17 frames of 8 x 7 words (data/RefsHor.snesmap); PushRef ($8F83A7) uses it when sfhormode
+	incbin "../data/RefsHor.snesmap"		; $89F3FB-$89FB6A
+RefsMapHorEnd:
+	assert RefsMapHorEnd-RefsMapHor == 17*$70
+StartSong8:		;auto: CODE_89FB6B. SNES: start song 8 (no caller found) unless it plays: the boot sound set (SPCBootUpload), then driver command 9
+	lda.w cursong		; $89FB6B: AD 51 16
+	cmp.w #8		; $89FB6E: C9 08 00
+	beq .rtl		; $89FB71: F0 1B
+	lda.w sndbank		; $89FB73: AD 4F 16
+	cmp.w #2		; $89FB76: C9 02 00
+	beq .cmd		; $89FB79: F0 04
+	jsl.l SPCBootUpload		; $89FB7B: 22 31 FA 82
+.cmd:
+	sep #$20		; $89FB7F: E2 20
+	lda.b #$09		; $89FB81: A9 09
+	sta.w APUIO0		; $89FB83: 8D 40 21
+	rep #$30		; $89FB86: C2 30
+	lda.w #8		; $89FB88: A9 08 00
+	sta.w cursong		; $89FB8B: 8D 51 16
+.rtl:
+	rtl		; $89FB8E: 6B
+StartSong9:		;auto: CODE_89FB8F. SNES: start song 9 (the playoff screen music, PlayoffScreen) unless it plays: the boot sound set (SPCBootUpload), then driver command 1
+	lda.w cursong		; $89FB8F: AD 51 16
+	cmp.w #9		; $89FB92: C9 09 00
+	beq .rtl		; $89FB95: F0 1B
+	lda.w sndbank		; $89FB97: AD 4F 16
+	cmp.w #2		; $89FB9A: C9 02 00
+	beq .cmd		; $89FB9D: F0 04
+	jsl.l SPCBootUpload		; $89FB9F: 22 31 FA 82
+.cmd:
 	sep #$20		; $89FBA3: E2 20
 	lda.b #$01		; $89FBA5: A9 01
-	sta.w $2140		; $89FBA7: 8D 40 21
+	sta.w APUIO0		; $89FBA7: 8D 40 21
 	rep #$30		; $89FBAA: C2 30
-	lda.w #$0009		; $89FBAC: A9 09 00
-	sta.w $1651		; $89FBAF: 8D 51 16
-CODE_89FBB2:		; M=16 X=16
+	lda.w #9		; $89FBAC: A9 09 00
+	sta.w cursong		; $89FBAF: 8D 51 16
+.rtl:
 	rtl		; $89FBB2: 6B
-	db $AD,$51,$16,$C9,$01,$00,$F0,$23,$AD,$4F,$16,$C9,$01,$00,$F0,$08	; $89FBB3
-	db $22,$1A,$FA,$82,$22,$7A,$FA,$82,$A9,$04,$00,$22,$7B,$FE,$8F,$A9	; $89FBC3
-	db $01,$00,$8D,$51,$16,$A9,$40,$02,$8D,$A9,$04,$6B,$AD,$51,$16,$C9	; $89FBD3
-	db $02,$00,$F0,$23,$AD,$4F,$16,$C9,$01,$00,$F0,$08,$22,$1A,$FA,$82	; $89FBE3
-	db $22,$7A,$FA,$82,$A9,$05,$00,$22,$7B,$FE,$8F,$A9,$02,$00,$8D,$51	; $89FBF3
-	db $16,$A9,$CE,$01,$8D,$A9,$04,$6B	; $89FC03
-CODE_89FC0B:		; M=16 X=16
-	lda.w $1651		; $89FC0B: AD 51 16
+StartSong1:		;auto: CODE_89FBB3. SNES: start music cue 1 (home goal) unless it plays: the in-game sound set, then $8FFE7B with 4; cuetimer = its length
+	lda.w cursong		; $89FBB3: AD 51 16
+	cmp.w #$0001		; $89FBB6: C9 01 00
+	beq .rtl		; $89FBB9: F0 23
+	lda.w sndbank		; $89FBBB: AD 4F 16
+	cmp.w #$0001		; $89FBBE: C9 01 00
+	beq .cmd		; $89FBC1: F0 08
+	jsl.l sndqreset		; $89FBC3: 22 1A FA 82
+	jsl.l SPCGameUpload		; $89FBC7: 22 7A FA 82
+.cmd:
+	lda.w #$0004		; $89FBCB: A9 04 00
+	jsl.l $8FFE7B		; $89FBCE: 22 7B FE 8F  bank $8F: driver command A (music cue)
+	lda.w #$0001		; $89FBD2: A9 01 00
+	sta.w cursong		; $89FBD5: 8D 51 16
+	lda.w #$0240		; $89FBD8: A9 40 02
+	sta.w cuetimer		; $89FBDB: 8D A9 04
+.rtl:
+	rtl		; $89FBDE: 6B
+StartSong2:		;auto: CODE_89FBDF. SNES: start music cue 2 (period start) unless it plays: the in-game sound set, then $8FFE7B with 5; cuetimer = its length
+	lda.w cursong		; $89FBDF: AD 51 16
+	cmp.w #$0002		; $89FBE2: C9 02 00
+	beq .rtl		; $89FBE5: F0 23
+	lda.w sndbank		; $89FBE7: AD 4F 16
+	cmp.w #$0001		; $89FBEA: C9 01 00
+	beq .cmd		; $89FBED: F0 08
+	jsl.l sndqreset		; $89FBEF: 22 1A FA 82
+	jsl.l SPCGameUpload		; $89FBF3: 22 7A FA 82
+.cmd:
+	lda.w #$0005		; $89FBF7: A9 05 00
+	jsl.l $8FFE7B		; $89FBFA: 22 7B FE 8F  bank $8F: driver command A (music cue)
+	lda.w #$0002		; $89FBFE: A9 02 00
+	sta.w cursong		; $89FC01: 8D 51 16
+	lda.w #$01CE		; $89FC04: A9 CE 01
+	sta.w cuetimer		; $89FC07: 8D A9 04
+.rtl:
+	rtl		; $89FC0A: 6B
+StartSong3:		;auto: CODE_89FC0B. SNES: start music cue 3 (from bank $8E) unless it plays: the in-game sound set, then $8FFE7B with 6; cuetimer = its length
+	lda.w cursong		; $89FC0B: AD 51 16
 	cmp.w #$0003		; $89FC0E: C9 03 00
-	beq CODE_89FC36		; $89FC11: F0 23
-	lda.w $164F		; $89FC13: AD 4F 16
+	beq .rtl		; $89FC11: F0 23
+	lda.w sndbank		; $89FC13: AD 4F 16
 	cmp.w #$0001		; $89FC16: C9 01 00
-	beq CODE_89FC23		; $89FC19: F0 08
-	jsl.l $82FA1A		; $89FC1B: 22 1A FA 82
-	jsl.l $82FA7A		; $89FC1F: 22 7A FA 82
-CODE_89FC23:		; M=16 X=16
+	beq .cmd		; $89FC19: F0 08
+	jsl.l sndqreset		; $89FC1B: 22 1A FA 82
+	jsl.l SPCGameUpload		; $89FC1F: 22 7A FA 82
+.cmd:
 	lda.w #$0006		; $89FC23: A9 06 00
-	jsl.l $8FFE7B		; $89FC26: 22 7B FE 8F
+	jsl.l $8FFE7B		; $89FC26: 22 7B FE 8F  bank $8F: driver command A (music cue)
 	lda.w #$0003		; $89FC2A: A9 03 00
-	sta.w $1651		; $89FC2D: 8D 51 16
+	sta.w cursong		; $89FC2D: 8D 51 16
 	lda.w #$0474		; $89FC30: A9 74 04
-	sta.w $04A9		; $89FC33: 8D A9 04
-CODE_89FC36:		; M=16 X=16
+	sta.w cuetimer		; $89FC33: 8D A9 04
+.rtl:
 	rtl		; $89FC36: 6B
-	db $AD,$51,$16,$C9,$04,$00,$F0,$23,$AD,$4F,$16,$C9,$01,$00,$F0,$08	; $89FC37
-	db $22,$1A,$FA,$82,$22,$7A,$FA,$82,$A9,$07,$00,$22,$7B,$FE,$8F,$A9	; $89FC47
-	db $04,$00,$8D,$51,$16,$A9,$2E,$02,$8D,$A9,$04,$6B,$AD,$51,$16,$C9	; $89FC57
-	db $05,$00,$F0,$23,$AD,$4F,$16,$C9,$01,$00,$F0,$08,$22,$1A,$FA,$82	; $89FC67
-	db $22,$7A,$FA,$82,$A9,$08,$00,$22,$7B,$FE,$8F,$A9,$05,$00,$8D,$51	; $89FC77
-	db $16,$A9,$1A,$04,$8D,$A9,$04,$6B,$86,$0A,$A2,$00,$00,$B5,$53,$48	; $89FC87
-	db $E8,$E8,$E0,$0C,$00,$D0,$F6,$A6,$0A,$A7,$5B,$87,$57,$E6,$57,$E6	; $89FC97
-	db $57,$E6,$5B,$E6,$5B,$C6,$53,$C6,$53,$D0,$EE,$86,$0A,$A2,$0A,$00	; $89FCA7
-	db $68,$95,$53,$CA,$CA,$10,$F9,$A6,$0A,$6B	; $89FCB7
-CODE_89FCC1:		; M=16 X=16
-	jsl.l $86FC76		; $89FCC1: 22 76 FC 86
+StartSong4:		;auto: CODE_89FC37. SNES: start music cue 4 (no caller found) unless it plays: the in-game sound set, then $8FFE7B with 7; cuetimer = its length
+	lda.w cursong		; $89FC37: AD 51 16
+	cmp.w #$0004		; $89FC3A: C9 04 00
+	beq .rtl		; $89FC3D: F0 23
+	lda.w sndbank		; $89FC3F: AD 4F 16
+	cmp.w #$0001		; $89FC42: C9 01 00
+	beq .cmd		; $89FC45: F0 08
+	jsl.l sndqreset		; $89FC47: 22 1A FA 82
+	jsl.l SPCGameUpload		; $89FC4B: 22 7A FA 82
+.cmd:
+	lda.w #$0007		; $89FC4F: A9 07 00
+	jsl.l $8FFE7B		; $89FC52: 22 7B FE 8F  bank $8F: driver command A (music cue)
+	lda.w #$0004		; $89FC56: A9 04 00
+	sta.w cursong		; $89FC59: 8D 51 16
+	lda.w #$022E		; $89FC5C: A9 2E 02
+	sta.w cuetimer		; $89FC5F: 8D A9 04
+.rtl:
+	rtl		; $89FC62: 6B
+StartSong5:		;auto: CODE_89FC63. SNES: start music cue 5 (mid-period) unless it plays: the in-game sound set, then $8FFE7B with 8; cuetimer = its length
+	lda.w cursong		; $89FC63: AD 51 16
+	cmp.w #$0005		; $89FC66: C9 05 00
+	beq .rtl		; $89FC69: F0 23
+	lda.w sndbank		; $89FC6B: AD 4F 16
+	cmp.w #$0001		; $89FC6E: C9 01 00
+	beq .cmd		; $89FC71: F0 08
+	jsl.l sndqreset		; $89FC73: 22 1A FA 82
+	jsl.l SPCGameUpload		; $89FC77: 22 7A FA 82
+.cmd:
+	lda.w #$0008		; $89FC7B: A9 08 00
+	jsl.l $8FFE7B		; $89FC7E: 22 7B FE 8F  bank $8F: driver command A (music cue)
+	lda.w #$0005		; $89FC82: A9 05 00
+	sta.w cursong		; $89FC85: 8D 51 16
+	lda.w #$041A		; $89FC88: A9 1A 04
+	sta.w cuetimer		; $89FC8B: 8D A9 04
+.rtl:
+	rtl		; $89FC8E: 6B
+CopyWords:		;auto: CODE_89FC8F. SNES: copy d0 bytes (words) from [d2] to [d1]
+	stx.b xsave		; $89FC8F: 86 0A
+	ldx.w #$0000		; $89FC91: A2 00 00
+.pushd:
+	lda.b d0,x		; $89FC94: B5 53
+	pha		; $89FC96: 48
+	inx		; $89FC97: E8
+	inx		; $89FC98: E8
+	cpx.w #$000C		; $89FC99: E0 0C 00
+	bne .pushd		; $89FC9C: D0 F6
+	ldx.b xsave		; $89FC9E: A6 0A
+.copy:
+	lda.b [d2]		; $89FCA0: A7 5B
+	sta.b [d1]		; $89FCA2: 87 57
+	inc.b d1		; $89FCA4: E6 57
+	inc.b d1		; $89FCA6: E6 57
+	inc.b d2		; $89FCA8: E6 5B
+	inc.b d2		; $89FCAA: E6 5B
+	dec.b d0		; $89FCAC: C6 53
+	dec.b d0		; $89FCAE: C6 53
+	bne .copy		; $89FCB0: D0 EE
+	stx.b xsave		; $89FCB2: 86 0A
+	ldx.w #$000A		; $89FCB4: A2 0A 00
+.popd:
+	pla		; $89FCB7: 68
+	sta.b d0,x		; $89FCB8: 95 53
+	dex		; $89FCBA: CA
+	dex		; $89FCBB: CA
+	bpl .popd		; $89FCBC: 10 F9
+	ldx.b xsave		; $89FCBE: A6 0A
+	rtl		; $89FCC0: 6B
+EraseScoutName:		;auto: CODE_89FCC1. SNES: blank the 11 x 2 showcased player name area (ScoutNamePos, eraser)
+	jsl.l ScoutNamePos		; $89FCC1: 22 76 FC 86
 	lda.w #$000B		; $89FCC5: A9 0B 00
-	sta.b $53		; $89FCC8: 85 53
+	sta.b d0		; $89FCC8: 85 53
 	lda.w #$0002		; $89FCCA: A9 02 00
-	sta.b $57		; $89FCCD: 85 57
-	lda.w $1BE7		; $89FCCF: AD E7 1B
-	sta.b $5B		; $89FCD2: 85 5B
-	jml.l $8D847C		; $89FCD4: 5C 7C 84 8D
-CODE_89FCD8:		; M=16 X=16
+	sta.b d1		; $89FCCD: 85 57
+	lda.w blankchar		; $89FCCF: AD E7 1B
+	sta.b d2		; $89FCD2: 85 5B
+	jml.l $8D847C		; $89FCD4: 5C 7C 84 8D  bank $8D: 92G eraser
+GetPlayerRecord:		;auto: CODE_89FCD8. SNES: a0 = roster record of player d0 of team a2 (tmdata: the player data, then name length + 8 bytes per player; 93G does it inline)
 	lda.w #$0083		; $89FCD8: A9 83 00
-	sta.b $35		; $89FCDB: 85 35
-	ldy.b $3B		; $89FCDD: A4 3B
-	lda.w $13CE,y		; $89FCDF: B9 CE 13
-	sta.b $33		; $89FCE2: 85 33
+	sta.b a0+2		; $89FCDB: 85 35
+	ldy.b a2		; $89FCDD: A4 3B
+	lda.w tmdata,y		; $89FCDF: B9 CE 13
+	sta.b a0		; $89FCE2: 85 33
 	ldy.w #$0000		; $89FCE4: A0 00 00
 	clc		; $89FCE7: 18
-	adc.b [$33]		; $89FCE8: 67 33
-	sta.b $33		; $89FCEA: 85 33
-	bra CODE_89FCF8		; $89FCEC: 80 0A
-CODE_89FCEE:		; M=16 X=16
-	lda.b $33		; $89FCEE: A5 33
+	adc.b [a0]		; $89FCE8: 67 33
+	sta.b a0		; $89FCEA: 85 33
+	bra .cnt		; $89FCEC: 80 0A
+.next:
+	lda.b a0		; $89FCEE: A5 33
 	clc		; $89FCF0: 18
-	adc.b [$33]		; $89FCF1: 67 33
+	adc.b [a0]		; $89FCF1: 67 33
 	adc.w #$0008		; $89FCF3: 69 08 00
-	sta.b $33		; $89FCF6: 85 33
-CODE_89FCF8:		; M=16 X=16
-	dec.b $53		; $89FCF8: C6 53
-	bpl CODE_89FCEE		; $89FCFA: 10 F2
+	sta.b a0		; $89FCF6: 85 33
+.cnt:
+	dec.b d0		; $89FCF8: C6 53
+	bpl .next		; $89FCFA: 10 F2
 	rtl		; $89FCFC: 6B
-CODE_89FCFD:		; M=16 X=16
-	lda.b $37		; $89FCFD: A5 37
+MesAreaDone:		;auto: CODE_89FCFD. SNES: end a string built in mesarea: length = a1 - mesarea, a1 = mesarea
+	lda.b a1		; $89FCFD: A5 37
 	sec		; $89FCFF: 38
 	sbc.w #$0191		; $89FD00: E9 91 01
-	sta.w $0191		; $89FD03: 8D 91 01
+	sta.w mesarea		; $89FD03: 8D 91 01
 	lda.w #$0191		; $89FD06: A9 91 01
-	sta.b $37		; $89FD09: 85 37
+	sta.b a1		; $89FD09: 85 37
 	rtl		; $89FD0B: 6B
-CODE_89FD0C:		; M=16 X=16
-	stz.w $1288		; $89FD0C: 9C 88 12
-	lda.w $160A		; $89FD0F: AD 0A 16
-	cmp.w #$0001		; $89FD12: C9 01 00
-	bne CODE_89FD1D		; $89FD15: D0 06
-	lda.w #$0020		; $89FD17: A9 20 00
-	tsb.w $1288		; $89FD1A: 0C 88 12
-CODE_89FD1D:		; M=16 X=16
-	jsl.l $82FD6B		; $89FD1D: 22 6B FD 82
-	stz.w $12FC		; $89FD21: 9C FC 12
-	stz.w $12F0		; $89FD24: 9C F0 12
-	stz.w $12F8		; $89FD27: 9C F8 12
-	jsl.l $89FD3A		; $89FD2A: 22 3A FD 89
-	jsl.l $8F902A		; $89FD2E: 22 2A 90 8F
-	jsl.l $82F9D1		; $89FD32: 22 D1 F9 82
-	jml.l $8D8217		; $89FD36: 5C 17 82 8D
-CODE_89FD3A:		; M=16 X=16
-	stz.b $3B		; $89FD3A: 64 3B
-	jsl.l $89FD45		; $89FD3C: 22 45 FD 89
+StartGame:		;auto: CODE_89FD0C (from $8B8176). 93G StartGame (hockey93_01): reset the game state (gmode, offsides option, team stats, scores, gsp), restoreteams, then on to the period start
+	stz.w gmode		; $89FD0C: 9C 88 12
+	lda.w OptPen		; $89FD0F: AD 0A 16
+	cmp.w #1		; $89FD12: C9 01 00
+	bne .go		; $89FD15: D0 06
+	lda.w #gmoffs		; $89FD17: A9 20 00
+	tsb.w gmode		; $89FD1A: 0C 88 12
+.go:
+	jsl.l ClearTeamStats		; $89FD1D: 22 6B FD 82
+	stz.w ScoreSumbytes		; $89FD21: 9C FC 12
+	stz.w gsp		; $89FD24: 9C F0 12
+	stz.w ChkCnt		; $89FD27: 9C F8 12
+	jsl.l restoreteams		; $89FD2A: 22 3A FD 89
+	jsl.l $8F902A		; $89FD2E: 22 2A 90 8F  bank $8F: 93G InitScores
+	jsl.l UpdateScores		; $89FD32: 22 D1 F9 82
+	jml.l $8D8217		; $89FD36: 5C 17 82 8D  bank $8D: on to the period start
+restoreteams:		;auto: CODE_89FD3A. 93G restoreteams (hockey93_01): both rosters to the bench: tmap 6, every tmpdst -2
+	stz.b a2		; $89FD3A: 64 3B
+	jsl.l .r		; $89FD3C: 22 45 FD 89
 	lda.w #$0002		; $89FD40: A9 02 00
-	sta.b $3B		; $89FD43: 85 3B
-CODE_89FD45:		; M=16 X=16
-	ldy.b $3B		; $89FD45: A4 3B
-	lda.w #$0006		; $89FD47: A9 06 00
-	sta.w $13EE,y		; $89FD4A: 99 EE 13
-	lda.w #$0032		; $89FD4D: A9 32 00
-	sta.b $53		; $89FD50: 85 53
-CODE_89FD52:		; M=16 X=16
-	lda.b $3B		; $89FD52: A5 3B
-	beq CODE_89FD59		; $89FD54: F0 03
-	lda.w #$0034		; $89FD56: A9 34 00
-CODE_89FD59:		; M=16 X=16
+	sta.b a2		; $89FD43: 85 3B
+.r:		;93G .r: one team (a2)
+	ldy.b a2		; $89FD45: A4 3B
+	lda.w #6		; $89FD47: A9 06 00
+	sta.w tmap,y		; $89FD4A: 99 EE 13
+	lda.w #$32		; $89FD4D: A9 32 00
+	sta.b d0		; $89FD50: 85 53
+.pl:
+	lda.b a2		; $89FD52: A5 3B
+	beq .home		; $89FD54: F0 03
+	lda.w #$34		; $89FD56: A9 34 00
+.home:
 	clc		; $89FD59: 18
-	adc.b $53		; $89FD5A: 65 53
+	adc.b d0		; $89FD5A: 65 53
 	tay		; $89FD5C: A8
-	lda.w #$FFFE		; $89FD5D: A9 FE FF
-	sta.w $14E2,y		; $89FD60: 99 E2 14
-	dec.b $53		; $89FD63: C6 53
-	dec.b $53		; $89FD65: C6 53
-	bpl CODE_89FD52		; $89FD67: 10 E9
+	lda.w #TMPDBENCH		; $89FD5D: A9 FE FF
+	sta.w tmpdst,y		; $89FD60: 99 E2 14
+	dec.b d0		; $89FD63: C6 53
+	dec.b d0		; $89FD65: C6 53
+	bpl .pl		; $89FD67: 10 E9
 	rtl		; $89FD69: 6B
-	db $AD,$BB,$0E,$30,$66,$BD,$E0,$0A,$38,$ED,$FC,$0A,$29,$FF,$00,$89	; $89FD6A
-	db $80,$00,$F0,$03,$09,$00,$FF,$18,$7D,$FF,$08,$38,$ED,$1B,$09,$89	; $89FD7A
-	db $00,$80,$F0,$04,$49,$FF,$FF,$1A,$C9,$29,$00,$B0,$3E,$BD,$00,$0B	; $89FD8A
-	db $38,$ED,$1C,$0B,$29,$FF,$00,$89,$80,$00,$F0,$03,$09,$00,$FF,$18	; $89FD9A
-	db $7D,$5F,$09,$38,$ED,$7B,$09,$89,$00,$80,$F0,$04,$49,$FF,$FF,$1A	; $89FDAA
-	db $C9,$29,$00,$B0,$16,$BD,$FF,$08,$38,$ED,$1B,$09,$85,$53,$BD,$5F	; $89FDBA
-	db $09,$38,$ED,$7B,$09,$85,$57,$5C,$A8,$AF,$80,$6B,$BD,$7F,$11,$F0	; $89FDCA
-	db $03,$4C,$93,$FE,$AD,$8A,$12,$F0,$04,$5C,$5A,$D7,$8F,$22,$27,$85	; $89FDDA
-	db $80,$BD,$DF,$0E,$89,$08,$00,$F0,$03,$4C,$93,$FE,$89,$02,$00,$F0	; $89FDEA
-	db $12,$29,$FD,$FF,$9D,$DF,$0E,$9E,$5F,$0C,$9E,$7F,$0C,$A9,$08,$00	; $89FDFA
-	db $9D,$FF,$0C,$BD,$5F,$0C,$38,$E5,$6F,$9D,$5F,$0C,$10,$2C,$18,$7D	; $89FE0A
-	db $BF,$0F,$10,$03,$A9,$00,$00,$9D,$5F,$0C,$AD,$BB,$0E,$30,$1B,$38	; $89FE1A
-	db $E9,$06,$00,$85,$57,$A9,$04,$00,$85,$53,$8A,$4A,$38,$E9,$06,$00	; $89FE2A
-	db $45,$57,$85,$57,$30,$04,$5C,$A7,$B4,$80,$A9,$64,$00,$85,$53,$BD	; $89FE3A
-	db $9F,$0B,$C9,$05,$00,$D0,$05,$A9,$9C,$FF,$85,$53,$A9,$9E,$00,$85	; $89FE4A
-	db $57,$BD,$3F,$11,$F0,$47,$A5,$53,$49,$FF,$FF,$1A,$85,$53,$A9,$62	; $89FE5A
-	db $FF,$85,$57,$A9,$B2,$FF,$85,$5B,$A4,$3B,$B9,$0A,$14,$89,$10,$00	; $89FE6A
-	db $D0,$62,$A5,$5B,$38,$ED,$7B,$09,$F0,$08,$30,$04,$70,$04,$80,$0A	; $89FE7A
-	db $70,$08,$AD,$7B,$09,$85,$57,$80,$4F,$6B,$A9,$F8,$FE,$85,$5B,$38	; $89FE8A
-	db $ED,$7B,$09,$30,$04,$50,$04,$80,$3F,$50,$3D,$80,$37,$A9,$4E,$00	; $89FE9A
-	db $85,$5B,$A4,$3B,$B9,$0A,$14,$89,$10,$00,$D0,$28,$A5,$5B,$38,$ED	; $89FEAA
-	db $7B,$09,$30,$04,$50,$04,$80,$09,$50,$07,$AD,$7B,$09,$85,$57,$80	; $89FEBA
-	db $17,$A9,$08,$01,$85,$5B,$38,$ED,$7B,$09,$F0,$08,$30,$04,$70,$04	; $89FECA
-	db $80,$06,$70,$04,$A5,$5B,$85,$57,$A9,$E6,$84,$85,$33,$A9,$80,$00	; $89FEDA
-	db $85,$35,$AD,$1B,$09,$45,$53,$85,$5B,$30,$05,$AD,$1B,$09,$85,$53	; $89FEEA
-	db $5C,$D0,$FD,$88,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $89FEFA
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $89FF0A
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $89FF1A
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $89FF2A
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $89FF3A
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $89FF4A
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $89FF5A
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $89FF6A
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $89FF7A
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $89FF8A
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $89FF9A
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $89FFAA
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $89FFBA
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $89FFCA
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $89FFDA
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $89FFEA
-	db $FF,$FF,$FF,$FF,$FF,$FF	; $89FFFA
+EvadePC:		;auto: CODE_89FD6A (skateto avoidance routine). 93G EvadePC (logic93_3, the 92G form): within 40 of the puck carrier (after one frame of both velocities) d0 = direction away from him
+	lda.w puckc		; $89FD6A: AD BB 0E
+	bmi .rtl		; $89FD6D: 30 66
+	lda.w Xvel+1,x		; $89FD6F: BD E0 0A
+	sec		; $89FD72: 38
+	sbc.w puckvx+1		; $89FD73: ED FC 0A
+	and.w #$00FF		; $89FD76: 29 FF 00
+	bit.w #$0080		; $89FD79: 89 80 00
+	beq .xs		; $89FD7C: F0 03
+	ora.w #$FF00		; $89FD7E: 09 00 FF
+.xs:
+	clc		; $89FD81: 18
+	adc.w Xpos,x		; $89FD82: 7D FF 08
+	sec		; $89FD85: 38
+	sbc.w puckx		; $89FD86: ED 1B 09
+	bit.w #$8000		; $89FD89: 89 00 80
+	beq .xa		; $89FD8C: F0 04
+	eor.w #$FFFF		; $89FD8E: 49 FF FF
+	inc a		; $89FD91: 1A
+.xa:
+	cmp.w #41		; $89FD92: C9 29 00
+	bcs .rtl		; $89FD95: B0 3E
+	lda.w Yvel+1,x		; $89FD97: BD 00 0B
+	sec		; $89FD9A: 38
+	sbc.w puckvy+1		; $89FD9B: ED 1C 0B
+	and.w #$00FF		; $89FD9E: 29 FF 00
+	bit.w #$0080		; $89FDA1: 89 80 00
+	beq .ys		; $89FDA4: F0 03
+	ora.w #$FF00		; $89FDA6: 09 00 FF
+.ys:
+	clc		; $89FDA9: 18
+	adc.w Ypos,x		; $89FDAA: 7D 5F 09
+	sec		; $89FDAD: 38
+	sbc.w pucky		; $89FDAE: ED 7B 09
+	bit.w #$8000		; $89FDB1: 89 00 80
+	beq .ya		; $89FDB4: F0 04
+	eor.w #$FFFF		; $89FDB6: 49 FF FF
+	inc a		; $89FDB9: 1A
+.ya:
+	cmp.w #41		; $89FDBA: C9 29 00
+	bcs .rtl		; $89FDBD: B0 16
+	lda.w Xpos,x		; $89FDBF: BD FF 08
+	sec		; $89FDC2: 38
+	sbc.w puckx		; $89FDC3: ED 1B 09
+	sta.b d0		; $89FDC6: 85 53
+	lda.w Ypos,x		; $89FDC8: BD 5F 09
+	sec		; $89FDCB: 38
+	sbc.w pucky		; $89FDCC: ED 7B 09
+	sta.b d1		; $89FDCF: 85 57
+	jml.l vtoa		; $89FDD1: 5C A8 AF 80
+.rtl:
+	rtl		; $89FDD5: 6B
+asswingd:		;auto: CODE_89FDD6 (asstab 3). 93G asswingd (logic93_2): wing on defence: cover his side between the puck and the goal; awingo when the team gets the puck
+	lda.w pfalock,x		; $89FDD6: BD 7F 11
+	beq .go		; $89FDD9: F0 03
+	jmp.w .rtl		; $89FDDB: 4C 93 FE
+.go:
+	lda.w gmclock		; $89FDDE: AD 8A 12
+	beq .gm		; $89FDE1: F0 04
+	jml.l $8FD75A		; $89FDE3: 5C 5A D7 8F  bank $8F: assnothing
+.gm:
+	jsl.l check4bench		; $89FDE7: 22 27 85 80
+	lda.w pflags,x		; $89FDEB: BD DF 0E
+	bit.w #$0008		; $89FDEE: 89 08 00
+	beq .chk		; $89FDF1: F0 03
+	jmp.w .rtl		; $89FDF3: 4C 93 FE
+.chk:
+	bit.w #$0002		; $89FDF6: 89 02 00
+	beq .nna		; $89FDF9: F0 12
+	and.w #$FFFD		; $89FDFB: 29 FD FF
+	sta.w pflags,x		; $89FDFE: 9D DF 0E
+	stz.w temp1,x		; $89FE01: 9E 5F 0C
+	stz.w temp2,x		; $89FE04: 9E 7F 0C
+	lda.w #8		; $89FE07: A9 08 00
+	sta.w temp2b,x		; $89FE0A: 9D FF 0C
+.nna:
+	lda.w temp1,x		; $89FE0D: BD 5F 0C
+	sec		; $89FE10: 38
+	sbc.b d7		; $89FE11: E5 6F
+	sta.w temp1,x		; $89FE13: 9D 5F 0C
+	bpl .nodec		; $89FE16: 10 2C
+	clc		; $89FE18: 18
+	adc.w aidef,x		; $89FE19: 7D BF 0F
+	bpl .t1		; $89FE1C: 10 03
+	lda.w #$0000		; $89FE1E: A9 00 00
+.t1:
+	sta.w temp1,x		; $89FE21: 9D 5F 0C
+	lda.w puckc		; $89FE24: AD BB 0E
+	bmi .nodec		; $89FE27: 30 1B
+	sec		; $89FE29: 38
+	sbc.w #6		; $89FE2A: E9 06 00
+	sta.b d1		; $89FE2D: 85 57
+	lda.w #4		; $89FE2F: A9 04 00
+	sta.b d0		; $89FE32: 85 53
+	txa		; $89FE34: 8A
+	lsr a		; $89FE35: 4A
+	sec		; $89FE36: 38
+	sbc.w #6		; $89FE37: E9 06 00
+	eor.b d1		; $89FE3A: 45 57
+	sta.b d1		; $89FE3C: 85 57
+	bmi .nodec		; $89FE3E: 30 04
+	jml.l assreplace		; $89FE40: 5C A7 B4 80
+.nodec:
+	lda.w #100		; $89FE44: A9 64 00
+	sta.b d0		; $89FE47: 85 53
+	lda.w position,x		; $89FE49: BD 9F 0B
+	cmp.w #5		; $89FE4C: C9 05 00
+	bne .zero		; $89FE4F: D0 05
+	lda.w #-100		; $89FE51: A9 9C FF
+	sta.b d0		; $89FE54: 85 53
+.zero:		;93G .0
+	lda.w #158		; $89FE56: A9 9E 00
+	sta.b d1		; $89FE59: 85 57
+	lda.w pfgoal,x		; $89FE5B: BD 3F 11
+	beq .up		; $89FE5E: F0 47
+	lda.b d0		; $89FE60: A5 53
+	eor.w #$FFFF		; $89FE62: 49 FF FF
+	inc a		; $89FE65: 1A
+	sta.b d0		; $89FE66: 85 53
+	lda.w #-158		; $89FE68: A9 62 FF
+	sta.b d1		; $89FE6B: 85 57
+	lda.w #-78		; $89FE6D: A9 B2 FF
+	sta.b d2		; $89FE70: 85 5B
+	ldy.b a2		; $89FE72: A4 3B
+	lda.w tmflags,y		; $89FE74: B9 0A 14
+	bit.w #tmfoffside		; $89FE77: 89 10 00
+	bne .set		; $89FE7A: D0 62
+	lda.b d2		; $89FE7C: A5 5B
+	sec		; $89FE7E: 38
+	sbc.w pucky		; $89FE7F: ED 7B 09
+	beq .hi0		; $89FE82: F0 08
+	bmi .lt		; $89FE84: 30 04
+	bvs .hi0		; $89FE86: 70 04
+	bra .lo		; $89FE88: 80 0A
+.lt:
+	bvs .lo		; $89FE8A: 70 08
+.hi0:
+	lda.w pucky		; $89FE8C: AD 7B 09
+	sta.b d1		; $89FE8F: 85 57
+	bra .go2		; $89FE91: 80 4F
+.rtl:
+	rtl		; $89FE93: 6B
+.lo:
+	lda.w #-264		; $89FE94: A9 F8 FE
+	sta.b d2		; $89FE97: 85 5B
+	sec		; $89FE99: 38
+	sbc.w pucky		; $89FE9A: ED 7B 09
+	bmi .lt2		; $89FE9D: 30 04
+	bvc .set1		; $89FE9F: 50 04
+	bra .go2		; $89FEA1: 80 3F
+.lt2:
+	bvc .go2		; $89FEA3: 50 3D
+.set1:
+	bra .set		; $89FEA5: 80 37
+.up:
+	lda.w #78		; $89FEA7: A9 4E 00
+	sta.b d2		; $89FEAA: 85 5B
+	ldy.b a2		; $89FEAC: A4 3B
+	lda.w tmflags,y		; $89FEAE: B9 0A 14
+	bit.w #tmfoffside		; $89FEB1: 89 10 00
+	bne .set		; $89FEB4: D0 28
+	lda.b d2		; $89FEB6: A5 5B
+	sec		; $89FEB8: 38
+	sbc.w pucky		; $89FEB9: ED 7B 09
+	bmi .lt3		; $89FEBC: 30 04
+	bvc .up0		; $89FEBE: 50 04
+	bra .hi		; $89FEC0: 80 09
+.lt3:
+	bvc .hi		; $89FEC2: 50 07
+.up0:
+	lda.w pucky		; $89FEC4: AD 7B 09
+	sta.b d1		; $89FEC7: 85 57
+	bra .go2		; $89FEC9: 80 17
+.hi:
+	lda.w #264		; $89FECB: A9 08 01
+	sta.b d2		; $89FECE: 85 5B
+	sec		; $89FED0: 38
+	sbc.w pucky		; $89FED1: ED 7B 09
+	beq .set		; $89FED4: F0 08
+	bmi .lt4		; $89FED6: 30 04
+	bvs .set		; $89FED8: 70 04
+	bra .go2		; $89FEDA: 80 06
+.lt4:
+	bvs .go2		; $89FEDC: 70 04
+.set:
+	lda.b d2		; $89FEDE: A5 5B
+	sta.b d1		; $89FEE0: 85 57
+.go2:		;93G .go
+	lda.w #rtss		; $89FEE2: A9 E6 84
+	sta.b a0		; $89FEE5: 85 33
+	lda.w #rtss>>16		; $89FEE7: A9 80 00
+	sta.b a0+2		; $89FEEA: 85 35
+	lda.w puckx		; $89FEEC: AD 1B 09
+	eor.b d0		; $89FEEF: 45 53
+	sta.b d2		; $89FEF1: 85 5B
+	bmi .skate		; $89FEF3: 30 05
+	lda.w puckx		; $89FEF5: AD 1B 09
+	sta.b d0		; $89FEF8: 85 53
+.skate:
+	jml.l skateto		; $89FEFA: 5C D0 FD 88
+unusedFF89:		;unused, $FF fill to the end of the bank
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $89FEFE
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $89FF0E
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $89FF1E
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $89FF2E
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $89FF3E
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $89FF4E
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $89FF5E
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $89FF6E
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $89FF7E
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $89FF8E
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $89FF9E
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $89FFAE
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $89FFBE
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $89FFCE
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $89FFDE
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $89FFEE
+	db $FF,$FF		; $89FFFE
