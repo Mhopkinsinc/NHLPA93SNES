@@ -683,9 +683,9 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	inx		; $80B57A: E8
 	cpx.w #$40E0		; $80B57B: E0 E0 40
 	bne .up1		; $80B57E: D0 F2
-	lda.w #RinkSideTiles1		; $80B580: A9 B4 C6  packed rink surround tiles (bank87_C000)
+	lda.w #FaceOffTiles		; $80B580: A9 B4 C6  packed faceoff box tiles (bank87_C000)
 	sta.b tmp0		; $80B583: 85 73
-	lda.w #RinkSideTiles1>>16		; $80B585: A9 87 00
+	lda.w #FaceOffTiles>>16		; $80B585: A9 87 00
 	sta.b tmp1		; $80B588: 85 75
 	jsl.l DecompressGraphics		; $80B58A: 22 3E FA 86
 	ldx.w #$0000		; $80B58E: A2 00 00
@@ -709,9 +709,9 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	inx		; $80B5B8: E8
 	cpx.w #$01C0		; $80B5B9: E0 C0 01
 	bne .up3		; $80B5BC: D0 F2
-	lda.w #$EB45		; $80B5BE: A9 45 EB  bank $89 tiles
+	lda.w #RefTilesHor		; $80B5BE: A9 45 EB  packed ref window tiles, horizontal rink (bank89_E000)
 	sta.b tmp0		; $80B5C1: 85 73
-	lda.w #$0089		; $80B5C3: A9 89 00
+	lda.w #RefTilesHor>>16		; $80B5C3: A9 89 00
 	sta.b tmp1		; $80B5C6: 85 75
 	jsl.l DecompressGraphics		; $80B5C8: 22 3E FA 86
 	ldx.w #$0000		; $80B5CC: A2 00 00
@@ -722,9 +722,9 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	inx		; $80B5D7: E8
 	cpx.w #$0D00		; $80B5D8: E0 00 0D
 	bne .up4		; $80B5DB: D0 F2
-	lda.w #RinkSideTiles2		; $80B5DD: A9 5E F5  packed rink surround tiles (bank87_F000)
+	lda.w #RefTiles		; $80B5DD: A9 5E F5  packed ref window tiles, vertical rink (bank87_F000)
 	sta.b tmp0		; $80B5E0: 85 73
-	lda.w #RinkSideTiles2>>16		; $80B5E2: A9 87 00
+	lda.w #RefTiles>>16		; $80B5E2: A9 87 00
 	sta.b tmp1		; $80B5E5: 85 75
 	jsl.l DecompressGraphics		; $80B5E7: 22 3E FA 86
 	ldx.w #$0000		; $80B5EB: A2 00 00

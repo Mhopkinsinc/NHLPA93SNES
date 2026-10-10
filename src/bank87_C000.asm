@@ -1,5 +1,5 @@
 ; $87C000-$87D204  ROM $3C000-$3D204: the last SpriteSet2 tiles; EASNMap (93G EASN.map.jim: the EASN logo backdrop, packed map and
-; tiles); RinkSideTiles1 (packed rink surround tiles for setupice); TeamBlocksMap (93G TeamBlocks.map: the 9 x 2 tile name block of each team);
+; tiles); FaceOffTiles (packed faceoff box tiles); TeamBlocksMap (93G TeamBlocks.map: the 9 x 2 tile name block of each team);
 ; DrawFrame, the SNES sprite emitter for frames below $293 (4-byte pieces) and the addframe end. Ends after it (boundary moved from $87CFFF).
 org $87C000
 	incbin "../data/Sprites/set02.chr":$3C60..$4000		; $87C000-$87C39F
@@ -7,8 +7,8 @@ SpriteSet2End:
 	assert SpriteSet2End-SpriteSet2 == $3A0+512*32
 EASNMap:		;93G EASN.map.jim: the EASN logo backdrop, packed (decompressor $86FA3E): a 32 x 16 map, then the tiles; unpacked by $8FDC7B and $8FE8D9
 	incbin "../data/EASN.map.pak"		; $87C3A0-$87C6B3
-RinkSideTiles1:		;packed tiles (55: crowd, boards and bench pieces) sent to vram by setupice after IceRinkTiles
-	incbin "../data/RinkSideTiles1.chr.pak"		; $87C6B4-$87CAB9
+FaceOffTiles:		;packed faceoff box tiles (55, 93G FaceOff.map.jim tiles): setupice sends them to faceoffvrcset
+	incbin "../data/FaceOff.chr.pak"		; $87C6B4-$87CAB9
 TeamBlocksMap:		;93G TeamBlocks.map: per team (26) a 9 x 2 tile block map (palette 1, tiles from TeamBlocksTiles), 36 bytes each (team * 36 by $88F672, $8D84F4)
 	dw $0400,$0401,$0402,$0403,$0404,$0405,$0406,$0401,$0407,$0408,$0409,$040A,$040B,$040C,$040D,$040E,$0409,$040F		; $87CABA team 0
 	dw $0410,$0411,$0412,$0413,$0414,$0415,$0416,$0417,$0418,$0408,$0419,$041A,$041B,$041C,$041D,$041E,$041F,$040F		; $87CADE team 1

@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank89_E000` ($89E000-$89EFFF). <- CURRENT
+`bank89_F000` ($89F00A-$89FFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -151,8 +151,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank89_B000 | matched | $89B000 | $89BFFF | data | SpriteSet13 tiles |
 | bank89_C000 | matched | $89C000 | $89CFFF | data | SpriteSet13 tiles |
 | bank89_D000 | matched | $89D000 | $89DFFF | data | SpriteSet13 tiles |
-| bank89_E000 | not matched <- CURRENT | $89E000 | $89EFFF | 5% |  |
-| bank89_F000 | not matched | $89F00A | $88FFFF | -0% |  |
+| bank89_E000 | matched | $89E000 | $89F009 | 100% | SpriteSet13 end, printscores1, PrintPerLabel, PrintTeamNameAndScore, nullrtl89, p_music_vblank, RefTilesHor start (data/RefHor.chr.pak) |
+| bank89_F000 | not matched <- CURRENT | $89F00A | $89FFFF | -0% |  |
 | bank8A_8000 | not matched | $8A8000 | $8A8FFF | 0% |  |
 | bank8A_9000 | not matched | $8A9000 | $8A9FFF | 0% |  |
 | bank8A_A000 | not matched | $8AA000 | $8AAFFF | 0% |  |
@@ -287,3 +287,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank89_B000: matched $89B000-$89BFFF (4096 bytes): SpriteSet13 tiles. MATCH.
 - bank89_C000: matched $89C000-$89CFFF (4096 bytes): SpriteSet13 tiles. MATCH.
 - bank89_D000: matched $89D000-$89DFFF (4096 bytes): SpriteSet13 tiles. MATCH.
+- bank89_E000: matched $89E000-$89F009 (4106 bytes; bank89_F000 starts at $89F00A as before). printscores1 is 93G (penalty93_2); $89EB45 is the packed ref window tile set of the horizontal rink (RefTilesHor, 104 tiles = refcharshor). Rendering the setupice tile sets in vram order showed RinkSideTiles1 is the faceoff box (renamed FaceOffTiles, data/FaceOff.chr.pak) and RinkSideTiles2 the vertical rink ref window tiles (RefTiles, data/Ref.chr.pak). MATCH.
