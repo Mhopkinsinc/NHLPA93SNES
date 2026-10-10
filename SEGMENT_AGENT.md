@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank81_9000` ($819000-$819FFF). <- CURRENT
+`bank81_A000` ($81A000-$81AFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -82,8 +82,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank80_E000 | matched | $80E0E1 | $80ED37 | 100% | 3159 bytes $80E0E1-$80ED37 (start moved by bank80_D000, end moved before the compressed block). 93G setpads, updateanim, checkwindow, setvideo, show_rink, checkfo, setsortcords, setffo, ButtonLabelCharTable, uppads, PenaltyManager, chkatop, checkfornewpen, Stop4Pen, limitfo (.lf), chkprogress, InProgress, coinsearch, UpdatePA, SetPA; SNES projxy |
 | bank80_F000 | matched | $80ED38 | $80FFFF | 100% | 4808 bytes $80ED38-$80FFFF (start moved by bank80_E000). PackedScreenData (1590 bytes for the decompressor $86FA3E); 93G adda43, setlccords, startpause, asspuckc (.chkdir), randomd0s, assgoalie, ClampYPosition, AdjustFacingDirection, GoalieSaveList, checkgoalp_CalcGoalShotDir, CalcAngleOffset, reenergizeteam; SNES ReadPads, divbig, far8B817A, far8B8172; $FF fill, internal header and vectors as dw labels |
 | bank81_8000 | matched | $818000 | $818FFF | data | 4096 bytes $818000-$818FFF. GameSoundUpload: SPC700 upload stream of the in-game sample set (setupice via $82FA7A): block headers, GameSampleDir (19 DSP directory entries, start/loop as SPCSAMPLES+offset), GameSamples incbin data/gamesamples.brr 0..$FAC |
-| bank81_9000 | not matched <- CURRENT | $819000 | $819FFF | 0% |  |
-| bank81_A000 | not matched | $81A000 | $81AFFF | 0% |  |
+| bank81_9000 | matched | $819000 | $819FFF | data | 4096 bytes $819000-$819FFF. GameSamples continued: incbin data/gamesamples.brr $FAC..$1FAC |
+| bank81_A000 | not matched <- CURRENT | $81A000 | $81AFFF | 0% |  |
 | bank81_B000 | not matched | $81B000 | $81BFFF | 0% |  |
 | bank81_C000 | not matched | $81C000 | $81CFFF | 0% |  |
 | bank81_D000 | not matched | $81D000 | $81DFFF | 0% |  |
@@ -216,3 +216,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank80_E000: matched $80E0E1-$80ED37 (3159 bytes; bank80_F000 now starts at $80ED38: a compressed block of 1590 bytes, read by $8FDD22/$8FE913 through the decompressor $86FA3E). Animation frames, screen following, the sprite table (face off, sort objects, pads with their labels, gloves), and the penalty manager (new penalties, delayed calls, face off spots, the ref, penalty box entries). New RAM: addframe parameters (sprframe/sprx/spry/sprhflip/sprvflip/sprflag), the ffo arrays at $0100-$0131 ($0106 was colorflag0: it is ffoframe+6), ref state (RefStep/RefPen/penmsgtimer), TempPlOffset, tmPenalties/tmPenmin/tmATOP; constants SPAList, OFFSCREEN, gmpen, PenDelay, SFXwhistle. Earlier bank80 slices regenerated. MATCH.
 - bank80_F000: matched $80ED38-$80FFFF (4808 bytes). The packed block $80ED38-$80F36D is labeled data (its stream format is described in the label comment). Code found through asstab, which has 4-byte entries: $E assgoalie $80F6AD, $10 asspuckc $80F45B; the asspuckc skateto callback $80F51A; adda43 called from bank $8F. Internal header (title, map mode $30, checksums) and the native/emulation vectors written as dw labels (VBjsr, BRKHalt, Start, HBjsr). New RAM: joypad3/4, padlast1-4, padnew1-4, padvcount, bignum; constants replaysize, ReplayBufferStart/End, goalie save SPAs, agoalietopuck. Bank $80 complete. MATCH.
 - bank81_8000: matched $818000-$818FFF (4096 bytes). Bank $81 is not code: $818000-$82B86B is one SPC700 upload stream (format from the uploader $82FAB9: length, APU address, data; length 0 ends and jumps), sent by $82FA7A from setupice. Blocks: 76-byte sample directory to APU $2C00, $B814 bytes of BRR samples to $2C50 (extracted to data/gamesamples.brr, incbin in slices, one per segment file), end block jumping to $0800 (in bank82_B000). Constants SPCSAMPLEDIR, SPCSAMPLES, SPCRESUME, GAMESAMPLESIZE. MATCH.
+- bank81_9000: matched $819000-$819FFF (4096 bytes): BRR samples of the in-game sample set, incbin data/gamesamples.brr $FAC..$1FAC. MATCH.
