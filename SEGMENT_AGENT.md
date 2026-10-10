@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank87_B000` ($87B000-$87BFFF). <- CURRENT
+`bank87_C000` ($87C000-$87CFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -132,8 +132,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank87_8000 | matched | $878000 | $878FFF | data | 4096 bytes $878000-$878FFF. SpriteSet2 (frame set 2, frames 145-184: stop and skate backwards): header, frame table, pieces (data/Sprites/set02.pieces), tiles (set02.chr) |
 | bank87_9000 | matched | $879000 | $879FFF | data | 4096 bytes $879000-$879FFF. SpriteSet2 tiles (incbin data/Sprites/set02.chr slice) |
 | bank87_A000 | matched | $87A000 | $87AFFF | data | 4096 bytes $87A000-$87AFFF. SpriteSet2 tiles (incbin data/Sprites/set02.chr slice) |
-| bank87_B000 | not matched <- CURRENT | $87B000 | $87BFFF | 0% |  |
-| bank87_C000 | not matched | $87C000 | $87CFFF | 10% |  |
+| bank87_B000 | matched | $87B000 | $87BFFF | data | 4096 bytes $87B000-$87BFFF. SpriteSet2 tiles (incbin data/Sprites/set02.chr slice) |
+| bank87_C000 | not matched <- CURRENT | $87C000 | $87CFFF | 10% |  |
 | bank87_D000 | not matched | $87D000 | $87DFFF | 13% |  |
 | bank87_E000 | not matched | $87E005 | $87EFFF | 0% |  |
 | bank87_F000 | not matched | $87F005 | $86FFFF | -0% |  |
@@ -267,3 +267,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank87_8000: matched $878000-$878FFF (4096 bytes): sprite frame set 2, frames 145-184 (SPFstop .. SPFskateb+23). MATCH.
 - bank87_9000: matched $879000-$879FFF (4096 bytes): SpriteSet2 tiles. MATCH.
 - bank87_A000: matched $87A000-$87AFFF (4096 bytes): SpriteSet2 tiles. MATCH.
+- bank87_B000: matched $87B000-$87BFFF (4096 bytes): SpriteSet2 tiles. MATCH.
