@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank87_D000` ($87D205-$87DFFF). <- CURRENT
+`bank87_F000` ($87F000-$87FFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -135,8 +135,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank87_B000 | matched | $87B000 | $87BFFF | data | 4096 bytes $87B000-$87BFFF. SpriteSet2 tiles (incbin data/Sprites/set02.chr slice) |
 | bank87_C000 | matched | $87C000 | $87D204 | 100% | 4613 bytes $87C000-$87D204 (end moved to the end of DrawFrame). SpriteSet2 end (size asserted); EASNMap (93G EASN.map.jim, packed, data/EASN.pak); RinkSideTiles1 (packed, data/RinkSideTiles1.pak); TeamBlocksMap (26 x 6x3 words); SNES DrawFrame, addframe_end |
 | bank87_D000 | not matched <- CURRENT | $87D205 | $87DFFF | 13% |  |
-| bank87_E000 | not matched | $87E005 | $87EFFF | 0% |  |
-| bank87_F000 | not matched | $87F005 | $86FFFF | -0% |  |
+| bank87_E000 | matched | $87E000 | $87EFFF | data | 4096 bytes $87E000-$87EFFF. SpriteSet6 tiles (incbin data/Sprites/set06.chr slice) |
+| bank87_F000 | not matched <- CURRENT | $87F000 | $87FFFF | -0% |  |
 | bank88_8000 | not matched | $888000 | $888FFF | 28% |  |
 | bank88_9000 | not matched | $88900F | $889FFF | 0% |  |
 | bank88_A000 | not matched | $88A00F | $88AFFF | 0% |  |
@@ -269,3 +269,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank87_A000: matched $87A000-$87AFFF (4096 bytes): SpriteSet2 tiles. MATCH.
 - bank87_B000: matched $87B000-$87BFFF (4096 bytes): SpriteSet2 tiles. MATCH.
 - bank87_C000: matched $87C000-$87D204 (4613 bytes; bank87_D000 now starts at SpriteSet6 $87D205). Rendered the packed blocks: $87C3A0 is the EASN logo backdrop (93G EASN.map.jim), $87C6B4 rink surround tiles. TeamBlocksMap: one 6 x 3 tile block per team. DrawFrame draws frames below $293 (4-byte pieces); the bank $85 emitter (6-byte pieces, $293 and up) is renamed DrawFrameHi. MATCH.
+- bank87_E000: matched $87E000-$87EFFF (4096 bytes): SpriteSet6 tiles. MATCH.
