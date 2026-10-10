@@ -33,7 +33,7 @@ Branch `cursor/source-cleanup-fbaa`. Every commit builds MATCH. Counts come from
 Per bank: banks $80-$8F all went through tasks 1-4. Code is mostly in $80, $88 and $8F; the other banks are mostly data in `src/gfx/` and `teamdata_*`.
 
 Left as is (with reason):
-- 4 operands `lda.w $0000,y` / `sta.w $0000,y` (in `video_b80`/`middle_b84`, the old bank80_D000/bank84_F000 code). The base really is zero (Y holds a full address), so no label applies.
+- 4 operands `lda.w $0000,y` / `sta.w $0000,y` (in `penalty_b80`/`penalty_b84`, the old bank80_D000/bank84_F000 code). The base really is zero (Y holds a full address), so no label applies.
 - Bank-suffixed data/RAM names (`sfx8F`, `PixelRemap83`, `jdtab8F`, `dirtab8F`, `unusedFFxx`). No 93G counterpart is confirmed yet.
 
 What's next:
