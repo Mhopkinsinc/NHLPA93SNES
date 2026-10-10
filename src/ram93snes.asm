@@ -68,6 +68,7 @@ velstep		= $E4	; d7*16: velocity to position scale this game frame (93G d4 in up
 gravstep	= $E6	; d7*96: gravity this game frame (93G 2*d4 + 4*d4)
 ThirdPBonus	= $F0	; setplayer: +2 when tied or trailing late in the 3rd period. 93G ThirdPBonus
 evalue		= $F2	; elasticity value of a player collision (0-16). 93G evalue
+pausetimer	= $EE	; pause menu: frames left before a demo pause ends by itself (60000)
 fobox		= $F4	; nonzero while the faceoff box is on screen (puckfaceoff2 .. Endfaceoff): SetLCmode2 keeps its area. 93G disflags bit 4
 ffoattr		= $F6	; 5 words: attribute of the ffo objects (pads 0-3, gloves). 93G ffo attribute
 
@@ -113,6 +114,7 @@ Satt		= $01FF	; sprite attribute table (OAM shadow, $220 bytes), sent by VBlank.
 printx		= $047B	; x cordinate for printing (text map column). 93G printx
 printy		= $047D	; y cordinate for printing. 93G printy
 PadControlBits	= $0431	; SCnum nibbles of the pad-controlled players ($FFFF = none). 93G PadControlBits
+psitem		= $0485	; pause menu item (0-4). 92G psitem
 padcont		= $0433	; 4 words. 93G padcont
 oldvcount	= $0427	; vcount at the last game frame (d7 = vcount - oldvcount). 93G oldvcount
 goalcue		= $0429	; nonzero: home team just scored (lead 0-2): assfaceoff plays the goal music cue at the next faceoff
@@ -142,6 +144,7 @@ colorflag1	= $08B7	; cleared by setplayercolors (no reader found)
 colorflag2	= $08B9	; cleared by setplayercolors (no reader found)
 TickerNum	= $08D7	; playoff game the score ticker shows next. 93G TickerNum
 threat		= $08D3	; direction of threat on puck handler (nonzero = threat). 93G threat
+demoflag	= $08D5	; nonzero in demo mode (pause ends by itself when no controller has a team). 93G demoflag
 xc1		= $08F5	; scroll lock x (fight). 93G xc1
 yc1		= $08F7	; scroll lock y. 93G yc1
 yleader		= $08F9	; lead distance on scrolling. 93G yleader
@@ -321,6 +324,7 @@ blankchar	= $1BE7	; vram tile of the blank character (93G uses tile $7FF)
 sprframetime	= $7E2000	; 4 bytes per sprite frame: sprclock when its tiles were last sent (sprite VRAM tile cache)
 palbuffer	= $7E6C74	; CGRAM shadow (256 colors, 512 bytes): VBlank_Cram sends it. 93G palbuffer role
 textmap		= $7E6E74	; text layer tile map buffer (32x32 words); textdirtylo/hi mark what to send
+textsave	= $7FF800	; copy of textmap while the pause screen is up
 
 ReplayBufferEnd	= $7EFF41	; replay buffer end: adda43 wraps to ReplayBufferStart
 ReplayBufferStart	= $7E8174	; first replay frame record
@@ -569,6 +573,12 @@ SFXcheck	= $90	; +0/1: check (93G $1C-$1F)
 SFXplayerwall	= $9E	; +0/1: player hits the boards (93G $20)
 ; joypad bits (SNES)
 JOYSTART	= $1000	; Start (93G sbut)
+JOYR		= $0010	; R shoulder
+JOYL		= $0020	; L shoulder
+JOYRIGHT	= $0100	; dpad right (93G rbut)
+JOYLEFT		= $0200	; dpad left (93G lbut)
+JOYDOWN		= $0400	; dpad down (93G dbut)
+JOYUP		= $0800	; dpad up (93G ubut)
 bbut		= $8000	; B: pass / switch player (93G bbut)
 abut		= $4000	; Y: hold / line change (93G abut)
 ; injury
