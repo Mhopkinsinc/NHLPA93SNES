@@ -791,7 +791,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	dec a		; $80B686: 3A
 	dec a		; $80B687: 3A
 	sta.w vcountmark+2		; $80B688: 8D FD 08
-	jsl.l $84F816		; $80B68B: 22 16 F8 84  bank $84
+	jsl.l InitSortObjects		; $80B68B: 22 16 F8 84
 	stz.w zamx		; $80B68F: 9C DD 08
 	jsl.l nullrtl		; $80B692: 22 6B B7 80
 	lda.w gmode		; $80B696: AD 88 12

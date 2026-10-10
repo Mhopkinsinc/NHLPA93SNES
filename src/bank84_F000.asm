@@ -1,396 +1,912 @@
-; $84EF3C-$84FFFF  (quick pass). Starts at HotList (boundary moved from $84F00C)
+; $84EF3C-$84FFFF  ROM $26F3C-$27FFF: HotList, UpdateScoutingDisplay, ScrollDisplayUp (hockey93_07), MenuTiles88, InitSortObjects and
+; its tables, Readjoy12, DisplayStats (92G penalty.asm), GetNameandAttrib, attribjmp and its handlers (stats93), $FF fill.
+; Starts at HotList (boundary moved from $84F00C).
 org $84EF3C
-	db $FC,$EC,$FF,$E8,$FE,$E4,$FF,$E7,$01,$E7,$10,$F8,$17,$F6,$13,$F8	; $84EF3C
-	db $15,$F5,$0E,$FC,$11,$03,$15,$03,$15,$02,$15,$03,$12,$03,$0E,$06	; $84EF4C
-	db $11,$0E,$11,$0A,$13,$0B,$11,$0A,$02,$10,$01,$14,$04,$0F,$04,$14	; $84EF5C
-	db $00,$14,$F8,$06,$F3,$0B,$F2,$0C,$EF,$0E,$F1,$0C,$F3,$03,$EC,$01	; $84EF6C
-	db $F2,$03,$F1,$02,$F3,$03,$F2,$F8,$F1,$F9,$F2,$F9,$F1,$F8,$F3,$F7	; $84EF7C
-	db $01,$F3,$01,$F5,$01,$F4,$00,$F4,$01,$F3,$0B,$FA,$0C,$F9,$0C,$FA	; $84EF8C
-	db $0A,$FA,$0A,$F9,$11,$00,$16,$02,$16,$01,$14,$01,$12,$01,$0B,$0C	; $84EF9C
-	db $0D,$0E,$0C,$0B,$0A,$0C,$0B,$0B,$00,$0D,$01,$0F,$01,$0C,$00,$0E	; $84EFAC
-	db $02,$0C,$F7,$0B,$F7,$0A,$F6,$09,$F3,$0A,$F5,$0A,$F0,$00,$EF,$FF	; $84EFBC
-	db $EF,$00,$F0,$02,$F2,$02,$F7,$F6,$F4,$F8,$F6,$FA,$F7,$FB,$F6,$FA	; $84EFCC
-	db $FA,$FB,$0E,$FB,$14,$00,$12,$06,$09,$06,$F0,$0B,$E8,$FC,$EA,$F9	; $84EFDC
-	db $01,$F9,$0F,$F7,$16,$03,$0E,$05,$FE,$07,$EA,$06,$EA,$FA,$F2,$F2	; $84EFEC
-	db $FA,$F4,$FA,$F4,$FA,$F4,$FA,$F4,$FA,$F4,$FA,$F4,$0E,$F4,$0E,$F4	; $84EFFC
-	db $0E,$F4,$0E,$F4,$0E,$F4,$0E,$F4,$13,$02,$13,$02,$13,$02,$13,$02	; $84F00C
-	db $13,$02,$13,$02,$0F,$07,$0F,$07,$0F,$07,$0F,$07,$0F,$07,$0F,$07	; $84F01C
-	db $08,$0E,$08,$0E,$08,$0E,$06,$0B,$08,$0E,$08,$0E,$F6,$0C,$F6,$0C	; $84F02C
-	db $F6,$0C,$F6,$0C,$F6,$0C,$F6,$0C,$F0,$07,$EF,$07,$EF,$07,$EF,$07	; $84F03C
-	db $EF,$07,$EF,$07,$EE,$FC,$EE,$FC,$EE,$FC,$EE,$FC,$EE,$FC,$EE,$FC	; $84F04C
-	db $FF,$ED,$FF,$ED,$10,$F9,$10,$F9,$11,$FF,$11,$FF,$0B,$08,$0B,$08	; $84F05C
-	db $FA,$08,$FA,$08,$F1,$07,$F1,$07,$F4,$FB,$F4,$FB,$F5,$F7,$F5,$F7	; $84F06C
-	db $FE,$ED,$F6,$F0,$FD,$F0,$11,$EE,$0E,$F5,$06,$F6,$18,$01,$18,$FC	; $84F07C
-	db $12,$FD,$0B,$08,$0F,$03,$0E,$04,$FC,$09,$02,$09,$08,$08,$EE,$04	; $84F08C
-	db $F2,$06,$F8,$06,$E7,$FE,$EE,$01,$F1,$FF,$EB,$F3,$F1,$F7,$F2,$FE	; $84F09C
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $84F0AC
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $84F0BC
-	db $0C,$F6,$02,$F3,$13,$FD,$10,$FA,$12,$08,$12,$07,$09,$0A,$0A,$0C	; $84F0CC
-	db $F2,$09,$F8,$0B,$EE,$01,$F1,$04,$F3,$FD,$EE,$FE,$F8,$F9,$F7,$F7	; $84F0DC
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $84F0EC
-	db $EF,$FF,$F6,$FB,$19,$02,$14,$06,$09,$0D,$F8,$0C,$E9,$04,$F0,$07	; $84F0FC
-	db $EF,$FC,$F7,$F8,$1B,$FB,$1D,$02,$0E,$0E,$02,$10,$EA,$05,$E9,$04	; $84F10C
-	db $F1,$F6,$13,$F6,$1E,$F8,$1D,$08,$08,$0B,$E4,$07,$E3,$02,$E8,$F8	; $84F11C
-	db $EB,$00,$F1,$FF,$0F,$F8,$0C,$FE,$11,$00,$02,$08,$F4,$07,$F2,$05	; $84F12C
-	db $F8,$E8,$F6,$E4,$13,$F9,$17,$F3,$1A,$06,$21,$06,$14,$0D,$20,$0D	; $84F13C
-	db $09,$10,$07,$1A,$EF,$09,$E6,$11,$E2,$04,$DC,$01,$E9,$F8,$E8,$F5	; $84F14C
-	db $00,$00,$0C,$07,$02,$1F,$0F,$F3,$00,$00,$05,$03,$EC,$1A,$0C,$02	; $84F15C
-	db $0C,$04,$02,$03,$E0,$FB,$06,$08,$FD,$04,$F9,$05,$E6,$ED,$FF,$08	; $84F16C
-	db $00,$00,$00,$00,$01,$E7,$F2,$05,$F1,$FD,$FE,$05,$12,$E8,$F0,$F9	; $84F17C
-	db $EE,$FE,$FB,$03,$1F,$FF,$03,$FC,$F7,$F8,$03,$03,$1C,$14,$02,$F9	; $84F18C
-	db $02,$EC,$F6,$EB,$F5,$E8,$F8,$EE,$0C,$F5,$11,$EA,$12,$E1,$12,$F1	; $84F19C
-	db $19,$04,$22,$02,$29,$F9,$1D,$FD,$11,$08,$1B,$11,$1F,$10,$13,$12	; $84F1AC
-	db $FD,$0E,$FE,$21,$04,$24,$02,$1F,$E7,$0A,$E5,$15,$E4,$15,$EB,$15	; $84F1BC
-	db $E0,$02,$D9,$04,$D7,$05,$E5,$06,$F1,$FC,$E4,$F4,$E4,$F1,$EC,$F0	; $84F1CC
-	db $0C,$FC,$10,$FF,$0D,$07,$08,$07,$F2,$04,$EC,$00,$EF,$FF,$F9,$F5	; $84F1DC
-	db $0D,$F9,$13,$FF,$19,$05,$0D,$0B,$F9,$0B,$EC,$07,$ED,$00,$F1,$FA	; $84F1EC
-	db $00,$00,$06,$FE,$07,$00,$07,$00,$07,$00,$07,$00,$07,$FF,$07,$FF	; $84F1FC
-	db $07,$FF,$07,$FF,$07,$FF,$07,$FF,$07,$FF,$07,$FF,$07,$FF,$F7,$FE	; $84F20C
-	db $EA,$FF,$E0,$FC,$EC,$06,$FD,$FE,$FF,$00,$E3,$02,$02,$05,$02,$02	; $84F21C
-	db $FD,$02,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $84F22C
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $84F23C
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$FF,$F9	; $84F24C
-	db $07,$FC,$FA,$F8,$01,$FB,$0B,$01,$01,$F7,$08,$FF,$08,$02,$0A,$F7	; $84F25C
-	db $08,$02,$01,$05,$03,$03,$01,$04,$FC,$01,$04,$05,$FD,$06,$F8,$FE	; $84F26C
-	db $F9,$08,$F8,$03,$F6,$00,$F6,$02,$F8,$FC,$FB,$FA,$F5,$FB,$02,$F6	; $84F27C
-	db $03,$F5,$0D,$F7,$0D,$F7,$17,$FF,$17,$FF,$0F,$05,$10,$04,$04,$0D	; $84F28C
-	db $04,$0E,$F0,$0A,$F0,$0A,$EA,$03,$E9,$FE,$EE,$F8,$ED,$F7,$04,$FC	; $84F29C
-	db $07,$FF,$FF,$FD,$0A,$00,$05,$05,$FE,$08,$01,$05,$F6,$FF,$F4,$03	; $84F2AC
-	db $F2,$FC,$FA,$FC,$07,$F8,$FF,$F8,$F6,$FB,$FF,$F9,$FF,$FB,$0B,$04	; $84F2BC
-	db $0B,$F8,$FD,$06,$0C,$03,$02,$07,$02,$05,$F5,$FF,$F2,$00,$07,$F2	; $84F2CC
-	db $F6,$FD,$13,$F6,$03,$F3,$15,$FE,$04,$F3,$08,$08,$0D,$FC,$F7,$05	; $84F2DC
-	db $09,$02,$ED,$05,$04,$05,$EE,$F8,$F8,$06,$F4,$F1,$F3,$FD,$FE,$F8	; $84F2EC
-	db $01,$F9,$07,$FD,$02,$FB,$11,$FD,$0F,$FE,$11,$FD,$10,$FF,$0C,$00	; $84F2FC
-	db $0E,$02,$13,$05,$11,$01,$07,$04,$05,$06,$09,$09,$0D,$0C,$02,$0A	; $84F30C
-	db $FF,$0B,$F5,$0F,$F8,$0B,$F7,$08,$FD,$08,$EF,$05,$F1,$07,$F5,$FE	; $84F31C
-	db $F5,$04,$EF,$03,$F0,$00,$F6,$F9,$F7,$FD,$F3,$F8,$F2,$F9,$00,$00	; $84F32C
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $84F33C
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $84F34C
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $84F35C
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $84F36C
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$30,$FF,$0D,$FE,$FE,$FC	; $84F37C
-	db $FF,$F8,$FC,$FB,$FF,$F0,$F0,$E0,$E0,$C0,$FF,$20,$00,$FE,$20,$04	; $84F38C
-	db $FC,$01,$F8,$03,$F8,$20,$00,$F0,$20,$04,$E0,$0F,$C0,$1F,$FF,$24	; $84F39C
-	db $69,$00,$FF,$CF,$00,$02,$82,$0D,$4A,$83,$17,$00,$FD,$50,$08,$05	; $84F3AC
-	db $02,$0A,$04,$F4,$08,$08,$F0,$F0,$20,$00,$01,$20,$00,$02,$50,$21	; $84F3BC
-	db $00,$FC,$20,$00,$F9,$20,$00,$F3,$20,$00,$07,$20,$00,$0F,$80,$20	; $84F3CC
-	db $11,$FE,$FF,$3F,$7F,$1F,$3F,$0F,$2F,$1E,$1E,$06,$17,$0C,$15,$08	; $84F3DC
-	db $09,$04,$3F,$20,$E1,$53,$0E,$0E,$E0,$07,$F1,$05,$F1,$03,$F3,$03	; $84F3EC
-	db $FB,$FF,$C0,$CF,$80,$BF,$20,$00,$7F,$E0,$66,$00,$E0,$C5,$48,$00	; $84F3FC
-	db $C0,$20,$03,$BF,$3F,$7F,$7F,$30,$FF,$30,$E0,$32,$FF,$04,$03,$FF	; $84F40C
-	db $01,$FD,$03,$C5,$07,$C0,$3E,$C1,$7E,$80,$7F,$80,$03,$20,$01,$FD	; $84F41C
-	db $FC,$48,$80,$B4,$30,$3E,$31,$7F,$10,$FF,$F0,$FF,$E0,$EE,$F1,$EE	; $84F42C
-	db $C1,$DD,$E0,$DD,$83,$BB,$C1,$BB,$07,$F0,$20,$01,$EE,$0E,$48,$01	; $84F43C
-	db $DE,$1E,$48,$01,$BD,$3C,$48,$0C,$7B,$78,$FC,$C0,$E0,$D8,$F0,$E0	; $84F44C
-	db $E1,$C0,$C0,$80,$80,$80,$5E,$05,$80,$7F,$C0,$1F,$C0,$07,$81,$D8	; $84F45C
-	db $01,$80,$3F,$80,$75,$48,$20,$07,$3A,$07,$47,$3E,$BF,$7E,$7E,$80	; $84F46C
-	db $85,$E6,$05,$02,$F8,$06,$C0,$3E,$80,$80,$CB,$84,$E6,$05,$3D,$02	; $84F47C
-	db $13,$0D,$0F,$03,$48,$07,$17,$0F,$2F,$1F,$DF,$3F,$3F,$FF,$20,$04	; $84F48C
-	db $FC,$01,$F0,$03,$F8,$48,$06,$07,$F0,$0F,$E0,$1F,$C0,$3F,$20,$06	; $84F49C
-	db $0F,$07,$08,$87,$87,$03,$87,$20,$00,$8F,$80,$C8,$05,$FF,$9F,$C0	; $84F4AC
-	db $BF,$07,$F8,$20,$06,$78,$03,$7C,$07,$7F,$8F,$3F,$48,$02,$9F,$20	; $84F4BC
-	db $80,$20,$10,$FE,$E1,$0E,$E1,$9D,$C2,$FD,$02,$FB,$04,$F3,$0C,$C7	; $84F4CC
-	db $F8,$30,$FF,$FE,$30,$1E,$0A,$BD,$3D,$FD,$FD,$FB,$FB,$F3,$F3,$C7	; $84F4DC
-	db $07,$30,$20,$1B,$E7,$0C,$EF,$14,$DB,$0C,$DF,$3A,$BF,$1E,$BD,$7F	; $84F4EC
-	db $7F,$3D,$FE,$7F,$F7,$F3,$E7,$E3,$EB,$E3,$DB,$C1,$DF,$C1,$BD,$80	; $84F4FC
-	db $48,$00,$7E,$20,$13,$77,$83,$F7,$0F,$EF,$07,$EF,$1F,$DF,$0F,$DF	; $84F50C
-	db $3F,$BF,$7F,$3F,$FF,$7B,$78,$F7,$F0,$48,$01,$EF,$E0,$48,$02,$DF	; $84F51C
-	db $C0,$BF,$80,$C5,$E0,$00,$AD,$EF,$08,$38,$E9,$00,$10,$F0,$08,$30	; $84F52C
-	db $04,$70,$04,$80,$45,$70,$43,$AD,$44,$16,$30,$05,$CE,$EF,$08,$10	; $84F53C
-	db $39,$A9,$30,$D6,$85,$37,$A9,$84,$00,$85,$39,$AD,$E9,$08,$85,$53	; $84F54C
-	db $10,$4E,$9C,$F1,$08,$AC,$ED,$08,$EE,$ED,$08,$EE,$ED,$08,$A9,$00	; $84F55C
-	db $00,$85,$33,$A9,$7F,$00,$85,$35,$B7,$33,$85,$53,$10,$0D,$A9,$FF	; $84F56C
-	db $7F,$8D,$EF,$08,$A9,$E0,$01,$8D,$EB,$08,$6B,$22,$34,$F7,$84,$A5	; $84F57C
-	db $37,$85,$3B,$A5,$39,$85,$3D,$80,$0C,$A7,$3B,$E6,$3B,$29,$FF,$00	; $84F58C
-	db $C9,$0D,$00,$D0,$F4,$C6,$53,$10,$F0,$A5,$3B,$38,$E5,$37,$85,$53	; $84F59C
-	db $A5,$37,$18,$65,$53,$85,$3B,$A5,$39,$85,$3D,$A9,$0A,$00,$8D,$EF	; $84F5AC
-	db $08,$AD,$F1,$08,$85,$53,$A7,$3B,$29,$FF,$00,$C9,$7E,$00,$D0,$03	; $84F5BC
-	db $4C,$E6,$F6,$C9,$7B,$00,$D0,$03,$4C,$FF,$F6,$C9,$7D,$00,$D0,$03	; $84F5CC
-	db $4C,$DA,$F6,$C9,$5B,$00,$D0,$03,$4C,$AB,$F6,$C9,$5D,$00,$D0,$03	; $84F5DC
-	db $4C,$A4,$F6,$A9,$FF,$FF,$8D,$E9,$08,$A9,$93,$01,$85,$33,$A9,$00	; $84F5EC
-	db $00,$85,$35,$64,$57,$A7,$3B,$29,$FF,$00,$C9,$0D,$00,$F0,$49,$E6	; $84F5FC
-	db $53,$E2,$20,$A7,$3B,$87,$33,$C2,$30,$E6,$33,$E6,$57,$A7,$3B,$29	; $84F60C
-	db $FF,$00,$C9,$2C,$00,$F0,$05,$C9,$2E,$00,$D0,$0A,$AD,$EF,$08,$18	; $84F61C
-	db $69,$28,$00,$8D,$EF,$08,$A7,$3B,$E6,$3B,$29,$FF,$00,$C9,$20,$00	; $84F62C
-	db $D0,$C3,$A7,$3B,$29,$FF,$00,$C9,$20,$00,$F0,$C5,$C6,$53,$A5,$3B	; $84F63C
-	db $38,$E5,$37,$85,$3B,$8D,$E9,$08,$A5,$57,$1A,$1A,$8D,$91,$01,$A9	; $84F64C
-	db $91,$01,$85,$37,$A9,$00,$00,$85,$39,$A5,$53,$38,$E9,$14,$00,$F0	; $84F65C
-	db $0C,$30,$08,$70,$08,$22,$34,$F7,$84,$80,$02,$70,$F8,$22,$0C,$B9	; $84F66C
-	db $80,$05,$00,$FF,$0A,$04,$AD,$F1,$08,$18,$6D,$7B,$04,$8D,$7B,$04	; $84F67C
-	db $AD,$F3,$08,$18,$6D,$7D,$04,$8D,$7D,$04,$22,$2D,$B9,$80,$AD,$F1	; $84F68C
-	db $08,$18,$65,$57,$8D,$F1,$08,$6B,$A9,$02,$00,$85,$37,$80,$02,$64	; $84F69C
-	db $37,$A4,$37,$B9,$F2,$13,$85,$57,$B9,$CE,$13,$85,$37,$A9,$83,$00	; $84F6AC
-	db $85,$39,$A0,$00,$00,$A5,$37,$18,$77,$37,$85,$37,$80,$0A,$A5,$37	; $84F6BC
-	db $18,$67,$37,$69,$08,$00,$85,$37,$C6,$57,$10,$F2,$80,$39,$AD,$D0	; $84F6CC
-	db $13,$85,$37,$A9,$83,$00,$85,$39,$80,$23,$A9,$83,$00,$85,$39,$AD	; $84F6DC
-	db $CE,$13,$C9,$68,$80,$F0,$05,$C9,$F6,$82,$D0,$03,$A9,$0E,$A0,$85	; $84F6EC
-	db $37,$80,$0A,$AD,$CE,$13,$85,$37,$A9,$83,$00,$85,$39,$A0,$04,$00	; $84F6FC
-	db $A5,$37,$18,$77,$37,$85,$37,$EE,$E9,$08,$A5,$53,$18,$67,$37,$3A	; $84F70C
-	db $85,$53,$A7,$37,$3A,$A8,$3A,$85,$57,$B7,$37,$29,$FF,$00,$F0,$03	; $84F71C
-	db $4C,$65,$F6,$C6,$57,$4C,$65,$F6,$9C,$F1,$08,$EE,$F3,$08,$AD,$F3	; $84F72C
-	db $08,$38,$E9,$07,$00,$30,$05,$50,$05,$4C,$86,$F5,$50,$FB,$CE,$F3	; $84F73C
-	db $08,$86,$0A,$A2,$00,$00,$B5,$53,$48,$E8,$E8,$E0,$10,$00,$D0,$F6	; $84F74C
-	db $A6,$0A,$A9,$07,$00,$85,$5F,$A9,$88,$6F,$85,$57,$A9,$7E,$00,$85	; $84F75C
-	db $59,$A9,$28,$00,$85,$53,$A5,$57,$18,$69,$40,$00,$85,$5B,$A5,$59	; $84F76C
-	db $85,$5D,$22,$8F,$FC,$89,$A5,$5B,$85,$57,$A5,$5D,$85,$59,$C6,$5F	; $84F77C
-	db $10,$DF,$86,$0A,$A2,$0E,$00,$68,$95,$53,$CA,$CA,$10,$F9,$A6,$0A	; $84F78C
-	db $6B,$20,$04,$34,$29,$59,$84,$48,$68,$20,$03,$24,$96,$10,$12,$20	; $84F79C
-	db $00,$09,$20,$0D,$FF,$7F,$7B,$6F,$D6,$5A,$52,$4A,$AD,$35,$29,$25	; $84F7AC
-	db $84,$10,$22,$04,$34,$7B,$6F,$52,$4A,$81,$0C,$03,$5B,$02,$B6,$01	; $84F7BC
-	db $21,$81,$2C,$02,$24,$01,$80,$20,$02,$36,$01,$0D,$20,$03,$B6,$35	; $84F7CC
-	db $2D,$11,$20,$02,$34,$D6,$02,$3F,$00,$2A,$E1,$40,$BF,$5F,$8F,$C0	; $84F7DC
-	db $8A,$C0,$9E,$00,$00,$E0,$20,$00,$F0,$20,$00,$38,$20,$00,$18,$4F	; $84F7EC
-	db $2F,$87,$1A,$4A,$00,$1F,$9C,$49,$00,$04,$20,$00,$06,$20,$00,$FF	; $84F7FC
-	db $FC,$0F,$F9,$E5,$8B,$60,$8F,$80,$E0,$00	; $84F80C
-CODE_84F816:		; M=16 X=16
-	ldx.w #$0000		; $84F816: A2 00 00
-CODE_84F819:		; M=16 X=16
-	stz.w $08FF,x		; $84F819: 9E FF 08
+HotList:		;93G HotList: hot spot (stick blade) x, y bytes for every sprite frame (763 pairs, data/HotList.bin), read by GetHot
+	incbin "../data/HotList.bin"		; $84EF3C-$84F531
+HotListEnd:
+UpdateScoutingDisplay:		;auto: CODE_84F532. 93G UpdateScoutingDisplay (hockey93_07): when ScoutingReportTimer runs out (at once with asv), print the next word of ScoutingReportText. ~ { } [ ] print a team or goalie name
+	lda.w ScoutingReportTimer		; $84F532: AD EF 08  text finished ($7FFF)
+	sec		; $84F535: 38
+	sbc.w #$1000		; $84F536: E9 00 10
+	beq .tm		; $84F539: F0 08
+	bmi .v1		; $84F53B: 30 04
+	bvs .tm		; $84F53D: 70 04
+	bra .rtl		; $84F53F: 80 45
+.v1:
+	bvs .rtl		; $84F541: 70 43
+.tm:
+	lda.w asv		; $84F543: AD 44 16  asv: no delay
+	bmi .go		; $84F546: 30 05
+	dec.w ScoutingReportTimer		; $84F548: CE EF 08
+	bpl .rtl		; $84F54B: 10 39
+.go:
+	lda.w #ScoutingReportText		; $84F54D: A9 30 D6
+	sta.b a1		; $84F550: 85 37
+	lda.w #ScoutingReportText>>16		; $84F552: A9 84 00
+	sta.b a1+2		; $84F555: 85 39
+	lda.w PlayerScrollCtr		; $84F557: AD E9 08
+	sta.b d0		; $84F55A: 85 53
+	bpl .cont		; $84F55C: 10 4E
+	stz.w DispAttribCtr		; $84F55E: 9C F1 08  next paragraph number from TestList; -1: stop typing, leave the screen in 480 frames
+	ldy.w SelectedPlayerIdx		; $84F561: AC ED 08
+	inc.w SelectedPlayerIdx		; $84F564: EE ED 08
+	inc.w SelectedPlayerIdx		; $84F567: EE ED 08
+	lda.w #$0000		; $84F56A: A9 00 00
+	sta.b a0		; $84F56D: 85 33
+	lda.w #TestList>>16		; $84F56F: A9 7F 00
+	sta.b a0+2		; $84F572: 85 35
+	lda.b [a0],y		; $84F574: B7 33
+	sta.b d0		; $84F576: 85 53
+	bpl .para		; $84F578: 10 0D
+	lda.w #$7FFF		; $84F57A: A9 FF 7F
+	sta.w ScoutingReportTimer		; $84F57D: 8D EF 08
+	lda.w #$01E0		; $84F580: A9 E0 01
+	sta.w screentimer		; $84F583: 8D EB 08
+.rtl:
+	rtl		; $84F586: 6B
+.para:		;blank line between paragraphs
+	jsl.l ScrollDisplayUp		; $84F587: 22 34 F7 84
+	lda.b a1		; $84F58B: A5 37
+	sta.b a2		; $84F58D: 85 3B
+	lda.b a1+2		; $84F58F: A5 39
+	sta.b a2+2		; $84F591: 85 3D
+	bra .cnt		; $84F593: 80 0C
+.find:
+	lda.b [a2]		; $84F595: A7 3B
+	inc.b a2		; $84F597: E6 3B
+	and.w #$00FF		; $84F599: 29 FF 00
+	cmp.w #$000D		; $84F59C: C9 0D 00
+	bne .find		; $84F59F: D0 F4
+.cnt:
+	dec.b d0		; $84F5A1: C6 53
+	bpl .find		; $84F5A3: 10 F0
+	lda.b a2		; $84F5A5: A5 3B
+	sec		; $84F5A7: 38
+	sbc.b a1		; $84F5A8: E5 37
+	sta.b d0		; $84F5AA: 85 53
+.cont:
+	lda.b a1		; $84F5AC: A5 37
+	clc		; $84F5AE: 18
+	adc.b d0		; $84F5AF: 65 53
+	sta.b a2		; $84F5B1: 85 3B
+	lda.b a1+2		; $84F5B3: A5 39
+	sta.b a2+2		; $84F5B5: 85 3D
+	lda.w #$000A		; $84F5B7: A9 0A 00  10 frames per word
+	sta.w ScoutingReportTimer		; $84F5BA: 8D EF 08
+	lda.w DispAttribCtr		; $84F5BD: AD F1 08
+	sta.b d0		; $84F5C0: 85 53
+	lda.b [a2]		; $84F5C2: A7 3B
+	and.w #$00FF		; $84F5C4: 29 FF 00
+	cmp.w #'~'		; $84F5C7: C9 7E 00
+	bne .c2		; $84F5CA: D0 03
+	jmp.w .arena		; $84F5CC: 4C E6 F6
+.c2:
+	cmp.w #'{'		; $84F5CF: C9 7B 00
+	bne .c3		; $84F5D2: D0 03
+	jmp.w .home		; $84F5D4: 4C FF F6
+.c3:
+	cmp.w #'}'		; $84F5D7: C9 7D 00
+	bne .c4		; $84F5DA: D0 03
+	jmp.w .away		; $84F5DC: 4C DA F6
+.c4:
+	cmp.w #'['		; $84F5DF: C9 5B 00
+	bne .c5		; $84F5E2: D0 03
+	jmp.w .hmtm		; $84F5E4: 4C AB F6
+.c5:
+	cmp.w #']'		; $84F5E7: C9 5D 00
+	bne .word		; $84F5EA: D0 03
+	jmp.w .awtm		; $84F5EC: 4C A4 F6
+.word:		;copy the word and its trailing spaces to mesarea+2
+	lda.w #$FFFF		; $84F5EF: A9 FF FF
+	sta.w PlayerScrollCtr		; $84F5F2: 8D E9 08
+	lda.w #mesarea+2		; $84F5F5: A9 93 01
+	sta.b a0		; $84F5F8: 85 33
+	lda.w #$0000		; $84F5FA: A9 00 00
+	sta.b a0+2		; $84F5FD: 85 35
+	stz.b d1		; $84F5FF: 64 57
+.wd:
+	lda.b [a2]		; $84F601: A7 3B
+	and.w #$00FF		; $84F603: 29 FF 00
+	cmp.w #$000D		; $84F606: C9 0D 00
+	beq .eol		; $84F609: F0 49
+	inc.b d0		; $84F60B: E6 53
+.copy:
+	sep #$20		; $84F60D: E2 20
+	lda.b [a2]		; $84F60F: A7 3B
+	sta.b [a0]		; $84F611: 87 33
+	rep #$30		; $84F613: C2 30
+	inc.b a0		; $84F615: E6 33
+	inc.b d1		; $84F617: E6 57
+	lda.b [a2]		; $84F619: A7 3B
+	and.w #$00FF		; $84F61B: 29 FF 00
+	cmp.w #','		; $84F61E: C9 2C 00
+	beq .pause		; $84F621: F0 05
+	cmp.w #'.'		; $84F623: C9 2E 00
+	bne .nopause		; $84F626: D0 0A
+.pause:		;40 more frames after punctuation
+	lda.w ScoutingReportTimer		; $84F628: AD EF 08
+	clc		; $84F62B: 18
+	adc.w #$0028		; $84F62C: 69 28 00
+	sta.w ScoutingReportTimer		; $84F62F: 8D EF 08
+.nopause:
+	lda.b [a2]		; $84F632: A7 3B
+	inc.b a2		; $84F634: E6 3B
+	and.w #$00FF		; $84F636: 29 FF 00
+	cmp.w #' '		; $84F639: C9 20 00
+	bne .wd		; $84F63C: D0 C3
+	lda.b [a2]		; $84F63E: A7 3B
+	and.w #$00FF		; $84F640: 29 FF 00
+	cmp.w #' '		; $84F643: C9 20 00
+	beq .copy		; $84F646: F0 C5
+	dec.b d0		; $84F648: C6 53
+	lda.b a2		; $84F64A: A5 3B
+	sec		; $84F64C: 38
+	sbc.b a1		; $84F64D: E5 37
+	sta.b a2		; $84F64F: 85 3B
+	sta.w PlayerScrollCtr		; $84F651: 8D E9 08
+.eol:		;make a String at mesarea
+	lda.b d1		; $84F654: A5 57
+	inc a		; $84F656: 1A
+	inc a		; $84F657: 1A
+	sta.w mesarea		; $84F658: 8D 91 01
+	lda.w #mesarea		; $84F65B: A9 91 01
+	sta.b a1		; $84F65E: 85 37
+	lda.w #$0000		; $84F660: A9 00 00
+	sta.b a1+2		; $84F663: 85 39
+.print:		;past column 20: ScrollDisplayUp
+	lda.b d0		; $84F665: A5 53
+	sec		; $84F667: 38
+	sbc.w #$0014		; $84F668: E9 14 00
+	beq .noscr		; $84F66B: F0 0C
+	bmi .v2		; $84F66D: 30 08
+	bvs .noscr		; $84F66F: 70 08
+.scr:
+	jsl.l ScrollDisplayUp		; $84F671: 22 34 F7 84
+	bra .noscr		; $84F675: 80 02
+.v2:
+	bvs .scr		; $84F677: 70 F8
+.noscr:
+	jsl.l printz		; $84F679: 22 0C B9 80  print at column + DispAttribCtr, line + VertLineScrolling
+	dw $0005		; $84F67D  printz inline string: length (counts itself), then control bytes / text
+	db $FF,$0A,$04
+	lda.w DispAttribCtr		; $84F682: AD F1 08
+	clc		; $84F685: 18
+	adc.w printx		; $84F686: 6D 7B 04
+	sta.w printx		; $84F689: 8D 7B 04
+	lda.w VertLineScrolling		; $84F68C: AD F3 08
+	clc		; $84F68F: 18
+	adc.w printy		; $84F690: 6D 7D 04
+	sta.w printy		; $84F693: 8D 7D 04
+	jsl.l print		; $84F696: 22 2D B9 80
+	lda.w DispAttribCtr		; $84F69A: AD F1 08
+	clc		; $84F69D: 18
+	adc.b d1		; $84F69E: 65 57
+	sta.w DispAttribCtr		; $84F6A0: 8D F1 08
+	rtl		; $84F6A3: 6B
+.awtm:		;away goalie
+	lda.w #$0002		; $84F6A4: A9 02 00
+	sta.b a1		; $84F6A7: 85 37
+	bra .team		; $84F6A9: 80 02
+.hmtm:		;home goalie
+	stz.b a1		; $84F6AB: 64 37
+.team:
+	ldy.b a1		; $84F6AD: A4 37
+	lda.w tmgoalie,y		; $84F6AF: B9 F2 13
+	sta.b d1		; $84F6B2: 85 57
+	lda.w tmdata,y		; $84F6B4: B9 CE 13
+	sta.b a1		; $84F6B7: 85 37
+	lda.w #TeamList>>16		; $84F6B9: A9 83 00
+	sta.b a1+2		; $84F6BC: 85 39
+	ldy.w #Playerdata		; $84F6BE: A0 00 00
+	lda.b a1		; $84F6C1: A5 37
+	clc		; $84F6C3: 18
+	adc.b [a1],y		; $84F6C4: 77 37
+	sta.b a1		; $84F6C6: 85 37
+	bra .pn		; $84F6C8: 80 0A
+.pl:
+	lda.b a1		; $84F6CA: A5 37
+	clc		; $84F6CC: 18
+	adc.b [a1]		; $84F6CD: 67 37
+	adc.w #$0008		; $84F6CF: 69 08 00
+	sta.b a1		; $84F6D2: 85 37
+.pn:
+	dec.b d1		; $84F6D4: C6 57
+	bpl .pl		; $84F6D6: 10 F2
+	bra .name		; $84F6D8: 80 39
+.away:		;away team name
+	lda.w tmdata+2		; $84F6DA: AD D0 13
+	sta.b a1		; $84F6DD: 85 37
+	lda.w #TeamList>>16		; $84F6DF: A9 83 00
+	sta.b a1+2		; $84F6E2: 85 39
+	bra .tname		; $84F6E4: 80 23
+.arena:		;~: the home team (Montreal for the All-Star teams)
+	lda.w #TeamList>>16		; $84F6E6: A9 83 00
+	sta.b a1+2		; $84F6E9: 85 39
+	lda.w tmdata		; $84F6EB: AD CE 13
+	cmp.w #AllStarsEast		; $84F6EE: C9 68 80
+	beq .mtl		; $84F6F1: F0 05
+	cmp.w #AllStarsWest		; $84F6F3: C9 F6 82
+	bne .ar		; $84F6F6: D0 03
+.mtl:
+	lda.w #Montreal		; $84F6F8: A9 0E A0
+.ar:
+	sta.b a1		; $84F6FB: 85 37
+	bra .tname		; $84F6FD: 80 0A
+.home:		;home team name
+	lda.w tmdata		; $84F6FF: AD CE 13
+	sta.b a1		; $84F702: 85 37
+	lda.w #TeamList>>16		; $84F704: A9 83 00
+	sta.b a1+2		; $84F707: 85 39
+.tname:
+	ldy.w #Teamname		; $84F709: A0 04 00
+	lda.b a1		; $84F70C: A5 37
+	clc		; $84F70E: 18
+	adc.b [a1],y		; $84F70F: 77 37
+	sta.b a1		; $84F711: 85 37
+.name:
+	inc.w PlayerScrollCtr		; $84F713: EE E9 08
+	lda.b d0		; $84F716: A5 53
+	clc		; $84F718: 18
+	adc.b [a1]		; $84F719: 67 37
+	dec a		; $84F71B: 3A
+	sta.b d0		; $84F71C: 85 53
+	lda.b [a1]		; $84F71E: A7 37
+	dec a		; $84F720: 3A
+	tay		; $84F721: A8
+	dec a		; $84F722: 3A
+	sta.b d1		; $84F723: 85 57
+	lda.b [a1],y		; $84F725: B7 37
+	and.w #$00FF		; $84F727: 29 FF 00
+	beq .pad		; $84F72A: F0 03
+	jmp.w .print		; $84F72C: 4C 65 F6
+.pad:
+	dec.b d1		; $84F72F: C6 57
+	jmp.w .print		; $84F731: 4C 65 F6
+ScrollDisplayUp:		;auto: CODE_84F734. 93G ScrollDisplayUp (hockey93_07): next text line (column 0); after line 7 move the text box up one row ($89FC8F copies 8 textmap rows)
+	stz.w DispAttribCtr		; $84F734: 9C F1 08
+	inc.w VertLineScrolling		; $84F737: EE F3 08
+	lda.w VertLineScrolling		; $84F73A: AD F3 08
+	sec		; $84F73D: 38
+	sbc.w #$0007		; $84F73E: E9 07 00
+	bmi .v1		; $84F741: 30 05
+	bvc .up		; $84F743: 50 05
+.ex1:
+	jmp.w UpdateScoutingDisplay_rtl		; $84F745: 4C 86 F5
+.v1:
+	bvc .ex1		; $84F748: 50 FB
+.up:
+	dec.w VertLineScrolling		; $84F74A: CE F3 08
+	stx.b xsave		; $84F74D: 86 0A
+	ldx.w #$0000		; $84F74F: A2 00 00
+.push:
+	lda.b d0,x		; $84F752: B5 53
+	pha		; $84F754: 48
+	inx		; $84F755: E8
+	inx		; $84F756: E8
+	cpx.w #$0010		; $84F757: E0 10 00
+	bne .push		; $84F75A: D0 F6
+	ldx.b xsave		; $84F75C: A6 0A
+	lda.w #$0007		; $84F75E: A9 07 00
+	sta.b d3		; $84F761: 85 5F
+	lda.w #textmap+$114		; $84F763: A9 88 6F  textmap+$114: the text box
+	sta.b d1		; $84F766: 85 57
+	lda.w #textmap>>16		; $84F768: A9 7E 00
+	sta.b d1+2		; $84F76B: 85 59
+.loop:
+	lda.w #$0028		; $84F76D: A9 28 00
+	sta.b d0		; $84F770: 85 53
+	lda.b d1		; $84F772: A5 57
+	clc		; $84F774: 18
+	adc.w #$0040		; $84F775: 69 40 00
+	sta.b d2		; $84F778: 85 5B
+	lda.b d1+2		; $84F77A: A5 59
+	sta.b d2+2		; $84F77C: 85 5D
+	jsl.l $89FC8F		; $84F77E: 22 8F FC 89  bank $89: copy a textmap row
+	lda.b d2		; $84F782: A5 5B
+	sta.b d1		; $84F784: 85 57
+	lda.b d2+2		; $84F786: A5 5D
+	sta.b d1+2		; $84F788: 85 59
+	dec.b d3		; $84F78A: C6 5F
+	bpl .loop		; $84F78C: 10 DF
+	stx.b xsave		; $84F78E: 86 0A
+	ldx.w #$000E		; $84F790: A2 0E 00
+.pop:
+	pla		; $84F793: 68
+	sta.b d0,x		; $84F794: 95 53
+	dex		; $84F796: CA
+	dex		; $84F797: CA
+	bpl .pop		; $84F798: 10 F9
+	ldx.b xsave		; $84F79A: A6 0A
+	rtl		; $84F79C: 6B
+MenuTiles88:		;packed tiles (decompressor $86FA3E) that the bank $88 screen setup ($88F55B) sends to vram $1000 (data/MenuTiles88.pak)
+	incbin "../data/MenuTiles88.pak"		; $84F79D-$84F815
+InitSortObjects:		;auto: CODE_84F816. SNES: clear the sort objects, then set the 4 sso arrows, the 5 ffo objects and the 16 sort objects from SsoInitTable, FfoInitTable and SortObjInitTable; then SprSort
+	ldx.w #$0000		; $84F816: A2 00 00  SortCords (all fields of the 16 objects)
+.clr:
+	stz.w Xpos,x		; $84F819: 9E FF 08
 	inx		; $84F81C: E8
 	inx		; $84F81D: E8
 	cpx.w #$0840		; $84F81E: E0 40 08
-	bne CODE_84F819		; $84F821: D0 F6
+	bne .clr		; $84F821: D0 F6
 	ldx.w #$0000		; $84F823: A2 00 00
 	ldy.w #$0000		; $84F826: A0 00 00
 	lda.w #$0003		; $84F829: A9 03 00
-	sta.b $53		; $84F82C: 85 53
-CODE_84F82E:		; M=16 X=16
+	sta.b d0		; $84F82C: 85 53
+.sso:
 	lda.w #$FFFF		; $84F82E: A9 FF FF
-	sta.w $08BB,y		; $84F831: 99 BB 08
-	lda.l $84F960,x		; $84F834: BF 60 F9 84
-	sta.w $08C3,y		; $84F838: 99 C3 08
-	lda.l $84F962,x		; $84F83B: BF 62 F9 84
-	sta.w $08CB,y		; $84F83F: 99 CB 08
-	lda.l $84F964,x		; $84F842: BF 64 F9 84
-	sta.w $08B3,y		; $84F846: 99 B3 08
-	lda.l $84F966,x		; $84F849: BF 66 F9 84
-	sta.w $08AB,y		; $84F84D: 99 AB 08
+	sta.w ssoz,y		; $84F831: 99 BB 08
+	lda.l SsoInitTable,x		; $84F834: BF 60 F9 84
+	sta.w ssox,y		; $84F838: 99 C3 08
+	lda.l SsoInitTable+2,x		; $84F83B: BF 62 F9 84
+	sta.w ssoy,y		; $84F83F: 99 CB 08
+	lda.l SsoInitTable+4,x		; $84F842: BF 64 F9 84
+	sta.w ssoframe,y		; $84F846: 99 B3 08
+	lda.l SsoInitTable+6,x		; $84F849: BF 66 F9 84
+	sta.w ssoattr,y		; $84F84D: 99 AB 08
 	txa		; $84F850: 8A
 	clc		; $84F851: 18
 	adc.w #$0008		; $84F852: 69 08 00
 	tax		; $84F855: AA
 	iny		; $84F856: C8
 	iny		; $84F857: C8
-	dec.b $53		; $84F858: C6 53
-	bpl CODE_84F82E		; $84F85A: 10 D2
+	dec.b d0		; $84F858: C6 53
+	bpl .sso		; $84F85A: 10 D2
 	ldx.w #$0000		; $84F85C: A2 00 00
 	ldy.w #$0000		; $84F85F: A0 00 00
 	lda.w #$0004		; $84F862: A9 04 00
-	sta.b $53		; $84F865: 85 53
-CODE_84F867:		; M=16 X=16
+	sta.b d0		; $84F865: 85 53
+.ffo:
 	lda.w #$FFFF		; $84F867: A9 FF FF
-	sta.w $010A,y		; $84F86A: 99 0A 01
-	lda.l $84F980,x		; $84F86D: BF 80 F9 84
-	sta.w $0114,y		; $84F871: 99 14 01
-	lda.l $84F982,x		; $84F874: BF 82 F9 84
-	sta.w $011E,y		; $84F878: 99 1E 01
-	lda.l $84F984,x		; $84F87B: BF 84 F9 84
-	sta.w $0128,y		; $84F87F: 99 28 01
-	lda.l $84F986,x		; $84F882: BF 86 F9 84
-	sta.w $0100,y		; $84F886: 99 00 01
-	lda.l $84F988,x		; $84F889: BF 88 F9 84
-	sta.w $00F6,y		; $84F88D: 99 F6 00
+	sta.w ffoxofs,y		; $84F86A: 99 0A 01
+	lda.l FfoInitTable,x		; $84F86D: BF 80 F9 84
+	sta.w ffox,y		; $84F871: 99 14 01
+	lda.l FfoInitTable+2,x		; $84F874: BF 82 F9 84
+	sta.w ffoy,y		; $84F878: 99 1E 01
+	lda.l FfoInitTable+4,x		; $84F87B: BF 84 F9 84
+	sta.w ffoz,y		; $84F87F: 99 28 01
+	lda.l FfoInitTable+6,x		; $84F882: BF 86 F9 84
+	sta.w ffoframe,y		; $84F886: 99 00 01
+	lda.l FfoInitTable+8,x		; $84F889: BF 88 F9 84
+	sta.w ffoattr,y		; $84F88D: 99 F6 00
 	txa		; $84F890: 8A
 	clc		; $84F891: 18
 	adc.w #$000A		; $84F892: 69 0A 00
 	tax		; $84F895: AA
 	iny		; $84F896: C8
 	iny		; $84F897: C8
-	dec.b $53		; $84F898: C6 53
-	bpl CODE_84F867		; $84F89A: 10 CB
-	stz.b $6B		; $84F89C: 64 6B
-	stz.b $37		; $84F89E: 64 37
-	stz.b $3B		; $84F8A0: 64 3B
-	stz.b $3F		; $84F8A2: 64 3F
-	stz.b $43		; $84F8A4: 64 43
-CODE_84F8A6:		; M=16 X=16
-	ldx.b $3B		; $84F8A6: A6 3B
-	ldy.b $3F		; $84F8A8: A4 3F
-	lda.b $6B		; $84F8AA: A5 6B
-	sta.w $0D9F,y		; $84F8AC: 99 9F 0D
+	dec.b d0		; $84F898: C6 53
+	bpl .ffo		; $84F89A: 10 CB
+	stz.b d6		; $84F89C: 64 6B
+	stz.b a1		; $84F89E: 64 37
+	stz.b a2		; $84F8A0: 64 3B
+	stz.b a3		; $84F8A2: 64 3F
+	stz.b a4		; $84F8A4: 64 43
+.obj:
+	ldx.b a2		; $84F8A6: A6 3B
+	ldy.b a3		; $84F8A8: A4 3F
+	lda.b d6		; $84F8AA: A5 6B
+	sta.w SCnum,y		; $84F8AC: 99 9F 0D
 	lda.w #$FFFF		; $84F8AF: A9 FF FF
-	sta.w $09FF,y		; $84F8B2: 99 FF 09
-	sta.w $0F1F,y		; $84F8B5: 99 1F 0F
-	lda.l $84F9B2,x		; $84F8B8: BF B2 F9 84
-	sta.w $08FF,y		; $84F8BC: 99 FF 08
-	lda.l $84F9B4,x		; $84F8BF: BF B4 F9 84
-	sta.w $095F,y		; $84F8C3: 99 5F 09
-	lda.l $84F9B6,x		; $84F8C6: BF B6 F9 84
-	sta.w $099F,y		; $84F8CA: 99 9F 09
-	lda.l $84F9B8,x		; $84F8CD: BF B8 F9 84
-	sta.w $093F,y		; $84F8D1: 99 3F 09
-	lda.l $84F9BA,x		; $84F8D4: BF BA F9 84
-	sta.w $09DF,y		; $84F8D8: 99 DF 09
-	lda.l $84F9BC,x		; $84F8DB: BF BC F9 84
-	sta.w $0D1F,y		; $84F8DF: 99 1F 0D
-	lda.l $84F9BE,x		; $84F8E2: BF BE F9 84
-	sta.w $0D3F,y		; $84F8E6: 99 3F 0D
-	lda.b $6B		; $84F8E9: A5 6B
+	sta.w oldframe,y		; $84F8B2: 99 FF 09
+	sta.w pnum,y		; $84F8B5: 99 1F 0F
+	lda.l SortObjInitTable,x		; $84F8B8: BF B2 F9 84
+	sta.w Xpos,y		; $84F8BC: 99 FF 08
+	lda.l SortObjInitTable+2,x		; $84F8BF: BF B4 F9 84
+	sta.w Ypos,y		; $84F8C3: 99 5F 09
+	lda.l SortObjInitTable+4,x		; $84F8C6: BF B6 F9 84
+	sta.w Zpos,y		; $84F8CA: 99 9F 09
+	lda.l SortObjInitTable+6,x		; $84F8CD: BF B8 F9 84
+	sta.w frame,y		; $84F8D1: 99 3F 09
+	lda.l SortObjInitTable+8,x		; $84F8D4: BF BA F9 84
+	sta.w attribute,y		; $84F8D8: 99 DF 09
+	lda.l SortObjInitTable+10,x		; $84F8DB: BF BC F9 84
+	sta.w radiusx,y		; $84F8DF: 99 1F 0D
+	lda.l SortObjInitTable+12,x		; $84F8E2: BF BE F9 84
+	sta.w radiusy,y		; $84F8E6: 99 3F 0D
+	lda.b d6		; $84F8E9: A5 6B
 	asl a		; $84F8EB: 0A
 	asl a		; $84F8EC: 0A
 	asl a		; $84F8ED: 0A
 	tay		; $84F8EE: A8
-	lda.l $84F9C0,x		; $84F8EF: BF C0 F9 84
-	sta.w $0BDF,y		; $84F8F3: 99 DF 0B
-	ldy.b $3F		; $84F8F6: A4 3F
-	lda.l $84F9C2,x		; $84F8F8: BF C2 F9 84
-	sta.w $0EDF,y		; $84F8FC: 99 DF 0E
+	lda.l SortObjInitTable+14,x		; $84F8EF: BF C0 F9 84
+	sta.w asslist,y		; $84F8F3: 99 DF 0B
+	ldy.b a3		; $84F8F6: A4 3F
+	lda.l SortObjInitTable+16,x		; $84F8F8: BF C2 F9 84
+	sta.w pflags,y		; $84F8FC: 99 DF 0E
 	lda.w #$0000		; $84F8FF: A9 00 00
-	sta.w $11FF,y		; $84F902: 99 FF 11
-	cpy.w #$001E		; $84F905: C0 1E 00
-	bne CODE_84F910		; $84F908: D0 06
+	sta.w pfnc,y		; $84F902: 99 FF 11
+	cpy.w #$001E		; $84F905: C0 1E 00  object $1E (puck shadow): pfnc
+	bne .tm		; $84F908: D0 06
 	lda.w #$0001		; $84F90A: A9 01 00
-	sta.w $11FF,y		; $84F90D: 99 FF 11
-CODE_84F910:		; M=16 X=16
-	cpx.w #$006C		; $84F910: E0 6C 00
+	sta.w pfnc,y		; $84F90D: 99 FF 11
+.tm:
+	cpx.w #$006C		; $84F910: E0 6C 00  pfgoal for objects 6-11 and 12-15, pfteam $34 for 6-11
 	rol a		; $84F913: 2A
 	inc a		; $84F914: 1A
 	and.w #$0001		; $84F915: 29 01 00
-	sta.w $113F,y		; $84F918: 99 3F 11
+	sta.w pfgoal,y		; $84F918: 99 3F 11
 	cpx.w #$006C		; $84F91B: E0 6C 00
-	bcc CODE_84F92B		; $84F91E: 90 0B
+	bcc .next		; $84F91E: 90 0B
 	cpx.w #$00D8		; $84F920: E0 D8 00
-	bcs CODE_84F92B		; $84F923: B0 06
+	bcs .next		; $84F923: B0 06
 	lda.w #$0034		; $84F925: A9 34 00
-	sta.w $119F,y		; $84F928: 99 9F 11
-CODE_84F92B:		; M=16 X=16
-	inc.b $3F		; $84F92B: E6 3F
-	inc.b $3F		; $84F92D: E6 3F
+	sta.w pfteam,y		; $84F928: 99 9F 11
+.next:
+	inc.b a3		; $84F92B: E6 3F
+	inc.b a3		; $84F92D: E6 3F
 	sep #$20		; $84F92F: E2 20
-	lda.b $6B		; $84F931: A5 6B
+	lda.b d6		; $84F931: A5 6B
 	asl a		; $84F933: 0A
-	ldy.b $37		; $84F934: A4 37
-	sta.w $125F,y		; $84F936: 99 5F 12
-	inc.b $37		; $84F939: E6 37
+	ldy.b a1		; $84F934: A4 37
+	sta.w OOlist,y		; $84F936: 99 5F 12
+	inc.b a1		; $84F939: E6 37
 	rep #$30		; $84F93B: C2 30
-	lda.b $6B		; $84F93D: A5 6B
-	ldy.b $43		; $84F93F: A4 43
-	sta.w $123F,y		; $84F941: 99 3F 12
-	inc.b $43		; $84F944: E6 43
-	inc.b $43		; $84F946: E6 43
-	inc.b $6B		; $84F948: E6 6B
-	lda.b $3B		; $84F94A: A5 3B
+	lda.b d6		; $84F93D: A5 6B
+	ldy.b a4		; $84F93F: A4 43
+	sta.w OOlistpos,y		; $84F941: 99 3F 12
+	inc.b a4		; $84F944: E6 43
+	inc.b a4		; $84F946: E6 43
+	inc.b d6		; $84F948: E6 6B
+	lda.b a2		; $84F94A: A5 3B
 	clc		; $84F94C: 18
 	adc.w #$0012		; $84F94D: 69 12 00
-	sta.b $3B		; $84F950: 85 3B
-	lda.b $6B		; $84F952: A5 6B
+	sta.b a2		; $84F950: 85 3B
+	lda.b d6		; $84F952: A5 6B
 	cmp.w #$0010		; $84F954: C9 10 00
-	beq CODE_84F95C		; $84F957: F0 03
-	jmp.w $F8A6		; $84F959: 4C A6 F8
-CODE_84F95C:		; M=16 X=16
-	jml.l $80B76C		; $84F95C: 5C 6C B7 80
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; $84F960
-	db $40,$00,$A4,$FF,$00,$00,$00,$80,$C0,$FF,$A4,$FF,$00,$00,$00,$80	; $84F970
-	db $00,$00,$00,$00,$FF,$FF,$88,$01,$00,$00,$00,$00,$00,$00,$FF,$FF	; $84F980
-	db $86,$01,$00,$00,$00,$00,$00,$00,$FF,$FF,$87,$01,$00,$00,$00,$00	; $84F990
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$FF,$FF,$61,$01	; $84F9A0
-	db $00,$00,$60,$01,$C0,$00,$00,$00,$01,$00,$00,$00,$08,$00,$04,$00	; $84F9B0
-	db $00,$00,$00,$00,$38,$FF,$9C,$FF,$00,$00,$01,$00,$00,$00,$08,$00	; $84F9C0
-	db $04,$00,$00,$00,$00,$00,$38,$FF,$B0,$FF,$00,$00,$01,$00,$00,$00	; $84F9D0
-	db $08,$00,$04,$00,$00,$00,$00,$00,$38,$FF,$C4,$FF,$00,$00,$01,$00	; $84F9E0
-	db $00,$00,$08,$00,$04,$00,$00,$00,$00,$00,$38,$FF,$D8,$FF,$00,$00	; $84F9F0
-	db $01,$00,$00,$00,$08,$00,$04,$00,$00,$00,$00,$00,$38,$FF,$EC,$FF	; $84FA00
-	db $00,$00,$01,$00,$00,$00,$08,$00,$04,$00,$00,$00,$00,$00,$C0,$00	; $84FA10
-	db $C0,$00,$00,$00,$01,$00,$01,$00,$08,$00,$04,$00,$00,$00,$00,$00	; $84FA20
-	db $38,$FF,$28,$00,$00,$00,$01,$00,$01,$00,$08,$00,$04,$00,$00,$00	; $84FA30
-	db $00,$00,$38,$FF,$3C,$00,$00,$00,$01,$00,$01,$00,$08,$00,$04,$00	; $84FA40
-	db $00,$00,$00,$00,$38,$FF,$50,$00,$00,$00,$01,$00,$01,$00,$08,$00	; $84FA50
-	db $04,$00,$00,$00,$00,$00,$38,$FF,$64,$00,$00,$00,$01,$00,$01,$00	; $84FA60
-	db $08,$00,$04,$00,$00,$00,$00,$00,$38,$FF,$78,$00,$00,$00,$01,$00	; $84FA70
-	db $01,$00,$08,$00,$04,$00,$00,$00,$00,$00,$00,$00,$0C,$01,$00,$00	; $84FA80
-	db $94,$01,$00,$00,$14,$00,$06,$00,$00,$00,$00,$00,$00,$00,$F4,$FE	; $84FA90
-	db $00,$00,$95,$01,$00,$00,$14,$00,$06,$00,$00,$00,$00,$00,$00,$00	; $84FAA0
-	db $00,$00,$00,$00,$8A,$01,$00,$00,$05,$00,$05,$00,$18,$00,$01,$00	; $84FAB0
-	db $00,$00,$00,$00,$00,$00,$89,$01,$00,$00,$03,$00,$03,$00,$19,$00	; $84FAC0
-	db $00,$00	; $84FAD0
-CODE_84FAD2:		; M=16 X=16
-	jsl.l $80C40B		; $84FAD2: 22 0B C4 80
-	lda.b $57		; $84FAD6: A5 57
+	beq .sort		; $84F957: F0 03
+	jmp.w .obj		; $84F959: 4C A6 F8
+.sort:
+	jml.l SprSort		; $84F95C: 5C 6C B7 80
+SsoInitTable:		;SNES: 4 x (ssox, ssoy, ssoframe, ssoattr)
+	dw $0000,$0000,$0000,$0000		; $84F960
+	dw $0000,$0000,$0000,$0000		; $84F968
+	dw $0040,$FFA4,$0000,$8000		; $84F970
+	dw $FFC0,$FFA4,$0000,$8000		; $84F978
+FfoInitTable:		;SNES: 5 x (ffox, ffoy, ffoz, ffoframe, ffoattr)
+	dw $0000,$0000,$FFFF,$0188,$0000		; $84F980
+	dw $0000,$0000,$FFFF,$0186,$0000		; $84F98A
+	dw $0000,$0000,$FFFF,$0187,$0000		; $84F994
+	dw $0000,$0000,$0000,$0000,$0000		; $84F99E
+	dw $0000,$0000,$FFFF,$0161,$0000		; $84F9A8
+SortObjInitTable:		;SNES: 16 x (Xpos, Ypos, Zpos, frame, attribute, radiusx, radiusy, assignment, pflags); objects 6-11 are team 2
+	dw $0160,$00C0,$0000,$0001,$0000,$0008,$0004,$0000,$0000		; $84F9B2
+	dw $FF38,$FF9C,$0000,$0001,$0000,$0008,$0004,$0000,$0000		; $84F9C4
+	dw $FF38,$FFB0,$0000,$0001,$0000,$0008,$0004,$0000,$0000		; $84F9D6
+	dw $FF38,$FFC4,$0000,$0001,$0000,$0008,$0004,$0000,$0000		; $84F9E8
+	dw $FF38,$FFD8,$0000,$0001,$0000,$0008,$0004,$0000,$0000		; $84F9FA
+	dw $FF38,$FFEC,$0000,$0001,$0000,$0008,$0004,$0000,$0000		; $84FA0C
+	dw $00C0,$00C0,$0000,$0001,$0001,$0008,$0004,$0000,$0000		; $84FA1E
+	dw $FF38,$0028,$0000,$0001,$0001,$0008,$0004,$0000,$0000		; $84FA30
+	dw $FF38,$003C,$0000,$0001,$0001,$0008,$0004,$0000,$0000		; $84FA42
+	dw $FF38,$0050,$0000,$0001,$0001,$0008,$0004,$0000,$0000		; $84FA54
+	dw $FF38,$0064,$0000,$0001,$0001,$0008,$0004,$0000,$0000		; $84FA66
+	dw $FF38,$0078,$0000,$0001,$0001,$0008,$0004,$0000,$0000		; $84FA78
+	dw $0000,$010C,$0000,$0194,$0000,$0014,$0006,$0000,$0000		; $84FA8A
+	dw $0000,$FEF4,$0000,$0195,$0000,$0014,$0006,$0000,$0000		; $84FA9C
+	dw $0000,$0000,$0000,$018A,$0000,$0005,$0005,$0018,$0001		; $84FAAE
+	dw $0000,$0000,$0000,$0189,$0000,$0003,$0003,$0019,$0000		; $84FAC0
+Readjoy12:		;auto: CODE_84FAD2. SNES: Readjoy1 and Readjoy2, d1 = the new presses of both pads
+	jsl.l Readjoy1		; $84FAD2: 22 0B C4 80  pad 1 or pad 2
+	lda.b d1		; $84FAD6: A5 57
 	pha		; $84FAD8: 48
-	jsl.l $80C429		; $84FAD9: 22 29 C4 80
+	jsl.l Readjoy2		; $84FAD9: 22 29 C4 80
 	pla		; $84FADD: 68
-	ora.b $57		; $84FADE: 05 57
-	sta.b $57		; $84FAE0: 85 57
+	ora.b d1		; $84FADE: 05 57
+	sta.b d1		; $84FAE0: 85 57
 	rtl		; $84FAE2: 6B
-	db $22,$BF,$FD,$82,$0A,$00,$BF,$0B,$02,$53,$54,$41,$54,$53,$22,$0C	; $84FAE3
-	db $B9,$80,$05,$00,$BF,$05,$07,$A9,$16,$00,$85,$53,$A9,$05,$00,$85	; $84FAF3
-	db $57,$AD,$D7,$1B,$85,$5B,$22,$7C,$84,$8D,$22,$0C,$B9,$80,$0B,$00	; $84FB03
-	db $BF,$0D,$06,$20,$20,$20,$20,$20,$20,$22,$0C,$B9,$80,$0A,$00,$BF	; $84FB13
-	db $0D,$07,$53,$68,$6F,$74,$73,$22,$0C,$B9,$80,$0F,$00,$BF,$0B,$08	; $84FB23
-	db $50,$6F,$77,$65,$72,$20,$50,$6C,$61,$79,$22,$0C,$B9,$80,$0E,$00	; $84FB33
-	db $BF,$0B,$09,$50,$65,$6E,$61,$6C,$74,$69,$65,$73,$22,$0C,$B9,$80	; $84FB43
-	db $10,$00,$BF,$0B,$0A,$42,$6F,$64,$79,$20,$43,$68,$65,$63,$6B,$73	; $84FB53
-	db $22,$0C,$B9,$80,$0F,$00,$BF,$0B,$0B,$41,$74,$74,$61,$63,$6B,$5A	; $84FB63
-	db $6F,$6E,$65,$22,$0C,$B9,$80,$05,$00,$BF,$1A,$07,$64,$3B,$22,$92	; $84FB73
-	db $FB,$84,$22,$0C,$B9,$80,$05,$00,$BF,$09,$07,$E6,$3B,$E6,$3B,$A9	; $84FB83
-	db $30,$FC,$85,$33,$A9,$84,$00,$85,$35,$A7,$33,$E6,$33,$E6,$33,$A8	; $84FB93
-	db $30,$6D,$AC,$7B,$04,$5A,$18,$65,$3B,$A8,$B9,$00,$00,$85,$53,$22	; $84FBA3
-	db $82,$86,$8F,$A7,$33,$E6,$33,$E6,$33,$A8,$30,$37,$85,$57,$A9,$91	; $84FBB3
-	db $01,$85,$3F,$A9,$00,$00,$85,$41,$A9,$02,$00,$87,$3F,$22,$C9,$87	; $84FBC3
-	db $8F,$22,$D3,$FD,$82,$03,$00,$2F,$A5,$3B,$18,$65,$57,$A8,$B9,$00	; $84FBD3
-	db $00,$85,$53,$22,$82,$86,$8F,$22,$C9,$87,$8F,$A5,$3F,$85,$37,$A5	; $84FBE3
-	db $41,$85,$39,$A7,$37,$1A,$4A,$49,$FF,$FF,$1A,$18,$6D,$7B,$04,$8D	; $84FBF3
-	db $7B,$04,$22,$2D,$B9,$80,$68,$8D,$7B,$04,$EE,$7D,$04,$80,$8A,$A4	; $84FC03
-	db $3B,$B9,$CA,$13,$85,$53,$22,$EA,$87,$8F,$A7,$37,$1A,$4A,$49,$FF	; $84FC13
-	db $FF,$1A,$18,$6D,$7B,$04,$8D,$7B,$04,$5C,$2D,$B9,$80,$B2,$13,$FF	; $84FC23
-	db $FF,$B6,$13,$BA,$13,$BE,$13,$C2,$13,$02,$14,$FF,$FF,$FF,$FF,$FF	; $84FC33
-	db $FF,$86,$0A,$A2,$00,$00,$B5,$53,$48,$E8,$E8,$E0,$14,$00,$D0,$F6	; $84FC43
-	db $A6,$0A,$86,$0A,$A2,$00,$00,$B5,$33,$48,$E8,$E8,$E0,$08,$00,$D0	; $84FC53
-	db $F6,$A6,$0A,$22,$0C,$CC,$83,$22,$2D,$B9,$80,$A9,$1A,$00,$8D,$7B	; $84FC63
-	db $04,$A5,$63,$C9,$03,$00,$B0,$03,$4C,$0D,$FD,$A4,$3B,$A9,$83,$00	; $84FC73
-	db $85,$35,$B9,$CE,$13,$85,$33,$18,$A0,$00,$00,$77,$33,$85,$33,$A5	; $84FC83
-	db $33,$18,$67,$33,$69,$08,$00,$85,$33,$C6,$53,$10,$F2,$64,$53,$64	; $84FC93
-	db $57,$A9,$0F,$00,$85,$5B,$A5,$63,$A4,$65,$85,$65,$84,$63,$A5,$63	; $84FCA3
-	db $85,$73,$A5,$65,$85,$75,$A5,$5B,$85,$77,$C6,$77,$30,$06,$46,$75	; $84FCB3
-	db $66,$73,$80,$F6,$46,$73,$90,$36,$A5,$5B,$4A,$49,$FF,$FF,$1A,$3A	; $84FCC3
-	db $18,$65,$33,$85,$73,$A5,$35,$85,$75,$A7,$73,$85,$5F,$A5,$5B,$4A	; $84FCD3
-	db $90,$08,$A5,$5F,$4A,$4A,$4A,$4A,$85,$5F,$A5,$5F,$29,$0F,$00,$85	; $84FCE3
-	db $5F,$18,$65,$53,$85,$53,$A5,$57,$18,$69,$0F,$00,$85,$57,$C6,$5B	; $84FCF3
-	db $10,$AC,$A5,$63,$A4,$65,$85,$65,$84,$63,$A9,$49,$FD,$85,$33,$A9	; $84FD03
-	db $84,$00,$85,$35,$A4,$63,$B7,$33,$18,$65,$33,$85,$33,$8D,$79,$01	; $84FD13
-	db $A5,$34,$8D,$7A,$01,$22,$78,$01,$00,$86,$0A,$A2,$06,$00,$68,$95	; $84FD23
-	db $33,$CA,$CA,$10,$F9,$A6,$0A,$86,$0A,$A2,$12,$00,$68,$95,$53,$CA	; $84FD33
-	db $CA,$10,$F9,$A6,$0A,$6B,$0C,$00,$A5,$00,$01,$01,$26,$01,$CB,$00	; $84FD43
-	db $D4,$00,$06,$53,$A5,$3B,$F0,$03,$A9,$34,$00,$65,$53,$A8,$B9,$E2	; $84FD53
-	db $14,$85,$53,$10,$24,$49,$FF,$FF,$85,$53,$C9,$03,$00,$90,$0C,$A9	; $84FD63
-	db $01,$00,$85,$53,$80,$05,$A9,$03,$00,$85,$53,$A9,$84,$00,$85,$39	; $84FD73
-	db $A9,$C6,$FD,$85,$37,$5C,$8C,$D6,$8F,$A5,$53,$89,$00,$10,$D0,$E6	; $84FD83
-	db $CE,$7B,$04,$A5,$53,$85,$57,$29,$FF,$0F,$85,$53,$22,$EA,$87,$8F	; $84FD93
-	db $22,$2D,$B9,$80,$A9,$04,$00,$85,$53,$A9,$00,$40,$14,$57,$F0,$05	; $84FDA3
-	db $A9,$05,$00,$85,$53,$A9,$84,$00,$85,$39,$A9,$C6,$FD,$85,$37,$5C	; $84FDB3
-	db $8C,$D6,$8F,$08,$00,$49,$63,$65,$20,$20,$20,$08,$00,$42,$65,$6E	; $84FDC3
-	db $63,$68,$20,$08,$00,$49,$6E,$6A,$20,$50,$20,$08,$00,$49,$6E,$6A	; $84FDD3
-	db $20,$47,$20,$04,$00,$20,$20,$04,$00,$20,$43,$06,$53,$A5,$3B,$F0	; $84FDE3
-	db $03,$A9,$34,$00,$65,$53,$A8,$B9,$7A,$14,$85,$83,$A9,$28,$00,$85	; $84FDF3
-	db $7D,$22,$D8,$B8,$80,$C9,$65,$00,$90,$03,$A9,$64,$00,$85,$53,$80	; $84FE03
-	db $20,$A5,$53,$29,$0E,$00,$85,$53,$C6,$57,$A9,$64,$00,$85,$7D,$A5	; $84FE13
-	db $53,$85,$83,$22,$42,$89,$88,$A5,$57,$85,$7D,$22,$E5,$CB,$80,$85	; $84FE23
-	db $53,$A9,$04,$00,$85,$57,$22,$4E,$F5,$8F,$22,$2D,$B9,$80,$22,$0C	; $84FE33
-	db $B9,$80,$04,$00,$20,$20,$6B,$A5,$53,$29,$01,$00,$85,$53,$A9,$84	; $84FE43
-	db $00,$85,$39,$A9,$5F,$FE,$85,$37,$5C,$8C,$D6,$8F,$08,$00,$52,$69	; $84FE53
-	db $67,$68,$74,$20,$08,$00,$4C,$65,$66,$74,$20,$20,$A5,$53,$0A,$0A	; $84FE63
-	db $0A,$69,$8C,$00,$85,$53,$22,$82,$86,$8F,$22,$2D,$B9,$80,$22,$0C	; $84FE73
-	db $B9,$80,$05,$00,$20,$20,$20,$6B,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FE83
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FE93
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FEA3
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FEB3
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FEC3
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FED3
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FEE3
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FEF3
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FF03
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FF13
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FF23
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FF33
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FF43
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FF53
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FF63
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FF73
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FF83
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FF93
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FFA3
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FFB3
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FFC3
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FFD3
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FFE3
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; $84FFF3
+DisplayStats:		;auto: CODE_84FAE3. 92G DisplayStats (penalty.asm): the STATS page of the pause menu: Shots, Power Play, Penalties, Body Checks (92G Fights Won), AttackZone for both teams
+	jsl.l printz8B		; $84FAE3: 22 BF FD 82
+	dw $000A		; $84FAE7  printz inline string: length (counts itself), then control bytes / text
+	db $BF,$0B,$02,"STATS"
+	jsl.l printz		; $84FAF1: 22 0C B9 80
+	dw $0005		; $84FAF5  printz inline string: length (counts itself), then control bytes / text
+	db $BF,$05,$07
+	lda.w #$0016		; $84FAFA: A9 16 00
+	sta.b d0		; $84FAFD: 85 53
+	lda.w #$0005		; $84FAFF: A9 05 00
+	sta.b d1		; $84FB02: 85 57
+	lda.w smallfontchars		; $84FB04: AD D7 1B
+	sta.b d2		; $84FB07: 85 5B
+	jsl.l $8D847C		; $84FB09: 22 7C 84 8D  bank $8D: 92G eraser
+	jsl.l printz		; $84FB0D: 22 0C B9 80
+	dw $000B		; $84FB11  printz inline string: length (counts itself), then control bytes / text
+	db $BF,$0D,$06,"      "
+	jsl.l printz		; $84FB1C: 22 0C B9 80
+	dw $000A		; $84FB20  printz inline string: length (counts itself), then control bytes / text
+	db $BF,$0D,$07,"Shots"
+	jsl.l printz		; $84FB2A: 22 0C B9 80
+	dw $000F		; $84FB2E  printz inline string: length (counts itself), then control bytes / text
+	db $BF,$0B,$08,"Power Play"
+	jsl.l printz		; $84FB3D: 22 0C B9 80
+	dw $000E		; $84FB41  printz inline string: length (counts itself), then control bytes / text
+	db $BF,$0B,$09,"Penalties"
+	jsl.l printz		; $84FB4F: 22 0C B9 80
+	dw $0010		; $84FB53  printz inline string: length (counts itself), then control bytes / text
+	db $BF,$0B,$0A,"Body Checks"
+	jsl.l printz		; $84FB63: 22 0C B9 80
+	dw $000F		; $84FB67  printz inline string: length (counts itself), then control bytes / text
+	db $BF,$0B,$0B,"AttackZone"
+	jsl.l printz		; $84FB76: 22 0C B9 80
+	dw $0005		; $84FB7A  printz inline string: length (counts itself), then control bytes / text
+	db $BF,$1A,$07
+	stz.b a2		; $84FB7F: 64 3B  home stats at x 26, then the away stats at x 9
+	jsl.l .ss		; $84FB81: 22 92 FB 84
+	jsl.l printz		; $84FB85: 22 0C B9 80
+	dw $0005		; $84FB89  printz inline string: length (counts itself), then control bytes / text
+	db $BF,$09,$07
+	inc.b a2		; $84FB8E: E6 3B
+	inc.b a2		; $84FB90: E6 3B
+.ss:		;92G .ss: the .sslist stats of team a2 at printx
+	lda.w #DisplayStats_sslist		; $84FB92: A9 30 FC
+	sta.b a0		; $84FB95: 85 33
+	lda.w #DisplayStats_sslist>>16		; $84FB97: A9 84 00
+	sta.b a0+2		; $84FB9A: 85 35
+.sstop:
+	lda.b [a0]		; $84FB9C: A7 33
+	inc.b a0		; $84FB9E: E6 33
+	inc.b a0		; $84FBA0: E6 33
+	tay		; $84FBA2: A8
+	bmi .atz		; $84FBA3: 30 6D
+	ldy.w printx		; $84FBA5: AC 7B 04
+	phy		; $84FBA8: 5A
+	clc		; $84FBA9: 18
+	adc.b a2		; $84FBAA: 65 3B
+	tay		; $84FBAC: A8
+	lda.w $0000,y		; $84FBAD: B9 00 00  stat word of team a2 (absolute address +$0000,y)
+	sta.b d0		; $84FBB0: 85 53
+	jsl.l $8F8682		; $84FBB2: 22 82 86 8F  bank $8F: 93G pushnumber
+	lda.b [a0]		; $84FBB6: A7 33
+	inc.b a0		; $84FBB8: E6 33
+	inc.b a0		; $84FBBA: E6 33
+	tay		; $84FBBC: A8
+	bmi .nextss		; $84FBBD: 30 37
+	sta.b d1		; $84FBBF: 85 57
+	lda.w #mesarea		; $84FBC1: A9 91 01
+	sta.b a3		; $84FBC4: 85 3F
+	lda.w #$0000		; $84FBC6: A9 00 00
+	sta.b a3+2		; $84FBC9: 85 41
+	lda.w #$0002		; $84FBCB: A9 02 00
+	sta.b [a3]		; $84FBCE: 87 3F
+	jsl.l $8F87C9		; $84FBD0: 22 C9 87 8F  bank $8F: appstring
+	jsl.l appendz		; $84FBD4: 22 D3 FD 82
+	dw $0003		; $84FBD8  printz inline string: length (counts itself), then control bytes / text
+	db "/"
+	lda.b a2		; $84FBDB: A5 3B
+	clc		; $84FBDD: 18
+	adc.b d1		; $84FBDE: 65 57
+	tay		; $84FBE0: A8
+	lda.w $0000,y		; $84FBE1: B9 00 00
+	sta.b d0		; $84FBE4: 85 53
+	jsl.l $8F8682		; $84FBE6: 22 82 86 8F  bank $8F: 93G pushnumber
+	jsl.l $8F87C9		; $84FBEA: 22 C9 87 8F  bank $8F: appstring
+	lda.b a3		; $84FBEE: A5 3F
+	sta.b a1		; $84FBF0: 85 37
+	lda.b a3+2		; $84FBF2: A5 41
+	sta.b a1+2		; $84FBF4: 85 39
+.nextss:
+	lda.b [a1]		; $84FBF6: A7 37
+	inc a		; $84FBF8: 1A
+	lsr a		; $84FBF9: 4A
+	eor.w #$FFFF		; $84FBFA: 49 FF FF
+	inc a		; $84FBFD: 1A
+	clc		; $84FBFE: 18
+	adc.w printx		; $84FBFF: 6D 7B 04
+	sta.w printx		; $84FC02: 8D 7B 04
+	jsl.l print		; $84FC05: 22 2D B9 80
+	pla		; $84FC09: 68
+	sta.w printx		; $84FC0A: 8D 7B 04
+	inc.w printy		; $84FC0D: EE 7D 04
+	bra .sstop		; $84FC10: 80 8A
+.atz:		;tmATOP as a time
+	ldy.b a2		; $84FC12: A4 3B
+	lda.w tmATOP,y		; $84FC14: B9 CA 13
+	sta.b d0		; $84FC17: 85 53
+	jsl.l $8F87EA		; $84FC19: 22 EA 87 8F  bank $8F: 93G PushTime (d0 = time)
+	lda.b [a1]		; $84FC1D: A7 37
+	inc a		; $84FC1F: 1A
+	lsr a		; $84FC20: 4A
+	eor.w #$FFFF		; $84FC21: 49 FF FF
+	inc a		; $84FC24: 1A
+	clc		; $84FC25: 18
+	adc.w printx		; $84FC26: 6D 7B 04
+	sta.w printx		; $84FC29: 8D 7B 04
+	jml.l print		; $84FC2C: 5C 2D B9 80
+DisplayStats_sslist:		;92G .sslist: stat, second stat (-1 = none)
+	dw tmshots,-1, tmPwrGoals,tmPwrPlays, tmPenalties,tmPenmin, tmchecks,-1, -1,-1		; $84FC30
+GetNameandAttrib:		;auto: CODE_84FC44. 93G GetNameandAttrib (stats93): print player d0 (number and name), then at x 26 the column d4 (attribjmp); columns above 2 average the rating nibbles masked by d4 high word
+	stx.b xsave		; $84FC44: 86 0A
+	ldx.w #$0000		; $84FC46: A2 00 00
+.pushd:
+	lda.b d0,x		; $84FC49: B5 53
+	pha		; $84FC4B: 48
+	inx		; $84FC4C: E8
+	inx		; $84FC4D: E8
+	cpx.w #$0014		; $84FC4E: E0 14 00
+	bne .pushd		; $84FC51: D0 F6
+	ldx.b xsave		; $84FC53: A6 0A
+	stx.b xsave		; $84FC55: 86 0A
+	ldx.w #$0000		; $84FC57: A2 00 00
+.pusha:
+	lda.b a0,x		; $84FC5A: B5 33
+	pha		; $84FC5C: 48
+	inx		; $84FC5D: E8
+	inx		; $84FC5E: E8
+	cpx.w #$0008		; $84FC5F: E0 08 00
+	bne .pusha		; $84FC62: D0 F6
+	ldx.b xsave		; $84FC64: A6 0A
+	jsl.l PlayerNumName		; $84FC66: 22 0C CC 83
+	jsl.l print		; $84FC6A: 22 2D B9 80
+	lda.w #$001A		; $84FC6E: A9 1A 00
+	sta.w printx		; $84FC71: 8D 7B 04
+	lda.b d4		; $84FC74: A5 63  status, energy, handed: no ratings
+	cmp.w #$0003		; $84FC76: C9 03 00
+	bcs .rate		; $84FC79: B0 03
+	jmp.w .jump		; $84FC7B: 4C 0D FD
+.rate:
+	ldy.b a2		; $84FC7E: A4 3B
+	lda.w #TeamList>>16		; $84FC80: A9 83 00
+	sta.b a0+2		; $84FC83: 85 35
+	lda.w tmdata,y		; $84FC85: B9 CE 13
+	sta.b a0		; $84FC88: 85 33
+	clc		; $84FC8A: 18
+	ldy.w #Playerdata		; $84FC8B: A0 00 00
+	adc.b [a0],y		; $84FC8E: 77 33
+	sta.b a0		; $84FC90: 85 33
+.pl:
+	lda.b a0		; $84FC92: A5 33
+	clc		; $84FC94: 18
+	adc.b [a0]		; $84FC95: 67 33
+	adc.w #$0008		; $84FC97: 69 08 00
+	sta.b a0		; $84FC9A: 85 33
+	dec.b d0		; $84FC9C: C6 53
+	bpl .pl		; $84FC9E: 10 F2
+	stz.b d0		; $84FCA0: 64 53
+	stz.b d1		; $84FCA2: 64 57
+	lda.w #$000F		; $84FCA4: A9 0F 00
+	sta.b d2		; $84FCA7: 85 5B
+	lda.b d4		; $84FCA9: A5 63
+	ldy.b d4+2		; $84FCAB: A4 65
+	sta.b d4+2		; $84FCAD: 85 65
+	sty.b d4		; $84FCAF: 84 63
+.one:
+	lda.b d4		; $84FCB1: A5 63
+	sta.b tmp0		; $84FCB3: 85 73
+	lda.b d4+2		; $84FCB5: A5 65
+	sta.b tmp1		; $84FCB7: 85 75
+	lda.b d2		; $84FCB9: A5 5B
+	sta.b tmp2		; $84FCBB: 85 77
+.sh:
+	dec.b tmp2		; $84FCBD: C6 77
+	bmi .bit		; $84FCBF: 30 06
+	lsr.b tmp1		; $84FCC1: 46 75
+	ror.b tmp0		; $84FCC3: 66 73
+	bra .sh		; $84FCC5: 80 F6
+.bit:
+	lsr.b tmp0		; $84FCC7: 46 73
+	bcc .three		; $84FCC9: 90 36
+	lda.b d2		; $84FCCB: A5 5B
+	lsr a		; $84FCCD: 4A
+	eor.w #$FFFF		; $84FCCE: 49 FF FF
+	inc a		; $84FCD1: 1A
+	dec a		; $84FCD2: 3A
+	clc		; $84FCD3: 18
+	adc.b a0		; $84FCD4: 65 33
+	sta.b tmp0		; $84FCD6: 85 73
+	lda.b a0+2		; $84FCD8: A5 35
+	sta.b tmp1		; $84FCDA: 85 75
+	lda.b [tmp0]		; $84FCDC: A7 73
+	sta.b d3		; $84FCDE: 85 5F
+	lda.b d2		; $84FCE0: A5 5B
+	lsr a		; $84FCE2: 4A
+	bcc .lo		; $84FCE3: 90 08
+	lda.b d3		; $84FCE5: A5 5F
+	lsr a		; $84FCE7: 4A
+	lsr a		; $84FCE8: 4A
+	lsr a		; $84FCE9: 4A
+	lsr a		; $84FCEA: 4A
+	sta.b d3		; $84FCEB: 85 5F
+.lo:
+	lda.b d3		; $84FCED: A5 5F
+	and.w #$000F		; $84FCEF: 29 0F 00
+	sta.b d3		; $84FCF2: 85 5F
+	clc		; $84FCF4: 18
+	adc.b d0		; $84FCF5: 65 53
+	sta.b d0		; $84FCF7: 85 53
+	lda.b d1		; $84FCF9: A5 57
+	clc		; $84FCFB: 18
+	adc.w #$000F		; $84FCFC: 69 0F 00
+	sta.b d1		; $84FCFF: 85 57
+.three:
+	dec.b d2		; $84FD01: C6 5B
+	bpl .one		; $84FD03: 10 AC
+	lda.b d4		; $84FD05: A5 63
+	ldy.b d4+2		; $84FD07: A4 65
+	sta.b d4+2		; $84FD09: 85 65
+	sty.b d4		; $84FD0B: 84 63
+.jump:		;go to attribjmp[d4] through jmlvector
+	lda.w #attribjmp		; $84FD0D: A9 49 FD
+	sta.b a0		; $84FD10: 85 33
+	lda.w #attribjmp>>16		; $84FD12: A9 84 00
+	sta.b a0+2		; $84FD15: 85 35
+	ldy.b d4		; $84FD17: A4 63
+	lda.b [a0],y		; $84FD19: B7 33
+	clc		; $84FD1B: 18
+	adc.b a0		; $84FD1C: 65 33
+	sta.b a0		; $84FD1E: 85 33
+	sta.w jmlvector+1		; $84FD20: 8D 79 01
+	lda.b a0+1		; $84FD23: A5 34
+	sta.w jmlvector+2		; $84FD25: 8D 7A 01
+	jsl.l $000178		; $84FD28: 22 78 01 00  jmlvector
+	stx.b xsave		; $84FD2C: 86 0A
+	ldx.w #$0006		; $84FD2E: A2 06 00
+.popa:
+	pla		; $84FD31: 68
+	sta.b a0,x		; $84FD32: 95 33
+	dex		; $84FD34: CA
+	dex		; $84FD35: CA
+	bpl .popa		; $84FD36: 10 F9
+	ldx.b xsave		; $84FD38: A6 0A
+	stx.b xsave		; $84FD3A: 86 0A
+	ldx.w #$0012		; $84FD3C: A2 12 00
+.popd:
+	pla		; $84FD3F: 68
+	sta.b d0,x		; $84FD40: 95 53
+	dex		; $84FD42: CA
+	dex		; $84FD43: CA
+	bpl .popd		; $84FD44: 10 F9
+	ldx.b xsave		; $84FD46: A6 0A
+	rtl		; $84FD48: 6B
+attribjmp:		;93G attribjmp: GetNameandAttrib column handlers, offsets from attribjmp
+	dw AttribStatus-attribjmp,AttribEnergy-attribjmp,AttribHanded-attribjmp,AttribWeight-attribjmp,AttribFighting-attribjmp,AttribRating-attribjmp		; $84FD49
+AttribStatus:		;auto: CODE_84FD55. 93G AttribStatus: tmpdst of player d0: Ice/Bench/Injury, or the penalty time (injured: Inj G, $4000: C)
+	asl.b d0		; $84FD55: 06 53
+	lda.b a2		; $84FD57: A5 3B
+	beq .tm		; $84FD59: F0 03
+	lda.w #$0034		; $84FD5B: A9 34 00
+.tm:
+	adc.b d0		; $84FD5E: 65 53
+	tay		; $84FD60: A8
+	lda.w tmpdst,y		; $84FD61: B9 E2 14  tmpdst: negative = not of the status
+	sta.b d0		; $84FD64: 85 53
+	bpl .pen		; $84FD66: 10 24
+	eor.w #$FFFF		; $84FD68: 49 FF FF
+	sta.b d0		; $84FD6B: 85 53
+	cmp.w #$0003		; $84FD6D: C9 03 00
+	bcc .st		; $84FD70: 90 0C
+	lda.w #$0001		; $84FD72: A9 01 00
+	sta.b d0		; $84FD75: 85 53
+	bra .st		; $84FD77: 80 05
+.inj:
+	lda.w #$0003		; $84FD79: A9 03 00
+	sta.b d0		; $84FD7C: 85 53
+.st:
+	lda.w #StatusTextTbl>>16		; $84FD7E: A9 84 00
+	sta.b a1+2		; $84FD81: 85 39
+	lda.w #StatusTextTbl		; $84FD83: A9 C6 FD
+	sta.b a1		; $84FD86: 85 37
+	jml.l $8FD68C		; $84FD88: 5C 8C D6 8F  bank $8F: 93G PrintStringFromList (d0 = index, [a1] = list)
+.pen:
+	lda.b d0		; $84FD8C: A5 53
+	bit.w #TMPDINJ		; $84FD8E: 89 00 10
+	bne .inj		; $84FD91: D0 E6
+	dec.w printx		; $84FD93: CE 7B 04
+	lda.b d0		; $84FD96: A5 53
+	sta.b d1		; $84FD98: 85 57
+	and.w #$0FFF		; $84FD9A: 29 FF 0F
+	sta.b d0		; $84FD9D: 85 53
+	jsl.l $8F87EA		; $84FD9F: 22 EA 87 8F  bank $8F: 93G PushTime (d0 = time)
+	jsl.l print		; $84FDA3: 22 2D B9 80
+	lda.w #$0004		; $84FDA7: A9 04 00
+	sta.b d0		; $84FDAA: 85 53
+	lda.w #$4000		; $84FDAC: A9 00 40
+	trb.b d1		; $84FDAF: 14 57
+	beq .t		; $84FDB1: F0 05
+	lda.w #$0005		; $84FDB3: A9 05 00
+	sta.b d0		; $84FDB6: 85 53
+.t:
+	lda.w #StatusTextTbl>>16		; $84FDB8: A9 84 00
+	sta.b a1+2		; $84FDBB: 85 39
+	lda.w #StatusTextTbl		; $84FDBD: A9 C6 FD
+	sta.b a1		; $84FDC0: 85 37
+	jml.l $8FD68C		; $84FDC2: 5C 8C D6 8F  bank $8F: 93G PrintStringFromList (d0 = index, [a1] = list)
+StatusTextTbl:		;93G StatusTextTbl: AttribStatus strings
+	%String("Ice   ")		; $84FDC6
+	%String("Bench ")		; $84FDCE
+	%String("Inj P ")		; $84FDD6
+	%String("Inj G ")		; $84FDDE
+	%String("  ")		; $84FDE6
+	%String(" C")		; $84FDEA
+AttribEnergy:		;auto: CODE_84FDEE. 93G AttribEnergy: tmpde of player d0 / 40, max 100
+	asl.b d0		; $84FDEE: 06 53
+	lda.b a2		; $84FDF0: A5 3B
+	beq .tm		; $84FDF2: F0 03
+	lda.w #$0034		; $84FDF4: A9 34 00
+.tm:
+	adc.b d0		; $84FDF7: 65 53
+	tay		; $84FDF9: A8
+	lda.w tmpde,y		; $84FDFA: B9 7A 14  divu16 by 40
+	sta.b mulb		; $84FDFD: 85 83
+	lda.w #$0028		; $84FDFF: A9 28 00
+	sta.b mula		; $84FE02: 85 7D
+	jsl.l divu16		; $84FE04: 22 D8 B8 80
+	cmp.w #$0065		; $84FE08: C9 65 00
+	bcc .pr		; $84FE0B: 90 03
+	lda.w #$0064		; $84FE0D: A9 64 00
+.pr:
+	sta.b d0		; $84FE10: 85 53
+	bra AttribPrintPct		; $84FE12: 80 20
+AttribFighting:		;auto: CODE_84FE14. 93G AttribFighting: bit 0 of the nibble is handedness, only bits 1-3 count
+	lda.b d0		; $84FE14: A5 53
+	and.w #$000E		; $84FE16: 29 0E 00
+	sta.b d0		; $84FE19: 85 53
+	dec.b d1		; $84FE1B: C6 57
+AttribRating:		;auto: CODE_84FE1D. 93G AttribRating: sum d0 of d1/15 ratings as a percentage
+	lda.w #$0064		; $84FE1D: A9 64 00
+	sta.b mula		; $84FE20: 85 7D
+	lda.b d0		; $84FE22: A5 53
+	sta.b mulb		; $84FE24: 85 83
+	jsl.l $888942		; $84FE26: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
+	lda.b d1		; $84FE2A: A5 57
+	sta.b mula		; $84FE2C: 85 7D
+	jsl.l divu		; $84FE2E: 22 E5 CB 80
+	sta.b d0		; $84FE32: 85 53
+AttribPrintPct:		;auto: CODE_84FE34. 93G AttribPrintPct: print d0 4 wide plus padding
+	lda.w #$0004		; $84FE34: A9 04 00
+	sta.b d1		; $84FE37: 85 57
+	jsl.l $8FF54E		; $84FE39: 22 4E F5 8F  bank $8F: 93G PushNumberWidth
+	jsl.l print		; $84FE3D: 22 2D B9 80
+	jsl.l printz		; $84FE41: 22 0C B9 80
+	dw $0004		; $84FE45  printz inline string: length (counts itself), then control bytes / text
+	db "  "
+	rtl		; $84FE49: 6B
+AttribHanded:		;auto: CODE_84FE4A. 93G AttribHanded: bit 0 of the sum
+	lda.b d0		; $84FE4A: A5 53
+	and.w #$0001		; $84FE4C: 29 01 00
+	sta.b d0		; $84FE4F: 85 53
+	lda.w #HandedTextTbl>>16		; $84FE51: A9 84 00
+	sta.b a1+2		; $84FE54: 85 39
+	lda.w #HandedTextTbl		; $84FE56: A9 5F FE
+	sta.b a1		; $84FE59: 85 37
+	jml.l $8FD68C		; $84FE5B: 5C 8C D6 8F  bank $8F: 93G PrintStringFromList (d0 = index, [a1] = list)
+HandedTextTbl:		;93G HandedTextTbl: AttribHanded strings (93G Righty, Lefty)
+	%String("Right ")		; $84FE5F
+	%String("Left  ")		; $84FE67
+AttribWeight:		;auto: CODE_84FE6F. 93G AttribWeight: 140 + 8 * rating lb
+	lda.b d0		; $84FE6F: A5 53
+	asl a		; $84FE71: 0A
+	asl a		; $84FE72: 0A
+	asl a		; $84FE73: 0A
+	adc.w #140		; $84FE74: 69 8C 00
+	sta.b d0		; $84FE77: 85 53
+	jsl.l $8F8682		; $84FE79: 22 82 86 8F  bank $8F: 93G pushnumber
+	jsl.l print		; $84FE7D: 22 2D B9 80
+	jsl.l printz		; $84FE81: 22 0C B9 80
+	dw $0005		; $84FE85  printz inline string: length (counts itself), then control bytes / text
+	db "   "
+	rtl		; $84FE8A: 6B
+unusedFF84:		;unused, $FF fill to the end of the bank
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FE8B
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FE9B
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FEAB
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FEBB
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FECB
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FEDB
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FEEB
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FEFB
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FF0B
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FF1B
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FF2B
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FF3B
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FF4B
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FF5B
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FF6B
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FF7B
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FF8B
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FF9B
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FFAB
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FFBB
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FFCB
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FFDB
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $84FFEB
+	db $FF,$FF,$FF,$FF,$FF		; $84FFFB

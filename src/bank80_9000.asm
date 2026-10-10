@@ -1237,7 +1237,7 @@ a2offsides:		;auto: CODE_809AA8. 93G a2offsides (logic93_5): player a2 touched t
 	sty.b a2		; $809B07: 84 3B
 .rtl:
 	rtl		; $809B09: 6B
-GetHot:		;auto: CODE_809B0A. 93G GetHot (logic93_5): A = object index; d0/d1 = its hot spot x/y from HotList ($84EF3C, a byte pair per frame)
+GetHot:		;auto: CODE_809B0A. 93G GetHot (logic93_5): A = object index; d0/d1 = its hot spot x/y from HotList (bank84_F000, a byte pair per frame)
 	phx		; $809B0A: DA
 	tay		; $809B0B: A8
 	stz.b d0		; $809B0C: 64 53
@@ -1253,14 +1253,14 @@ GetHot:		;auto: CODE_809B0A. 93G GetHot (logic93_5): A = object index; d0/d1 = i
 	bmi .ex		; $809B21: 30 55
 	asl a		; $809B23: 0A
 	tax		; $809B24: AA
-	lda.l $84EF3C,x		; $809B25: BF 3C EF 84  HotList x (bank $84)
+	lda.l HotList,x		; $809B25: BF 3C EF 84  HotList x (bank $84)
 	and.w #$00FF		; $809B29: 29 FF 00
 	bit.w #$0080		; $809B2C: 89 80 00
 	beq .hx		; $809B2F: F0 03
 	ora.w #$FF00		; $809B31: 09 00 FF
 .hx:
 	sta.b d0		; $809B34: 85 53
-	lda.l $84EF3C+1,x		; $809B36: BF 3D EF 84  HotList y
+	lda.l HotList+1,x		; $809B36: BF 3D EF 84  HotList y
 	and.w #$00FF		; $809B3A: 29 FF 00
 	bit.w #$0080		; $809B3D: 89 80 00
 	beq .hy		; $809B40: F0 03

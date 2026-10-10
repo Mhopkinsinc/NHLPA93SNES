@@ -86,7 +86,7 @@ Start:		;auto: CODE_808000. 93G main93 Start + hockey93_01 Begin (RAM clear). Re
 	stz.b vbactive		; $8080A0: 64 12  vblank handlers may run
 	jsl.l $8F9073		; $8080A2: 22 73 90 8F  bank $8F: $1610-$161F = $1E
 	jsl.l $8FE32B		; $8080A6: 22 2B E3 8F  bank $8F: 93G DefaultMenus (initial menu choices at $1600)
-	jsl.l $84FAD2		; $8080AA: 22 D2 FA 84  bank $84
+	jsl.l Readjoy12		; $8080AA: 22 D2 FA 84
 	jml.l $8B816A		; $8080AE: 5C 6A 81 8B  bank $8B: on to the title screen (93G Opening)
 BRKHalt:		;auto: CODE_8080B2. BRK vector: hang. No 92G/93G counterpart (68k traps go to IRQ7 rte)
 	bra BRKHalt		; $8080B2: 80 FE

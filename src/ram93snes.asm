@@ -74,6 +74,7 @@ ffoattr		= $F6	; 5 words: attribute of the ffo objects (pads 0-3, gloves). 93G f
 
 ; $0100-$1FFF: absolute (DB = $80 mirrors bank $00 WRAM)
 ffoframe	= $0100	; 5 words: frame of the objects tied to rink scrolling (pads 0-3, gloves at +8). 93G ffo frame (92 ffo)
+ffoxofs		= $010A	; 5 words: ffo x offset of the label sprites (93G ffo 2(a3))
 ffox		= $0114	; 5 words: ffo x. 93G ffo Xpos
 ffoy		= $011E	; 5 words: ffo y
 ffoz		= $0128	; 5 words: ffo z ($FFFF = hidden)
@@ -143,6 +144,11 @@ sprslottime	= $04AB	; 512 words: sprclock value when each 32-byte VRAM sprite ti
 colorflag1	= $08B7	; cleared by setplayercolors (no reader found)
 colorflag2	= $08B9	; cleared by setplayercolors (no reader found)
 TickerNum	= $08D7	; playoff game the score ticker shows next. 93G TickerNum
+ssoattr		= $08AB	; 4 words: attribute of the off-screen arrow objects (93G sso, checksso; field roles by analogy with ffo)
+ssoframe	= $08B3	; 4 words: sso frame
+ssoz		= $08BB	; 4 words: sso z ($FFFF = hidden)
+ssox		= $08C3	; 4 words: sso x
+ssoy		= $08CB	; 4 words: sso y
 threat		= $08D3	; direction of threat on puck handler (nonzero = threat). 93G threat
 demoflag	= $08D5	; nonzero in demo mode (pause ends by itself when no controller has a team). 93G demoflag
 PlayerScrollCtr	= $08E9	; scouting text: offset of the next word in the paragraph (negative = next paragraph). 93G PlayerScrollCtr

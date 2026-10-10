@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank84_F000` ($84EF3C-$84FFFF). <- CURRENT
+Bank $84 done (bank84_8000 .. bank84_F000 matched). Waiting for the user before the next bank (`bank85_8000`). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -112,8 +112,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank84_C000 | matched | $84C000 | $84CFFF | data | 4096 bytes $84C000-$84CFFF. SpriteSet9 tiles: incbin data/Sprites/set09.chr $39D0..$49D0 |
 | bank84_D000 | matched | $84D000 | $84E948 | data | 6473 bytes $84D000-$84E948 (end moved to the end of the text). SpriteSet9 tiles end (size asserted); ScoutingReportText incbin data/Text/ScoutingReportText.bin (93G ScoutingReportText) |
 | bank84_E000 | matched | $84E949 | $84EF3B | 100% | 1523 bytes $84E949-$84EF3B (boundaries moved: after ScoutingReportText, before HotList). ScoutPicMap; SNES scouting report showcase: PutDigits2, ScoutPlayersRun, ScoutTeamStep, ScoutPlayerExit, ScoutNextPlayer, ScoutPickScript, GetRosterEntry, DrawScoutPlayers/DrawScoutPlayer; tables ScoutScriptPick(G), ScoutScripts (SPA steps), ScoutLineOrder |
-| bank84_F000 | not matched <- CURRENT | $84EF3C | $84FFFF | 8% | Title credits $FAAA-$FCF4 (93G $4B3C-$4D7E); penalty DisplayStats $FAEC (92G $A784); Ice/Bench/Inj strings $FDC8 (93G $78E8) |
-| bank85_8000 | not matched | $858000 | $858FFF | 0% |  |
+| bank84_F000 | matched | $84EF3C | $84FFFF | 100% | 4292 bytes $84EF3C-$84FFFF (start moved by bank84_E000). 93G HotList (data/HotList.bin), UpdateScoutingDisplay, ScrollDisplayUp, GetNameandAttrib, attribjmp, AttribStatus/Energy/Fighting/Rating/PrintPct/Handed/Weight, StatusTextTbl, HandedTextTbl; 92G DisplayStats (.ss, .atz, .sslist); SNES MenuTiles88 (packed), InitSortObjects with SsoInitTable/FfoInitTable/SortObjInitTable, Readjoy12; $FF fill |
+| bank85_8000 | not matched <- CURRENT | $858000 | $858FFF | 0% |  |
 | bank85_9000 | not matched | $859000 | $859FFF | 0% |  |
 | bank85_A000 | not matched | $85A000 | $85AFFF | 0% |  |
 | bank85_B000 | not matched | $85B000 | $85BFFF | 0% |  |
@@ -246,3 +246,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank84_C000: matched $84C000-$84CFFF (4096 bytes): SpriteSet9 tiles. MATCH.
 - bank84_D000: matched $84D000-$84E948 (6473 bytes; bank84_E000 now starts at $84E949): the last frame set 9 tiles and the scouting report text, extracted to data/Text/ScoutingReportText.bin like 93G. The bank83_D000 row note about the scouting text at $83D630 meant $84D630. MATCH.
 - bank84_E000: matched $84E949-$84EF3B (1523 bytes; bank84_F000 now starts at HotList $84EF3C). SNES-only scouting report extras: two showcased players (one per team, from the line sets) skate in with their number and name, animated by scripts of SPA steps picked from their ratings. New RAM: tmscoutpl, the 93G scouting text variables (ScoutingReportTimer, PlayerScrollCtr, SelectedPlayerIdx, DispAttribCtr, VertLineScrolling, screentimer, asv, TestList). MATCH.
+- bank84_F000: matched $84EF3C-$84FFFF (4292 bytes). HotList (stick hot spots per frame) extracted to data/HotList.bin and used by GetHot by label; the scouting text printer (93G UpdateScoutingDisplay/ScrollDisplayUp; ~ is the arena team, Montreal for the All-Stars); 92G DisplayStats (Body Checks where 92G has Fights Won); the 93G roster attribute columns (GetNameandAttrib, attribjmp handlers, strings); InitSortObjects and its tables. New RAM: sso arrays (ssox/ssoy/ssoframe/ssoattr/ssoz, roles by analogy with ffo), ffoxofs. Bank $84 complete. MATCH.
