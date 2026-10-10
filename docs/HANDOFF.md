@@ -16,4 +16,27 @@ Branch `cursor/source-cleanup-fbaa`. Every commit builds MATCH. Counts come from
 - Task 1 (names for addresses): done. ROM pointer immediates and bank bytes use labels (`#label`, `#label>>16`, `#label&$FFFF`), `jml jmlvector`/`jml Restart`, `unpackbuf` ($7F0000), `mesarea` pointers, team record offsets (Playerdata..ScoreOdds), all 8 DMA channels and register value constants in `src/inc/snes_regs.asm`. HotList's last 428 bytes are a packed tile stream: `RinkLogoTiles`. `ScoutPicMap` is the 93G `FaceOffMap`.
 - Task 2 (generic names): done. `;auto: CODE_xxxxxx` traces moved to `docs/name_map.csv`; the 442 `.lN` locals renamed by use; far trampolines named.
 - Task 3 (Genesis comments): header comments of 290 routines with a 93G/92G counterpart brought over (93G text first, `SNES:` line after). Every routine has a header comment. Inline 93G comments are not copied (not done).
-- Task 4 (file layout): in progress.
+- Task 4 (file layout): done. The `bankXX_YYYY` slices are regrouped into 93G module files, one file per module per bank: `src/main.asm`, `src/frames.asm`, `src/{hockey,logic,middle,penalty,video,stats,sound,teamdata}_bXX.asm`, and graphics/sprite data in `src/gfx/{graphics,sprites}_bXX.asm`. Each file keeps the original `org` per block (247 blocks), so every byte stays at its address. `src/nhlpa93snes.asm` includes them all. The file-by-block list is in `docs/file_map.md`, the old slice header notes are in `docs/segment_notes.md`, and the `file` column of `docs/name_map.csv` gives the new file. Committed one bank per commit ($81 and $82 together because the GameSamples unit spans both).
+- Task 5 (final scan, `tools/scan_cleanup.py`, 92 files):
+
+  | count | before (main) | now |
+  |---|---|---|
+  | raw address operands | 15 | 4 |
+  | raw pointer immediates | 9 | 0 |
+  | raw bank-byte immediates | 30 | 0 |
+  | noise / byte-dump comments | 0 | 0 |
+  | generic `CODE_`/`DATA_` labels | 0 | 0 |
+  | `;auto:` traces | 435 | 0 |
+  | `.lN` auto locals (refs) | 971 | 0 |
+  | globals without a header comment | - | 0 |
+
+Per bank: banks $80-$8F all went through tasks 1-4. Code is mostly in $80, $88 and $8F; the other banks are mostly data in `src/gfx/` and `teamdata_*`.
+
+Left as is (with reason):
+- 4 operands `lda.w $0000,y` / `sta.w $0000,y` (in `video_b80`/`middle_b84`, the old bank80_D000/bank84_F000 code). The base really is zero (Y holds a full address), so no label applies.
+- Bank-suffixed data/RAM names (`sfx8F`, `PixelRemap83`, `jdtab8F`, `dirtab8F`, `unusedFFxx`). No 93G counterpart is confirmed yet.
+
+What's next:
+- Copy the important 93G inline comments, matching them instruction by instruction.
+- Rename the remaining generic locals (`.zero`, `.join`, `.skip`, `.lt`, ...) by reading the code.
+- Split the larger `hockey_bXX`/`logic_bXX` files further once more routines are identified, and keep `docs/file_map.md` in step with them.
