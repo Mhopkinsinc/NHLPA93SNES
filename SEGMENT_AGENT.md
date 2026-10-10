@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank88_A000` ($88A00F-$88AFFF). <- CURRENT
+`bank88_B000` ($88B00F-$88C00E). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -139,8 +139,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank87_F000 | matched | $87F000 | $87FFFF | 100% | 4096 bytes $87F000-$87FFFF. SpriteSet6 tiles end (size asserted); 93G RestoreReplayFrame, assepen (asstab $A); PixelRemap87; RinkSideTiles2 (packed, data/RinkSideTiles2.chr.pak); $FF fill |
 | bank88_8000 | matched | $888000 | $88900E | 100% | GameSetupMap (data/GameSetup.map.pak), SmallFontMap, mulu32, getlinee, WritePassBits, noturn0, PWprint, EncodePW, FramerMap/FramerTiles, showcrowd, SuperMult, DrawGameSetupBack, mulu, SpriteSet8 head |
 | bank88_9000 | matched | $88900F | $889FFF | data | SpriteSet8 tiles end, TeamBlocksTiles start (data/TeamBlocks.chr.pak) |
-| bank88_A000 | not matched <- CURRENT | $88A00F | $88AFFF | 0% |  |
-| bank88_B000 | not matched | $88B00F | $88BFFF | 0% |  |
+| bank88_A000 | matched | $88A00F | $88AFFF | data | TeamBlocksTiles (packed) |
+| bank88_B000 | not matched <- CURRENT | $88B00F | $88C00E | 0% |  |
 | bank88_C000 | not matched | $88C00F | $88CFFF | 0% |  |
 | bank88_D000 | not matched | $88D00F | $88DFFF | 0% |  |
 | bank88_E000 | not matched | $88E00F | $88EFFF | 2% |  |
@@ -275,3 +275,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - assets (after bank $87): data files renamed by format (`.map.pak` packed screen, `.chr.pak` packed tiles, `.snesmap`, `.snespal`, `spc/driver.spc700`; see data/README.md). tools/snesgfx.py added (unpack and render). $80ED38 (PackedScreenData) rendered as the Ron Barr picture: now RonBarrMap, data/RonBarr.map.pak. Comment lines over 200 characters wrapped. No code changes. MATCH.
 - bank88_8000: matched $888000-$88900E (4111 bytes). Rendered the packed block at $888000: the game setup screen backdrop (GameSetupMap); $8C8000 is the NHLPA logo. The password code is 92G Rev A (WritePassBits with the checksum, EncodePW with pojoy). $88871C/$88872E are the Framer box map and tiles. TeamBlocksMap corrected to 9 x 2 blocks (bank87_C000 comments). tools/snesgfx.py: --pal FILE:OFFSET works with drive letters. MATCH.
 - bank88_9000: matched $88900F-$889FFF (4081 bytes): the last SpriteSet8 tiles, then the packed TeamBlocksTiles ($889B73: the 405 team name banner tiles that TeamBlocksMap places). MATCH.
+- bank88_A000: matched $88A00F-$88AFFF (4081 bytes): TeamBlocksTiles continued. MATCH.
