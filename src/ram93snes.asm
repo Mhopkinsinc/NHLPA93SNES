@@ -81,6 +81,7 @@ deltay		= $EC	; avdgoal: y correction. 93G deltay
 impactstep	= $E2	; d7*2: impact decay this game frame (game loop)
 velstep		= $E4	; d7*16: velocity to position scale this game frame (93G d4 in updateplayers)
 gravstep	= $E6	; d7*96: gravity this game frame (93G 2*d4 + 4*d4)
+d7x1024		= $E8	; d7*1024, set with the other time steps (no reader found yet)
 ThirdPBonus	= $F0	; setplayer: +2 when tied or trailing late in the 3rd period. 93G ThirdPBonus
 evalue		= $F2	; elasticity value of a player collision (0-16). 93G evalue
 pausetimer	= $EE	; pause menu: frames left before a demo pause ends by itself (60000)
@@ -139,6 +140,7 @@ nibblebuffer	= $041F	; 4 words: the weights WeightedRandomSelect picks from (Set
 oldvcount	= $0427	; vcount at the last game frame (d7 = vcount - oldvcount). 93G oldvcount
 goalcue		= $0429	; nonzero: home team just scored (lead 0-2): assfaceoff plays the goal music cue at the next faceoff
 percue		= $042B	; nonzero: period just started: assfaceoff plays the period music cue
+p3cue		= $042D	; third period: frames until StartSong3 plays its music cue (set by StartPer, 0 = done)
 midpercue	= $042F	; gameclock value (half the period) at which assfaceoff plays the mid-period music cue (0 = done)
 passdir		= $043B	; direction for pass/shot 0-7 (8 = none). 93G passdir
 passspeed	= $043D	; speed of pass/shot. 93G passspeed
@@ -344,6 +346,7 @@ OptPerlen	= $1608	; period length index. 93G OptPerlen
 PassWord	= $1610	; 16 password characters (indexes into PasstoText; bit 7 hides it). 92G PassWord
 OptPen		= $160A	; penalties (0 = off). 93G OptPen
 asv		= $1644	; scouting text without delays (down pressed). 93G asv
+crowdvol	= $1646	; crowd noise volume last sent to the sound driver (updatesound)
 passbits	= $1624	; password bits: a 128-bit number, 8 words, low word first (SuperDiv, PushBits). 92G PassBits
 tpassbits	= $1634	; 8 words: passbits before all games are resolved (EncodePW, sf3alttree). 92G tpassbits
 OptLine		= $160C	; line changes (0 = on). 93G OptLine
@@ -386,6 +389,7 @@ LineSets	= 6	; 93G LineSets
 ScoutReport	= 8	; 93G ScoutReport
 ScoreOdds	= 10	; 93G ScoreOdds
 NumofTeams	= 26	; 93G NumofTeams (24 clubs and the 2 All-Star teams)
+gsftf		= $0001	; the teams of the game are flipped (92G gsftf 0)
 gsfhl		= $0002	; game shown in the score ticker (93G gsfhl 1)
 gsfso		= $0004	; game over (93G gsfso 2)
 PWrange		= 30	; characters in PasstoText (92G PWrange)
@@ -446,6 +450,7 @@ pf2inj		= $0004	; injured (93G pflags2 bit 6, kept in pflags bit 2 here)
 ; sflags3 bits
 sf3llcs		= $0001	; lower line change box on screen (93G sf3llcs 0)
 sf3rmplay	= $0002	; replay play mode on (93G sf3rmplay 1)
+sf3sbut		= $0008	; Start pressed during the highlights: skip the rest (92G sf3sbut 3)
 sf3fo		= $0010	; face off just ended: the next puck pickup wins it (93G sflags3 bit 4)
 sf3icetime	= $0020	; count frames on ice per player (93G sflags3 bit 6)
 ; iflags bits
@@ -456,7 +461,6 @@ ifok		= $0004	; icing possible (93G ifok 2)
 attrxflip	= $0800	; x flip (93G attribute bit 3)
 attryflip	= $1000	; y flip (93G attribute bit 4)
 ; tmflags bits
-tmfstartlc	= $0001	; start line change mode at the next lineinput (93G tmflags bit 0)
 tmfmid		= $0002	; nearest player takes the spot between puck and own goal (93G tmflags bit 2)
 tmflcc		= $0001	; line change box needs redrawing (93G tmflcc 0)
 tmflast		= $0004	; next touch overwrites the last touch only (93G tmflags bit 3)

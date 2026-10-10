@@ -141,9 +141,9 @@ lineinput:		;auto: CODE_8AFD0C (from $80DF7C). 93G lineinput (logic93_1): line c
 .zero:		;93G .0
 	ldy.b a2		; $8AFD1A: A4 3B
 	lda.w tmflags,y		; $8AFD1C: B9 0A 14  tmflags bit 0: start line change mode
-	bit.w #tmfstartlc		; $8AFD1F: 89 01 00
+	bit.w #tmflcc		; $8AFD1F: 89 01 00
 	beq .one		; $8AFD22: F0 0E
-	and.w #~tmfstartlc&$FFFF		; $8AFD24: 29 FE FF
+	and.w #~tmflcc&$FFFF		; $8AFD24: 29 FE FF
 	sta.w tmflags,y		; $8AFD27: 99 0A 14
 	jsl.l lcfound2		; $8AFD2A: 22 B7 FC 86
 	jsl.l SetLCmode2		; $8AFD2E: 22 48 A7 80
