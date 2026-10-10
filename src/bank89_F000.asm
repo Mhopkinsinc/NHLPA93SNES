@@ -79,7 +79,7 @@ StartSong2:		;auto: CODE_89FBDF. SNES: start music cue 2 (period start) unless i
 	sta.w cuetimer		; $89FC07: 8D A9 04
 .rtl:
 	rtl		; $89FC0A: 6B
-StartSong3:		;auto: CODE_89FC0B. SNES: start music cue 3 (from bank $8E) unless it plays: the in-game sound set, then $8FFE7B with 6; cuetimer = its length
+StartSong3:		;auto: CODE_89FC0B. SNES: start music cue 3 (third period, Gameloop by p3cue) unless it plays: the in-game sound set, then $8FFE7B with 6; cuetimer = its length
 	lda.w cursong		; $89FC0B: AD 51 16
 	cmp.w #$0003		; $89FC0E: C9 03 00
 	beq .rtl		; $89FC11: F0 23
