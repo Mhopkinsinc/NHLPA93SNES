@@ -11,6 +11,7 @@ fadeout		= $06	; nonzero: vb2 steps brightness down every 4 frames until 0. SNES
 fadein		= $08	; 1: vb2 steps brightness up every 4 frames to 15; >1: delay count before fading in
 xsave		= $0A	; X saved around the movem-style push/pop loops of the 68k port (stx xsave : ldx #0 ...)
 farptr		= $0C	; long pointer ($0C-$0E) to a frame set table (addframe, addframe_hi)
+sprtileptr	= $0F	; addframe: long pointer to the tiles of the frame set ($0F-$11)
 vbactive	= $12	; nonzero while the vbint handler runs (or while main code holds vblank off): VBjsr skips it
 vbint		= $14	; address (bank $80) of the vblank handler VBjsr jumps to. 93G vbint
 hbint		= $16	; address (bank $80) of the H/V-timer IRQ handler HBjsr jumps to. Default HBdefault
@@ -50,10 +51,21 @@ sprpriority	= $BB	; OAM attribute priority bits ORed into every game sprite ($20
 sprflag		= $AB	; addframe parameter: $8000 = attribute bit 0 / the second faceoff sprite (cleared by addframe)
 sprframe	= $C3	; addframe parameter: sprite frame number (1-based)
 sprsetofs	= $C5	; addframe: first frame number of the frame set that holds sprframe
+sprnodraw	= $C7	; addframe: nonzero: draw nothing
 sprx		= $C9	; addframe parameter: screen x of the frame
 spry		= $CB	; addframe parameter: screen y
 sprhflip	= $A5	; addframe parameter: $0800 = x flip (attribute bit 11)
 sprvflip	= $CD	; addframe parameter: $1000 = attribute bit 12
+sprcount	= $A9	; addframe: next OAM entry (sprite count this frame)
+sprpal		= $AD	; addframe: palette bits of the piece
+sprpattr	= $AF	; addframe: flip bits of the piece ($C0)
+sprbigslot	= $B1	; addframe: VRAM slot rotor for 16x16 sprites
+sprbigslotend	= $B3	; addframe: rotor stop: all big slots in use
+sprslot		= $B5	; addframe: VRAM slot rotor for 8x8 sprites
+sprslotend	= $B7	; addframe: rotor stop: all small slots in use
+sprtile		= $B9	; addframe: VRAM tile of the piece
+sprox		= $BD	; addframe: OAM x of the piece (bit 8 in $BE)
+sproy		= $BF	; addframe: OAM y of the piece
 sprslotlife	= $C1	; frames a sprite VRAM slot stays reserved after it was last used ($12 at start)
 textdirtylo	= $D0	; lowest changed word of textmap (sent at the next vblank); $D2 = highest
 textdirtyhi	= $D2	; highest changed word of textmap
@@ -113,10 +125,12 @@ gamenum		= $014C	; index of the user game in the playoff game arrays (-1 = none)
 mesarea		= $0191	; temp area for print strings (length word, then characters). 93G mesarea
 lastplayer	= $017D	; SCnum of the last player who touched the puck (doshot). 93G lastplayer
 Satt		= $01FF	; sprite attribute table (OAM shadow, $220 bytes), sent by VBlank. 93G Satt
+SattHi		= $03FF	; OAM high table shadow (x bit 8 and size, 2 bits per sprite)
 printx		= $047B	; x cordinate for printing (text map column). 93G printx
 printy		= $047D	; y cordinate for printing. 93G printy
 PadControlBits	= $0431	; SCnum nibbles of the pad-controlled players ($FFFF = none). 93G PadControlBits
 psitem		= $0485	; pause menu item (0-4). 92G psitem
+sprpieces	= $0487	; addframe: pieces left in the frame
 padcont		= $0433	; 4 words. 93G padcont
 oldvcount	= $0427	; vcount at the last game frame (d7 = vcount - oldvcount). 93G oldvcount
 goalcue		= $0429	; nonzero: home team just scored (lead 0-2): assfaceoff plays the goal music cue at the next faceoff
@@ -254,8 +268,10 @@ c1playernum	= $1292	; player on controller 1 (negative = none). 93G c1playernum
 c2playernum	= $1294	; 93G c2playernum
 cont1team	= $1296	; team on controller 1 (0 none, 1 home, 2 away). 93G cont1team
 cont2team	= $1298	; 93G cont2team
-PenaltyBufferEnd	= $129C	; word before PenBuf. 93G PenaltyBufferEnd
+HomeTeam	= $129A	; home team number (TeamList index). 93G HomeTeam
+VisTeam		= $129C	; visiting team number. 93G VisTeam
 PenBuf		= $129E	; up to 32 penalties: (penalty number, SCnum) byte pairs, 0 = free. 93G PenBuf
+PenaltyBufferEnd	= PenBuf-2	; the word before PenBuf, used as the list base. 93G PenaltyBufferEnd
 Pencntdwn	= $12E0	; penalty/fight count down (negative = fight over). 93G Pencntdwn
 PBnum		= $12E4	; players in the penalty boxes: home*16 + visitors. 93G PBnum
 InjCntDown	= $12E6	; 93G InjCntDown
@@ -269,6 +285,7 @@ ScoreSumbytes	= $12FC	; bytes used in ScoreSum (6 per goal, max $B4). 93G ScoreS
 ScoreSum	= $12FE	; goal log: time word, (2+tmap diff | $80 away), scorer, assist, assist. 93G ScoreSum
 gsp		= $12F0	; game period. 93G gsp
 gameclock	= $12F2	; game clock seconds; gameclock+2 = jiffies (-$AAA per frame). 93G gameclock
+PerTimeTotal	= $12F6	; length of this period (seconds). 93G PerTimeTotal
 
 ; Team structs (93G hmtmstruct / awtmstruct): word arrays indexed by a2 (0 home, 2 away)
 tmshots		= $13B2	; shots stat. 93G tmshots
@@ -382,6 +399,7 @@ gmoffs		= $0020	; offsides on (93G gmoffs 5)
 gmendper	= $0040	; end the period at the next faceoff (93G gmode bit 6)
 ; sflags (low byte = 93G sflags, high byte = 93G sflags2)
 sfpz		= $0001	; pause mode (93G sfpz 0)
+sfpj		= $0002	; pause started by controller 2 (93G sfpj 1)
 sfspdir		= $0004	; set pass dir mode (93G sfspdir 2)
 sfssdir		= $0008	; set shot dir mode (93G sfssdir 3)
 sfwrap		= $0010	; replay has wrapped around (93G sfwrap 4)

@@ -86,7 +86,7 @@ SetPA2:		;auto: CODE_82F93C. 93G SetPA2 (penalty93_1): next frame/delay pair of 
 	plx		; $82F9CF: FA
 	rtl		; $82F9D0: 6B
 UpdateScores:		;auto: CODE_82F9D1. 93G UpdateScores (penalty93_2): update the ticker scores of the other playoff games (not gamenum, not over)
-	jsl.l $85D5A4		; $82F9D1: 22 A4 D5 85  GetShifter: d1 = games - 1, bank $85: 93G GetShifter (d1 = games - 1)
+	jsl.l GetShifter		; $82F9D1: 22 A4 D5 85  GetShifter: d1 = games - 1
 	lda.b d1		; $82F9D5: A5 57
 	sta.w TickerNum		; $82F9D7: 8D D7 08
 	asl a		; $82F9DA: 0A
@@ -406,11 +406,11 @@ ContinuePlayoffs:		;auto: CODE_82FC59. SNES: "continue playoffs" chosen (OptPlay
 	lda.w OptPlayMode		; $82FC61: AD 00 16  not continuing playoffs, or no user game: $83FA87
 	cmp.w #$0001		; $82FC64: C9 01 00
 	beq .po		; $82FC67: F0 04
-	jml.l $83FA87		; $82FC69: 5C 87 FA 83  bank $83
+	jml.l Restart		; $82FC69: 5C 87 FA 83
 .po:
 	lda.w gamenum		; $82FC6D: AD 4C 01
 	bpl .pw		; $82FC70: 10 04
-	jml.l $83FA87		; $82FC72: 5C 87 FA 83  bank $83
+	jml.l Restart		; $82FC72: 5C 87 FA 83
 .pw:
 	lda.w PassWord		; $82FC76: AD 10 16  clear bit 7 (hidden) of the first two characters
 	and.w #$7F7F		; $82FC79: 29 7F 7F
@@ -508,7 +508,7 @@ addframe_hi:		;auto: CODE_82FD17. SNES addframe path for sprframe >= $293: find 
 	sec		; $82FD3C: 38
 	sbc.b [farptr]		; $82FD3D: E7 0C
 	bcs .next		; $82FD3F: B0 04
-	jml.l $85FBB9		; $82FD41: 5C B9 FB 85  bank $85: draw the frame from its set
+	jml.l DrawFrameSet		; $82FD41: 5C B9 FB 85
 .next:
 	sta.b sprframe		; $82FD45: 85 C3
 	lda.b sprsetofs		; $82FD47: A5 C5
@@ -560,7 +560,7 @@ PrintPenaltyMessagesString:		;auto: CODE_82FD95. 93G PrintPenaltyMessagesString 
 	db $BF,$05,$0B,"                      "
 	rtl		; $82FDB4: 6B
 startpause2:		;auto: CODE_82FDB5. 93G startpause2 (hockey93_01): pause started by controller 2 (sflags bit 1), then startpause
-	lda.w #$0002		; $82FDB5: A9 02 00
+	lda.w #sfpj		; $82FDB5: A9 02 00
 	tsb.w sflags		; $82FDB8: 0C 8C 12
 	jml.l startpause		; $82FDBB: 5C E1 F3 80
 printz8B:		;auto: CODE_82FDBF. SNES: printz-style call with an inline string (length word counting itself): step the return address past it and go to the bank $8B printer $8BFCCE

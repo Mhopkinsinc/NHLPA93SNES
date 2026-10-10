@@ -230,8 +230,8 @@ PauseReadJoy:		;auto: CODE_83FA32. 92G Pausemode .rjoy: wait for a vblank and a 
 	ora.w joypad2		; $83FA49: 0D 60 01
 	bit.w #JOYR|JOYL		; $83FA4C: 89 30 00
 	bne PauseReadJoy		; $83FA4F: D0 E1
-	jsl.l $85FF0E		; $83FA51: 22 0E FF 85  menu sounds and ticker, bank $85
-	jsl.l $85FF96		; $83FA55: 22 96 FF 85  bank $85
+	jsl.l getpzjoy		; $83FA51: 22 0E FF 85  menu sounds and ticker
+	jsl.l nullrtl85		; $83FA55: 22 96 FF 85
 	lda.w demoflag		; $83FA59: AD D5 08  demo with no controller teams: count down pausetimer
 	beq .chk		; $83FA5C: F0 11
 	lda.w cont1team		; $83FA5E: AD 96 12

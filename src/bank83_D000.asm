@@ -60,7 +60,7 @@ PlayerNumName:		;auto: CODE_83CC0C. SNES: mesarea = "<uniform number> <name>" of
 	lda.b [a0]		; $83CC70: A7 33
 	and.w #$00FF		; $83CC72: 29 FF 00
 	sta.b d0		; $83CC75: 85 53
-	jsl.l $84EA39		; $83CC77: 22 39 EA 84  two digits, then a blank and the name, bank $84: number d0 as two digits at [a1]
+	jsl.l PutDigits2		; $83CC77: 22 39 EA 84  two digits, then a blank and the name
 	jsl.l appendz		; $83CC7B: 22 D3 FD 82
 	dw $0003		; $83CC7F  printz inline string: length (counts itself), then control bytes / text
 	db " "
