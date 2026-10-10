@@ -2,7 +2,7 @@
 ; PlayoffScreen (93G hockey93_06: the playoff tree) with PlayoffTreeSetup, assdefd (logic93_2, asstab 2), SuperAdd (92G), skateto (logic93_5),
 ; $FF fill. Starts after SpriteSet7 (boundary moved from $88F002).
 org $88EF9C
-GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password screen on the game setup backdrop: pick characters from the PasstoText grid; Start decodes it (DecodePW), a bad one
+GetPassWord:		;92G GetPassWord: the password screen on the game setup backdrop: pick characters from the PasstoText grid; Start decodes it (DecodePW), a bad one
 		;   offers retry or the setup screen
 	lda.w #$0080		; show the password again
 	trb.w PassWord
@@ -285,7 +285,7 @@ PasswordText:		;92G GetPassWord .text: "Password" at 2, 14, "Press Start" at 10,
 	db $FF,2,14,"Password",$FF,10,24,"Press Start",$FF,21,14
 	dw 3
 	db 0
-TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): Title1Map backdrop, StartSong6, then the Credits scroll up 6 rows at a time; Start leaves
+TitleScreen:		;93G TitleScreen (hockey93_07): Title1Map backdrop, StartSong6, then the Credits scroll up 6 rows at a time; Start leaves
 	lda.w #$0198		; the blank tile and the small font above the title tiles
 	sta.w blankchar
 	inc a
@@ -543,7 +543,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 CreditsBlank:		;print string of 32 blanks: TitleScreen erases the rows below the credits with it
 	dw 34
 	db "                                "
-PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G PlayoffScreen (hockey93_06): set the font tile bases; in playoff mode draw the tree (PlayoffTreeSetup by gamelevel: team
+PlayoffScreen:		;93G PlayoffScreen (hockey93_06): set the font tile bases; in playoff mode draw the tree (PlayoffTreeSetup by gamelevel: team
 		;   blocks, arrows, series scores) with the NHLPA logo, PWprint; scroll with left/right until Start
 	lda.w #6		; tile bases: small font 6, big font +100, score/team blocks +100, NHLPA logo +405
 	sta.w smallfontchars
@@ -1156,7 +1156,7 @@ PlayoffTreeSetup:		;93G PlayoffTreeSetup: playoff tree layout by gamelevel (offs
 	db 0,25,1,26,2,36,3,37,4,47,5,48,5,58,6,69,6,79,7,80,8,90,9,91,10,101,11,102,$FF		; arrows (graphics, x), $FF
 	db 11,85		; Hscroll min, max (x8)
 	db 0		; series scores (x, y)
-assdefd:		;auto: CODE_88FBA6 (asstab 2). 93G assdefd (logic93_2): defenceman on defence: stay between the furthest-up attacker and the goal, join the attack (adefo) when the puck is past the line
+assdefd:		;asstab 2. 93G assdefd (logic93_2): defenceman on defence: stay between the furthest-up attacker and the goal, join the attack (adefo) when the puck is past the line
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rtl
@@ -1423,7 +1423,7 @@ assdefd:		;auto: CODE_88FBA6 (asstab 2). 93G assdefd (logic93_2): defenceman on 
 	sta.b a0+2
 	jsl.l skateto
 	jml.l check4check
-SuperAdd:		;auto: CODE_88FDB2. 92G SuperAdd: passbits (8 words) += d0
+SuperAdd:		;92G SuperAdd: passbits (8 words) += d0
 	phx
 	lda.w passbits
 	clc
@@ -1442,7 +1442,7 @@ SuperAdd:		;auto: CODE_88FDB2. 92G SuperAdd: passbits (8 words) += d0
 	plx
 	clc
 	rtl
-skateto:		;auto: CODE_88FDD0. 93G skateto (logic93_5): a0 = collision avoidance routine, d0/d1 = x/y to skate to, d7 = frames. SNES: a skater near the target (sum of distances < 55) slows to 7/8
+skateto:		;93G skateto (logic93_5): a0 = collision avoidance routine, d0/d1 = x/y to skate to, d7 = frames. SNES: a skater near the target (sum of distances < 55) slows to 7/8
 	lda.w position,x
 	beq .t2
 	lda.w pflags,x

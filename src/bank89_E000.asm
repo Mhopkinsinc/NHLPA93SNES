@@ -4,7 +4,7 @@ org $89E000
 	incbin "../data/Sprites/set13.chr":$46A3..$5000		; $89E000-$89E95C
 SpriteSet13End:
 	assert SpriteSet13End-SpriteSet13 == $5DA+640*32
-printscores1:		;auto: CODE_89E95D. 93G printscores1 (penalty93_2): scoreboard. Vertical rink: period box and score box (team names and scores); horizontal rink (.sbscreen): period, team names, scores
+printscores1:		;93G printscores1 (penalty93_2): scoreboard. Vertical rink: period box and score box (team names and scores); horizontal rink (.sbscreen): period, team names, scores
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -145,7 +145,7 @@ printscores1:		;auto: CODE_89E95D. 93G printscores1 (penalty93_2): scoreboard. V
 	inc.b d3
 	jsl.l printteamname
 	bra .ex
-PrintPerLabel:		;auto: CODE_89EAB1. SNES: print the PerLabels ($8F8236) entry for gsp (93G AdvanceStringPtr + print)
+PrintPerLabel:		;SNES: print the PerLabels ($8F8236) entry for gsp (93G AdvanceStringPtr + print)
 	lda.w gsp
 	sta.b d0
 	lda.w #PerLabels
@@ -164,7 +164,7 @@ PrintPerLabel:		;auto: CODE_89EAB1. SNES: print the PerLabels ($8F8236) entry fo
 	dec.b d0
 	bpl .next
 	jml.l print
-PrintTeamNameAndScore:		;auto: CODE_89EAD7. 93G PrintTeamNameAndScore: team name of team a2 (d3 = home/away), then its score as 2 characters (blank tens)
+PrintTeamNameAndScore:		;93G PrintTeamNameAndScore: team name of team a2 (d3 = home/away), then its score as 2 characters (blank tens)
 	jsl.l printteamname
 	lda.w #mesarea
 	sta.b a1
@@ -188,9 +188,9 @@ PrintTeamNameAndScore:		;auto: CODE_89EAD7. 93G PrintTeamNameAndScore: team name
 	adc.w #'0'
 	sta.w mesarea+3
 	jml.l print
-nullrtl89:		;auto: CODE_89EB14. does nothing (printscores1 calls it)
+nullrtl89:		;does nothing (printscores1 calls it)
 	rtl
-p_music_vblank:		;auto: CODE_89EB15 (from vblank). 93G p_music_vblank role: every other frame send the next queued sound command (sndqueue) to APUIO0, a counter to APUIO1
+p_music_vblank:		;93G p_music_vblank role: every other frame send the next queued sound command (sndqueue) to APUIO0, a counter to APUIO1
 	lda.w sndsettle		; wait after the sample upload
 	bne .settle
 	sep #$30

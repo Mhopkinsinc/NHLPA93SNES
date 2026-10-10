@@ -15,7 +15,7 @@ FaceOffMap:		;93G FaceOffMap (92G FaceOffMap): the 12 x 10 faceoff box map (tile
 	dw $2024,$2025,$2025,$2025,$2025,$2025,$2030,$2031,$2032,$2033,$2025,$2029
 	dw $2024,$2025,$2025,$2025,$2025,$2025,$2025,$2025,$2025,$2025,$2025,$2029
 	dw $2034,$2035,$2035,$2035,$2035,$2035,$2035,$2035,$2035,$2035,$2035,$2036
-PutDigits2:		;auto: CODE_84EA39. SNES: write the 2 digit number d0 (BCD byte, blank leading zero) as 2 characters at [a1], a1 += 2
+PutDigits2:		;SNES: write the 2 digit number d0 (BCD byte, blank leading zero) as 2 characters at [a1], a1 += 2
 	lda.w #$2020		; blank, then the tens digit when d0 >= 10
 	sta.b tmp0
 	lda.b d0
@@ -40,7 +40,7 @@ PutDigits2:		;auto: CODE_84EA39. SNES: write the 2 digit number d0 (BCD byte, bl
 	inc.b a1
 	inc.b a1
 	rtl
-ScoutPlayersRun:		;auto: CODE_84EA66. SNES scouting report: one frame of the two showcased players (home a2 = 0, away a2 = 2), then draw them
+ScoutPlayersRun:		;SNES scouting report: one frame of the two showcased players (home a2 = 0, away a2 = 2), then draw them
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -89,7 +89,7 @@ ScoutPlayersRun:		;auto: CODE_84EA66. SNES scouting report: one frame of the two
 	ldx.b xsave
 	ldx.b a3
 	rtl
-ScoutTeamStep:		;auto: CODE_84EABF. SNES: step the showcased player of team a2: a new team (tmteam changed) picks its goalie and restarts the order (ScoutPlayerExit); skating out to the side
+ScoutTeamStep:		;SNES: step the showcased player of team a2: a new team (tmteam changed) picks its goalie and restarts the order (ScoutPlayerExit); skating out to the side
 		;   (tmflags bit 1) ends at x 40 (ScoutNextPlayer); else the next script step (SPA, facedir) every 9 frames, then print his number and name
 	ldy.b a2
 	lda.w tmteam,y		; team changed?
@@ -278,7 +278,7 @@ ScoutTeamStep:		;auto: CODE_84EABF. SNES: step the showcased player of team a2: 
 	lda.w #mesarea
 	sta.b a1
 	jml.l print
-ScoutPlayerExit:		;auto: CODE_84EC4C. SNES: the showcased player of team a2 skates off ($89FCC1, tmflags bit 1)
+ScoutPlayerExit:		;SNES: the showcased player of team a2 skates off ($89FCC1, tmflags bit 1)
 	jsl.l EraseScoutName		; bank $89
 	ldy.b a2
 	lda.w tmflags,y
@@ -286,7 +286,7 @@ ScoutPlayerExit:		;auto: CODE_84EC4C. SNES: the showcased player of team a2 skat
 	sta.w tmflags,y
 .rtl:
 	rtl
-ScoutNextPlayer:		;auto: CODE_84EC5C. SNES: the next showcased player of team a2 from ScoutLineOrder (goalie: tmgoalie): start at x -40, pick his ScoutScripts entry from his ratings
+ScoutNextPlayer:		;SNES: the next showcased player of team a2 from ScoutLineOrder (goalie: tmgoalie): start at x -40, pick his ScoutScripts entry from his ratings
 	jsl.l SetTeamColors		; SprSort
 	ldy.b a2
 	lda.w tmflags,y
@@ -396,7 +396,7 @@ ScoutNextPlayer:		;auto: CODE_84EC5C. SNES: the next showcased player of team a2
 	lda.w #$0000
 	sta.w tmATOP,y
 	rtl
-ScoutPickScript:		;auto: CODE_84ED51. SNES: rating nibble d1 against the next (minimum, script) pair at [a1]: the highest qualifying rating picks tmPenmin
+ScoutPickScript:		;SNES: rating nibble d1 against the next (minimum, script) pair at [a1]: the highest qualifying rating picks tmPenmin
 	lda.b [a1]
 	and.w #$00FF
 	sta.b tmp0
@@ -437,7 +437,7 @@ ScoutPickScript:		;auto: CODE_84ED51. SNES: rating nibble d1 against the next (m
 	lda.b tmp1
 	sta.w tmPenmin,y
 	rtl
-GetRosterEntry:		;auto: CODE_84ED96. SNES: a0 = Playerdata entry of roster player d0 of team a2 (walks the Player list)
+GetRosterEntry:		;SNES: a0 = Playerdata entry of roster player d0 of team a2 (walks the Player list)
 	lda.w #TeamList>>16
 	sta.b a0+2
 	ldy.b a2
@@ -474,13 +474,13 @@ ScoutScripts:		;SNES: the showcase animation scripts: 8 offsets, then (SPA, face
 .s7:	dw SPAskate,3,SPAskate,2,SPAfight,-2,SPAfhigh,2,SPAflow,2,SPAfhigh,2,SPAflow,2,0
 ScoutLineOrder:		;SNES: the LineSets bytes shown in order (lines 1-3), $FF ends
 	db $04,$05,$03,$00,$02,$01,$0C,$0D,$0B,$0A,$09,$14,$15,$13,$12,$11,$FF
-DrawScoutPlayers:		;auto: CODE_84EEF4. SNES: addframe for the two showcased players (objects 0 and 6)
+DrawScoutPlayers:		;SNES: addframe for the two showcased players (objects 0 and 6)
 	ldx.w #$0000
 	stx.b a3
 	jsl.l DrawScoutPlayer
 	ldx.w #$000C
 	stx.b a3
-DrawScoutPlayer:		;auto: CODE_84EF02. SNES: addframe for object X at (Xpos + OldXpos - 144, Ypos - 128)
+DrawScoutPlayer:		;SNES: addframe for object X at (Xpos + OldXpos - 144, Ypos - 128)
 	lda.w Xpos,x
 	clc
 	adc.w OldXpos,x

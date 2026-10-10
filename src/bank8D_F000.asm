@@ -4,7 +4,7 @@ org $8DF00C
 	incbin "../data/BigFont.chr.pak":$144..$9C0		; $8DF00C-$8DF887
 BigFontTilesEnd:
 	assert BigFontTilesEnd-BigFontTiles == $9C0
-StartHL2:		;auto: CODE_8DF888 (from $82FCB9 with d0-d7/a0-a6 saved). 92G StartHL2: play the highlight of playoff game a0: "Highlight from game:", then 1-3 minutes of that game with its score; Start
+StartHL2:		;92G StartHL2: play the highlight of playoff game a0: "Highlight from game:", then 1-3 minutes of that game with its score; Start
 		;   or A ends it, a tie gets a random winner
 	lda.w sflags3		; Start pressed before: no more highlights
 	bit.w #sf3sbut
@@ -489,7 +489,7 @@ StartHL2:		;auto: CODE_8DF888 (from $82FCB9 with d0-d7/a0-a6 saved). 92G StartHL
 	dw 100,40
 	dw -10,10
 	dw -50,0
-asspenalty:		;auto: CODE_8DFCC7 (asstab $C). 93G asspenalty (logic93_2): player X skates to the penalty box (temp3/temp4 by PBnum), glides in, faces the ice (SPAwallright), then adopen
+asspenalty:		;asstab $C. 93G asspenalty (logic93_2): player X skates to the penalty box (temp3/temp4 by PBnum), glides in, faces the ice (SPAwallright), then adopen
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rtl
@@ -641,7 +641,7 @@ asspenalty:		;auto: CODE_8DFCC7 (asstab $C). 93G asspenalty (logic93_2): player 
 	lda.w #rtss>>16
 	sta.b a0+2
 	jml.l skateto
-clrplayer:		;auto: CODE_8DFE1B. 93G clrplayer: take the joystick off player X (changeplayer)
+clrplayer:		;93G clrplayer: take the joystick off player X (changeplayer)
 	lda.w pflags,x
 	bit.w #pfjoycon
 	beq asspenalty_rtl
@@ -655,7 +655,7 @@ clrplayer:		;auto: CODE_8DFE1B. 93G clrplayer: take the joystick off player X (c
 	inc.b d4
 .ch:
 	jml.l changeplayer
-avdgoal:		;auto: CODE_8DFE36 (from skateto, $808C45). 93G avdgoal (logic93_5, SNES form): if the path d0/d1 crosses a goal line (y +-254) within 40 of the net, aim beside the net (x +-60) instead
+avdgoal:		;93G avdgoal (logic93_5, SNES form): if the path d0/d1 crosses a goal line (y +-254) within 40 of the net, aim beside the net (x +-60) instead
 	stz.b tmp2
 	lda.w #-258		; goal line at y -258 ($FEFE) and 258 ($102)
 	jsl.l .ch1

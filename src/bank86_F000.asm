@@ -6,7 +6,7 @@ org $86F000
 BootSamplesEnd:
 	assert BootSamplesEnd-BootSamples == BOOTSAMPLESIZE
 	dw $0000, SPCDRIVER		; end block: length 0, start the driver at $0400
-DecompressGraphics:		;auto: CODE_86FA3E. SNES: unpack the stream at [tmp0] to $7F0000 (output pointer tmp1+1..+3, copy distance tmp2+2). Control byte: $00-$1F copy n+1 bytes; $2x n+1 zeros; $3x n+3
+DecompressGraphics:		;SNES: unpack the stream at [tmp0] to $7F0000 (output pointer tmp1+1..+3, copy distance tmp2+2). Control byte: $00-$1F copy n+1 bytes; $2x n+1 zeros; $3x n+3
 		;   times the next byte; $40-$7F, $8x, $9x, $Ax, $Bx copy from earlier output going up; $C0-$DF, $Ex, $Fx going down; $E0 $00 ends
 	stz.b tmp1+1		; output pointer = $7F0000
 	lda.w #TestList>>16
@@ -222,7 +222,7 @@ DecompressGraphics:		;auto: CODE_86FA3E. SNES: unpack the stream at [tmp0] to $7
 	bra .down
 .end:
 	rtl
-UpdateLineChange:		;auto: CODE_86FB96. 93G UpdateLineChange (hockey93_01): once a second with line changes on, players on the bench (TMPDBENCH) regain 10 energy up to $1000, both teams
+UpdateLineChange:		;93G UpdateLineChange (hockey93_01): once a second with line changes on, players on the bench (TMPDBENCH) regain 10 energy up to $1000, both teams
 	lda.w OptLine
 	bne .rtl
 	stz.b a2		; home team, then the away team
@@ -263,7 +263,7 @@ UpdateLineChange:		;auto: CODE_86FB96. 93G UpdateLineChange (hockey93_01): once 
 	bpl .pl
 .rtl:
 	rtl
-StartSong6:		;auto: CODE_86FBE1. SNES: start song 6 (the title screen music: TitleScreen $88F3A1, $8FF05C) unless it plays: the boot sound set (SPCBootUpload), then driver command 3
+StartSong6:		;SNES: start song 6 (the title screen music: TitleScreen $88F3A1, $8FF05C) unless it plays: the boot sound set (SPCBootUpload), then driver command 3
 	lda.w cursong
 	cmp.w #6
 	beq .rtl
@@ -280,7 +280,7 @@ StartSong6:		;auto: CODE_86FBE1. SNES: start song 6 (the title screen music: Tit
 	sta.w cursong
 .rtl:
 	rtl
-StartSong7:		;auto: CODE_86FC05. SNES: start song 7 (driver command 2); no caller found
+StartSong7:		;SNES: start song 7 (driver command 2); no caller found
 	lda.w cursong
 	cmp.w #7
 	beq .rtl
@@ -297,7 +297,7 @@ StartSong7:		;auto: CODE_86FC05. SNES: start song 7 (driver command 2); no calle
 	sta.w cursong
 .rtl:
 	rtl
-setteams:		;auto: CODE_86FC29. 93G setteams (hockey93_06) with InitTeamSructure: use HomeTeam/VisTeam to set the team structs (tmsort, tmteam, tmdata from TeamList). Falls in from ClearTeamStats
+setteams:		;93G setteams (hockey93_06) with InitTeamSructure: use HomeTeam/VisTeam to set the team structs (tmsort, tmteam, tmdata from TeamList). Falls in from ClearTeamStats
 	stz.w tmsort		; home: tmsort 0, away: tmsort $0C
 	lda.w #$000C
 	sta.w tmsort+2
@@ -316,7 +316,7 @@ setteams:		;auto: CODE_86FC29. 93G setteams (hockey93_06) with InitTeamSructure:
 	lda.l TeamList,x
 	sta.w tmdata+2
 	rtl
-ProcessInputWithRepeat:		;auto: CODE_86FC53. 93G ProcessInputWithRepeat (middle93_1): nodiag (nullrtl85), then key repeat: a change (d2) resets the delay to 15 frames; while the same buttons stay
+ProcessInputWithRepeat:		;93G ProcessInputWithRepeat (middle93_1): nodiag (nullrtl85), then key repeat: a change (d2) resets the delay to 15 frames; while the same buttons stay
 		;   held, every 4 frames d1 = held buttons (d3)
 	jsl.l nullrtl85
 	lda.b d3
@@ -335,7 +335,7 @@ ProcessInputWithRepeat:		;auto: CODE_86FC53. 93G ProcessInputWithRepeat (middle9
 	lda.w #15
 	sta.w repeatdelay
 	rtl
-ScoutNamePos:		;auto: CODE_86FC76. SNES: print position of a showcased player name: x 1, y 10; the home team (a2 = 0) at x 20
+ScoutNamePos:		;SNES: print position of a showcased player name: x 1, y 10; the home team (a2 = 0) at x 20
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$01,$0A
@@ -345,7 +345,7 @@ ScoutNamePos:		;auto: CODE_86FC76. SNES: print position of a showcased player na
 	sta.w printx
 .rtl:
 	rtl
-GetPeriodTimeRemaining:		;auto: CODE_86FC8A. 93G GetPeriodTimeRemaining (hockey93_04): d0 = (gsp << 14 | PerTimeTotal) - gameclock (Goal and InProgress log it)
+GetPeriodTimeRemaining:		;93G GetPeriodTimeRemaining (hockey93_04): d0 = (gsp << 14 | PerTimeTotal) - gameclock (Goal and InProgress log it)
 	lda.w gsp		; gsp in bits 14-15
 	xba
 	and.w #$FF00
@@ -360,7 +360,7 @@ GetPeriodTimeRemaining:		;auto: CODE_86FC8A. 93G GetPeriodTimeRemaining (hockey9
 	sbc.w gameclock
 	sta.b d0
 	rtl
-GetPeriodTime:		;auto: CODE_86FCA1. 93G GetPeriodTime (hockey93_01): d0 = period length in seconds for OptPerlen
+GetPeriodTime:		;93G GetPeriodTime (hockey93_01): d0 = period length in seconds for OptPerlen
 	phx
 	lda.w OptPerlen
 	asl a
@@ -371,7 +371,7 @@ GetPeriodTime:		;auto: CODE_86FCA1. 93G GetPeriodTime (hockey93_01): d0 = period
 	rtl
 GetPeriodTime_timetab:		;93G .timetab (IDA PeriodTimeTable): 5, 10, 20 minutes, 30 seconds
 	dw 5*60,10*60,20*60,30
-lcfound2:		;auto: CODE_86FCB7. 93G lcfound2 (logic93_1): close the line change box (setlccords; the lower box clears sf3llcs), erase it unless the faceoff box is up, then printscores1
+lcfound2:		;93G lcfound2 (logic93_1): close the line change box (setlccords; the lower box clears sf3llcs), erase it unless the faceoff box is up, then printscores1
 	jsl.l setlccords
 	lda.w printy
 	sec
@@ -393,7 +393,7 @@ lcfound2:		;auto: CODE_86FCB7. 93G lcfound2 (logic93_1): close the line change b
 	jsl.l eraser		; bank $8D: 92G eraser
 .ps:
 	jml.l printscores1
-PickStartingGoalie:		;auto: CODE_86FCE3. SNES: tmgoalie of team a2 = 0 ($8B807D); a computer team in the later playoff rounds (gamelevel >= 2, line changes on) picks the goalie by its scouting
+PickStartingGoalie:		;SNES: tmgoalie of team a2 = 0 ($8B807D); a computer team in the later playoff rounds (gamelevel >= 2, line changes on) picks the goalie by its scouting
 		;   report ($8FF4D8, $8FE3B0)
 	stx.b xsave
 	ldx.w #$0000
@@ -482,7 +482,7 @@ PickStartingGoalie:		;auto: CODE_86FCE3. SNES: tmgoalie of team a2 = 0 ($8B807D)
 	bpl .popd
 	ldx.b xsave
 	rtl
-assscore:		;auto: CODE_86FD86 (asstab 7). 93G assscore (logic93_2): player X celebrates, the scorer pumps his arm. SNES: velocities * 3/4 each frame, the carrier drops the puck (nopuck 1800)
+assscore:		;asstab 7. 93G assscore (logic93_2): player X celebrates, the scorer pumps his arm. SNES: velocities * 3/4 each frame, the carrier drops the puck (nopuck 1800)
 	lda.w Xvel,x		; Xvel, Yvel *= $C0/256
 	sta.b mula
 	lda.w #$00C0

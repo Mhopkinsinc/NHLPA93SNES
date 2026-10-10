@@ -4,7 +4,7 @@ org $8BF003
 	incbin "../data/Sprites/set05.chr":$6335..$7000		; $8BF003-$8BFCCD
 SpriteSet5End:
 	assert SpriteSet5End-SpriteSet5 == $8E0+896*32
-printbig:		;auto: CODE_8BFCCE. 93G printbig (middle93_2): print string [a1] in the big font (2 x 2 tiles, narrow characters 1 column) at printx/printy; control codes as print
+printbig:		;93G printbig (middle93_2): print string [a1] in the big font (2 x 2 tiles, narrow characters 1 column) at printx/printy; control codes as print
 	phx
 	stx.b xsave
 	ldx.w #$0000
@@ -202,7 +202,7 @@ printbig:		;auto: CODE_8BFCCE. 93G printbig (middle93_2): print string [a1] in t
 	ldx.b xsave
 	plx
 	rtl
-asswingo:		;auto: CODE_8BFE47 (asstab 4). 93G asswingo (logic93_3): wing on offence: pick a spot in the zone the puck is in (.dedata + random), awingd when the other team has the puck
+asswingo:		;asstab 4. 93G asswingo (logic93_3): wing on offence: pick a spot in the zone the puck is in (.dedata + random), awingd when the other team has the puck
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rtl
@@ -390,11 +390,11 @@ asswingo:		;auto: CODE_8BFE47 (asstab 4). 93G asswingo (logic93_3): wing on offe
 	dw 100,20,60,10		; centre
 	dw 60,50,230,20		; their zone
 	dw 80,30,250,20		; past the goal line
-showref:		;auto: CODE_8BFFCC (from setvideo). 93G showref (video93_1): SNES only clears sf2refref (the ref window goes by DMA elsewhere)
+showref:		;93G showref (video93_1): SNES only clears sf2refref (the ref window goes by DMA elsewhere)
 	lda.w #sf2refref
 	trb.w sflags
 	rtl
-skatetopuckinit:		;auto: CODE_8BFFD3. 93G skatetopuckinit (logic93_5): d0/d1 = puck x/y plus half the high byte of its velocity
+skatetopuckinit:		;93G skatetopuckinit (logic93_5): d0/d1 = puck x/y plus half the high byte of its velocity
 	lda.w puckvx		; puckvx high byte / 2
 	xba
 	lsr a

@@ -2,7 +2,7 @@
 ; readers (hockey93_01/middle93_1), updateplayers (hockey93_02), checkcoll, checkwallcoll, wallcollb, wallcoll (hockey93_03/04),
 ; sroot, divu, puckflip.
 org $80C18F
-AddPenalty:		;auto: CODE_80C18F. 93G AddPenalty (penalty93_1): add penalty d0 (PenaltyList offset) for player X. Ignored while the clock is stopped, when penalties are off, or offsides when offsides
+AddPenalty:		;93G AddPenalty (penalty93_1): add penalty d0 (PenaltyList offset) for player X. Ignored while the clock is stopped, when penalties are off, or offsides when offsides
 		;   are off. Falls into AddPenalty2
 	lda.w gmclock		; clock stopped
 	bne .rtl
@@ -19,7 +19,7 @@ AddPenalty:		;auto: CODE_80C18F. 93G AddPenalty (penalty93_1): add penalty d0 (P
 	bne AddPenalty2
 .rtl:
 	rtl
-AddPenalty2:		;auto: CODE_80C1B0. 93G AddPenalty2 (penalty93_1): forced penalties like face off and game over. d0 = penalty, X = player or a player of the penalized team
+AddPenalty2:		;93G AddPenalty2 (penalty93_1): forced penalties like face off and game over. d0 = penalty, X = player or a player of the penalized team
 	lda.w sfhormode		; horizontal rink: none
 	beq .go
 	jmp.w .rtl
@@ -131,7 +131,7 @@ AddPenalty2:		;auto: CODE_80C1B0. 93G AddPenalty2 (penalty93_1): forced penaltie
 	ldx.b xsave
 .rtl:
 	rtl
-freezewindow:		;auto: CODE_80C278. 93G freezewindow (hockey93_02): lock scrolling at the current position
+freezewindow:		;93G freezewindow (hockey93_02): lock scrolling at the current position
 	lda.w Vpos		; yc1 = Vpos, xc1 = Hpos, sfslock
 	sta.w yc1
 	lda.w Hpos
@@ -139,7 +139,7 @@ freezewindow:		;auto: CODE_80C278. 93G freezewindow (hockey93_02): lock scrollin
 	lda.w #sfslock
 	tsb.w sflags
 	rtl
-sfx:		;auto: CODE_80C28B. 93G sfx (middle93_1): play the sound number pushed before the jsl (it is pulled here). Dropped within 180 frames of sfxmutetime; remembered in lastsfx
+sfx:		;93G sfx (middle93_1): play the sound number pushed before the jsl (it is pulled here). Dropped within 180 frames of sfxmutetime; remembered in lastsfx
 	pla		; return address +1 into jmlvector
 	inc a
 	sta.w jmlvector+1
@@ -161,7 +161,7 @@ sfx:		;auto: CODE_80C28B. 93G sfx (middle93_1): play the sound number pushed bef
 .drop:
 	pla
 	bra .ret
-updatereplay:		;auto: CODE_80C2B4. 93G updatereplay (hockey93_02): save this frame into the replay buffer (positions, frames, players, puck, sound, pads, crowd, gloves, box, scroll)
+updatereplay:		;93G updatereplay (hockey93_02): save this frame into the replay buffer (positions, frames, players, puck, sound, pads, crowd, gloves, box, scroll)
 	lda.w gmode
 	bit.w #gmhl		; gmhl: no recording
 	beq .rec
@@ -299,7 +299,7 @@ updatereplay:		;auto: CODE_80C2B4. 93G updatereplay (hockey93_02): save this fra
 	sta.b [a0]
 .rtl:
 	rtl
-demoread:		;auto: CODE_80C3D4. 93G demoread (hockey93_01): in demo mode (no controller team), Start pauses and any other button ends the demo
+demoread:		;93G demoread (hockey93_01): in demo mode (no controller team), Start pauses and any other button ends the demo
 	lda.w cont1team		; a controller team: not a demo
 	ora.w cont2team
 	bne .rtl
@@ -324,7 +324,7 @@ demoread:		;auto: CODE_80C3D4. 93G demoread (hockey93_01): in demo mode (no cont
 .exit:		;end the demo: back to the title screen (93G ExitToOpening)
 	jsl.l sndqreset		; sound queue reset; on to the title screen
 	jml.l Opening		; bank $8B: on to the title screen (93G Opening)
-Readjoy1:		;auto: CODE_80C40B. 93G Readjoy1 (middle93_1): read controller 1. d0 = direction, d1 = new presses, d2 = changed, d3 = held
+Readjoy1:		;93G Readjoy1 (middle93_1): read controller 1. d0 = direction, d1 = new presses, d2 = changed, d3 = held
 	phx
 	ldx.w #$0000
 	jsl.l ReadJoy
@@ -339,7 +339,7 @@ Readjoy1:		;auto: CODE_80C40B. 93G Readjoy1 (middle93_1): read controller 1. d0 
 	and.b d1
 	sta.b d1
 	rtl
-Readjoy2:		;auto: CODE_80C429. 93G Readjoy2 (middle93_1): read controller 2
+Readjoy2:		;93G Readjoy2 (middle93_1): read controller 2
 	phx
 	ldx.w #$0002
 	jsl.l ReadJoy
@@ -354,7 +354,7 @@ Readjoy2:		;auto: CODE_80C429. 93G Readjoy2 (middle93_1): read controller 2
 	and.b d1
 	sta.b d1
 	rtl
-ReadJoy:		;auto: CODE_80C447. 93G ReadJoy (middle93_1): X = 0/2: d1 = buttons held, d0 = direction from jdtab
+ReadJoy:		;93G ReadJoy (middle93_1): X = 0/2: d1 = buttons held, d0 = direction from jdtab
 	lda.w joypad1,x		; buttons
 	sta.b d0+2
 	sta.b d1
@@ -367,7 +367,7 @@ ReadJoy:		;auto: CODE_80C447. 93G ReadJoy (middle93_1): X = 0/2: d1 = buttons he
 	rtl
 jdtab:		;93G jdtab (middle93_1): convert buttons r,l,d,u into directions 0-7, 8
 	db 8,2,6,8,4,3,5,8,0,1,7,8,8,8,8,8
-updateplayers:		;auto: CODE_80C46D. 93G updateplayers (hockey93_02): animation, velocity, position, input and the assignment for every sort object
+updateplayers:		;93G updateplayers (hockey93_02): animation, velocity, position, input and the assignment for every sort object
 	ldx.w #$0016		; 12 players
 .spd:		;pspeed = max($1000, (|Xvel|+|Yvel|)*5/4) for the 12 players
 	lda.w Xvel,x
@@ -860,7 +860,7 @@ updateplayers:		;auto: CODE_80C46D. 93G updateplayers (hockey93_02): animation, 
 	sta.w carriedy
 .rtl:
 	rtl
-checkcoll:		;auto: CODE_80C894. 93G checkcoll (hockey93_03): d2/d3 = new x/y of object X. Wall collision (hot spot, end of the stick), player collision, then keep OOlist sorted
+checkcoll:		;93G checkcoll (hockey93_03): d2/d3 = new x/y of object X. Wall collision (hot spot, end of the stick), player collision, then keep OOlist sorted
 	stz.b collflag		; collflag = 0
 	lda.w sfhormode		; horizontal: exg d2,d3
 	beq .nhor1
@@ -1067,7 +1067,7 @@ checkcoll:		;auto: CODE_80C894. 93G checkcoll (hockey93_03): d2/d3 = new x/y of 
 	lda.w OldYpos,x
 	sta.w Ypos,x
 	rtl
-checkwallcoll:		;auto: CODE_80CA1D. 93G checkwallcoll (hockey93_04): d2/d3 = x/y, object X, wcradiusx/y. Corner circles, goals, then side and end boards
+checkwallcoll:		;93G checkwallcoll (hockey93_04): d2/d3 = x/y, object X, wcradiusx/y. Corner circles, goals, then side and end boards
 	lda.w #$012A		; d3 = $12A - wcradiusy, d2 = $88 - wcradiusx; corner centers 64 in
 	sec
 	sbc.w wcradiusy
@@ -1303,7 +1303,7 @@ checkwallcoll:		;auto: CODE_80CA1D. 93G checkwallcoll (hockey93_04): d2/d3 = x/y
 	bvs .b4
 .rtl:
 	rtl
-sroot:		;auto: CODE_80CBB1. 93G sroot (middle93_1): d0 = sqrt(d0, 32-bit) by binary search on the square
+sroot:		;93G sroot (middle93_1): d0 = sqrt(d0, 32-bit) by binary search on the square
 	stz.b tmp0
 	lda.w #$1000
 	sta.b tmp1
@@ -1333,7 +1333,7 @@ sroot:		;auto: CODE_80CBB1. 93G sroot (middle93_1): d0 = sqrt(d0, 32-bit) by bin
 .done:
 	sta.b d0
 	rtl
-divu:		;auto: CODE_80CBE5. 68k divu: A = mulres = mulb (32-bit) / mula; mulres+2 = remainder. C clear
+divu:		;68k divu: A = mulres = mulb (32-bit) / mula; mulres+2 = remainder. C clear
 	lda.b mula
 	sta.b mula+2
 	stz.b mula
@@ -1365,7 +1365,7 @@ divu:		;auto: CODE_80CBE5. 68k divu: A = mulres = mulb (32-bit) / mula; mulres+2
 	sta.b mulb
 	clc
 	rtl
-wallcollb:		;auto: CODE_80CC1E. 93G wallcollb (hockey93_04): object X hits a wall (d0/d1 = cos/sin). The puck may go over the glass; otherwise wallcoll
+wallcollb:		;93G wallcollb (hockey93_04): object X hits a wall (d0/d1 = cos/sin). The puck may go over the glass; otherwise wallcoll
 	cpx.w #$001C		; not the puck: wallcoll
 	beq .puck
 	jmp.w wallcoll
@@ -1468,7 +1468,7 @@ wallcollb:		;auto: CODE_80CC1E. 93G wallcollb (hockey93_04): object X hits a wal
 	stx.b a3
 .rtl:
 	rtl
-wallcoll:		;auto: CODE_80CCDE. 93G wallcoll (hockey93_04): d0/d1 = cos/sin of the wall; bounce object X: puck loses speed, flips, sound; players sound on a hard hit
+wallcoll:		;93G wallcoll (hockey93_04): d0/d1 = cos/sin of the wall; bounce object X: puck loses speed, flips, sound; players sound on a hard hit
 	lda.b d0		; Wallcos/Wallsin
 	sta.w Wallcos,x
 	lda.b d1
@@ -1731,7 +1731,7 @@ wallcoll:		;auto: CODE_80CCDE. 93G wallcoll (hockey93_04): d0/d1 = cos/sin of th
 	bpl .pop
 	ldx.b xsave
 	rtl
-puckflip:		;auto: CODE_80CEC9. 93G puckflip (logic93_5): start the puck spinning. d0 bit 0 = flip
+puckflip:		;93G puckflip (logic93_5): start the puck spinning. d0 bit 0 = flip
 	lda.b d0
 	and.w #$0001		; facedir of the puck ^= d0 bit 0, & 3
 	sta.b d0

@@ -3,7 +3,7 @@
 ; X = SCnum*2 of the current object (93G a3). Out-of-bank or later-segment calls keep their address with the 93G name in the comment.
 org $808000
 
-Start:		;auto: CODE_808000. 93G main93 Start + hockey93_01 Begin (RAM clear). Reset vector. Native mode, stack $1FFF, D=0, DB=$00; clears DP/RAM, sets vbint/hbint, inits the sprite tile cache,
+Start:		;93G main93 Start + hockey93_01 Begin (RAM clear). Reset vector. Native mode, stack $1FFF, D=0, DB=$00; clears DP/RAM, sets vbint/hbint, inits the sprite tile cache,
 		;   checks the ROM sum, inits hardware/sound, then the title screen
 	sei		; interrupts off
 	clc
@@ -89,9 +89,9 @@ Start:		;auto: CODE_808000. 93G main93 Start + hockey93_01 Begin (RAM clear). Re
 	jsl.l DefaultMenus		; bank $8F: 93G DefaultMenus (initial menu choices at $1600)
 	jsl.l Readjoy12
 	jml.l Opening		; bank $8B: on to the title screen (93G Opening)
-BRKHalt:		;auto: CODE_8080B2. BRK vector: hang. No 92G/93G counterpart (68k traps go to IRQ7 rte)
+BRKHalt:		;BRK vector: hang. No 92G/93G counterpart (68k traps go to IRQ7 rte)
 	bra BRKHalt
-VBjsr:		;auto: CODE_8080B4. 93G VBjsr (hockey93_01, IDA VBLANK). NMI: ack RDNMI, skip if vbactive, else "rts" into the vbint handler
+VBjsr:		;93G VBjsr (hockey93_01, IDA VBLANK). NMI: ack RDNMI, skip if vbactive, else "rts" into the vbint handler
 	rep #$30
 	pha
 	lda.w RDNMI
@@ -110,7 +110,7 @@ VBjsr:		;auto: CODE_8080B4. 93G VBjsr (hockey93_01, IDA VBLANK). NMI: ack RDNMI,
 	dec a
 	pha
 	rts
-vb2_blank:		;auto: CODE_8080CE. vbint target: vb2 with the screen held in forced blank. Resets hbint to HBdefault
+vb2_blank:		;vbint target: vb2 with the screen held in forced blank. Resets hbint to HBdefault
 	sep #$20
 	lda.b #INIDISP_FBLANK
 	sta.w INIDISP
@@ -118,11 +118,11 @@ vb2_blank:		;auto: CODE_8080CE. vbint target: vb2 with the screen held in forced
 	lda.w #HBdefault
 	sta.b hbint
 	bra vb2_main
-vb2:		;auto: CODE_8080DE. 93G vb2 (video93_1): vblank for fades only, no dma. INIDISP from brightness, then vb2_main
+vb2:		;93G vb2 (video93_1): vblank for fades only, no dma. INIDISP from brightness, then vb2_main
 	sep #$20
 	lda.b brightness
 	sta.w INIDISP
-vb2_main:		;auto: CODE_8080E5. common vblank tail: vcount, sound tick (93G p_music_vblank), brightness fades (93G cramfade), rti
+vb2_main:		;common vblank tail: vcount, sound tick (93G p_music_vblank), brightness fades (93G cramfade), rti
 	rep #$30
 	inc.b vcount
 	bne .tick
@@ -165,9 +165,9 @@ vb2_main:		;auto: CODE_8080E5. common vblank tail: vcount, sound tick (93G p_mus
 	pla
 	stz.b vbactive		; vblank done
 	rti
-VBlank_long:		;auto: CODE_80812F. vbint target (set by bank $80E3B3): jml into VBlank so it runs from the FastROM bank $80
+VBlank_long:		;vbint target (set by bank $80E3B3): jml into VBlank so it runs from the FastROM bank $80
 	jml.l VBlank
-VBlank:		;auto: CODE_808133. 93G VBlank / DumpSprites2+DoDMAList role: forced blank, run DMAList (ch7), BG2 scroll from Hscroll/vramrow/Vscroll, OAM dma from Satt; one shot: sets vbint back to vb2
+VBlank:		;93G VBlank / DumpSprites2+DoDMAList role: forced blank, run DMAList (ch7), BG2 scroll from Hscroll/vramrow/Vscroll, OAM dma from Satt; one shot: sets vbint back to vb2
 	sep #$20
 	lda.b #INIDISP_FBLANK
 	sta.w INIDISP
@@ -235,7 +235,7 @@ VBlank:		;auto: CODE_808133. 93G VBlank / DumpSprites2+DoDMAList role: forced bl
 	lda.w #vb2		; one shot: back to vb2 next frame
 	sta.b vbint
 	jmp.w vb2
-VBlank_SprPal:		;auto: CODE_8081C5. vbint target (banks $88/$8F): VBlank, plus CGRAM colors $A0-$BF (sprite palettes 2-3) from palbuffer; one shot, then vb2
+VBlank_SprPal:		;vbint target (banks $88/$8F): VBlank, plus CGRAM colors $A0-$BF (sprite palettes 2-3) from palbuffer; one shot, then vb2
 	sep #$20
 	lda.b #INIDISP_FBLANK
 	sta.w INIDISP
@@ -295,7 +295,7 @@ VBlank_SprPal:		;auto: CODE_8081C5. vbint target (banks $88/$8F): VBlank, plus C
 	lda.w #vb2
 	sta.b vbint
 	jmp.w vb2
-VBlank_List:		;auto: CODE_808250. vbint target (bank $8F): forced blank and DMAList only; one shot, then vb2
+VBlank_List:		;vbint target (bank $8F): forced blank and DMAList only; one shot, then vb2
 	sep #$20
 	lda.b #INIDISP_FBLANK
 	sta.w INIDISP
@@ -328,7 +328,7 @@ VBlank_List:		;auto: CODE_808250. vbint target (bank $8F): forced blank and DMAL
 	lda.w #vb2
 	sta.b vbint
 	jmp.w vb2
-VBlank_VScroll:		;auto: CODE_808293. vbint target (bank $88): BG1VOFS = d0, then DMAList; one shot, then vb2
+VBlank_VScroll:		;vbint target (bank $88): BG1VOFS = d0, then DMAList; one shot, then vb2
 	sep #$20
 	lda.b #INIDISP_FBLANK
 	sta.w INIDISP
@@ -365,7 +365,7 @@ VBlank_VScroll:		;auto: CODE_808293. vbint target (bank $88): BG1VOFS = d0, then
 	lda.w #vb2
 	sta.b vbint
 	jmp.w vb2
-VBlank_Cram:		;auto: CODE_8082E0. vbint target (bank $88): DMAList, BG1 fine h-scroll Hscroll&7, BG1VOFS 0, CGRAM 0-127 from palbuffer; then VBlank_CramOnly every frame
+VBlank_Cram:		;vbint target (bank $88): DMAList, BG1 fine h-scroll Hscroll&7, BG1VOFS 0, CGRAM 0-127 from palbuffer; then VBlank_CramOnly every frame
 	sep #$20
 	lda.b #INIDISP_FBLANK
 	sta.w INIDISP
@@ -423,7 +423,7 @@ VBlank_Cram:		;auto: CODE_8082E0. vbint target (bank $88): DMAList, BG1 fine h-s
 	dex
 	bne .wait
 	jmp.w vb2
-VBlank_CramOnly:		;auto: CODE_808361. vbint target (stays installed): forced blank, CGRAM 0-127 from palbuffer each frame, then vb2_main
+VBlank_CramOnly:		;vbint target (stays installed): forced blank, CGRAM 0-127 from palbuffer each frame, then vb2_main
 	sep #$20
 	lda.b #INIDISP_FBLANK
 	sta.w INIDISP
@@ -442,7 +442,7 @@ VBlank_CramOnly:		;auto: CODE_808361. vbint target (stays installed): forced bla
 	sta.w MDMAEN
 	rep #$30
 	jmp.w vb2
-HBjsr:		;auto: CODE_808390. IRQ vector: if TIMEUP set, "rts" into hbint; else HBdefault. No 93G counterpart (Genesis hbint not used this way)
+HBjsr:		;IRQ vector: if TIMEUP set, "rts" into hbint; else HBdefault. No 93G counterpart (Genesis hbint not used this way)
 	rep #$30
 	pha
 	phx
@@ -455,14 +455,14 @@ HBjsr:		;auto: CODE_808390. IRQ vector: if TIMEUP set, "rts" into hbint; else HB
 	dec a
 	pha
 	rts
-HBdefault:		;auto: CODE_8083A3. default hbint: count hcount, restore regs, rti
+HBdefault:		;default hbint: count hcount, restore regs, rti
 	rep #$30
 	inc.b hcount
 	ply
 	plx
 	pla
 	rti
-goalieacc:		;auto: CODE_8083AB. 93G goalieacc (logic93_5): goalie gets acc. in direction d0. Turns facedir one step toward d0, then playeracc
+goalieacc:		;93G goalieacc (logic93_5): goalie gets acc. in direction d0. Turns facedir one step toward d0, then playeracc
 	lda.w #SPAgready		; 93G SPAgready (2)
 	sta.b d1
 	lda.b d0
@@ -504,7 +504,7 @@ goalieacc:		;auto: CODE_8083AB. 93G goalieacc (logic93_5): goalie gets acc. in d
 	lda.w facedir,x
 	sta.b d2
 	jml.l playeracc		; d2 = facedir, bank $8F: 93G playeracc (d2 = direction)
-dostop:		;auto: CODE_808404. 93G dostop (logic93_5 IDA loc_D538): player X stops. Stop animation (and sound for the puck carrier) if fast, then StopNA
+dostop:		;93G dostop (logic93_5 IDA loc_D538): player X stops. Stop animation (and sound for the puck carrier) if fast, then StopNA
 	lda.w Xvel,x
 	bit.w #$8000
 	beq .xabs
@@ -542,7 +542,7 @@ dostop:		;auto: CODE_808404. 93G dostop (logic93_5 IDA loc_D538): player X stops
 	sta.w pf2aip,x
 .setspa:
 	jsl.l SetSPA
-StopNA:		;auto: CODE_808452. 93G StopNA (logic93_5): slow player X by $70*d7 on each axis (93G 150), no animation change
+StopNA:		;93G StopNA (logic93_5): slow player X by $70*d7 on each axis (93G 150), no animation change
 	lda.w #$0070		; $70 per frame (93G 150)
 	sta.b mula
 	lda.b d7
@@ -577,7 +577,7 @@ StopNA:		;auto: CODE_808452. 93G StopNA (logic93_5): slow player X by $70*d7 on 
 	stz.w Yvel,x
 .rts:
 	rtl
-muls16:		;auto: CODE_808496. 68k muls.w: A = mula*mulb (signed 16-bit result, also in mula/mulb/mulres); C clear. Signs folded around the unsigned mulu (bank $8D)
+muls16:		;68k muls.w: A = mula*mulb (signed 16-bit result, also in mula/mulb/mulres); C clear. Signs folded around the unsigned mulu (bank $8D)
 	stz.b mula+2		; count the negative operands in mula+2
 	lda.b mula
 	bpl .bpos
@@ -604,7 +604,7 @@ muls16:		;auto: CODE_808496. 68k muls.w: A = mula*mulb (signed 16-bit result, al
 	clc
 .rtl:
 	rtl
-getpde:		;auto: CODE_8084C4. 93G getpde: d0 = energy of player X (tmpde of its team, entry pnum)
+getpde:		;93G getpde: d0 = energy of player X (tmpde of its team, entry pnum)
 	lda.w pfteam,x
 	beq .team
 	lda.w #$0002		; a2 = 2: away team
@@ -622,7 +622,7 @@ getpde:		;auto: CODE_8084C4. 93G getpde: d0 = energy of player X (tmpde of its t
 	tay
 	lda.w tmpde,y
 	sta.b d0
-rtss:		;auto (inside CODE_8084C4). 93G rtss: the rtl that ends getpde, also used as a do-nothing callback (lda #rtss for skateto)
+rtss:		;93G rtss: the rtl that ends getpde, also used as a do-nothing callback (lda #rtss for skateto)
 	rtl
 MaxSpeed:		;93G MaxSpeed (logic93_5): max speed^2 for each leg speed rating level 0-15. SNES ((n+20)*266)^2 (93G 275)
 	dd (20*266)*(20*266)
@@ -641,7 +641,7 @@ MaxSpeed:		;93G MaxSpeed (logic93_5): max speed^2 for each leg speed rating leve
 	dd (33*266)*(33*266)
 	dd (34*266)*(34*266)
 	dd (35*266)*(35*266)
-check4bench:		;auto: CODE_808527 (asscenter*, assdef*, asswing* ... call it with jsl). 93G check4bench (logic93_1): should player X go to the bench? Pops its return address when it takes over
+check4bench:		;93G check4bench (logic93_1): should player X go to the bench? Pops its return address when it takes over
 	lda.w pflags,x
 	bit.w #pfjoycon|pf2pen		; joystick controlled, or penalty (93G btst #4,pflags2)
 	bne .rts
@@ -694,7 +694,7 @@ check4bench:		;auto: CODE_808527 (asscenter*, assdef*, asswing* ... call it with
 	lda.w position,x		; d0 = position (newpos is negative here)
 	sta.b d0
 	jmp.w Setplass
-checkob:		;auto: CODE_808598. 93G checkob (logic93_4): bring up the little warning ref if a player on your team is over the blue line. Called from doinput and asspuckc
+checkob:		;93G checkob (logic93_4): bring up the little warning ref if a player on your team is over the blue line. Called from doinput and asspuckc
 	lda.w gmode
 	bit.w #gmoffs		; offsides off: nothing to do
 	bne .push
@@ -825,7 +825,7 @@ checkob:		;auto: CODE_808598. 93G checkob (logic93_4): bring up the little warni
 	dec.b d0
 	bpl .top1
 	bra .nob
-chk4lc:		;auto: CODE_808681. 93G chk4lc (logic93_3): should the computer call a line change? Then shoot the puck in (CompShoot)
+chk4lc:		;93G chk4lc (logic93_3): should the computer call a line change? Then shoot the puck in (CompShoot)
 	lda.w pucky
 	sta.b d0
 	lda.w pfgoal,x
@@ -871,7 +871,7 @@ chk4lc:		;auto: CODE_808681. 93G chk4lc (logic93_3): should the computer call a 
 	jmp.w CompShoot
 .rts:
 	rtl
-chk4shot:		;auto: CODE_8086E3. 93G chk4shot (logic93_3): computer player X looks for a shot. Called from asspuckc
+chk4shot:		;93G chk4shot (logic93_3): computer player X looks for a shot. Called from asspuckc
 	jsl.l chkpk
 	bne .npk
 	lda.w threat		; threat on the puck carrier
@@ -1004,7 +1004,7 @@ chk4shot:		;auto: CODE_8086E3. 93G chk4shot (logic93_3): computer player X looks
 	bra CompShoot
 .rts:
 	rtl
-CompShoot:		;auto: CODE_8087F7. 93G CompShoot (logic93_3): computer player X shoots. Pops the caller (addq #4,sp), temp2b = swing time, assignment ashoot
+CompShoot:		;93G CompShoot (logic93_3): computer player X shoots. Pops the caller (addq #4,sp), temp2b = swing time, assignment ashoot
 	pla		; pop the caller (93G addq #4,sp)
 	sep #$20
 	pla
@@ -1036,7 +1036,7 @@ CompShoot:		;auto: CODE_8087F7. 93G CompShoot (logic93_3): computer player X sho
 	lda.w #ashoot		; ashoot
 	sta.b d0
 	jmp.w assreplace
-assnearest:		;auto: CODE_808834 (asstab $11). 93G assnearest (logic93_4): assignment for the player nearest the puck who does not have it
+assnearest:		;asstab $11. 93G assnearest (logic93_4): assignment for the player nearest the puck who does not have it
 	lda.w pflags,x
 	bit.w #pfna		; pfna
 	beq .nna
@@ -1406,7 +1406,7 @@ assnearest:		;auto: CODE_808834 (asstab $11). 93G assnearest (logic93_4): assign
 .topuck:
 	jsl.l skatetopuck
 	jmp.w check4check
-check4check:		;auto: CODE_808B15. 93G check4check (logic93_4): look for a good chance to check an opponent. Falls in from assnearest; also entered from assfwatch and asswingd
+check4check:		;93G check4check (logic93_4): look for a good chance to check an opponent. Falls in from assnearest; also entered from assfwatch and asswingd
 	lda.w #$0014
 	sec
 	sbc.w aggress,x
@@ -1477,7 +1477,7 @@ check4check:		;auto: CODE_808B15. 93G check4check (logic93_4): look for a good c
 	bpl .loop
 .rts:
 	rtl
-burst:		;auto: CODE_808BAD. 93G burst (logic93_1): check button: speed burst in the facing direction (costs energy), lock in SPAburst. Also entered from check4check
+burst:		;93G burst (logic93_1): check button: speed burst in the facing direction (costs energy), lock in SPAburst. Also entered from check4check
 	jsl.l getpde
 	lda.w OptLine		; line changes off: no energy cost
 	bne .spd
@@ -1536,7 +1536,7 @@ burst:		;auto: CODE_808BAD. 93G burst (logic93_1): check button: speed burst in 
 	sta.b d1
 	sta.w pfalock,x
 	jmp.w SetSPA
-skatetopuck:		;auto: CODE_808C2D. 93G skatetopuck (logic93_5): player X skates to the puck. d7 = elapsed frames
+skatetopuck:		;93G skatetopuck (logic93_5): player X skates to the puck. d7 = elapsed frames
 	jsl.l skatetopuckinit		; bank $8B: 93G skatetopuckinit (d0/d1 = puck spot)
 	lda.w temp2,x
 	sec
@@ -1699,18 +1699,18 @@ skatetopuck:		;auto: CODE_808C2D. 93G skatetopuck (logic93_5): player X skates t
 	sta.w Yvel,x
 .acc:
 	jml.l doplayeracc		; bank $8F: 93G doplayeracc (d0 = direction)
-Sweepcheck:		;auto: CODE_808D8A. 93G Sweepcheck (logic93_1): start a sweep check on player X
+Sweepcheck:		;93G Sweepcheck (logic93_1): start a sweep check on player X
 	lda.w #SPAsweepchk		; 93G SPAsweepchk $B44, pfalock
 	sta.b d1
 	sta.w pfalock,x
 	jmp.w SetSPA
-chkpk:		;auto: CODE_808D95. 93G chkpk (logic93_3): Z set if player X is killing a penalty. No power play returns NE
+chkpk:		;93G chkpk (logic93_3): Z set if player X is killing a penalty. No power play returns NE
 	lda.w sflags
 	and.w #sf2pwrplay		; sf2pwrplay
 	bne chkpk2
 	inc a
 	rtl
-chkpk2:		;auto: CODE_808D9F. 93G chkpk2 (logic93_3): Z set if player X is on the short-handed team (sf2pwrtm vs pfteam)
+chkpk2:		;93G chkpk2 (logic93_3): Z set if player X is on the short-handed team (sf2pwrtm vs pfteam)
 	lda.w pfteam,x
 	bne .team2
 	lda.w sflags
@@ -1721,7 +1721,7 @@ chkpk2:		;auto: CODE_808D9F. 93G chkpk2 (logic93_3): Z set if player X is on the
 	lda.w sflags
 	and.w #sf2pwrtm
 	rtl
-assshoot:		;auto: CODE_808DB5 (asstab $12). 93G assshoot (logic93_4): assignment for computer shooting
+assshoot:		;asstab $12. 93G assshoot (logic93_4): assignment for computer shooting
 	lda.w pflags,x
 	bit.w #pfna		; pfna
 	beq .nna
@@ -1745,7 +1745,7 @@ assshoot:		;auto: CODE_808DB5 (asstab $12). 93G assshoot (logic93_4): assignment
 	lda.w #cbut
 	tsb.b d2
 	bra ShotMode
-SetShotMode:		;auto: CODE_808DE9. 93G SetShotMode (logic93_1): start a shot by player X: shot mode, direction to goal, shot animation
+SetShotMode:		;93G SetShotMode (logic93_1): start a shot by player X: shot mode, direction to goal, shot animation
 	lda.w #$0008		; default shot direction: none
 	sta.w passdir
 	lda.w #sfssdir
@@ -1777,7 +1777,7 @@ SetShotMode:		;auto: CODE_808DE9. 93G SetShotMode (logic93_1): start a shot by p
 	sta.b d1
 .ck1:
 	jmp.w SetSPA
-ShotMode:		;auto: CODE_808E33. 93G ShotMode (logic93_1): shot input. d0 = dpad, d2 = changed buttons. Falls into doshot at the end of the animation
+ShotMode:		;93G ShotMode (logic93_1): shot input. d0 = dpad, d2 = changed buttons. Falls into doshot at the end of the animation
 	lda.w SPAnum,x
 	cmp.w #$0018		; 7*4: end of the animation
 	bcs doshot
@@ -1808,7 +1808,7 @@ ShotMode:		;auto: CODE_808E33. 93G ShotMode (logic93_1): shot input. d0 = dpad, 
 	bra doshot
 .rts:
 	rtl
-doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launch it toward the goal
+doshot:		;93G doshot (logic93_1): stick is at the puck, launch it toward the goal
 	stx.b xsave
 	ldx.w #$0000
 .pushd:		;movem d0-d7/a0-a3 to the stack

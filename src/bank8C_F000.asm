@@ -4,7 +4,7 @@ org $8CF000
 	incbin "../data/Sprites/set00.chr":$63E6..$7000		; $8CF000-$8CFC19
 SpriteSet0End:
 	assert SpriteSet0End-SpriteSet0 == $7C0+896*32
-checksso:		;auto: CODE_8CFC1A (from setvideo). 93G checksso (video93_2): arrows for the two pad players when they are off screen (SNES also on the horizontal rink); falls into .ca for player 2
+checksso:		;93G checksso (video93_2): arrows for the two pad players when they are off screen (SNES also on the horizontal rink); falls into .ca for player 2
 	lda.w #2		; player 1: ffo 1, sso 0, SPFarrow
 	sta.b a0
 	stz.b a3
@@ -164,7 +164,7 @@ checksso:		;auto: CODE_8CFC1A (from setvideo). 93G checksso (video93_2): arrows 
 	dw -116,-100,1,$1800
 	dw -116,0,2,$0800
 	dw -116,100,1,$0800
-chk4pass:		;auto: CODE_8CFD83. 93G chk4pass (logic93_3): computer player X looks for a good pass: a random team mate, onside, ahead of the blue line rule, no opponent in the lane; then dopass and
+chk4pass:		;93G chk4pass (logic93_3): computer player X looks for a good pass: a random team mate, onside, ahead of the blue line rule, no opponent in the lane; then dopass and
 		;   assexit
 	lda.w threat		; no threat: pass only now and then (spodds)
 	bne .dp0

@@ -23,7 +23,7 @@ SmallFontMap:		;93G smallfontmap: print character (0-127) -> small font tile (+ 
 	dw $004C,$004D,$004E,$004F,$0050,$0051,$0052,$0053		; chars $68-$6F
 	dw $0054,$0055,$0056,$0057,$0058,$0059,$005A,$005B		; chars $70-$77
 	dw $005C,$005D,$005E,$0063,$005F,$8063,$0000,$0000		; chars $78-$7F
-mulu32:		;auto: CODE_88832F. SNES: 32-bit multiply with the 8x8 hardware multiplier: A = mulres (32-bit, low word) = mula * mulb (low 32 bits). C clear
+mulu32:		;SNES: 32-bit multiply with the 8x8 hardware multiplier: A = mulres (32-bit, low word) = mula * mulb (low 32 bits). C clear
 	sep #$20
 	lda.b mula
 	sta.w WRMPYA
@@ -133,7 +133,7 @@ mulu32:		;auto: CODE_88832F. SNES: 32-bit multiply with the 8x8 hardware multipl
 	lda.b mulres
 	clc
 	rtl
-getlinee:		;auto: CODE_888405. 93G getlinee (penalty93_2): d0 = line number, a2 = team. Returns d0 = average energy (tmpde) of the skaters of that line (priolist $8FF820 picks the positions)
+getlinee:		;93G getlinee (penalty93_2): d0 = line number, a2 = team. Returns d0 = average energy (tmpde) of the skaters of that line (priolist $8FF820 picks the positions)
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -224,7 +224,7 @@ getlinee:		;auto: CODE_888405. 93G getlinee (penalty93_2): d0 = line number, a2 
 	bpl .popd
 	ldx.b xsave
 	rtl
-WritePassBits:		;auto: CODE_8884A9. 92G WritePassBits: playoff state into passbits (PushBits with each range), then the 9-bit checksum of the values (d7) with range 512
+WritePassBits:		;92G WritePassBits: playoff state into passbits (PushBits with each range), then the 9-bit checksum of the values (d7) with range 512
 	jsl.l ClrPassBits
 	stz.b d7
 	lda.w postarts		; PushBits ranges: postarts 32, bosgames 8, gamelevel 4, potreeteam 16, pojoy 4, WinBits $4000
@@ -288,7 +288,7 @@ WritePassBits:		;auto: CODE_8884A9. 92G WritePassBits: playoff state into passbi
 	adc.b d0
 	sta.b d7
 	jml.l PushBits
-noturn0:		;auto: CODE_888548 (from doplayeracc). 93G noturn0 (logic93_5): wanted direction needs no turn; glide/stop/skate animation, then revplayeracc (93G noturn). d0 = direction - facedir
+noturn0:		;93G noturn0 (logic93_5): wanted direction needs no turn; glide/stop/skate animation, then revplayeracc (93G noturn). d0 = direction - facedir
 	lda.w #$0002		; d4 (here d2) = 2, 6 skating backwards
 	sta.b d4
 	lda.w pfrev,x
@@ -363,7 +363,7 @@ noturn0:		;auto: CODE_888548 (from doplayeracc). 93G noturn0 (logic93_5): wanted
 .set:
 	jsl.l SetSPA
 	jml.l revplayeracc
-PWprint:		;auto: CODE_8885F7. 92G PWprint: print the 16 password characters (PassWord through PasstoText) at printx/printy, unless PassWord bit 7 hides it
+PWprint:		;92G PWprint: print the 16 password characters (PassWord through PasstoText) at printx/printy, unless PassWord bit 7 hides it
 	lda.w PassWord
 	bit.w #$0080
 	beq .show
@@ -442,7 +442,7 @@ PWprint:		;auto: CODE_8885F7. 92G PWprint: print the 16 password characters (Pas
 	ldx.b xsave
 .rtl:
 	rtl
-EncodePW:		;auto: CODE_88868D. 92G EncodePW (Rev A): after a playoff game, ResolveGames and maketree; then the new password, or new playoffs when the user won or went out
+EncodePW:		;92G EncodePW (Rev A): after a playoff game, ResolveGames and maketree; then the new password, or new playoffs when the user won or went out
 	lda.w OptPlayMode
 	bne .po
 	jmp.w .rtl
@@ -510,7 +510,7 @@ FramerMap:		;93G Framer.map.jim: the 3 x 3 box pieces (corner, edge, side, centr
 	dw $8000,$8001,$C000
 FramerTiles:		;the 4 Framer box tiles (4bpp, data/Framer.chr): vram by $8FDCFD; setupice remaps them with PixelRemap87
 	incbin "../data/Framer.chr"		; $88872E-$8887AD
-showcrowd:		;auto: CODE_8887AE. 93G showcrowd (video93_1): crowd sprites: up to 3 frames per PBnum nibble (penalty box), then the two crowdframe frames (not on the horizontal rink)
+showcrowd:		;93G showcrowd (video93_1): crowd sprites: up to 3 frames per PBnum nibble (penalty box), then the two crowdframe frames (not on the horizontal rink)
 	stz.b a1
 	lda.w Hpos
 	sta.b d4
@@ -592,7 +592,7 @@ showcrowd:		;auto: CODE_8887AE. 93G showcrowd (video93_1): crowd sprites: up to 
 	adc.b d5
 	sta.b spry
 	jml.l addframe_hi
-SuperMult:		;auto: CODE_888853. 92G SuperMult: passbits (8 words) *= d0, by shift and add (mulres..mulres+15 hold the shifted copy)
+SuperMult:		;92G SuperMult: passbits (8 words) *= d0, by shift and add (mulres..mulres+15 hold the shifted copy)
 	phx
 	ldx.w #$000E
 .copy:
@@ -646,7 +646,7 @@ SuperMult:		;auto: CODE_888853. 92G SuperMult: passbits (8 words) *= d0, by shif
 	plx
 	clc
 	rtl
-DrawGameSetupBack:		;auto: CODE_8888C3. SNES: game setup screen backdrop: textmap blank, GameSetupMap to backmap (priority off), the NHLPA logo map ($8C8000, 8 x 10) into textmap at x 12-19, y 0-9
+DrawGameSetupBack:		;SNES: game setup screen backdrop: textmap blank, GameSetupMap to backmap (priority off), the NHLPA logo map ($8C8000, 8 x 10) into textmap at x 12-19, y 0-9
 	lda.w blankchar
 	ldx.w #$07FE
 .clr:
@@ -708,7 +708,7 @@ DrawGameSetupBack:		;auto: CODE_8888C3. SNES: game setup screen backdrop: textma
 	dec.b tmp1
 	bpl .row
 	rtl
-mulu:		;auto: CODE_888942. 68k mulu.w: mulres (32-bit) = mula * mulb; mula/mulb also get the result. A byte factor uses the mode 7 multiplier (M7A/M7B)
+mulu:		;68k mulu.w: mulres (32-bit) = mula * mulb; mula/mulb also get the result. A byte factor uses the mode 7 multiplier (M7A/M7B)
 	lda.b mula		; mula >= $80 needs mulb < $80
 	bmi .full
 	cmp.w #$0080

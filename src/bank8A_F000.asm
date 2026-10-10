@@ -130,7 +130,7 @@ Credits:		;93G Credits: the title screen credit lines (length word, text); $FE e
 	db $FF
 	dw 3
 	db $FF
-lineinput:		;auto: CODE_8AFD0C (from $80DF7C). 93G lineinput (logic93_1): line change input, d1 = new buttons: Y/B/A choose line choice 0-2 (lcfound); else skate with the dpad
+lineinput:		;93G lineinput (logic93_1): line change input, d1 = new buttons: Y/B/A choose line choice 0-2 (lcfound); else skate with the dpad
 	lda.b d1
 	pha
 	stz.b a2
@@ -175,7 +175,7 @@ lineinput:		;auto: CODE_8AFD0C (from $80DF7C). 93G lineinput (logic93_1): line c
 	jml.l doplayeracc		; bank $8F: doplayeracc
 .x:
 	rtl
-getlchoice:		;auto: CODE_8AFD6D. 93G getlchoice (logic93_1): d0 = choice 0-2 of team a2 -> d0 = line 0-6 by the man advantage and tmline (.tab), -1 = none
+getlchoice:		;93G getlchoice (logic93_1): d0 = choice 0-2 of team a2 -> d0 = line 0-6 by the man advantage and tmline (.tab), -1 = none
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -243,7 +243,7 @@ getlchoice:		;auto: CODE_8AFD6D. 93G getlchoice (logic93_1): d0 = choice 0-2 of 
 	db 0,1,2, 1,2,0, 2,0,1, 0,1,2, 0,1,2, 0,1,2, 0,1,2		; no power play: lines 0-6
 	db 3,4,-1, 3,4,-1, 3,4,-1, 3,4,-1, 4,3,-1, 3,4,-1, 3,4,-1		; penalty killing: lines 0-6
 	db 5,6,-1, 5,6,-1, 5,6,-1, 5,6,-1, 5,6,-1, 5,6,-1, 6,5,-1		; power play: lines 0-6
-SetScore:		;auto: CODE_8AFE21 (from UpdateScores $82F9F4, $8F9062). 93G SetScore (penalty93_2): one period of playoff game a0: random goals by ScoreOdds (.getscore); after period 3 a game within one
+SetScore:		;93G SetScore (penalty93_2): one period of playoff game a0: random goals by ScoreOdds (.getscore); after period 3 a game within one
 		;   goal goes to overtime and asks for a highlight
 	ldy.b a0
 	lda.w gsper,y

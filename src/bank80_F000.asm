@@ -8,7 +8,7 @@ RonBarrMap:		;93G RonBarrMap (RonBarr.map.jim): the Ron Barr picture of the scou
 	incbin "../data/RonBarr.map.pak"		; $80ED38-$80F36D
 RonBarrMapEnd:
 	assert RonBarrMapEnd-RonBarrMap == $636
-adda43:		;auto: CODE_80F36E. 93G adda43 (hockey93_02): a4 += replaysize, wrapping from ReplayBufferEnd to ReplayBufferStart
+adda43:		;93G adda43 (hockey93_02): a4 += replaysize, wrapping from ReplayBufferEnd to ReplayBufferStart
 	lda.b a4
 	clc
 	adc.w #replaysize
@@ -27,7 +27,7 @@ adda43:		;auto: CODE_80F36E. 93G adda43 (hockey93_02): a4 += replaysize, wrappin
 	sta.b a4+2
 .rtl:
 	rtl
-setlccords:		;auto: CODE_80F391. 93G setlccords (logic93_1): printx/printy for the line change box of team a2 (21 rows lower for the home team, flipped by gmdir); d0/d1 = Framer box size
+setlccords:		;93G setlccords (logic93_1): printx/printy for the line change box of team a2 (21 rows lower for the home team, flipped by gmdir); d0/d1 = Framer box size
 	stz.b d0
 	lda.b a2
 	bne .pr
@@ -63,11 +63,11 @@ setlccords:		;auto: CODE_80F391. 93G setlccords (logic93_1): printx/printy for t
 	lda.w #$000C
 	sta.b d0
 	rtl
-startpause:		;auto: CODE_80F3E1. 93G startpause (hockey93_01): set sfpz (startpause1 and startpause2 jump here)
+startpause:		;93G startpause (hockey93_01): set sfpz (startpause1 and startpause2 jump here)
 	lda.w #sfpz
 	tsb.w sflags
 	rtl
-ReadPads:		;auto: CODE_80F3E8. SNES: once per frame (padvcount) read the 4 auto-read pads into joypad1-4, padnew1-4 = new presses, padlast1-4 = buttons
+ReadPads:		;SNES: once per frame (padvcount) read the 4 auto-read pads into joypad1-4, padnew1-4 = new presses, padlast1-4 = buttons
 	lda.b vcount		; once per frame
 	cmp.w padvcount
 	beq .new
@@ -110,7 +110,7 @@ ReadPads:		;auto: CODE_80F3E8. SNES: once per frame (padvcount) read the 4 auto-
 	lda.w joypad4
 	sta.w padlast1+6
 	rtl
-asspuckc:		;auto: CODE_80F45B (asstab $10). 93G asspuckc (logic93_3): player X is the puck carrier: every aioff frames checkob, chk4lc, chk4shot, chk4pass; skate to a postab spot (bank $8F) with
+asspuckc:		;asstab $10. 93G asspuckc (logic93_3): player X is the puck carrier: every aioff frames checkob, chk4lc, chk4shot, chk4pass; skate to a postab spot (bank $8F) with
 		;   .chkdir
 	txa		; not the carrier: assexit
 	lsr a
@@ -298,13 +298,13 @@ asspuckc:		;auto: CODE_80F45B (asstab $10). 93G asspuckc (logic93_3): player X i
 	jmp.w .cd0
 .rtl2:
 	rtl
-DecodePW:		;auto: CODE_80F5EA. 92G DecodePW: translate the password in PassWord to game variables: PWtoBits, then ReadPassBits ($8B817A)
+DecodePW:		;92G DecodePW: translate the password in PassWord to game variables: PWtoBits, then ReadPassBits ($8B817A)
 	jsl.l PWtoBits
 	jml.l ReadPassBits		; bank $8B
-far8B8172:		;auto: CODE_80F5F2. far trampoline: PlayoffScreen ($88F512), then on at $8B8172
+far8B8172:		;far trampoline: PlayoffScreen ($88F512), then on at $8B8172
 	jsl.l PlayoffScreen		; bank $88: 93G PlayoffScreen (font tile bases, the playoff tree)
 	jml.l Opening4		; bank $8B
-SuperDiv:		;auto: CODE_80F5FA. 92G SuperDiv: passbits (128 bits) / d0: quotient in passbits, remainder in d0. Shift-subtract over 128 bits with the divisor in mula+0..+16 and the remainder in
+SuperDiv:		;92G SuperDiv: passbits (128 bits) / d0: quotient in passbits, remainder in d0. Shift-subtract over 128 bits with the divisor in mula+0..+16 and the remainder in
 		;   mulres+0..+14
 	phx		; remainder = passbits, divisor = d0 << 128
 	ldx.w #$000E
@@ -390,7 +390,7 @@ SuperDiv:		;auto: CODE_80F5FA. 92G SuperDiv: passbits (128 bits) / d0: quotient 
 	sta.b d0
 	clc
 	rtl
-randomd0s:		;auto: CODE_80F6A1. 93G randomd0s: A = random -A..A (randoma of 2A, minus A)
+randomd0s:		;93G randomd0s: A = random -A..A (randoma of 2A, minus A)
 	sta.b tmp0
 	asl a
 	jsl.l randoma
@@ -398,7 +398,7 @@ randomd0s:		;auto: CODE_80F6A1. 93G randomd0s: A = random -A..A (randoma of 2A, 
 	sbc.b tmp0
 	clc
 	rtl
-assgoalie:		;auto: CODE_80F6AD (asstab $E). 93G assgoalie (logic93_3): goalie X. Skate back to the crease, hold/pass the puck, cover a loose puck, follow the puck and lead it, saves
+assgoalie:		;asstab $E. 93G assgoalie (logic93_3): goalie X. Skate back to the crease, hold/pass the puck, cover a loose puck, follow the puck and lead it, saves
 		;   (GoalieSaveList), hug the post, rush a loose puck (agoalietopuck)
 	lda.w pfalock,x		; anim locked: nothing
 	beq .go
@@ -1162,7 +1162,7 @@ assgoalie:		;auto: CODE_80F6AD (asstab $E). 93G assgoalie (logic93_3): goalie X.
 	lda.w #agoalietopuck		; agoalietopuck
 	sta.b d0
 	jmp.w assinsert
-ClampYPosition:		;auto: CODE_80FCC9. 93G ClampYPosition (logic93_3): d1 = y clamped to +-$103, minus goal line d3. d0 = 0 if X has the puck
+ClampYPosition:		;93G ClampYPosition (logic93_3): d1 = y clamped to +-$103, minus goal line d3. d0 = 0 if X has the puck
 	lda.w puckc
 	sta.b d2
 	cmp.w SCnum,x
@@ -1199,7 +1199,7 @@ ClampYPosition:		;auto: CODE_80FCC9. 93G ClampYPosition (logic93_3): d1 = y clam
 	sbc.b d3
 	sta.b d1
 	rtl
-AdjustFacingDirection:		;auto: CODE_80FD05. 93G AdjustFacingDirection (logic93_3): turn facedir of goalie X one step toward d0, not past the sides of the net
+AdjustFacingDirection:		;93G AdjustFacingDirection (logic93_3): turn facedir of goalie X one step toward d0, not past the sides of the net
 	lda.w facedir,x
 	sta.b d1
 	lda.b d0
@@ -1259,7 +1259,7 @@ AdjustFacingDirection:		;auto: CODE_80FD05. 93G AdjustFacingDirection (logic93_3
 	rtl
 GoalieSaveList:		;93G GoalieSaveList (logic93_3): save anims by index: glove 0/1, stack 2/3, stick 4/5
 	dw SPAgglover,SPAgglovel,SPAgstackr,SPAgstackl,SPAgstickr,SPAgstickl
-checkgoalp_CalcGoalShotDir:		;auto: CODE_80FD7C. 93G checkgoalp_CalcGoalShotDir (logic93_1): if the opposing goalie covers the middle of the net, passdir 2 or 6 to shoot at the open side, else 0.
+checkgoalp_CalcGoalShotDir:		;93G checkgoalp_CalcGoalShotDir (logic93_1): if the opposing goalie covers the middle of the net, passdir 2 or 6 to shoot at the open side, else 0.
 		;   Skipped for joystick players
 	lda.w pflags,x		; joystick player: skip
 	bit.w #pfjoycon
@@ -1396,7 +1396,7 @@ checkgoalp_CalcGoalShotDir:		;auto: CODE_80FD7C. 93G checkgoalp_CalcGoalShotDir 
 	sta.w passdir
 .rtl:
 	rtl
-CalcAngleOffset:		;auto: CODE_80FE89. 93G CalcAngleOffset (logic93_1): d4 = (goalie vector d0/d1 x post vector d3/d4 from the puck) / d2
+CalcAngleOffset:		;93G CalcAngleOffset (logic93_1): d4 = (goalie vector d0/d1 x post vector d3/d4 from the puck) / d2
 	lda.b d3
 	sec
 	sbc.w puckx
@@ -1431,7 +1431,7 @@ CalcAngleOffset:		;auto: CODE_80FE89. 93G CalcAngleOffset (logic93_1): d4 = (goa
 	jsl.l divs
 	sta.b d4
 	rtl
-reenergizeteam:		;auto: CODE_80FED1. 93G reenergizeteam (penalty93_2): max energy for every player of team a2; TMPDOUT players go to the bench
+reenergizeteam:		;93G reenergizeteam (penalty93_2): max energy for every player of team a2; TMPDOUT players go to the bench
 	lda.w #$0032
 	sta.b d0
 .top:

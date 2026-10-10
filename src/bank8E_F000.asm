@@ -3,7 +3,7 @@ org $8EF00B
 	incbin "../data/Sprites/set14.chr":$478..$12E0		; $8EF00B-$8EFE72
 SpriteSet14End:
 	assert SpriteSet14End-SpriteSet14 == $11EC+151*32
-assdefo:		;auto: CODE_8EFE73 (asstab 1). 93G assdefo (logic93_2): defenceman on offence: hold the blue line on his side; adefd when offside, the puck goes back past the line or the other team has it
+assdefo:		;asstab 1. 93G assdefo (logic93_2): defenceman on offence: hold the blue line on his side; adefd when offside, the puck goes back past the line or the other team has it
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rtl

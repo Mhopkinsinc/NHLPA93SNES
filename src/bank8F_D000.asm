@@ -5,7 +5,7 @@ org $8FD005
 	incbin "../data/Sprites/set01.chr":$3B0C..$4000		; $8FD005-$8FD4F8
 SpriteSet1End:
 	assert SpriteSet1End-SpriteSet1 == $474+512*32
-fightinput:		;auto: CODE_8FD4F9 (from joyplayer). 93G fightinput: pad input in a fight: dpad moves (playeracc), stay near the fight spot (xc1), B/A/Y punch (SPA $F82/$F50/$F0C)
+fightinput:		;93G fightinput: pad input in a fight: dpad moves (playeracc), stay near the fight spot (xc1), B/A/Y punch (SPA $F82/$F50/$F0C)
 	lda.w temp3,x
 	ora.w Pencntdwn
 	bpl .l1
@@ -98,7 +98,7 @@ fightinput:		;auto: CODE_8FD4F9 (from joyplayer). 93G fightinput: pad input in a
 	stz.w pf2aip,x
 .l10:
 	rtl
-holdcheck:		;auto: CODE_8FD5BF (from checkcheck). 93G holdcheck: player X holds a2 (SPAHold/SPAhook), both slow to the average speed; checkagr may call a holding/hooking penalty
+holdcheck:		;93G holdcheck: player X holds a2 (SPAHold/SPAhook), both slow to the average speed; checkagr may call a holding/hooking penalty
 	lda.w pfalock,x
 	ora.w pf2fight,x
 	beq .l1
@@ -194,7 +194,7 @@ holdcheck:		;auto: CODE_8FD5BF (from checkcheck). 93G holdcheck: player X holds 
 	sta.b collflag
 .l8:
 	rtl
-PrintStringFromList:		;auto: CODE_8FD68C. 93G PrintStringFromList: print string d0 of the list [a1]
+PrintStringFromList:		;93G PrintStringFromList: print string d0 of the list [a1]
 	lda.b d0
 	bne .l1
 	jml.l print
@@ -205,7 +205,7 @@ PrintStringFromList:		;auto: CODE_8FD68C. 93G PrintStringFromList: print string 
 	sta.b a1
 	dec.b d0
 	bra PrintStringFromList
-Framer:		;auto: CODE_8FD69F. 93G Framer: a d0 x d1 box of FramerMap pieces at printx/printy
+Framer:		;93G Framer: a d0 x d1 box of FramerMap pieces at printx/printy
 	phx
 	lda.w printx
 	sta.b tmp0
@@ -294,7 +294,7 @@ Framer:		;auto: CODE_8FD69F. 93G Framer: a d0 x d1 box of FramerMap pieces at pr
 	sta.b textdirtyhi
 .l6:
 	rtl
-assnothing:		;auto: CODE_8FD75A. 93G assnothing: a computer player stands (doplayeracc 8)
+assnothing:		;93G assnothing: a computer player stands (doplayeracc 8)
 	lda.w pflags,x
 	bit.w #$0008
 	bne .l1
@@ -303,7 +303,7 @@ assnothing:		;auto: CODE_8FD75A. 93G assnothing: a computer player stands (dopla
 	jmp.w doplayeracc
 .l1:
 	rtl
-GoalieCount:		;auto: CODE_8FD76B. SNES: d0 = goalies of team a2 (nibbles of its goalie weights word, team record +$A, until 0); hangs if a2 is not 0 or 2
+GoalieCount:		;SNES: d0 = goalies of team a2 (nibbles of its goalie weights word, team record +$A, until 0); hangs if a2 is not 0 or 2
 	lda.b a2
 	tay
 	and.w #$FFFD
@@ -328,7 +328,7 @@ GoalieCount:		;auto: CODE_8FD76B. SNES: d0 = goalies of team a2 (nibbles of its 
 	asl a
 	bne .l2
 	rtl
-AdvanceStringPtr:		;auto: CODE_8FD793. 93G AdvanceStringPtr: a1 = string d0 of the list [a1]
+AdvanceStringPtr:		;93G AdvanceStringPtr: a1 = string d0 of the list [a1]
 	bra .l2
 .l1:
 	lda.b a1
@@ -441,7 +441,7 @@ PositionNames:		;SNES: position names LD, RD, LW, C, RW
 	db "C"
 	dw 4
 	db "RW"
-releasepl:		;auto: CODE_8FD9DF. 93G releasepl (penalty93_1): player d0 leaves the penalty box: the next free object of team a2 comes on (tmap+1, priolist position), setplayer
+releasepl:		;93G releasepl (penalty93_1): player d0 leaves the penalty box: the next free object of team a2 comes on (tmap+1, priolist position), setplayer
 	stx.b xsave
 	ldx.w #$0000
 .l1:
@@ -520,7 +520,7 @@ releasepl:		;auto: CODE_8FD9DF. 93G releasepl (penalty93_1): player d0 leaves th
 	ldx.b xsave
 	ldx.b a3
 	rtl
-InitScoutDisplay:		;auto: CODE_8FDA75. SNES: scouting report scroll state reset; a0 = $7F0000 (the text buffer)
+InitScoutDisplay:		;SNES: scouting report scroll state reset; a0 = $7F0000 (the text buffer)
 	lda.w #$FFFF
 	sta.w VertLineScrolling
 	sta.w PlayerScrollCtr
@@ -531,7 +531,7 @@ InitScoutDisplay:		;auto: CODE_8FDA75. SNES: scouting report scroll state reset;
 	lda.w #TestList>>16
 	sta.b a0+2
 	rtl
-assstanley:		;auto: CODE_8FDA8F (asstab 8). 93G assstanley: skate to the side of the screen holding the Stanley Cup (SPAcup)
+assstanley:		;asstab 8. 93G assstanley: skate to the side of the screen holding the Stanley Cup (SPAcup)
 	lda.w pfalock,x
 	bne .l5
 	lda.w pflags,x
@@ -577,11 +577,11 @@ assstanley:		;auto: CODE_8FDA8F (asstab 8). 93G assstanley: skate to the side of
 	jmp.w playeracc
 .l5:
 	rtl
-addframe_full:		;auto: CODE_8FDAF3. SNES: sprite VRAM cache full: sprnodraw, addframe_end
+addframe_full:		;SNES: sprite VRAM cache full: sprnodraw, addframe_end
 	lda.w #$0001
 	sta.b sprnodraw
 	jml.l addframe_end
-RemovePlayerFromList:		;auto: CODE_8FDAFC. 93G RemovePlayerFromList: remove entry a0 from the penalty box list (tmboxlist) by shifting the rest down
+RemovePlayerFromList:		;93G RemovePlayerFromList: remove entry a0 from the penalty box list (tmboxlist) by shifting the rest down
 	lda.w #$FFFF
 	sta.b d2
 .l1:
@@ -598,7 +598,7 @@ RemovePlayerFromList:		;auto: CODE_8FDAFC. 93G RemovePlayerFromList: remove entr
 	beq .l1
 	dec.b a0
 	rtl
-asscenterd:		;auto: CODE_8FDB1B (asstab 5). 93G asscenterd (logic93_2): centre on defence: halfway between the puck and his goal; acentero when the team gets the puck
+asscenterd:		;asstab 5. 93G asscenterd (logic93_2): centre on defence: halfway between the puck and his goal; acentero when the team gets the puck
 	lda.w gmclock
 	beq .l1
 	jml.l assnothing
@@ -697,7 +697,7 @@ asscenterd:		;auto: CODE_8FDB1B (asstab 5). 93G asscenterd (logic93_2): centre o
 	lda.w #rtss>>16
 	sta.b a0+2
 	jml.l skateto
-box:		;auto: CODE_8FDBDB. SNES: erase the 19 x 9 box at x 11, y 2 (93G box role)
+box:		;SNES: erase the 19 x 9 box at x 11, y 2 (93G box role)
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $FF,$0B,$02
@@ -708,11 +708,11 @@ box:		;auto: CODE_8FDBDB. SNES: erase the 19 x 9 box at x 11, y 2 (93G box role)
 	lda.w blankchar
 	sta.b d2
 	jml.l eraser
-UpdateCwdExcite:		;auto: CODE_8FDBF7. 93G UpdateCwdExcite: nothing on the SNES
+UpdateCwdExcite:		;93G UpdateCwdExcite: nothing on the SNES
 	rtl
-CheckPeriodEnd:		;auto: CODE_8FDBF8. 93G CheckPeriodEnd: nothing on the SNES
+CheckPeriodEnd:		;93G CheckPeriodEnd: nothing on the SNES
 	rtl
-loadTeamStruct:		;auto: CODE_8FDBF9. 93G loadTeamStruct: a2 = team of player X, a1 = the other team
+loadTeamStruct:		;93G loadTeamStruct: a2 = team of player X, a1 = the other team
 	stz.b a2
 	lda.w #$0002
 	sta.b a1
@@ -723,7 +723,7 @@ loadTeamStruct:		;auto: CODE_8FDBF9. 93G loadTeamStruct: a2 = team of player X, 
 	sta.b a2
 .l1:
 	rtl
-ScoutingReport:		;auto: CODE_8FDC0D (from Opening4). 93G ScoutingReport (hockey93_07): the scouting report screen: EASN backdrop, both team blocks, ScoutLabels with both teams' ratings, Ron Barr and
+ScoutingReport:		;93G ScoutingReport (hockey93_07): the scouting report screen: EASN backdrop, both team blocks, ScoutLabels with both teams' ratings, Ron Barr and
 		;   the scrolling text until Start
 	jsl.l ClearTeamStats
 	jsl.l forceblack
@@ -1028,7 +1028,7 @@ ScoutingReport:		;auto: CODE_8FDC0D (from Opening4). 93G ScoutingReport (hockey9
 	bpl .l14
 .l17:
 	rtl
-ScoutCompare:		;auto: CODE_8FDED2. SNES: print the scouting ratings of team [a0] (nibbles of .sr, against [a2] for the advantages) down the screen
+ScoutCompare:		;SNES: print the scouting ratings of team [a0] (nibbles of .sr, against [a2] for the advantages) down the screen
 	ldy.w #$0004
 	lda.b [a0],y
 	xba

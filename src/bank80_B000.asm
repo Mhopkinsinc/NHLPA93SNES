@@ -3,7 +3,7 @@
 ; periodicevents: hockey93_01), AvgCline, printz/print (middle93_2), updatepwrplay, the goalie pulls (ChkGoalies, ReturnGoalies,
 ; CPgoalie: logic93_4), updatecrowdf, and PenaltyList (hockey93_11).
 org $80B006
-SetSPA:		;auto: CODE_80B006. 93G SetSPA (logic93_5): set sprite animation d1 on object X (restart at frame 0)
+SetSPA:		;93G SetSPA (logic93_5): set sprite animation d1 on object X (restart at frame 0)
 	lda.b d1
 	cmp.w SPA,x		; same animation: keep going
 	beq .rtl
@@ -13,7 +13,7 @@ SetSPA:		;auto: CODE_80B006. 93G SetSPA (logic93_5): set sprite animation d1 on 
 	sta.w SPAcnt,x
 .rtl:
 	rtl
-ResetBench:		;auto: CODE_80B01A. 93G ResetBench (hockey93_05): empty the penalty boxes / put all players on their own bench. PBnum = players left in the box, home*16 + visitors
+ResetBench:		;93G ResetBench (hockey93_05): empty the penalty boxes / put all players on their own bench. PBnum = players left in the box, home*16 + visitors
 	stz.w PBnum
 	lda.w #$0010		; home: +$10 per player
 	sta.b d1
@@ -65,7 +65,7 @@ ResetBench:		;auto: CODE_80B01A. 93G ResetBench (hockey93_05): empty the penalty
 	dec.b d0
 	bpl .rb1
 	rtl
-forcepldata:		;auto: CODE_80B086. 93G forcepldata (hockey93_05): a2 = team. No skating on/off: force the players to their new positions (faceoffs only)
+forcepldata:		;93G forcepldata (hockey93_05): a2 = team. No skating on/off: force the players to their new positions (faceoffs only)
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -156,7 +156,7 @@ forcepldata:		;auto: CODE_80B086. 93G forcepldata (hockey93_05): a2 = team. No s
 	ldx.b xsave
 	ldx.b a3
 	rtl
-Setplass:		;auto: CODE_80B138. 93G Setplass (hockey93_05): set the initial assignment of player X from its position
+Setplass:		;93G Setplass (hockey93_05): set the initial assignment of player X from its position
 	lda.w position,x
 	sta.b d0
 	bmi .rtl		; no position: no assignment
@@ -173,7 +173,7 @@ Setplass:		;auto: CODE_80B138. 93G Setplass (hockey93_05): set the initial assig
 	rtl
 .alist:		;93G .alist: assignment for each position (goalie, LD, RD, LW, C, RW, extra)
 	db agoalie,adefd,adefd,awingd,acenterd,awingd,acenterd
-setplayer:		;auto: CODE_80B15D. 93G setplayer (hockey93_05): bring roster player d3 (in d3 = $5F) onto the ice as object X and set his stats from the roster record plus the bonuses
+setplayer:		;93G setplayer (hockey93_05): bring roster player d3 (in d3 = $5F) onto the ice as object X and set his stats from the roster record plus the bonuses
 	phx
 	phy
 	lda.w pflags,x		; clear pf2inj
@@ -499,7 +499,7 @@ setplayer:		;auto: CODE_80B15D. 93G setplayer (hockey93_05): bring roster player
 	ply
 	plx
 	rtl
-ClampNibble:		;auto: CODE_80B3E7. 93G ClampNibble (hockey93_05): clamp A to 0-15
+ClampNibble:		;93G ClampNibble (hockey93_05): clamp A to 0-15
 	bit.w #$0080		; negative: 0
 	beq .hi
 	lda.w #$0000
@@ -509,7 +509,7 @@ ClampNibble:		;auto: CODE_80B3E7. 93G ClampNibble (hockey93_05): clamp A to 0-15
 	lda.w #$000F
 .x:
 	rtl
-resetplstuff:		;auto: CODE_80B3F8. 93G resetplstuff (hockey93_06): reset team variables and the players on both teams
+resetplstuff:		;93G resetplstuff (hockey93_06): reset team variables and the players on both teams
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -590,12 +590,12 @@ resetplstuff:		;auto: CODE_80B3F8. 93G resetplstuff (hockey93_06): reset team va
 	dec.b d2
 	bpl .loop
 	rtl
-assinsert:		;auto: CODE_80B49D. 93G assinsert (logic93_5): insert assignment d0 on player X. Falls into assreplace
+assinsert:		;93G assinsert (logic93_5): insert assignment d0 on player X. Falls into assreplace
 	lda.w assnum,x		; assnum - 1
 	dec a
 	and.w #$0007
 	sta.w assnum,x
-assreplace:		;auto: CODE_80B4A7. 93G assreplace (logic93_5): replace the current assignment of player X with d0
+assreplace:		;93G assreplace (logic93_5): replace the current assignment of player X with d0
 	lda.w pflags,x
 	ora.w #pfna		; pfna
 	sta.w pflags,x
@@ -609,7 +609,7 @@ assreplace:		;auto: CODE_80B4A7. 93G assreplace (logic93_5): replace the current
 	sta.w asslist,y
 	rep #$30
 	rtl
-setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, send the rink and text graphics to vram, palettes, video mode, team colors
+setupice:		;93G setupice (hockey93_06): set all variables, send the rink and text graphics to vram, palettes, video mode, team colors
 	jsl.l forceblack		; 93G setvram role (bank $8F), bank $8F
 	lda.w #$0207		; vram tile bases of the text layer
 	sta.w faceoffvrcset
@@ -820,7 +820,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	lda.w #$000A
 	sta.b fadein
 	rtl
-setplayercolors:		;auto: CODE_80B6D5. 93G setplayercolors (hockey93_06): team colors into palbuffer, then the whole palette to CGRAM
+setplayercolors:		;93G setplayercolors (hockey93_06): team colors into palbuffer, then the whole palette to CGRAM
 	stz.w ffoframe+6		; pad 3 frame = 0
 	stz.w colorflag1
 	stz.w colorflag2
@@ -839,7 +839,7 @@ setplayercolors:		;auto: CODE_80B6D5. 93G setplayercolors (hockey93_06): team co
 	sta.w MDMAEN
 	rep #$30
 	rtl
-SetTeamColors:		;auto: CODE_80B706. 92 SetTeamColors role: convert both teams' Genesis colors (team data +2) to SNES colors in palbuffer (BG and sprite halves)
+SetTeamColors:		;92 SetTeamColors role: convert both teams' Genesis colors (team data +2) to SNES colors in palbuffer (BG and sprite halves)
 	phx
 	phy
 	ldx.w #$0000
@@ -857,7 +857,7 @@ SetTeamColors:		;auto: CODE_80B706. 92 SetTeamColors role: convert both teams' G
 	ply
 	plx
 	rtl
-SetTeamColors_team:		;auto: CODE_80B72C. one team: tmp0 = team data, tmp2+1 = palbuffer offset
+SetTeamColors_team:		;one team: tmp0 = team data, tmp2+1 = palbuffer offset
 	ldy.w #$0002		; team data + word at +2: palette
 	lda.b [tmp0],y
 	clc
@@ -894,9 +894,9 @@ SetTeamColors_team:		;auto: CODE_80B72C. one team: tmp0 = team data, tmp2+1 = pa
 	dec.b tmp2+1
 	bne .col
 	rtl
-nullrtl:		;auto: CODE_80B76B. does nothing (setupice calls it)
+nullrtl:		;does nothing (setupice calls it)
 	rtl
-SprSort:		;auto: CODE_80B76C. 93G SprSort (hockey93_06): sort the objects by y (x in horizontal mode) into OOlist/OOlistpos
+SprSort:		;93G SprSort (hockey93_06): sort the objects by y (x in horizontal mode) into OOlist/OOlistpos
 	phx
 	phy
 	stx.b xsave
@@ -976,13 +976,13 @@ SprSort:		;auto: CODE_80B76C. 93G SprSort (hockey93_06): sort the objects by y (
 	ply
 	plx
 	rtl
-DoGameFrame:		;auto: CODE_80B7FA. 93G DoGameFrame (hockey93_01): one frame of game logic (d7 = elapsed frames, set by the caller)
+DoGameFrame:		;93G DoGameFrame (hockey93_01): one frame of game logic (d7 = elapsed frames, set by the caller)
 	jsl.l periodicevents		; periodicevents
 	jsl.l updateplayers		; updateplayers
 	jsl.l checkwindow		; checkwindow
 	jsl.l updatereplay		; updatereplay
 	jmp.w setvideo
-periodicevents:		;auto: CODE_80B80D. 93G periodicevents (hockey93_01): every game loop; once a second (lldisp) the slower checks
+periodicevents:		;93G periodicevents (hockey93_01): every game loop; once a second (lldisp) the slower checks
 	jsl.l PenaltyManager		; PenaltyManager
 	jsl.l updatecrowdf		; updatecrowdf
 	jsl.l updatesound		; updatesound, bank $8D: 93G updatesound
@@ -1005,7 +1005,7 @@ periodicevents:		;auto: CODE_80B80D. 93G periodicevents (hockey93_01): every gam
 	jmp.w updatepwrplay
 .rtl:
 	rtl
-AvgCline:		;auto: CODE_80B84C. 93G AvgCline (penalty93_2): d0 = average energy of the current line of team a2
+AvgCline:		;93G AvgCline (penalty93_2): d0 = average energy of the current line of team a2
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -1084,7 +1084,7 @@ AvgCline:		;auto: CODE_80B84C. 93G AvgCline (penalty93_2): d0 = average energy o
 	bpl .popd
 	ldx.b xsave
 	rtl
-divu16:		;auto: CODE_80B8D8. 68k divu.w: mulres = mulb / mula (16-bit), mulres+2 = remainder; A = mula = mulb = quotient. C clear
+divu16:		;68k divu.w: mulres = mulb / mula (16-bit), mulres+2 = remainder; A = mula = mulb = quotient. C clear
 	lda.b mula
 	sta.b mula+2
 	stz.b mula
@@ -1113,7 +1113,7 @@ divu16:		;auto: CODE_80B8D8. 68k divu.w: mulres = mulb / mula (16-bit), mulres+2
 	sta.b mulb
 	clc
 	rtl
-printz:		;auto: CODE_80B90C. 93G printz (middle93_2): print the string that follows the jsl (length word counting itself, then control bytes / text), return after it. Keeps a1
+printz:		;93G printz (middle93_2): print the string that follows the jsl (length word counting itself, then control bytes / text), return after it. Keeps a1
 	lda.b a1+2
 	pha
 	lda.b a1
@@ -1133,7 +1133,7 @@ printz:		;auto: CODE_80B90C. 93G printz (middle93_2): print the string that foll
 	pla
 	sta.b a1+2
 	rtl
-print:		;auto: CODE_80B92D. 93G print (middle93_2): [a1] = string (length word, control bytes / text) into textmap at printx/printy; marks textdirtylo/hi. "@" = blank tile
+print:		;93G print (middle93_2): [a1] = string (length word, control bytes / text) into textmap at printx/printy; marks textdirtylo/hi. "@" = blank tile
 	lda.b [a1]
 	cmp.w #$0100
 .hang:		;string longer than 255: hang
@@ -1251,7 +1251,7 @@ print:		;auto: CODE_80B92D. 93G print (middle93_2): [a1] = string (length word, 
 	clc
 	adc.w printfontset
 	jmp.w .put
-updatepwrplay:		;auto: CODE_80B9F4. 93G updatepwrplay (penalty93_1): show the power play box: time left and the team on the power play
+updatepwrplay:		;93G updatepwrplay (penalty93_1): show the power play box: time left and the team on the power play
 	stz.b a2		; a2 = home, a3 = away
 	lda.w #$0002
 	sta.b a3
@@ -1324,14 +1324,14 @@ updatepwrplay:		;auto: CODE_80B9F4. 93G updatepwrplay (penalty93_1): show the po
 	lda.b a3+2
 	sta.b a1+2
 	jmp.w print
-updatepwrplay_clr:		;auto: CODE_80BAAF. 93G updatepwrplay .clrpwrplay: power play over, EASN logo back
+updatepwrplay_clr:		;93G updatepwrplay .clrpwrplay: power play over, EASN logo back
 	lda.w #sf2pwrplay
 	trb.w sflags
 	beq .rtl
 	jml.l EASNLogo		; EASNLogo, bank $8D: 93G EASNLogo
 .rtl:
 	rtl
-printteamname:		;auto: CODE_80BABC. print the team name of team d3 (0 home) at printx/printy, then printy += 2
+printteamname:		;print the team name of team d3 (0 home) at printx/printy, then printy += 2
 	lda.w printx
 	pha
 	lda.w tmdata		; tmdata of team d3
@@ -1357,7 +1357,7 @@ printteamname:		;auto: CODE_80BABC. print the team name of team d3 (0 home) at p
 	inc.w printy
 	inc.w printy
 	rtl
-ChkGoalies:		;auto: CODE_80BAF2. 93G ChkGoalies (logic93_4): computer pulls the goalie on a delayed penalty. Called from periodicevents
+ChkGoalies:		;93G ChkGoalies (logic93_4): computer pulls the goalie on a delayed penalty. Called from periodicevents
 	lda.w gmclock		; clock stopped
 	bne ChkGoalies_CPG_rtl
 	stz.b a2
@@ -1372,7 +1372,7 @@ ChkGoalies:		;auto: CODE_80BAF2. 93G ChkGoalies (logic93_4): computer pulls the 
 	ldy.b a2
 	sta.b a2
 	sty.b a1
-ChkGoalies_CPG:		;auto: CODE_80BB12. 93G ChkGoalies .CPG: d0 = team (1/2), a2/a1 = team/other
+ChkGoalies_CPG:		;93G ChkGoalies .CPG: d0 = team (1/2), a2/a1 = team/other
 	lda.b d0
 	cmp.w cont1team		; controlled team: no
 	beq .rtl
@@ -1406,7 +1406,7 @@ ChkGoalies_CPG:		;auto: CODE_80BB12. 93G ChkGoalies .CPG: d0 = team (1/2), a2/a1
 	jmp.w setpersonel
 .rtl:
 	rtl
-setpersonel:		;auto: CODE_80BB5A. 93G setpersonel (hockey93_05): set the personel of team a2 from SetPlList: keep the players already on the ice, place the rest
+setpersonel:		;93G setpersonel (hockey93_05): set the personel of team a2 from SetPlList: keep the players already on the ice, place the rest
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -1586,7 +1586,7 @@ setpersonel:		;auto: CODE_80BB5A. 93G setpersonel (hockey93_05): set the persone
 	ldx.b xsave
 	ldx.b a3
 	rtl
-SetPlList:		;auto: CODE_80BCB0. 93G SetPlList (hockey93_05): make PlList, the players we want on the ice now (team a2)
+SetPlList:		;93G SetPlList (hockey93_05): make PlList, the players we want on the ice now (team a2)
 	lda.w #PlList
 	sta.b a4
 	lda.w #PlList>>16
@@ -1747,7 +1747,7 @@ SetPlList:		;auto: CODE_80BCB0. 93G SetPlList (hockey93_05): make PlList, the pl
 	jsl.l TryAddPlayerToList
 	beq .try
 	bra .next1
-TryAddPlayerToList:		;auto: CODE_80BDEB. 93G TryAddPlayerToList (hockey93_05): d0 = roster player (1 based), d4 = PlList slot. A = d1 = player if added, 0 (Z set) if not available
+TryAddPlayerToList:		;93G TryAddPlayerToList (hockey93_05): d0 = roster player (1 based), d4 = PlList slot. A = d1 = player if added, 0 (Z set) if not available
 	lda.b d0
 	sta.b d1
 	dec.b d0
@@ -1796,7 +1796,7 @@ TryAddPlayerToList:		;auto: CODE_80BDEB. 93G TryAddPlayerToList (hockey93_05): d
 	lda.w #$0000
 	sta.b d1
 	rtl
-ReturnGoalies:		;auto: CODE_80BE47. 93G ReturnGoalies (logic93_4): if the computer pulled its goalie, should he come back? Called from puckfaceoff
+ReturnGoalies:		;93G ReturnGoalies (logic93_4): if the computer pulled its goalie, should he come back? Called from puckfaceoff
 	stz.b a2
 	lda.w #$0001
 	sta.b d0
@@ -1809,7 +1809,7 @@ ReturnGoalies:		;auto: CODE_80BE47. 93G ReturnGoalies (logic93_4): if the comput
 	ldy.b a2
 	sta.b a2
 	sty.b a1
-ReturnGoalies_r:		;auto: CODE_80BE62. 93G ReturnGoalies .r: d0 = team (1/2), a2/a1 = team/other
+ReturnGoalies_r:		;93G ReturnGoalies .r: d0 = team (1/2), a2/a1 = team/other
 	lda.b d0
 	cmp.w cont1team		; controlled team: no
 	beq .rtl
@@ -1827,7 +1827,7 @@ ReturnGoalies_r:		;auto: CODE_80BE62. 93G ReturnGoalies .r: d0 = team (1/2), a2/
 	jmp.w CPgoalie
 .rtl:
 	rtl
-CPgoalie:		;auto: CODE_80BE89. 93G CPgoalie (logic93_4): should the computer pull its goalie? d1 = puck/faceoff y. 3rd period, behind by 2, under a minute
+CPgoalie:		;93G CPgoalie (logic93_4): should the computer pull its goalie? d1 = puck/faceoff y. 3rd period, behind by 2, under a minute
 	lda.w gsp		; 3rd period only
 	cmp.w #$0002
 	bne .rtl
@@ -1861,7 +1861,7 @@ CPgoalie:		;auto: CODE_80BE89. 93G CPgoalie (logic93_4): should the computer pul
 	jmp.w setpersonel
 .rtl:
 	rtl
-updatecrowdf:		;auto: CODE_80BED1. 93G updatecrowdf (hockey93_01): every game loop (d7 = elapsed frames): crowd level decay and the crowd animation frame
+updatecrowdf:		;93G updatecrowdf (hockey93_01): every game loop (d7 = elapsed frames): crowd level decay and the crowd animation frame
 	lda.b crowdlevel
 	sec
 	sbc.w #$015E		; 350

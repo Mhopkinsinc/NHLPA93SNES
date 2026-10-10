@@ -2,7 +2,7 @@
 ; NewPO93, eraser, DrawTeamBlocks, EASNLogo (penalty93_2), PeriodOver, GetPlayerName, updatesound, asstab, mulu16, puckshadow, setd0player;
 ; then SpriteSet10 (frame set 10), tiles continue to bank8D_E000.
 org $8D8000
-maketree:		;auto: CODE_8D8000. 93G maketree (hockey93_09): potree from playoffseats (postarts) and WinBits; reset the games of this round (.sett), then FigureJoy
+maketree:		;93G maketree (hockey93_09): potree from playoffseats (postarts) and WinBits; reset the games of this round (.sett), then FigureJoy
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -146,7 +146,7 @@ maketree:		;auto: CODE_8D8000. 93G maketree (hockey93_09): potree from playoffse
 	and.w #$00FF
 	sta.w gst2,x
 	rtl
-InitPPU:		;auto: CODE_8D8120. SNES: all PPU and CPU I/O registers to their reset values (forced blank, mode 0, no layers, NMI off)
+InitPPU:		;SNES: all PPU and CPU I/O registers to their reset values (forced blank, mode 0, no layers, NMI off)
 	sep #$20
 	lda.b #INIDISP_FBLANK|$0F
 	sta.w INIDISP
@@ -233,7 +233,7 @@ InitPPU:		;auto: CODE_8D8120. SNES: all PPU and CPU I/O registers to their reset
 	sta.w MEMSEL
 	rep #$30
 	rtl
-StartPer:		;auto: CODE_8D8217 (from StartGame). 93G StartPer (hockey93_01): reset the stack, rink and clock, faceoff at centre ice, music cue timers, replay reset; then the game loop ($8E8000)
+StartPer:		;93G StartPer (hockey93_01): reset the stack, rink and clock, faceoff at centre ice, music cue timers, replay reset; then the game loop ($8E8000)
 	lda.w #$1FFF		; reset the stack
 	tcs
 	jsl.l Readjoy1
@@ -312,7 +312,7 @@ StartPer:		;auto: CODE_8D8217 (from StartGame). 93G StartPer (hockey93_01): rese
 	stz.w lastframevc
 	stz.w oldvcount
 	jml.l Gameloop		; the game loop (bank $8E)
-GetLowestPen:		;auto: CODE_8D82F0 (from updatepwrplay). 93G GetLowestPen (penalty93_1): a2 = team on the power play, a3 = the other. d0 = power play time left from the penalty box times
+GetLowestPen:		;93G GetLowestPen (penalty93_1): a2 = team on the power play, a3 = the other. d0 = power play time left from the penalty box times
 	stz.b d0
 	stz.b d3
 	lda.b a2
@@ -396,7 +396,7 @@ GetLowestPen:		;auto: CODE_8D82F0 (from updatepwrplay). 93G GetLowestPen (penalt
 	sta.b d0
 .rtl:
 	rtl
-Bcheck:		;auto: CODE_8D8389 (from checkcheck). 93G Bcheck (hockey93_03): a2 checks a3 with SPA $B44: if a3 is in front (within one direction) he falls; checkagr may call a penalty $20 (charging) on
+Bcheck:		;93G Bcheck (hockey93_03): a2 checks a3 with SPA $B44: if a3 is in front (within one direction) he falls; checkagr may call a penalty $20 (charging) on
 		;   a2
 	ldy.b a2
 	lda.w pfalock,x
@@ -461,7 +461,7 @@ Bcheck:		;auto: CODE_8D8389 (from checkcheck). 93G Bcheck (hockey93_03): a2 chec
 	sta.b collflag
 .rtl:
 	rtl
-NewPO93:		;auto: CODE_8D8416. 93G NewPO (hockey93_09): continue the playoffs from passbits (ReadPassBits, maketree, OptPlayers = 7 - pojoy); no caller found (92G NewPO is at $8B8000)
+NewPO93:		;93G NewPO (hockey93_09): continue the playoffs from passbits (ReadPassBits, maketree, OptPlayers = 7 - pojoy); no caller found (92G NewPO is at $8B8000)
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -517,7 +517,7 @@ NewPO93:		;auto: CODE_8D8416. 93G NewPO (hockey93_09): continue the playoffs fro
 	ldx.b xsave
 	ldx.b a3
 	rtl
-eraser:		;auto: CODE_8D847C. 92G eraser: fill d0 x d1 textmap words at printx/printy (print map printm) with tile d2 (+ printfontset)
+eraser:		;92G eraser: fill d0 x d1 textmap words at printx/printy (print map printm) with tile d2 (+ printfontset)
 	phx
 	lda.b d2
 	clc
@@ -581,7 +581,7 @@ eraser:		;auto: CODE_8D847C. 92G eraser: fill d0 x d1 textmap words at printx/pr
 	sta.b textdirtyhi
 .rtl:
 	rtl
-DrawTeamBlocks:		;auto: CODE_8D84E2. 93G DrawTeamBlocks (hockey93_06): the 9 x 2 TeamBlocksMap block of team d1 into textmap at printx/printy (scorechars, printa)
+DrawTeamBlocks:		;93G DrawTeamBlocks (hockey93_06): the 9 x 2 TeamBlocksMap block of team d1 into textmap at printx/printy (scorechars, printa)
 	lda.b a2
 	pha
 	phx
@@ -638,7 +638,7 @@ DrawTeamBlocks:		;auto: CODE_8D84E2. 93G DrawTeamBlocks (hockey93_06): the 9 x 2
 	pla
 	sta.b a2
 	rtl
-EASNLogo:		;auto: CODE_8D8549. 93G EASNLogo (penalty93_2): the EASN logo (7 x 2 words, $8F824D) at x 1, y $19 of the rink map unless a power play is on
+EASNLogo:		;93G EASNLogo (penalty93_2): the EASN logo (7 x 2 words, $8F824D) at x 1, y $19 of the rink map unless a power play is on
 	lda.w sflags
 	bit.w #sf2pwrplay
 	bne .rtl
@@ -684,7 +684,7 @@ EASNLogo:		;auto: CODE_8D8549. 93G EASNLogo (penalty93_2): the EASN logo (7 x 2 
 	sta.b textdirtyhi
 .rtl:
 	rtl
-PeriodOver:		;auto: CODE_8D85A9 (from clockcont). 93G PeriodOver (hockey93_06): next period (gmdir flips); overtime only for a tied playoff game; gsp 4 = game over (ContinuePlayoffs), else StartPer
+PeriodOver:		;93G PeriodOver (hockey93_06): next period (gmdir flips); overtime only for a tied playoff game; gsp 4 = game over (ContinuePlayoffs), else StartPer
 	jsl.l forceblack
 	inc.w gsp		; next period
 	lda.w gmode
@@ -718,7 +718,7 @@ PeriodOver:		;auto: CODE_8D85A9 (from clockcont). 93G PeriodOver (hockey93_06): 
 	jml.l ContinuePlayoffs
 .per:
 	jmp.w StartPer
-GetPlayerName:		;auto: CODE_8D8605. SNES: mesarea = number and name of player TempPlOffset (bit 15: away team) via PlayerNumName
+GetPlayerName:		;SNES: mesarea = number and name of player TempPlOffset (bit 15: away team) via PlayerNumName
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -768,7 +768,7 @@ GetPlayerName:		;auto: CODE_8D8605. SNES: mesarea = number and name of player Te
 	bpl .popd
 	ldx.b xsave
 	rtl
-updatesound:		;auto: CODE_8D865A (from periodicevents). 93G updatesound: move the crowd volume (asv) toward crowdlevel; send it to the sound driver when it changes (crowdvol)
+updatesound:		;93G updatesound: move the crowd volume (asv) toward crowdlevel; send it to the sound driver when it changes (crowdvol)
 	ldy.b d7
 	lda.b crowdlevel		; target volume crowdlevel * 8 + $200 (max $CFF)
 	asl a
@@ -840,7 +840,7 @@ asstab:		;SNES: the assignment routines (29 long pointers) that updateplayers ca
 	dd pucknothing		; 1A
 	dd puckfaceoff		; 1B
 	dd puckfaceoff2		; 1C
-mulu16:		;auto: CODE_8D871C. SNES: 16-bit multiply: A = mula = mulb = mulres = low word of mula * mulb (mode 7 multiplier for a byte factor)
+mulu16:		;SNES: 16-bit multiply: A = mula = mulb = mulres = low word of mula * mulb (mode 7 multiplier for a byte factor)
 	lda.b mula
 	bmi .full
 	cmp.w #$0080
@@ -916,7 +916,7 @@ mulu16:		;auto: CODE_8D871C. SNES: 16-bit multiply: A = mula = mulb = mulres = l
 	sta.b mulb
 	clc
 	rtl
-puckshadow:		;auto: CODE_8D87B0 (asstab $19). 93G puckshadow: the shadow object follows the puck (frame $189); else parks it behind the goal
+puckshadow:		;asstab $19. 93G puckshadow: the shadow object follows the puck (frame $189); else parks it behind the goal
 	lda.w frame,x
 	cmp.w #$0189		; puck frame: shadow under the puck
 	bne .none
@@ -949,7 +949,7 @@ puckshadow:		;auto: CODE_8D87B0 (asstab $19). 93G puckshadow: the shadow object 
 	dec.w Zpos,x
 .rtl:
 	rtl
-setd0player:		;auto: CODE_8D87FB. 93G setd0player: give player d0 to the controller of his team (setc1player/setc2player) unless a controller has him already
+setd0player:		;93G setd0player: give player d0 to the controller of his team (setc1player/setc2player) unless a controller has him already
 	lda.b d0
 	cmp.w c1playernum
 	beq .rtl

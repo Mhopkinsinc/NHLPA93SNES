@@ -2,7 +2,7 @@
 ; DefaultMenus, checkagr, WeightedRandomSelect, forceblack, passmode/dopass, FrameSetTable, CompLine, TeamRoster, addframe, Pmenu with the
 ; pause menu lists, GetPadTeam, setpde. Ends before setoptions (boundaries moved from $8FE00E / $8FF002).
 org $8FE00A
-SetupTeamForIntermission:		;auto: CODE_8FE00A (from Intermission). 93G SetupTeamForIntermission: ResetBench; both teams re-energized, line 0 (3/5 when a team is a man short or up)
+SetupTeamForIntermission:		;93G SetupTeamForIntermission: ResetBench; both teams re-energized, line 0 (3/5 when a team is a man short or up)
 	jsl.l ResetBench
 	stz.b a2
 	lda.w #$0002
@@ -31,7 +31,7 @@ SetupTeamForIntermission:		;auto: CODE_8FE00A (from Intermission). 93G SetupTeam
 	sta.w tmline,x
 .l1:
 	rtl
-ClearSprites:		;auto: CODE_8FE04C. SNES: all 128 OAM entries off screen (y $E0), the high table clear; new sprite frame (sprclock), VRAM slot rotors restart
+ClearSprites:		;SNES: all 128 OAM entries off screen (y $E0), the high table clear; new sprite frame (sprclock), VRAM slot rotors restart
 	clc
 	ldx.w #$0000
 	ldy.w #$0008
@@ -95,7 +95,7 @@ ClearSprites:		;auto: CODE_8FE04C. SNES: all 128 OAM entries off screen (y $E0),
 	lda.b sprslot
 	sta.b sprslotend
 	rtl
-RemapTiles:		;auto: CODE_8FE0E4. SNES: d0 4bpp tiles at [a0] to vram with each pixel value remapped through the 16-byte table [a1]
+RemapTiles:		;SNES: d0 4bpp tiles at [a0] to vram with each pixel value remapped through the 16-byte table [a1]
 	lda.w #$000E
 	sta.b tmp2+1
 .l1:
@@ -167,7 +167,7 @@ RemapTiles:		;auto: CODE_8FE0E4. SNES: d0 4bpp tiles at [a0] to vram with each p
 	rtl
 PixelRemap8F:		;SNES: 4bpp pixel value remap for RemapTiles: colour 1 stays, the rest 0
 	db $00,$01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-playeracc:		;auto: CODE_8FE164 (from noturn, fightinput). 93G playeracc (logic93_5): accelerate player X in direction d2 (dirtab8F, Wallsin/Wallcos, weight and legstr), cap at MaxSpeed; energy use
+playeracc:		;93G playeracc (logic93_5): accelerate player X in direction d2 (dirtab8F, Wallsin/Wallcos, weight and legstr), cap at MaxSpeed; energy use
 	asl.b d2
 	asl.b d2
 	ldx.b d2
@@ -366,7 +366,7 @@ dirtab8F:		;93G dirtab: x, y acceleration per direction 0-7 (playeracc)
 	dw -565,-565
 	dw -800,0
 	dw -565,565
-ClearPenaltyBuffer:		;auto: CODE_8FE2F9. 93G ClearPenaltyBuffer: clear the 32 words of the penalty list (PenBuf)
+ClearPenaltyBuffer:		;93G ClearPenaltyBuffer: clear the 32 words of the penalty list (PenBuf)
 	lda.w #$001F
 	sta.b d0
 	lda.w #PenBuf
@@ -381,7 +381,7 @@ ClearPenaltyBuffer:		;auto: CODE_8FE2F9. 93G ClearPenaltyBuffer: clear the 32 wo
 	dec.b d0
 	bpl .l1
 	rtl
-randomd0sd0:		;auto: CODE_8FE316. 93G randomd0s with the range in d0: d0 = random -d0..+d0 (randomd0s in bank $80 takes A)
+randomd0sd0:		;93G randomd0s with the range in d0: d0 = random -d0..+d0 (randomd0s in bank $80 takes A)
 	lda.b d0
 	pha
 	asl.b d0
@@ -394,7 +394,7 @@ randomd0sd0:		;auto: CODE_8FE316. 93G randomd0s with the range in d0: d0 = rando
 	sta.b d0
 	clc
 	rtl
-DefaultMenus:		;auto: CODE_8FE32B (from Start). 93G DefaultMenus: the 7 options at $1600 from .tab; notdemo set
+DefaultMenus:		;93G DefaultMenus: the 7 options at $1600 from .tab; notdemo set
 	lda.w #$FFFF
 	sta.w notdemo
 	lda.w #OptPlayMode
@@ -419,7 +419,7 @@ DefaultMenus:		;auto: CODE_8FE32B (from Start). 93G DefaultMenus: the 7 options 
 	rtl
 .tab:		;93G DefaultMenus .tab: OptPlayMode, OptPlayers, OptTeam1, OptTeam2, OptPerlen, OptPen, OptLine
 	dw $0000,$0001,$000F,$0003,$0001,$0000,$0001
-checkagr:		;auto: CODE_8FE369. 93G checkagr: d0 = random value by the GGSleft rating of player X (x2 joystick controlled, /2 near the puck): small values call a penalty
+checkagr:		;93G checkagr: d0 = random value by the GGSleft rating of player X (x2 joystick controlled, /2 near the puck): small values call a penalty
 	lda.w #$0014
 	sec
 	sbc.w GGSleft,x
@@ -456,7 +456,7 @@ checkagr:		;auto: CODE_8FE369. 93G checkagr: d0 = random value by the GGSleft ra
 	lsr.b d0
 .l4:
 	jml.l randomd0
-WeightedRandomSelect:		;auto: CODE_8FE3B0. 93G WeightedRandomSelect: d0 = random index 0..d0-1 weighted by the words in nibblebuffer
+WeightedRandomSelect:		;93G WeightedRandomSelect: d0 = random index 0..d0-1 weighted by the words in nibblebuffer
 	lda.b d1+2
 	pha
 	lda.b d1
@@ -506,7 +506,7 @@ WeightedRandomSelect:		;auto: CODE_8FE3B0. 93G WeightedRandomSelect: d0 = random
 	pla
 	sta.b d1+2
 	rtl
-forceblack:		;auto: CODE_8FE404. 93G forceblack role: the default vblank/IRQ handlers, the sprite VRAM caches reset, wait a frame, empty DMAList
+forceblack:		;93G forceblack role: the default vblank/IRQ handlers, the sprite VRAM caches reset, wait a frame, empty DMAList
 	phx
 	lda.w #vb2_blank
 	sta.b vbint
@@ -538,7 +538,7 @@ forceblack:		;auto: CODE_8FE404. 93G forceblack role: the default vblank/IRQ han
 	stz.b DMAListend
 	plx
 	rtl
-passmode:		;auto: CODE_8FE43C (from joyplayer). 93G passmode: B held: a dpad direction sets passdir (d0 | 8) before dopass
+passmode:		;93G passmode: B held: a dpad direction sets passdir (d0 | 8) before dopass
 	lda.b d2
 	bit.w #$8000
 	bne dopass
@@ -552,7 +552,7 @@ passmode:		;auto: CODE_8FE43C (from joyplayer). 93G passmode: B held: a dpad dir
 	bra dopass
 .l1:
 	rtl
-dopass:		;auto: CODE_8FE458. 93G dopass: pass the puck: the team mate nearest the passdir lane (or passdir), puck velocity, SPA, pfalock
+dopass:		;93G dopass: pass the puck: the team mate nearest the passdir lane (or passdir), puck velocity, SPA, pfalock
 	stx.b xsave
 	ldx.w #$0000
 .l1:
@@ -832,7 +832,7 @@ FrameSetTable:		;SNES: long pointers to the 15 sprite frame sets (addframe), the
 	dd SpriteSet13
 	dd SpriteSet14
 	dd 0		; end
-CompLine:		;auto: CODE_8FE6BD (from setpersonel). 93G CompLine: the computer team picks a line by the man advantage, the score late in the game and the line energies (getlinee)
+CompLine:		;93G CompLine: the computer team picks a line by the man advantage, the score late in the game and the line energies (getlinee)
 	stx.b xsave
 	ldx.w #$0000
 .l1:
@@ -1001,7 +1001,7 @@ CompLine:		;auto: CODE_8FE6BD (from setpersonel). 93G CompLine: the computer tea
 	dw 0,2,1
 .behind2:
 	dw 0,1,0
-TeamRoster:		;auto: CODE_8FE825 (pause menu). SNES Team Roster screen: the team block, each line's players and an attribute; dpad moves, Y switches team, Start leaves
+TeamRoster:		;SNES Team Roster screen: the team block, each line's players and an attribute; dpad moves, Y switches team, Start leaves
 	jsl.l forceblack
 	sep #$20
 	stz.w BG1HOFS
@@ -1418,7 +1418,7 @@ RosterLineNames:		;SNES: the Team Roster line names (15-byte strings)
 	db "{Pen. Kill 1}"
 	dw 15
 	db "{Pen. Kill 2 "
-addframe:		;auto: CODE_8FEC68. 93G addframe: sprite frame sprframe at sprx/spry: find its frame set in FrameSetTable (sprsetofs), then DrawFrame; frames $293 and up are drawn by addframe_hi
+addframe:		;93G addframe: sprite frame sprframe at sprx/spry: find its frame set in FrameSetTable (sprsetofs), then DrawFrame; frames $293 and up are drawn by addframe_hi
 	lda.b sprframe
 	cmp.w #$0293
 	bcc .l1
@@ -1453,7 +1453,7 @@ addframe:		;auto: CODE_8FEC68. 93G addframe: sprite frame sprframe at sprx/spry:
 	inx
 	inx
 	bra .l3
-Pmenu:		;auto: CODE_8FECAB (from Pausemode, StartHL2). 92G Pausemode .Pmenu: the 5 pause menu items (.mlist, game-over list when gsp = 4), item psitem highlighted
+Pmenu:		;92G Pausemode .Pmenu: the 5 pause menu items (.mlist, game-over list when gsp = 4), item psitem highlighted
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$06,$0D
@@ -1599,7 +1599,7 @@ Pmenu:		;auto: CODE_8FECAB (from Pausemode, StartHL2). 92G Pausemode .Pmenu: the
 	db "Goalie - "
 	dw 13
 	db "Team Roster"
-GetPadTeam:		;auto: CODE_8FEE4A. SNES: a2 = team of the controller that paused (cont1team/cont2team by sfpj)
+GetPadTeam:		;SNES: a2 = team of the controller that paused (cont1team/cont2team by sfpj)
 	stz.b a2
 	lda.w cont1team
 	beq .l3
@@ -1617,7 +1617,7 @@ GetPadTeam:		;auto: CODE_8FEE4A. SNES: a2 = team of the controller that paused (
 	inc.b a2
 .l3:
 	rtl
-setpde:		;auto: CODE_8FEE6B. 93G setpde: tmpde of player d1 (team a2) = d0 (not below 0)
+setpde:		;93G setpde: tmpde of player d1 (team a2) = d0 (not below 0)
 	lda.b a2
 	beq .l1
 	lda.w #$0034

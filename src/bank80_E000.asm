@@ -3,7 +3,7 @@
 ; limitfo, chkprogress, InProgress, coinsearch, UpdatePA, SetPA (penalty93_1). Starts at setpads (boundary moved from $80E001),
 ; ends before the compressed block at $80ED38 (now in bank80_F000).
 org $80E0E1
-setpads:		;auto: CODE_80E0E1. 93G setpads (logic93_1): d4 = pad index (-2 puck carrier, 0/2 controllers, 4 replay target): put SCnum of X in that nibble of PadControlBits
+setpads:		;93G setpads (logic93_1): d4 = pad index (-2 puck carrier, 0/2 controllers, 4 replay target): put SCnum of X in that nibble of PadControlBits
 	stx.b xsave
 	ldx.w #$0000
 .push:
@@ -57,7 +57,7 @@ setpads:		;auto: CODE_80E0E1. 93G setpads (logic93_1): d4 = pad index (-2 puck c
 	bpl .pop
 	ldx.b xsave
 	rtl
-updateanim:		;auto: CODE_80E13E. 93G updateanim (hockey93_02): frame switch control on object X. SPA = offset in SPAList; next frame when SPAcnt runs out (d7), loops or ends the animation
+updateanim:		;93G updateanim (hockey93_02): frame switch control on object X. SPA = offset in SPAList; next frame when SPAcnt runs out (d7), loops or ends the animation
 	lda.w SPA,x		; no animation: clear pfalock, pf2aip
 	bne .ia
 	stz.w pf2aip,x
@@ -145,7 +145,7 @@ updateanim:		;auto: CODE_80E13E. 93G updateanim (hockey93_02): frame switch cont
 	lda.b d2
 	sta.w frame,x
 	rtl
-checkwindow:		;auto: CODE_80E1E8. 93G checkwindow (hockey93_02): set Hpos/Vpos so the screen follows the puck (or xc1/yc1 when sfslock)
+checkwindow:		;93G checkwindow (hockey93_02): set Hpos/Vpos so the screen follows the puck (or xc1/yc1 when sfslock)
 	lda.w yc1
 	sta.b d2
 	lda.w xc1
@@ -360,7 +360,7 @@ checkwindow:		;auto: CODE_80E1E8. 93G checkwindow (hockey93_02): set Hpos/Vpos s
 	sta.w Hpos
 .rtl:
 	rtl
-setvideo:		;auto: CODE_80E35E. 93G setvideo (video93_1): once per game frame, if vblank is idle (vb2 / vb2_blank): build the sprite table and the dma list, then hand VBlank_long to vbint
+setvideo:		;93G setvideo (video93_1): once per game frame, if vblank is idle (vb2 / vb2_blank): build the sprite table and the dma list, then hand VBlank_long to vbint
 	lda.b vbint		; vblank busy with a list: skip this frame
 	cmp.w #vb2
 	beq .go
@@ -407,7 +407,7 @@ setvideo:		;auto: CODE_80E35E. 93G setvideo (video93_1): once per game frame, if
 	ldx.b a3
 .rtl:
 	rtl
-show_rink:		;auto: CODE_80E3C9. 93G show_rink (video93_1): vertical rink: Hscroll = Hpos - 128, Vscroll = -Vpos - 112 (the rows are sent elsewhere)
+show_rink:		;93G show_rink (video93_1): vertical rink: Hscroll = Hpos - 128, Vscroll = -Vpos - 112 (the rows are sent elsewhere)
 	lda.w sfhormode
 	bne .rtl
 	lda.w Hpos
@@ -422,7 +422,7 @@ show_rink:		;auto: CODE_80E3C9. 93G show_rink (video93_1): vertical rink: Hscrol
 	sta.w Vscroll
 .rtl:
 	rtl
-checkfo:		;auto: CODE_80E3E7. 93G checkfo/checkfo2 (video93_1): face off sprites: the three fofdata2 entries (frame, flags) at fodropx/fodropy, priority $30
+checkfo:		;93G checkfo/checkfo2 (video93_1): face off sprites: the three fofdata2 entries (frame, flags) at fodropx/fodropy, priority $30
 	lda.w sflags		; not in pause, face off only
 	bit.w #sfpz
 	bne .rtl
@@ -462,7 +462,7 @@ checkfo:		;auto: CODE_80E3E7. 93G checkfo/checkfo2 (video93_1): face off sprites
 	sta.b sprpriority
 .rtl:
 	rtl
-setsortcords:		;auto: CODE_80E439. 93G setsortcords (video93_2): addframe for the 16 objects in OOlist order (hidden when Zpos < 0 or off the screen)
+setsortcords:		;93G setsortcords (video93_2): addframe for the 16 objects in OOlist order (hidden when Zpos < 0 or off the screen)
 	lda.w #OOlist		; a4 = OOlist
 	sta.b a4
 .top:
@@ -504,7 +504,7 @@ setsortcords:		;auto: CODE_80E439. 93G setsortcords (video93_2): addframe for th
 	cmp.w #OOlist+$10
 	bne .top
 	rtl
-projxy:		;auto: CODE_80E495. SNES (93G addframe position math): rink d0/d1/d2 = x/y/z to screen: d0 = x - Hpos + 128, d1 = 112 - (y - Vpos + 1.5*z); d1 = OFFSCREEN when |x| or |y| > 144. Horizontal
+projxy:		;SNES (93G addframe position math): rink d0/d1/d2 = x/y/z to screen: d0 = x - Hpos + 128, d1 = 112 - (y - Vpos + 1.5*z); d1 = OFFSCREEN when |x| or |y| > 144. Horizontal
 		;   rink: x = -y, y = x - 197
 	lda.w sfhormode
 	beq .nhor
@@ -567,7 +567,7 @@ projxy:		;auto: CODE_80E495. SNES (93G addframe position math): rink d0/d1/d2 = 
 	lda.w #OFFSCREEN
 	sta.b d1
 	rtl
-setffo:		;auto: CODE_80E501. 93G setffo (video93_2): uppads, then draw the 5 objects tied to rink scrolling (pads 0-2 with their 3 character label, gloves; pad 3 skipped)
+setffo:		;93G setffo (video93_2): uppads, then draw the 5 objects tied to rink scrolling (pads 0-2 with their 3 character label, gloves; pad 3 skipped)
 	jsl.l uppads
 	ldx.w #$0000
 .top:
@@ -696,7 +696,7 @@ setffo:		;auto: CODE_80E501. 93G setffo (video93_2): uppads, then draw the 5 obj
 	rtl
 ButtonLabelCharTable:		;93G ButtonLabelCharTable (video93_2): tile of the position letter in the pad label, by position 1-6
 	db $0B,$0B,$0C,$0A,$0D,$0E		; tiles by position (index 1-6)
-uppads:		;auto: CODE_80E60B. 93G uppads (video93_2): gloves object from glovecords, and the 4 pad objects from the PadControlBits nibbles ($E = stays, $F = hidden); padcont = label code (position <<
+uppads:		;93G uppads (video93_2): gloves object from glovecords, and the 4 pad objects from the PadControlBits nibbles ($E = stays, $F = hidden); padcont = label code (position <<
 		;   8 | rostnum)
 	ldy.w #$0008		; gloves (ffo 4): hidden unless glovecords
 	lda.w #$FFFF
@@ -785,12 +785,12 @@ uppads:		;auto: CODE_80E60B. 93G uppads (video93_2): gloves object from glovecor
 	dec.b d4
 	bpl .top
 	rtl
-PenaltyManager:		;auto: CODE_80E6C7. 93G PenaltyManager (penalty93_1): called periodically, d7 = elapsed time: updatepentime, checkfornewpen, chkprogress, UpdatePA
+PenaltyManager:		;93G PenaltyManager (penalty93_1): called periodically, d7 = elapsed time: updatepentime, checkfornewpen, chkprogress, UpdatePA
 	jsl.l updatepentime		; updatepentime, checkfornewpen, chkprogress, then UpdatePA, bank $8F: 93G updatepentime
 	jsl.l checkfornewpen
 	jsl.l chkprogress
 	jmp.w UpdatePA
-chkatop:		;auto: CODE_80E6D6. 93G chkatop (penalty93_1): attack time of possession: tmATOP +1 for the team with the puck past the blue line ($58)
+chkatop:		;93G chkatop (penalty93_1): attack time of possession: tmATOP +1 for the team with the puck past the blue line ($58)
 	stz.b d1
 	lda.w pucky
 	sec
@@ -826,7 +826,7 @@ chkatop:		;auto: CODE_80E6D6. 93G chkatop (penalty93_1): attack time of possessi
 	sta.w tmATOP,y
 .rtl:
 	rtl
-checkfornewpen:		;auto: CODE_80E715. 93G checkfornewpen (penalty93_1): new penalties in PenBuf. Stops play at once for penalties without minutes or when the guilty team has the puck, otherwise a
+checkfornewpen:		;93G checkfornewpen (penalty93_1): new penalties in PenBuf. Stops play at once for penalties without minutes or when the guilty team has the puck, otherwise a
 		;   delayed penalty call
 	lda.w sfhormode		; not in horizontal mode
 	beq .go
@@ -943,7 +943,7 @@ checkfornewpen:		;auto: CODE_80E715. 93G checkfornewpen (penalty93_1): new penal
 	sta.b d0
 	jsl.l SetPA
 	jmp.w .next
-Stop4Pen:		;auto: CODE_80E7F7. 93G Stop4Pen (penalty93_1): a0 = PenBuf entry +2. Stop the clock, set the face off spot from the penalty type, blow the whistle
+Stop4Pen:		;93G Stop4Pen (penalty93_1): a0 = PenBuf entry +2. Stop the clock, set the face off spot from the penalty type, blow the whistle
 	lda.w #$FFFF		; clock already stopped: skip the face off spot
 	tsb.w gmclock
 	beq .spot
@@ -1069,7 +1069,7 @@ Stop4Pen:		;auto: CODE_80E7F7. 93G Stop4Pen (penalty93_1): a0 = PenBuf entry +2.
 	lda.w #PenWhistle
 	sta.b d0
 	jmp.w SetPA
-limitfo:		;auto: CODE_80E8F4. 93G limitfo (penalty93_1): keep the face off spot 65 from the blue line for every player in PenBuf
+limitfo:		;93G limitfo (penalty93_1): keep the face off spot 65 from the blue line for every player in PenBuf
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -1167,7 +1167,7 @@ limitfo:		;auto: CODE_80E8F4. 93G limitfo (penalty93_1): keep the face off spot 
 	sta.w fox
 .rtl:
 	rtl
-chkprogress:		;auto: CODE_80E99F. 93G chkprogress (penalty93_1): when the stop delay runs out and a penalty with minutes is in PenBuf, switch to the horizontal rink for the player to enter the box
+chkprogress:		;93G chkprogress (penalty93_1): when the stop delay runs out and a penalty with minutes is in PenBuf, switch to the horizontal rink for the player to enter the box
 	lda.w gmode		; gmpen: ref in progress
 	bit.w #gmpen
 	bne .pen
@@ -1237,7 +1237,7 @@ chkprogress:		;auto: CODE_80E99F. 93G chkprogress (penalty93_1): when the stop d
 	jsl.l PushRef		; bank $8F: 93G PushRef
 .rtl:
 	rtl
-InProgress:		;auto: CODE_80EA40. 93G InProgress (penalty93_1): ref in progress. Takes the last PenBuf entry: the first pass logs a penalty with minutes and sends the player to the box, later passes
+InProgress:		;93G InProgress (penalty93_1): ref in progress. Takes the last PenBuf entry: the first pass logs a penalty with minutes and sends the player to the box, later passes
 		;   clear it; at the end coinsearch and the face off
 	lda.w RefCnt		; animation in progress: exit
 	bmi .step
@@ -1537,7 +1537,7 @@ InProgress:		;auto: CODE_80EA40. 93G InProgress (penalty93_1): ref in progress. 
 	ldx.b a3
 .rtl:
 	rtl
-coinsearch:		;auto: CODE_80EC89. 93G coinsearch (penalty93_1): a2 = team. Clears tmpdst bit $2000, counts the players kept off the ice by penalties (not coincidental, not injured, never below 4)
+coinsearch:		;93G coinsearch (penalty93_1): a2 = team. Clears tmpdst bit $2000, counts the players kept off the ice by penalties (not coincidental, not injured, never below 4)
 		;   into tmap
 	lda.w #$0006		; d1 = 6 players, d0 = last roster word
 	sta.b d1
@@ -1570,7 +1570,7 @@ coinsearch:		;auto: CODE_80EC89. 93G coinsearch (penalty93_1): a2 = team. Clears
 	lda.b d1
 	sta.w tmap,y
 	rtl
-UpdatePA:		;auto: CODE_80ECC7. 93G UpdatePA (penalty93_1): animate the ref (SetPA2 when RefCnt runs out); reprint the horizontal penalty message line when penmsgtimer runs out
+UpdatePA:		;93G UpdatePA (penalty93_1): animate the ref (SetPA2 when RefCnt runs out); reprint the horizontal penalty message line when penmsgtimer runs out
 	lda.w RefCnt		; RefCnt negative: idle
 	bmi .rtl
 	sec
@@ -1601,7 +1601,7 @@ UpdatePA:		;auto: CODE_80ECC7. 93G UpdatePA (penalty93_1): animate the ref (SetP
 	jmp.w print
 .rtl:
 	rtl
-SetPA:		;auto: CODE_80ED0C. 93G SetPA (penalty93_1): start the ref animation for penalty d0: prefmes, DisplayPlayerAttributeMenu for a goal, penmsgtimer (60 in horizontal mode), then SetPA2
+SetPA:		;93G SetPA (penalty93_1): start the ref animation for penalty d0: prefmes, DisplayPlayerAttributeMenu for a goal, penmsgtimer (60 in horizontal mode), then SetPA2
 	lda.b d0		; RefPen = d0, RefStep = 0, prefmes
 	sta.w RefPen
 	stz.w RefStep

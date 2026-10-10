@@ -1,7 +1,7 @@
 ; $8E8000-$8E900A  ROM $70000-$7100A: Gameloop (hockey93_01, with the DoGameFrame time steps), PlayerShortName, assbench (logic93_2, asstab $B);
 ; then SpriteSet3 (frame set 3: celebrations), tiles continue to bank8E_D000.
 org $8E8000
-Gameloop:		;auto: CODE_8E8000 (from StartPer). 93G Gameloop (hockey93_01): wait for a new frame, time steps from d7, clock, music cue timers, crowd cheers, DoGameFrame, demoread, goalie
+Gameloop:		;93G Gameloop (hockey93_01): wait for a new frame, time steps from d7, clock, music cue timers, crowd cheers, DoGameFrame, demoread, goalie
 		;   puck-handling penalty, line change end, Pausemode
 	lda.b vcount		; wait for the next frame
 	cmp.w oldvcount
@@ -180,7 +180,7 @@ Gameloop:		;auto: CODE_8E8000 (from StartPer). 93G Gameloop (hockey93_01): wait 
 	jsl.l Pausemode
 .loop:
 	jmp.w Gameloop
-PlayerShortName:		;auto: CODE_8E8182. SNES: mesarea = "<number> <first initial>. <last name>" of roster player d0 (team a2)
+PlayerShortName:		;SNES: mesarea = "<number> <first initial>. <last name>" of roster player d0 (team a2)
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -308,7 +308,7 @@ PlayerShortName:		;auto: CODE_8E8182. SNES: mesarea = "<number> <first initial>.
 	bpl .popd
 	ldx.b xsave
 	rtl
-assbench:		;auto: CODE_8E826B (asstab $B). 93G assbench (logic93_2): player X skates to the bench door and leaves; the new player (newpnum) comes on (setplayer)
+assbench:		;asstab $B. 93G assbench (logic93_2): player X skates to the bench door and leaves; the new player (newpnum) comes on (setplayer)
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rtl

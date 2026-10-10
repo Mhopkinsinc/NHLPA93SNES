@@ -9,7 +9,7 @@ RefsMapHor:		;ref window frames for the horizontal rink, 17 frames of 8 x 7 word
 	incbin "../data/RefsHor.snesmap"		; $89F3FB-$89FB6A
 RefsMapHorEnd:
 	assert RefsMapHorEnd-RefsMapHor == 17*$70
-StartSong8:		;auto: CODE_89FB6B. SNES: start song 8 (no caller found) unless it plays: the boot sound set (SPCBootUpload), then driver command 9
+StartSong8:		;SNES: start song 8 (no caller found) unless it plays: the boot sound set (SPCBootUpload), then driver command 9
 	lda.w cursong
 	cmp.w #8
 	beq .rtl
@@ -26,7 +26,7 @@ StartSong8:		;auto: CODE_89FB6B. SNES: start song 8 (no caller found) unless it 
 	sta.w cursong
 .rtl:
 	rtl
-StartSong9:		;auto: CODE_89FB8F. SNES: start song 9 (the playoff screen music, PlayoffScreen) unless it plays: the boot sound set (SPCBootUpload), then driver command 1
+StartSong9:		;SNES: start song 9 (the playoff screen music, PlayoffScreen) unless it plays: the boot sound set (SPCBootUpload), then driver command 1
 	lda.w cursong
 	cmp.w #9
 	beq .rtl
@@ -43,7 +43,7 @@ StartSong9:		;auto: CODE_89FB8F. SNES: start song 9 (the playoff screen music, P
 	sta.w cursong
 .rtl:
 	rtl
-StartSong1:		;auto: CODE_89FBB3. SNES: start music cue 1 (home goal) unless it plays: the in-game sound set, then $8FFE7B with 4; cuetimer = its length
+StartSong1:		;SNES: start music cue 1 (home goal) unless it plays: the in-game sound set, then $8FFE7B with 4; cuetimer = its length
 	lda.w cursong
 	cmp.w #$0001
 	beq .rtl
@@ -61,7 +61,7 @@ StartSong1:		;auto: CODE_89FBB3. SNES: start music cue 1 (home goal) unless it p
 	sta.w cuetimer
 .rtl:
 	rtl
-StartSong2:		;auto: CODE_89FBDF. SNES: start music cue 2 (period start) unless it plays: the in-game sound set, then $8FFE7B with 5; cuetimer = its length
+StartSong2:		;SNES: start music cue 2 (period start) unless it plays: the in-game sound set, then $8FFE7B with 5; cuetimer = its length
 	lda.w cursong
 	cmp.w #$0002
 	beq .rtl
@@ -79,7 +79,7 @@ StartSong2:		;auto: CODE_89FBDF. SNES: start music cue 2 (period start) unless i
 	sta.w cuetimer
 .rtl:
 	rtl
-StartSong3:		;auto: CODE_89FC0B. SNES: start music cue 3 (third period, Gameloop by p3cue) unless it plays: the in-game sound set, then $8FFE7B with 6; cuetimer = its length
+StartSong3:		;SNES: start music cue 3 (third period, Gameloop by p3cue) unless it plays: the in-game sound set, then $8FFE7B with 6; cuetimer = its length
 	lda.w cursong
 	cmp.w #$0003
 	beq .rtl
@@ -97,7 +97,7 @@ StartSong3:		;auto: CODE_89FC0B. SNES: start music cue 3 (third period, Gameloop
 	sta.w cuetimer
 .rtl:
 	rtl
-StartSong4:		;auto: CODE_89FC37. SNES: start music cue 4 (no caller found) unless it plays: the in-game sound set, then $8FFE7B with 7; cuetimer = its length
+StartSong4:		;SNES: start music cue 4 (no caller found) unless it plays: the in-game sound set, then $8FFE7B with 7; cuetimer = its length
 	lda.w cursong
 	cmp.w #$0004
 	beq .rtl
@@ -115,7 +115,7 @@ StartSong4:		;auto: CODE_89FC37. SNES: start music cue 4 (no caller found) unles
 	sta.w cuetimer
 .rtl:
 	rtl
-StartSong5:		;auto: CODE_89FC63. SNES: start music cue 5 (mid-period) unless it plays: the in-game sound set, then $8FFE7B with 8; cuetimer = its length
+StartSong5:		;SNES: start music cue 5 (mid-period) unless it plays: the in-game sound set, then $8FFE7B with 8; cuetimer = its length
 	lda.w cursong
 	cmp.w #$0005
 	beq .rtl
@@ -133,7 +133,7 @@ StartSong5:		;auto: CODE_89FC63. SNES: start music cue 5 (mid-period) unless it 
 	sta.w cuetimer
 .rtl:
 	rtl
-CopyWords:		;auto: CODE_89FC8F. SNES: copy d0 bytes (words) from [d2] to [d1]
+CopyWords:		;SNES: copy d0 bytes (words) from [d2] to [d1]
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -164,7 +164,7 @@ CopyWords:		;auto: CODE_89FC8F. SNES: copy d0 bytes (words) from [d2] to [d1]
 	bpl .popd
 	ldx.b xsave
 	rtl
-EraseScoutName:		;auto: CODE_89FCC1. SNES: blank the 11 x 2 showcased player name area (ScoutNamePos, eraser)
+EraseScoutName:		;SNES: blank the 11 x 2 showcased player name area (ScoutNamePos, eraser)
 	jsl.l ScoutNamePos
 	lda.w #$000B
 	sta.b d0
@@ -173,7 +173,7 @@ EraseScoutName:		;auto: CODE_89FCC1. SNES: blank the 11 x 2 showcased player nam
 	lda.w blankchar
 	sta.b d2
 	jml.l eraser		; bank $8D: 92G eraser
-GetPlayerRecord:		;auto: CODE_89FCD8. SNES: a0 = roster record of player d0 of team a2 (tmdata: the player data, then name length + 8 bytes per player; 93G does it inline)
+GetPlayerRecord:		;SNES: a0 = roster record of player d0 of team a2 (tmdata: the player data, then name length + 8 bytes per player; 93G does it inline)
 	lda.w #TeamList>>16
 	sta.b a0+2
 	ldy.b a2
@@ -194,7 +194,7 @@ GetPlayerRecord:		;auto: CODE_89FCD8. SNES: a0 = roster record of player d0 of t
 	dec.b d0
 	bpl .next
 	rtl
-MesAreaDone:		;auto: CODE_89FCFD. SNES: end a string built in mesarea: length = a1 - mesarea, a1 = mesarea
+MesAreaDone:		;SNES: end a string built in mesarea: length = a1 - mesarea, a1 = mesarea
 	lda.b a1
 	sec
 	sbc.w #$0191
@@ -202,7 +202,7 @@ MesAreaDone:		;auto: CODE_89FCFD. SNES: end a string built in mesarea: length = 
 	lda.w #mesarea
 	sta.b a1
 	rtl
-StartGame:		;auto: CODE_89FD0C (from $8B8176). 93G StartGame (hockey93_01): reset the game state (gmode, offsides option, team stats, scores, gsp), restoreteams, then on to the period start
+StartGame:		;93G StartGame (hockey93_01): reset the game state (gmode, offsides option, team stats, scores, gsp), restoreteams, then on to the period start
 	stz.w gmode
 	lda.w OptPen		; OptPen 1: offsides on
 	cmp.w #1
@@ -218,7 +218,7 @@ StartGame:		;auto: CODE_89FD0C (from $8B8176). 93G StartGame (hockey93_01): rese
 	jsl.l InitScores		; bank $8F: 93G InitScores
 	jsl.l UpdateScores
 	jml.l StartPer		; bank $8D: on to the period start
-restoreteams:		;auto: CODE_89FD3A. 93G restoreteams (hockey93_01): both rosters to the bench: tmap 6, every tmpdst -2
+restoreteams:		;93G restoreteams (hockey93_01): both rosters to the bench: tmap 6, every tmpdst -2
 	stz.b a2
 	jsl.l .r
 	lda.w #$0002
@@ -243,7 +243,7 @@ restoreteams:		;auto: CODE_89FD3A. 93G restoreteams (hockey93_01): both rosters 
 	dec.b d0
 	bpl .pl
 	rtl
-EvadePC:		;auto: CODE_89FD6A (skateto avoidance routine). 93G EvadePC (logic93_3, the 92G form): within 40 of the puck carrier (after one frame of both velocities) d0 = direction away from him
+EvadePC:		;93G EvadePC (logic93_3, the 92G form): within 40 of the puck carrier (after one frame of both velocities) d0 = direction away from him
 	lda.w puckc
 	bmi .rtl
 	lda.w Xvel+1,x		; x after one frame, relative to the puck carrier
@@ -295,7 +295,7 @@ EvadePC:		;auto: CODE_89FD6A (skateto avoidance routine). 93G EvadePC (logic93_3
 	jml.l vtoa
 .rtl:
 	rtl
-asswingd:		;auto: CODE_89FDD6 (asstab 3). 93G asswingd (logic93_2): wing on defence: cover his side between the puck and the goal; awingo when the team gets the puck
+asswingd:		;asstab 3. 93G asswingd (logic93_2): wing on defence: cover his side between the puck and the goal; awingo when the team gets the puck
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rtl

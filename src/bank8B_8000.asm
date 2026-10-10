@@ -1,7 +1,7 @@
 ; $8B8000-$8B9002  ROM $58000-$59002: the 92G playoff code: NewPO, FigureJoy, Opening/Opening4, ReadPassBits, ResolveGames; then SpriteSet5
 ; (frame set 5: the falls), tiles continue to bank8B_F000.
 org $8B8000
-NewPO:		;auto: CODE_8B8000. 92G NewPO: new playoffs with the same team 1: random postarts whose playoffseats hold OptTeam1 (all-star teams count as team 23), clear the series, then maketree
+NewPO:		;92G NewPO: new playoffs with the same team 1: random postarts whose playoffseats hold OptTeam1 (all-star teams count as team 23), clear the series, then maketree
 	lda.w #32		; d0 = random 0-31
 	sta.b d0
 	jsl.l randomd0
@@ -61,7 +61,7 @@ NewPO:		;auto: CODE_8B8000. 92G NewPO: new playoffs with the same team 1: random
 	bpl .cg
 .n0:
 	jml.l maketree		; bank $8D: maketree
-FigureJoy:		;auto: CODE_8B807D. 92G FigureJoy: set cont1team/cont2team: in the playoffs from the po team's game (gamenum, OptTeam2, HomeTeam/VisTeam) and pojoy; else from OptPlayers. Not after the
+FigureJoy:		;92G FigureJoy: set cont1team/cont2team: in the playoffs from the po team's game (gamenum, OptTeam2, HomeTeam/VisTeam) and pojoy; else from OptPlayers. Not after the
 		;   demo (notdemo = 0)
 	stz.w cont1team
 	stz.w cont2team
@@ -166,13 +166,13 @@ FigureJoy:		;auto: CODE_8B807D. 92G FigureJoy: set cont1team/cont2team: in the p
 	dw 2,0
 	dw 1,1
 	dw 1,2
-Opening:		;auto: CODE_8B816A (from Start, $80C407). 92G Opening: TitleScreen, then Restart (93G Opening2: the setup screens)
+Opening:		;92G Opening: TitleScreen, then Restart (93G Opening2: the setup screens)
 	jsl.l TitleScreen
 	jml.l Restart
-Opening4:		;auto: CODE_8B8172 (from ContinuePlayoffs, far8B8172). 92G Opening4: ScoutingReport ($8FDC0D), then StartGame
+Opening4:		;92G Opening4: ScoutingReport ($8FDC0D), then StartGame
 	jsl.l ScoutingReport		; bank $8F: 93G ScoutingReport
 	jml.l StartGame
-ReadPassBits:		;auto: CODE_8B817A. 92G ReadPassBits: passbits back into the playoff state (SuperDiv by each range, the reverse of WritePassBits); a bad 9-bit checksum sets postarts -1
+ReadPassBits:		;92G ReadPassBits: passbits back into the playoff state (SuperDiv by each range, the reverse of WritePassBits); a bad 9-bit checksum sets postarts -1
 	lda.w #512		; checksum first (range 512)
 	sta.b d0
 	jsl.l SuperDiv
@@ -263,7 +263,7 @@ ReadPassBits:		;auto: CODE_8B817A. 92G ReadPassBits: passbits back into the play
 	adc.b d0
 	sta.b d7
 	rtl
-ResolveGames:		;auto: CODE_8B8253. 92G ResolveGames: the played game's score into its gstruct, wins for all series of the round; when the round is over (or single games) WinBits and gamelevel move on
+ResolveGames:		;92G ResolveGames: the played game's score into its gstruct, wins for all series of the round; when the round is over (or single games) WinBits and gamelevel move on
 	lda.w gamenum
 	asl a
 	sta.b d0

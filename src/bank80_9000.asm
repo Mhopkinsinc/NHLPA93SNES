@@ -2,7 +2,7 @@
 ; assfaceoff, assexit, assfaceoffp1 (logic93_2/4/5), randomd0, puck logic pucknorm with findpc, divs, a2touchpuck, a2offsides,
 ; GetHot, puckIChk, ChkOffsides (logic93_4/5), and the puck/player collision checkpuckcoll, puckstick, puckglue (hockey93_04/05).
 org $80910F
-asspassrec:		;auto: asstab $13. 93G asspassrec (logic93_4 IDA loc_BFC6): assignment for catching a pass
+asspassrec:		;asstab $13. 93G asspassrec (logic93_4 IDA loc_BFC6): assignment for catching a pass
 	lda.w pfalock,x
 	bne .rts		; locked
 	lda.w gmclock		; clock stopped
@@ -37,7 +37,7 @@ asspassrec:		;auto: asstab $13. 93G asspassrec (logic93_4 IDA loc_BFC6): assignm
 	jmp.w assexit
 .rts:
 	rtl
-assfight:		;auto: asstab $14. 93G assfight (logic93_2): fighting logic for player X. The SNES drops the 93G banner call and keeps the fighters inside x +-$6F
+assfight:		;asstab $14. 93G assfight (logic93_2): fighting logic for player X. The SNES drops the 93G banner call and keeps the fighters inside x +-$6F
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rts
@@ -264,7 +264,7 @@ assfight:		;auto: asstab $14. 93G assfight (logic93_2): fighting logic for playe
 	rtl
 .al:		;93G .al: punch animations SPAfhigh, SPAflow, SPAfgrab
 	dw SPAfhigh,SPAflow,SPAfgrab
-chkhit:		;auto: CODE_809330. 93G chkhit (logic93_2): part of the fight, is player X hit by opponent a0?
+chkhit:		;93G chkhit (logic93_2): part of the fight, is player X hit by opponent a0?
 	stx.b xsave
 	ldx.w #$0000
 .pushd:		;movem d0/a0-a3 to the stack
@@ -332,7 +332,7 @@ chkhit:		;auto: CODE_809330. 93G chkhit (logic93_2): part of the fight, is playe
 	beq .grab
 	cmp.w #SPFfight+4+5
 	beq .grab
-.ex:		;auto: CODE_8093B8. 93G chkhit .ex: movem the registers back (global: CwdFight/FightFall paths jump here)
+.ex:		;93G chkhit .ex: movem the registers back (global: CwdFight/FightFall paths jump here)
 	stx.b xsave
 	ldx.w #$000E
 .popa:
@@ -353,7 +353,7 @@ chkhit:		;auto: CODE_809330. 93G chkhit (logic93_2): part of the fight, is playe
 	ldx.b xsave
 	ldx.b a3		; X = a3 again
 	rtl
-.dropped:		;auto: CODE_8093D7. 93G chkhit .dropped: gloves dropped, glovecords from xc1/yc1 (x clamped +-90)
+.dropped:		;93G chkhit .dropped: gloves dropped, glovecords from xc1/yc1 (x clamped +-90)
 	lda.w pflags,x
 	and.w #~pf2npc&$FFFF		; clear pf2npc: gloves dropped
 	sta.w pflags,x
@@ -442,7 +442,7 @@ chkhit:		;auto: CODE_809330. 93G chkhit (logic93_2): part of the fight, is playe
 	pha
 	jsl.l sfx
 	jmp.w .ex
-CwdFight:		;auto: CODE_809493. 93G chkhit .cwd (IDA CwdFight): crowd reacts to a punch; push the hit player X back by the puncher (a0) strength
+CwdFight:		;93G chkhit .cwd (IDA CwdFight): crowd reacts to a punch; push the hit player X back by the puncher (a0) strength
 	ldy.b a0
 	lda.b crowdlevel
 	clc
@@ -469,7 +469,7 @@ CwdFight:		;auto: CODE_809493. 93G chkhit .cwd (IDA CwdFight): crowd reacts to a
 	adc.b d0
 	sta.w Xvel,x
 	rtl
-FightFall:		;auto: CODE_8094CB. 93G chkhit .fall (IDA FightFall): X lost the fight: the a0 player gets PenFighting, maybe X is injured
+FightFall:		;93G chkhit .fall (IDA FightFall): X lost the fight: the a0 player gets PenFighting, maybe X is injured
 	lda.b a1+2		; push a1
 	pha
 	lda.b a1
@@ -561,7 +561,7 @@ FightFall:		;auto: CODE_8094CB. 93G chkhit .fall (IDA FightFall): X lost the fig
 .snd:
 	jsl.l sfx
 	jmp.w chkhit_ex
-assfwatch:		;auto: asstab $15. 93G assfwatch (logic93_2): for a player watching a fight: skate to a spot 80 pixels from the fight
+assfwatch:		;asstab $15. 93G assfwatch (logic93_2): for a player watching a fight: skate to a spot 80 pixels from the fight
 	lda.w pfalock,x
 	beq .joy
 	jmp.w .rts
@@ -696,7 +696,7 @@ assfwatch:		;auto: asstab $15. 93G assfwatch (logic93_2): for a player watching 
 	jmp.w check4check
 .rts:
 	rtl
-assfaceoff:		;auto: asstab $16. 93G assfaceoff (logic93_2): players do nothing until the faceoff is over. SNES: also starts the goal / period / mid-period music cues
+assfaceoff:		;asstab $16. 93G assfaceoff (logic93_2): players do nothing until the faceoff is over. SNES: also starts the goal / period / mid-period music cues
 	lda.w pfalock,x
 	bne .rts
 	lda.w sflags
@@ -731,7 +731,7 @@ assfaceoff:		;auto: asstab $16. 93G assfaceoff (logic93_2): players do nothing u
 	jsl.l StartSong5		; bank $89: mid-period music cue
 .rts:
 	rtl
-assexit:		;auto: CODE_8096F9. 93G assexit (logic93_5): exit the current assignment of player X
+assexit:		;93G assexit (logic93_5): exit the current assignment of player X
 	lda.w assnum,x
 	inc a		; next assignment
 	and.w #$0007
@@ -740,7 +740,7 @@ assexit:		;auto: CODE_8096F9. 93G assexit (logic93_5): exit the current assignme
 	ora.w #pfna		; pfna
 	sta.w pflags,x
 	rtl
-assfaceoffp1:		;auto: asstab $17. 93G assfaceoffp1 (logic93_2): assignment for the players taking the faceoff
+assfaceoffp1:		;asstab $17. 93G assfaceoffp1 (logic93_2): assignment for the players taking the faceoff
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rts
@@ -809,12 +809,12 @@ assfaceoffp1:		;auto: asstab $17. 93G assfaceoffp1 (logic93_2): assignment for t
 	lda.w #$0014		; nopuck = 20
 	sta.w nopuck,x
 	jmp.w assexit
-randomd0:		;auto: CODE_8097A3. 93G randomd0: d0 = random 0..d0-1 (via randoma)
+randomd0:		;93G randomd0: d0 = random 0..d0-1 (via randoma)
 	lda.b d0
 	jsl.l randoma
 	sta.b d0
 	rtl
-pucknorm:		;auto: asstab $18. 93G pucknorm (logic93_4): assignment for the puck most of the time. X = puck, d7 = elapsed frames
+pucknorm:		;asstab $18. 93G pucknorm (logic93_4): assignment for the puck most of the time. X = puck, d7 = elapsed frames
 	lda.w #pfna
 	trb.w pflags+puckobj		; pfna
 	beq .nna
@@ -912,7 +912,7 @@ pucknorm:		;auto: asstab $18. 93G pucknorm (logic93_4): assignment for the puck 
 .flat:
 	jsl.l pucknothing		; pucknothing: stop spinning
 	jmp.w checkpuckcoll		; 93G bra checkpuckcoll
-findpc:		;auto: CODE_80988A. 93G findpc (logic93_5): when and where will the puck cross each goal line
+findpc:		;93G findpc (logic93_5): when and where will the puck cross each goal line
 	stx.b xsave
 	ldx.w #$0000
 .push:
@@ -941,7 +941,7 @@ findpc:		;auto: CODE_80988A. 93G findpc (logic93_5): when and where will the puc
 	bpl .pop
 	ldx.b xsave
 	rtl
-findpc_calc:		;auto: CODE_8098C2. 93G findpc .calc: d4 = goal line y, Y = puckcross entry offset
+findpc_calc:		;93G findpc .calc: d4 = goal line y, Y = puckcross entry offset
 	lda.b d4		; d0 = line - pucky
 	sec
 	sbc.w pucky
@@ -1032,7 +1032,7 @@ findpc_calc:		;auto: CODE_8098C2. 93G findpc .calc: d4 = goal line y, Y = puckcr
 	sta.w puckcross+2,y
 .rtl:
 	rtl
-divs:		;auto: CODE_80996C. 68k divs: A = mulres = mulb (32-bit) / mula, signed 16-bit quotient. C clear
+divs:		;68k divs: A = mulres = mulb (32-bit) / mula, signed 16-bit quotient. C clear
 	stz.b mulsign		; mulsign = number of negative operands
 	lda.b mula
 	bpl .apos
@@ -1082,7 +1082,7 @@ divs:		;auto: CODE_80996C. 68k divs: A = mulres = mulb (32-bit) / mula, signed 1
 	lda.b mulres
 	clc
 	rtl
-a2touchpuck:		;auto: CODE_8099C7. 93G a2touchpuck (logic93_5): player a2 touches the puck: last touch, offsides, icing
+a2touchpuck:		;93G a2touchpuck (logic93_5): player a2 touches the puck: last touch, offsides, icing
 	ldy.b a2
 	lda.w Xpos,y
 	sta.w ltx		; ltx/lty/ltplayer
@@ -1137,7 +1137,7 @@ a2touchpuck:		;auto: CODE_8099C7. 93G a2touchpuck (logic93_5): player a2 touches
 	bne .up
 	lda.w pfgoal,y
 	beq .notice
-.icing:		;auto: CODE_809A48. 93G a2touchpuck .icing: icing on icingPlayer
+.icing:		;93G a2touchpuck .icing: icing on icingPlayer
 	phx
 	lda.w iflags+1		; X = icingPlayer
 	and.w #$00FF
@@ -1149,12 +1149,12 @@ a2touchpuck:		;auto: CODE_8099C7. 93G a2touchpuck (logic93_5): player a2 touches
 	jsl.l AddPenalty		; AddPenalty
 	plx
 	stx.b a3
-.rtl:		;auto: CODE_809A5F
+.rtl:
 	rtl
 .up:
 	lda.w pfgoal,y
 	beq .icing
-.notice:		;auto: CODE_809A65. 93G a2touchpuck .notice: start a new icing watch for player a2
+.notice:		;93G a2touchpuck .notice: start a new icing watch for player a2
 	tya
 	lsr a
 	xba
@@ -1188,7 +1188,7 @@ a2touchpuck:		;auto: CODE_8099C7. 93G a2touchpuck (logic93_5): player a2 touches
 	lda.w #ifok		; ifok
 	tsb.w iflags
 	rtl
-a2offsides:		;auto: CODE_809AA8. 93G a2offsides (logic93_5): player a2 touched the puck: offsides if his team is flagged and the puck is past the blue line
+a2offsides:		;93G a2offsides (logic93_5): player a2 touched the puck: offsides if his team is flagged and the puck is past the blue line
 	ldy.b a2
 	lda.w gmode
 	bit.w #gmoffs
@@ -1237,7 +1237,7 @@ a2offsides:		;auto: CODE_809AA8. 93G a2offsides (logic93_5): player a2 touched t
 	sty.b a2
 .rtl:
 	rtl
-GetHot:		;auto: CODE_809B0A. 93G GetHot (logic93_5): A = object index; d0/d1 = its hot spot x/y from HotList (bank84_F000, a byte pair per frame)
+GetHot:		;93G GetHot (logic93_5): A = object index; d0/d1 = its hot spot x/y from HotList (bank84_F000, a byte pair per frame)
 	phx
 	tay
 	stz.b d0
@@ -1294,7 +1294,7 @@ GetHot:		;auto: CODE_809B0A. 93G GetHot (logic93_5): A = object index; d0/d1 = i
 .ex:
 	plx
 	rtl
-puckIChk:		;auto: CODE_809B7A. 93G puckIChk (logic93_5): check for icing. Called from pucknorm
+puckIChk:		;93G puckIChk (logic93_5): check for icing. Called from pucknorm
 	lda.w iflags
 	bit.w #ifok		; ifok and not ifcgl, puck loose
 	beq .rtl
@@ -1332,7 +1332,7 @@ puckIChk:		;auto: CODE_809B7A. 93G puckIChk (logic93_5): check for icing. Called
 	lda.w #ifcgl		; ifcgl
 	tsb.w iflags
 	rtl
-ChkOffsides:		;auto: CODE_809BC3. 93G ChkOffsides (logic93_5): flag a team offsides when the puck crosses its blue line. Called from pucknorm
+ChkOffsides:		;93G ChkOffsides (logic93_5): flag a team offsides when the puck crosses its blue line. Called from pucknorm
 	lda.w gmode
 	bit.w #gmoffs
 	beq .rtl
@@ -1397,7 +1397,7 @@ ChkOffsides:		;auto: CODE_809BC3. 93G ChkOffsides (logic93_5): flag a team offsi
 	lda.w tmflags,y
 	ora.w #tmfoffside		; tmfoffside
 	sta.w tmflags,y
-.rtl:		;auto: CODE_809C46 (also the exit of ClearOffsidesIfAllPlayers)
+.rtl:
 	rtl
 .n0:
 	inc.b a0
@@ -1469,7 +1469,7 @@ ChkOffsides:		;auto: CODE_809BC3. 93G ChkOffsides (logic93_5): flag a team offsi
 	dec.b d2
 	bpl .l2
 	rtl
-ClearOffsidesIfAllPlayers:		;auto: CODE_809CC2. 93G ClearOffsidesIfAllPlayers (logic93_5): a2 = team; clear tmfoffside once no skater is past the blue line
+ClearOffsidesIfAllPlayers:		;93G ClearOffsidesIfAllPlayers (logic93_5): a2 = team; clear tmfoffside once no skater is past the blue line
 	ldy.b a2
 	lda.w tmflags,y		; tmfoffside
 	bit.w #tmfoffside
@@ -1513,7 +1513,7 @@ ClearOffsidesIfAllPlayers:		;auto: CODE_809CC2. 93G ClearOffsidesIfAllPlayers (l
 	and.w #~tmfoffside&$FFFF		; clear tmfoffside
 	sta.w tmflags,y
 	rtl
-checkpuckcoll:		;auto: CODE_809D17. 93G checkpuckcoll (hockey93_04): puck collision with the players within 22 in y (OOlist up and down from the puck)
+checkpuckcoll:		;93G checkpuckcoll (hockey93_04): puck collision with the players within 22 in y (OOlist up and down from the puck)
 	lda.w Zpos+puckobj		; puck feet in the air (Zpos > 16): no collision
 	sec
 	sbc.w #$0010
@@ -1576,7 +1576,7 @@ checkpuckcoll:		;auto: CODE_809D17. 93G checkpuckcoll (hockey93_04): puck collis
 	bne .dn
 .rtl:
 	rtl
-checkpuckcoll_ccx:		;auto: CODE_809D8A. 93G checkpuckcoll .ccx: d4 = object index: stick (puckstick), body (puckbody) or goalie (puckgoalie) contact
+checkpuckcoll_ccx:		;93G checkpuckcoll .ccx: d4 = object index: stick (puckstick), body (puckbody) or goalie (puckgoalie) contact
 	stx.b xsave
 	ldx.w #$0000
 .push:
@@ -1774,7 +1774,7 @@ checkpuckcoll_ccx:		;auto: CODE_809D8A. 93G checkpuckcoll .ccx: d4 = object inde
 	bcs .exit
 	jsl.l puckgoalie
 	bra .exit
-puckstick:		;auto: CODE_809F15. 93G puckstick (hockey93_05): puck hits the stick of player a2. d0 = distance^2 (from checkpuckcoll_ccx)
+puckstick:		;93G puckstick (hockey93_05): puck hits the stick of player a2. d0 = distance^2 (from checkpuckcoll_ccx)
 	ldy.b a2
 	lda.w position,y
 	bne .p0
@@ -1939,7 +1939,7 @@ puckstick:		;auto: CODE_809F15. 93G puckstick (hockey93_05): puck hits the stick
 	lda.w #$0008		; too fast: nopuck 8, deflect
 	sta.w nopuck,y
 	jmp.w .stdef
-puckglue:		;auto: CODE_80A07D. 93G puckglue (hockey93_05 IDA loc_10F8A): player a2 takes the puck. Falls into setd0player (bank $8D)
+puckglue:		;93G puckglue (hockey93_05 IDA loc_10F8A): player a2 takes the puck. Falls into setd0player (bank $8D)
 	lda.w seed+2		; pickup sound (one of 4)
 	and.w #$0003
 	clc

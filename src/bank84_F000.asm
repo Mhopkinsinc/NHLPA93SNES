@@ -7,7 +7,7 @@ HotList:		;93G HotList: hot spot (stick blade) x, y bytes for every sprite frame
 RinkLogoTiles:		;SNES: packed rink logo tiles (14 tiles, $1C0 bytes unpacked), sent to vram after FaceOffTiles by setupice. Kept in data/HotList.bin after the hot spots
 	incbin "../data/HotList.bin":$44A..$5F6		; $84F386-$84F531
 RinkLogoTilesEnd:
-UpdateScoutingDisplay:		;auto: CODE_84F532. 93G UpdateScoutingDisplay (hockey93_07): when ScoutingReportTimer runs out (at once with asv), print the next word of ScoutingReportText. ~ { } [ ] print
+UpdateScoutingDisplay:		;93G UpdateScoutingDisplay (hockey93_07): when ScoutingReportTimer runs out (at once with asv), print the next word of ScoutingReportText. ~ { } [ ] print
 		;   a team or goalie name
 	lda.w ScoutingReportTimer		; text finished ($7FFF)
 	sec
@@ -266,7 +266,7 @@ UpdateScoutingDisplay:		;auto: CODE_84F532. 93G UpdateScoutingDisplay (hockey93_
 .pad:
 	dec.b d1
 	jmp.w .print
-ScrollDisplayUp:		;auto: CODE_84F734. 93G ScrollDisplayUp (hockey93_07): next text line (column 0); after line 7 move the text box up one row ($89FC8F copies 8 textmap rows)
+ScrollDisplayUp:		;93G ScrollDisplayUp (hockey93_07): next text line (column 0); after line 7 move the text box up one row ($89FC8F copies 8 textmap rows)
 	stz.w DispAttribCtr
 	inc.w VertLineScrolling
 	lda.w VertLineScrolling
@@ -324,7 +324,7 @@ ScrollDisplayUp:		;auto: CODE_84F734. 93G ScrollDisplayUp (hockey93_07): next te
 	rtl
 PlayoffTiles:		;packed playoff screen palette and tiles (decompressor $86FA3E): 128 colours, then 6 tiles; PlayoffScreen sends them to vram $1000
 	incbin "../data/PlayoffTiles.chr.pak"		; $84F79D-$84F815
-InitSortObjects:		;auto: CODE_84F816. SNES: clear the sort objects, then set the 4 sso arrows, the 5 ffo objects and the 16 sort objects from SsoInitTable, FfoInitTable and SortObjInitTable; then
+InitSortObjects:		;SNES: clear the sort objects, then set the 4 sso arrows, the 5 ffo objects and the 16 sort objects from SsoInitTable, FfoInitTable and SortObjInitTable; then
 		;   SprSort
 	ldx.w #$0000		; SortCords (all fields of the 16 objects)
 .clr:
@@ -490,7 +490,7 @@ SortObjInitTable:		;SNES: 16 x (Xpos, Ypos, Zpos, frame, attribute, radiusx, rad
 	dw $0000,$FEF4,$0000,$0195,$0000,$0014,$0006,$0000,$0000
 	dw $0000,$0000,$0000,$018A,$0000,$0005,$0005,$0018,$0001
 	dw $0000,$0000,$0000,$0189,$0000,$0003,$0003,$0019,$0000
-Readjoy12:		;auto: CODE_84FAD2. SNES: Readjoy1 and Readjoy2, d1 = the new presses of both pads
+Readjoy12:		;SNES: Readjoy1 and Readjoy2, d1 = the new presses of both pads
 	jsl.l Readjoy1		; pad 1 or pad 2
 	lda.b d1
 	pha
@@ -499,7 +499,7 @@ Readjoy12:		;auto: CODE_84FAD2. SNES: Readjoy1 and Readjoy2, d1 = the new presse
 	ora.b d1
 	sta.b d1
 	rtl
-DisplayStats:		;auto: CODE_84FAE3. 92G DisplayStats (penalty.asm): the STATS page of the pause menu: Shots, Power Play, Penalties, Body Checks (92G Fights Won), AttackZone for both teams
+DisplayStats:		;92G DisplayStats (penalty.asm): the STATS page of the pause menu: Shots, Power Play, Penalties, Body Checks (92G Fights Won), AttackZone for both teams
 	jsl.l printz8B
 	dw $000A		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$0B,$02,"STATS"
@@ -618,7 +618,7 @@ DisplayStats:		;auto: CODE_84FAE3. 92G DisplayStats (penalty.asm): the STATS pag
 	jml.l print
 DisplayStats_sslist:		;92G .sslist: stat, second stat (-1 = none)
 	dw tmshots,-1, tmPwrGoals,tmPwrPlays, tmPenalties,tmPenmin, tmchecks,-1, -1,-1
-GetNameandAttrib:		;auto: CODE_84FC44. 93G GetNameandAttrib (stats93): print player d0 (number and name), then at x 26 the column d4 (attribjmp); columns above 2 average the rating nibbles masked by
+GetNameandAttrib:		;93G GetNameandAttrib (stats93): print player d0 (number and name), then at x 26 the column d4 (attribjmp); columns above 2 average the rating nibbles masked by
 		;   d4 high word
 	stx.b xsave
 	ldx.w #$0000
@@ -764,7 +764,7 @@ GetNameandAttrib:		;auto: CODE_84FC44. 93G GetNameandAttrib (stats93): print pla
 	rtl
 attribjmp:		;93G attribjmp: GetNameandAttrib column handlers, offsets from attribjmp
 	dw AttribStatus-attribjmp,AttribEnergy-attribjmp,AttribHanded-attribjmp,AttribWeight-attribjmp,AttribFighting-attribjmp,AttribRating-attribjmp
-AttribStatus:		;auto: CODE_84FD55. 93G AttribStatus: tmpdst of player d0: Ice/Bench/Injury, or the penalty time (injured: Inj G, $4000: C)
+AttribStatus:		;93G AttribStatus: tmpdst of player d0: Ice/Bench/Injury, or the penalty time (injured: Inj G, $4000: C)
 	asl.b d0
 	lda.b a2
 	beq .tm
@@ -822,7 +822,7 @@ StatusTextTbl:		;93G StatusTextTbl: AttribStatus strings
 	%String("Inj G ")
 	%String("  ")
 	%String(" C")
-AttribEnergy:		;auto: CODE_84FDEE. 93G AttribEnergy: tmpde of player d0 / 40, max 100
+AttribEnergy:		;93G AttribEnergy: tmpde of player d0 / 40, max 100
 	asl.b d0
 	lda.b a2
 	beq .tm
@@ -841,12 +841,12 @@ AttribEnergy:		;auto: CODE_84FDEE. 93G AttribEnergy: tmpde of player d0 / 40, ma
 .pr:
 	sta.b d0
 	bra AttribPrintPct
-AttribFighting:		;auto: CODE_84FE14. 93G AttribFighting: bit 0 of the nibble is handedness, only bits 1-3 count
+AttribFighting:		;93G AttribFighting: bit 0 of the nibble is handedness, only bits 1-3 count
 	lda.b d0
 	and.w #$000E
 	sta.b d0
 	dec.b d1
-AttribRating:		;auto: CODE_84FE1D. 93G AttribRating: sum d0 of d1/15 ratings as a percentage
+AttribRating:		;93G AttribRating: sum d0 of d1/15 ratings as a percentage
 	lda.w #$0064
 	sta.b mula
 	lda.b d0
@@ -856,7 +856,7 @@ AttribRating:		;auto: CODE_84FE1D. 93G AttribRating: sum d0 of d1/15 ratings as 
 	sta.b mula
 	jsl.l divu
 	sta.b d0
-AttribPrintPct:		;auto: CODE_84FE34. 93G AttribPrintPct: print d0 4 wide plus padding
+AttribPrintPct:		;93G AttribPrintPct: print d0 4 wide plus padding
 	lda.w #$0004
 	sta.b d1
 	jsl.l PushNumberWidth		; bank $8F: 93G PushNumberWidth
@@ -865,7 +865,7 @@ AttribPrintPct:		;auto: CODE_84FE34. 93G AttribPrintPct: print d0 4 wide plus pa
 	dw $0004		; printz inline string: length (counts itself), then control bytes / text
 	db "  "
 	rtl
-AttribHanded:		;auto: CODE_84FE4A. 93G AttribHanded: bit 0 of the sum
+AttribHanded:		;93G AttribHanded: bit 0 of the sum
 	lda.b d0
 	and.w #$0001
 	sta.b d0
@@ -877,7 +877,7 @@ AttribHanded:		;auto: CODE_84FE4A. 93G AttribHanded: bit 0 of the sum
 HandedTextTbl:		;93G HandedTextTbl: AttribHanded strings (93G Righty, Lefty)
 	%String("Right ")
 	%String("Left  ")
-AttribWeight:		;auto: CODE_84FE6F. 93G AttribWeight: 140 + 8 * rating lb
+AttribWeight:		;93G AttribWeight: 140 + 8 * rating lb
 	lda.b d0
 	asl a
 	asl a

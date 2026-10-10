@@ -3,7 +3,7 @@
 ; and SNES helpers: the SPC700 uploads and the sound queue, muls32, textmap dirty marks, inline string far calls, trampolines.
 ; Starts after the packed rink tiles (boundary moved from $82F000). Ends with $FF fill.
 org $82F93C
-SetPA2:		;auto: CODE_82F93C. 93G SetPA2 (penalty93_1): next frame/delay pair of the ref animation from the PenaltyList entry of RefPen. A negative pair is the last one (RefStep = -1). RefCnt =
+SetPA2:		;93G SetPA2 (penalty93_1): next frame/delay pair of the ref animation from the PenaltyList entry of RefPen. A negative pair is the last one (RefStep = -1). RefCnt =
 		;   delay*8, then PushRef
 	phx
 	stx.b xsave
@@ -86,7 +86,7 @@ SetPA2:		;auto: CODE_82F93C. 93G SetPA2 (penalty93_1): next frame/delay pair of 
 	ldx.b xsave
 	plx
 	rtl
-UpdateScores:		;auto: CODE_82F9D1. 93G UpdateScores (penalty93_2): update the ticker scores of the other playoff games (not gamenum, not over)
+UpdateScores:		;93G UpdateScores (penalty93_2): update the ticker scores of the other playoff games (not gamenum, not over)
 	jsl.l GetShifter		; GetShifter: d1 = games - 1
 	lda.b d1
 	sta.w TickerNum
@@ -109,7 +109,7 @@ UpdateScores:		;auto: CODE_82F9D1. 93G UpdateScores (penalty93_2): update the ti
 	dec.b d1
 	bpl .top
 	rtl
-BitstoPW:		;auto: CODE_82FA01. 92G BitstoPW: convert passbits into the 16 password characters (SuperDiv by PWrange)
+BitstoPW:		;92G BitstoPW: convert passbits into the 16 password characters (SuperDiv by PWrange)
 	ldx.w #$000F
 .zero:
 	lda.w #PWrange		; PassWord[x] = passbits mod PWrange
@@ -122,7 +122,7 @@ BitstoPW:		;auto: CODE_82FA01. 92G BitstoPW: convert passbits into the 16 passwo
 	dex
 	bpl .zero
 	rtl
-sndqreset:		;auto: CODE_82FA1A. SNES: empty the sound command queue and the music cue
+sndqreset:		;SNES: empty the sound command queue and the music cue
 	lda.w #$0001		; sndlock while the queue is reset; cuetimer = 0
 	sta.b sndlock
 	stz.w cursong
@@ -133,7 +133,7 @@ sndqreset:		;auto: CODE_82FA1A. SNES: empty the sound command queue and the musi
 	sta.b sndqin
 	stz.b sndlock
 	rtl
-SPCBootUpload:		;auto: CODE_82FA31. SNES: wait for the queue and a vblank, then send the boot stream at $868000 (driver and its samples, sndbank 2)
+SPCBootUpload:		;SNES: wait for the queue and a vblank, then send the boot stream at $868000 (driver and its samples, sndbank 2)
 	phy
 	phx
 	pha
@@ -174,7 +174,7 @@ SPCBootUpload:		;auto: CODE_82FA31. SNES: wait for the queue and a vblank, then 
 	plx
 	ply
 	rtl
-SPCGameUpload:		;auto: CODE_82FA7A. SNES: wait for the queue and 6 frames, then send the in-game sample set GameSoundUpload ($818000, sndbank 1)
+SPCGameUpload:		;SNES: wait for the queue and 6 frames, then send the in-game sample set GameSoundUpload ($818000, sndbank 1)
 	phy
 	phx
 	pha
@@ -207,7 +207,7 @@ SPCGameUpload:		;auto: CODE_82FA7A. SNES: wait for the queue and 6 frames, then 
 	plx
 	ply
 	rtl
-SPCUpload:		;auto: CODE_82FAB9. SNES: send the upload stream at [sndptr] to the SPC700 boot ROM (IPL protocol on APUIO0-3): blocks of length, APU address, data; NMI off while it runs
+SPCUpload:		;SNES: send the upload stream at [sndptr] to the SPC700 boot ROM (IPL protocol on APUIO0-3): blocks of length, APU address, data; NMI off while it runs
 	stz.w cursong
 	sep #$20
 	stz.w NMITIMEN		; NMI off; vbactive; queue empty; APUIO0 = $F8
@@ -313,7 +313,7 @@ SPCUpload:		;auto: CODE_82FAB9. SNES: send the upload stream at [sndptr] to the 
 	stz.w APUIO0
 	stz.b vbactive
 	rtl
-QueueSound:		;auto: CODE_82FB79. SNES: queue sound command A (sfx/song number) for the SPC. Dropped while a music cue runs; sounds below $A2 need the in-game set (SPCGameUpload first)
+QueueSound:		;SNES: queue sound command A (sfx/song number) for the SPC. Dropped while a music cue runs; sounds below $A2 need the in-game set (SPCGameUpload first)
 	phx		; cuetimer running: drop it
 	ldx.w cuetimer
 	bne .ex
@@ -342,7 +342,7 @@ QueueSound:		;auto: CODE_82FB79. SNES: queue sound command A (sfx/song number) f
 	rtl
 PasstoText:		;92G PasstoText: characters used in the password text (PWrange = 30, the 31st is the blank)
 	db "BCDFGHJKLMNPRSTVWXYZ0123456789-"
-PWtoBits:		;auto: CODE_82FBC5. 92G PWtoBits: convert the password text into passbits (ClrPassBits, then SuperMult by PWrange and SuperAdd per character)
+PWtoBits:		;92G PWtoBits: convert the password text into passbits (ClrPassBits, then SuperMult by PWrange and SuperAdd per character)
 	jsl.l ClrPassBits
 	ldx.w #$0000
 .zero:
@@ -358,7 +358,7 @@ PWtoBits:		;auto: CODE_82FBC5. 92G PWtoBits: convert the password text into pass
 	cpx.w #pwlength
 	bne .zero
 	rtl
-ClrPassBits:		;auto: CODE_82FBEA. 92G ClrPassBits: clear passbits
+ClrPassBits:		;92G ClrPassBits: clear passbits
 	stz.w passbits
 	stz.w passbits+2
 	stz.w passbits+4
@@ -368,7 +368,7 @@ ClrPassBits:		;auto: CODE_82FBEA. 92G ClrPassBits: clear passbits
 	stz.w passbits+12
 	stz.w passbits+14
 	rtl
-PushBits:		;auto: CODE_82FC03. 93G PushBits (hockey93_09, IDA EncodeValueToPassword): passbits = passbits * d1 + d0
+PushBits:		;93G PushBits (hockey93_09, IDA EncodeValueToPassword): passbits = passbits * d1 + d0
 	stx.b xsave
 	ldx.w #$0000
 .push:
@@ -401,7 +401,7 @@ PushBits:		;auto: CODE_82FC03. 93G PushBits (hockey93_09, IDA EncodeValueToPassw
 BitMaskTable:		;SNES: the 16 bit masks 1 << n (read by the playoff bit code in bank $8B)
 	dw $0001,$0002,$0004,$0008,$0010,$0020,$0040,$0080
 	dw $0100,$0200,$0400,$0800,$1000,$2000,$4000,$8000
-ContinuePlayoffs:		;auto: CODE_82FC59. SNES: after a game: EncodePW and PlayoffScreen; when the playoffs go on with a user game (OptPlayMode 1, gamenum set) DecodePW the new password and maketree
+ContinuePlayoffs:		;SNES: after a game: EncodePW and PlayoffScreen; when the playoffs go on with a user game (OptPlayMode 1, gamenum set) DecodePW the new password and maketree
 		;   (sf3alttree picks the path); else back to $83FA87
 	jsl.l EncodePW		; bank $88
 	jsl.l PlayoffScreen		; bank $88: 93G PlayoffScreen (font tile bases, the playoff tree)
@@ -425,7 +425,7 @@ ContinuePlayoffs:		;auto: CODE_82FC59. SNES: after a game: EncodePW and PlayoffS
 	jml.l far8B8172
 .tree:
 	jml.l Opening4		; bank $8B
-far8DF888:		;auto: CODE_82FC97. SNES: save d0-d7 and a0-a6 on the stack and go on at $8DF888 (it pulls them back)
+far8DF888:		;SNES: save d0-d7 and a0-a6 on the stack and go on at $8DF888 (it pulls them back)
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -449,7 +449,7 @@ far8DF888:		;auto: CODE_82FC97. SNES: save d0-d7 and a0-a6 on the stack and go o
 	jml.l StartHL2		; bank $8D (pulls the saved registers)
 PixelRemap8D:		;SNES: 4bpp pixel value remap for BigFontTiles (setupice via $8FE0E4): colour 0 -> 7, the rest unchanged
 	db $07,$01,$02,$03,$04,$05,$06,$07,$08,$09,$0A,$0B,$0C,$0D,$0E,$0F
-marktextlo:		;auto: CODE_82FCCD. SNES: textdirtylo = min(textdirtylo, A)
+marktextlo:		;SNES: textdirtylo = min(textdirtylo, A)
 	cmp.b textdirtylo
 	bcs .rtl
 	sta.b textdirtylo
@@ -457,7 +457,7 @@ marktextlo:		;auto: CODE_82FCCD. SNES: textdirtylo = min(textdirtylo, A)
 	rtl
 PixelRemap83:		;SNES: 4bpp pixel value remap for SmallFontTiles (setupice, $83F990, PlayoffScreen via $8FE0E4). Only colours 0-6 occur: entries 7-15 would read the next bytes (muls32)
 	db $04,$03,$04,$03,$02,$01,$04
-muls32:		;auto: CODE_82FCDB. 68k muls.w with a 32-bit result: A/mulres = low word, mulres+2 = high word of mula*mulb (signs folded around mulu $888942)
+muls32:		;68k muls.w with a 32-bit result: A/mulres = low word, mulres+2 = high word of mula*mulb (signs folded around mulu $888942)
 	stz.b mulneg		; mulneg = number of negative operands
 	lda.b mula
 	bpl .b
@@ -490,7 +490,7 @@ muls32:		;auto: CODE_82FCDB. 68k muls.w with a 32-bit result: A/mulres = low wor
 	clc
 .rtl:
 	rtl
-addframe_hi:		;auto: CODE_82FD17. SNES addframe path for sprframe >= $293: find the frame set in the table at $8FE67D (sprframe -= set size, sprsetofs += set offset) and draw it ($85FBB9); lower
+addframe_hi:		;SNES addframe path for sprframe >= $293: find the frame set in the table at $8FE67D (sprframe -= set size, sprsetofs += set offset) and draw it ($85FBB9); lower
 		;   frames go to $87D1FE
 	lda.b sprframe
 	cmp.w #$0293
@@ -523,7 +523,7 @@ addframe_hi:		;auto: CODE_82FD17. SNES addframe path for sprframe >= $293: find 
 	inx
 	inx
 	bra .find
-revplayeracc:		;auto: CODE_82FD54. SNES: playeracc with the direction d2 turned 180 degrees for a reversed player (pfrev)
+revplayeracc:		;SNES: playeracc with the direction d2 turned 180 degrees for a reversed player (pfrev)
 	lda.w pfrev,x
 	beq .acc
 	lda.b d2
@@ -531,13 +531,13 @@ revplayeracc:		;auto: CODE_82FD54. SNES: playeracc with the direction d2 turned 
 	sta.b d2
 .acc:
 	jml.l playeracc		; bank $8F: 93G playeracc
-marktexthi:		;auto: CODE_82FD64. SNES: textdirtyhi = max(textdirtyhi, A)
+marktexthi:		;SNES: textdirtyhi = max(textdirtyhi, A)
 	cmp.b textdirtyhi
 	bcc .rtl
 	sta.b textdirtyhi
 .rtl:
 	rtl
-ClearTeamStats:		;auto: CODE_82FD6B. SNES: clear the team stats $13B2-$157D except tmgoalie, empty both penalty box lists, then on at $86FC29
+ClearTeamStats:		;SNES: clear the team stats $13B2-$157D except tmgoalie, empty both penalty box lists, then on at $86FC29
 	lda.w tmgoalie		; keep tmgoalie (2 words)
 	pha
 	lda.w tmgoalie+2
@@ -557,16 +557,16 @@ ClearTeamStats:		;auto: CODE_82FD6B. SNES: clear the team stats $13B2-$157D exce
 	sta.w tmboxlist
 	sta.w tmboxlist+$1A
 	jml.l setteams
-PrintPenaltyMessagesString:		;auto: CODE_82FD95. 93G PrintPenaltyMessagesString (penalty93_1): blank the horizontal mode penalty message line (22 spaces at x 5, y $B)
+PrintPenaltyMessagesString:		;93G PrintPenaltyMessagesString (penalty93_1): blank the horizontal mode penalty message line (22 spaces at x 5, y $B)
 	jsl.l printz
 	dw $001B		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$05,$0B,"                      "
 	rtl
-startpause2:		;auto: CODE_82FDB5. 93G startpause2 (hockey93_01): pause started by controller 2 (sflags bit 1), then startpause
+startpause2:		;93G startpause2 (hockey93_01): pause started by controller 2 (sflags bit 1), then startpause
 	lda.w #sfpj
 	tsb.w sflags
 	jml.l startpause
-printz8B:		;auto: CODE_82FDBF. SNES: printz-style call with an inline string (length word counting itself): step the return address past it and go to the bank $8B printer $8BFCCE
+printz8B:		;SNES: printz-style call with an inline string (length word counting itself): step the return address past it and go to the bank $8B printer $8BFCCE
 	lda.b $03,s		; farptr-style: a1 = the inline string after the caller
 	sta.b a1+2
 	lda.b $01,s
@@ -577,7 +577,7 @@ printz8B:		;auto: CODE_82FDBF. SNES: printz-style call with an inline string (le
 	adc.b $01,s
 	sta.b $01,s
 	jml.l printbig		; bank $8B: print the inline string
-appendz:		;auto: CODE_82FDD3. SNES: like printz8B, for appstring $8F87C9 (append an inline string)
+appendz:		;SNES: like printz8B, for appstring $8F87C9 (append an inline string)
 	lda.b $03,s
 	sta.b a1+2
 	lda.b $01,s
@@ -588,7 +588,7 @@ appendz:		;auto: CODE_82FDD3. SNES: like printz8B, for appstring $8F87C9 (append
 	adc.b $01,s
 	sta.b $01,s
 	jml.l appstring		; bank $8F: appstring
-asscentero:		;auto: CODE_82FDE7 (asstab 6). 93G asscentero (logic93_3): player X is the center on offense. Every aidef frames: acenterd when the other team has the puck, else a random spot in the
+asscentero:		;asstab 6. 93G asscentero (logic93_3): player X is the center on offense. Every aidef frames: acenterd when the other team has the puck, else a random spot in the
 		;   zone of the puck (.dedata), skateto with EvadePC
 	lda.w pfalock,x		; anim locked: nothing
 	beq .clk

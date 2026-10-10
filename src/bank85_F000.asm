@@ -6,7 +6,7 @@ org $85F000
 	incbin "../data/Title1.map.pak":$1A40..$25F9		; $85F000-$85FBB8
 Title1MapEnd:
 	assert Title1MapEnd-Title1Map == $25F9
-DrawFrameHi:		;auto: CODE_85FBB9 (from addframe_hi). SNES: draw frame sprframe ($293 and up, 6-byte pieces) of the frame set at [farptr] (sprsetofs = its first frame number) at sprx/spry: for each
+DrawFrameHi:		;SNES: draw frame sprframe ($293 and up, 6-byte pieces) of the frame set at [farptr] (sprsetofs = its first frame number) at sprx/spry: for each
 		;   piece an OAM entry, and the piece tiles to a free VRAM slot through DMAList when not cached
 	lda.b sprnodraw
 	beq .go
@@ -472,14 +472,14 @@ DrawFrameHi:		;auto: CODE_85FBB9 (from addframe_hi). SNES: draw frame sprframe (
 	stz.b sprvflip
 	stz.b sprflag
 	rtl
-getpzjoy:		;auto: CODE_85FF0E. 93G getpzjoy (hockey93_02): read the joystick of the pad that paused (sfpj: Readjoy2, else Readjoy1)
+getpzjoy:		;93G getpzjoy (hockey93_02): read the joystick of the pad that paused (sfpj: Readjoy2, else Readjoy1)
 	lda.w sflags
 	bit.w #sfpj
 	beq .p1
 	jml.l Readjoy2
 .p1:
 	jml.l Readjoy1
-PrintTeamNames:		;auto: CODE_85FF1E. SNES: regular season: HomeTeam/VisTeam from the options; print both team names ($8D84E2), then $86FC29
+PrintTeamNames:		;SNES: regular season: HomeTeam/VisTeam from the options; print both team names ($8D84E2), then $86FC29
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -539,9 +539,9 @@ PrintTeamNames:		;auto: CODE_85FF1E. SNES: regular season: HomeTeam/VisTeam from
 	bpl .popd
 	ldx.b xsave
 	rtl
-nullrtl85:		;auto: CODE_85FF96. does nothing
+nullrtl85:		;does nothing
 	rtl
-ResetClock:		;auto: CODE_85FF97. 93G ResetClock (hockey93_01): set the period length (GetPeriodTime; regular season overtime is 10:00) and stop the clock
+ResetClock:		;93G ResetClock (hockey93_01): set the period length (GetPeriodTime; regular season overtime is 10:00) and stop the clock
 	jsl.l GetPeriodTime
 	lda.w gsp		; gsp >= 3 (overtime) and OptPlayMode 0: 600 seconds
 	sec

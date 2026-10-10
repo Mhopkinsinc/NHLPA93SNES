@@ -36,7 +36,7 @@ TeamBlocksMap:		;93G TeamBlocks.map: per team (26) a 9 x 2 tile block map (palet
 	dw $0449,$0564,$0565,$0566,$0567,$0568,$0569,$056A,$0451,$0435,$056B,$056C,$056D,$056E,$056F,$0570,$0571,$043D		; team 23
 	dw $0572,$0573,$0574,$0575,$0576,$0577,$0578,$0579,$0407,$057A,$057B,$057C,$057D,$057E,$057F,$0580,$0581,$0582		; team 24
 	dw $0583,$0584,$0585,$0586,$0587,$0588,$0589,$058A,$058B,$058C,$058D,$058E,$058F,$0590,$0591,$0592,$0593,$0594		; team 25
-DrawFrame:		;auto: CODE_87CE62 (from addframe). SNES: as DrawFrameHi (bank85_F000) for frames below $293 with 4-byte pieces (x, y signed bytes, tile, attributes); sprnodraw skips the upload; a full
+DrawFrame:		;SNES: as DrawFrameHi (bank85_F000) for frames below $293 with 4-byte pieces (x, y signed bytes, tile, attributes); sprnodraw skips the upload; a full
 		;   cache shortens sprslotlife first
 	lda.b farptr+1
 	sta.b sprtileptr+1
@@ -539,7 +539,7 @@ DrawFrame:		;auto: CODE_87CE62 (from addframe). SNES: as DrawFrameHi (bank85_F00
 	dec.w sprpieces
 	beq addframe_end
 	jmp.w .piece
-addframe_end:		;auto: CODE_87D1FE. SNES addframe end: clear sprhflip, sprvflip, sprflag
+addframe_end:		;SNES addframe end: clear sprhflip, sprvflip, sprflag
 	stz.b sprhflip
 	stz.b sprvflip
 	stz.b sprflag

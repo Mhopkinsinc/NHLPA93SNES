@@ -5,7 +5,7 @@ org $85D000
 	incbin "../data/Sprites/set04.chr":$4A5C..$5000		; $85D000-$85D5A3
 SpriteSet4End:
 	assert SpriteSet4End-SpriteSet4 == $5A4+640*32
-GetShifter:		;auto: CODE_85D5A4. 92G/93G GetShifter: d1 = number of games - 1, d2 = first bit of WinBits for the playoff gamelevel
+GetShifter:		;92G/93G GetShifter: d1 = number of games - 1, d2 = first bit of WinBits for the playoff gamelevel
 	lda.w #-16
 	sta.b d2
 	lda.w #16

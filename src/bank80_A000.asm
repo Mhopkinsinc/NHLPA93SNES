@@ -2,7 +2,7 @@
 ; makepde, pucknothing, the faceoff (puckfaceoff, puckfaceoff2, updatefaceoff, Endfaceoff: logic93_4) with the line change box
 ; (SetLCmode, SetLCmode2) and ClrHor, dirtab, random/randoma, changeplayer, vtoa (logic93_5 / middle93_1).
 org $80A121
-deflect:		;auto: CODE_80A121. 93G deflect (hockey93_05): random puck direction on a deflection. Entered from puckstick .stdef
+deflect:		;93G deflect (hockey93_05): random puck direction on a deflection. Entered from puckstick .stdef
 	lda.w #$FFFF		; puck loose
 	sta.w puckc
 	lda.w #$1000		; random velocity +-$1000 in y and x, 0..$1000 up
@@ -15,7 +15,7 @@ deflect:		;auto: CODE_80A121. 93G deflect (hockey93_05): random puck direction o
 	jsl.l randoma
 	sta.w puckvz
 	jmp.w puckflip		; puckflip
-setc1player:		;auto: CODE_80A148. 93G setc1player (logic93_1): restore the old player and give controller 1 to player d0
+setc1player:		;93G setc1player (logic93_1): restore the old player and give controller 1 to player d0
 	lda.b d0
 	cmp.w c1playernum
 	beq .rtl
@@ -26,7 +26,7 @@ setc1player:		;auto: CODE_80A148. 93G setc1player (logic93_1): restore the old p
 	sta.w c1playernum
 .rtl:
 	rtl
-setc2player:		;auto: CODE_80A15E. 93G setc2player (logic93_1): same for controller 2
+setc2player:		;93G setc2player (logic93_1): same for controller 2
 	lda.b d0
 	cmp.w c2playernum
 	beq .rtl
@@ -37,7 +37,7 @@ setc2player:		;auto: CODE_80A15E. 93G setc2player (logic93_1): same for controll
 	sta.w c2playernum
 .rtl:
 	rtl
-restorepl:		;auto: CODE_80A174. 93G restorepl (logic93_1 IDA retorepl): release old joystick player d1, give d0 the joystick. A player in line change mode keeps control (d0 = d1)
+restorepl:		;93G restorepl (logic93_1 IDA retorepl): release old joystick player d1, give d0 the joystick. A player in line change mode keeps control (d0 = d1)
 	stz.b a0
 	lda.b d1
 	bmi .spd
@@ -69,7 +69,7 @@ restorepl:		;auto: CODE_80A174. 93G restorepl (logic93_1 IDA retorepl): release 
 	sta.w pflags,y
 .rtl:
 	rtl
-makepde:		;auto: CODE_80A1B4. 93G makepde (hockey93_05): d0 = rating A (on entry) scaled by the energy of player a0: A*energy/$1000
+makepde:		;93G makepde (hockey93_05): d0 = rating A (on entry) scaled by the energy of player a0: A*energy/$1000
 	pha
 	stx.b xsave
 	ldx.w #$0000
@@ -130,7 +130,7 @@ makepde:		;auto: CODE_80A1B4. 93G makepde (hockey93_05): d0 = rating A (on entry
 	sta.b d0
 	clc
 	rtl
-puckbody:		;auto: CODE_80A21A. 93G puckbody (hockey93_05): puck (X) hits player a2. d0 = distance^2. A fast high puck knocks a2 down (FallDown), a slower one plays SPAcatch
+puckbody:		;93G puckbody (hockey93_05): puck (X) hits player a2. d0 = distance^2. A fast high puck knocks a2 down (FallDown), a slower one plays SPAcatch
 	lda.w Zpos,x		; puck above 8: always a hit
 	sec
 	sbc.w #$0008
@@ -238,7 +238,7 @@ puckbody:		;auto: CODE_80A21A. 93G puckbody (hockey93_05): puck (X) hits player 
 	stx.b a3
 	sty.b a2
 	rtl
-puckgoalie:		;auto: CODE_80A2FA. 93G puckgoalie (hockey93_05): puck (X) hits goalie a2. d0/d1 = goalie - puck x/y. SNES: save odds from the four save ratings, no .list2 frame table
+puckgoalie:		;93G puckgoalie (hockey93_05): puck (X) hits goalie a2. d0/d1 = goalie - puck x/y. SNES: save odds from the four save ratings, no .list2 frame table
 	lda.w gmode
 	bit.w #gmhl		; gmhl
 	beq .go
@@ -516,7 +516,7 @@ puckgoalie:		;auto: CODE_80A2FA. 93G puckgoalie (hockey93_05): puck (X) hits goa
 .hold:
 	stz.w Zvel,x
 	jmp.w puckglue		; puckglue: goalie holds the puck
-pucknothing:		;auto: asstab $1A. 93G pucknothing / puckunflip (logic93_4 / logic93_5): puck just slides; stop spinning (93G pucknothing is bra puckunflip)
+pucknothing:		;asstab $1A. 93G pucknothing / puckunflip (logic93_4 / logic93_5): puck just slides; stop spinning (93G pucknothing is bra puckunflip)
 	lda.w SPAnum+puckobj
 	cmp.w #$0008		; SPAnum 2*4..6*4: flip the face
 	bcc .k
@@ -532,7 +532,7 @@ pucknothing:		;auto: asstab $1A. 93G pucknothing / puckunflip (logic93_4 / logic
 	lda.w #$FFFF
 	sta.w SPAcnt+puckobj
 	rtl
-puckfaceoff:		;auto: asstab $1B. 93G puckfaceoff (logic93_4): this is where the action starts: period end checks, goalies, line change boxes, then pfaceoff2
+puckfaceoff:		;asstab $1B. 93G puckfaceoff (logic93_4): this is where the action starts: period end checks, goalies, line change boxes, then pfaceoff2
 	lda.w pflags,x
 	bit.w #pfna
 	bne .first
@@ -736,7 +736,7 @@ puckfaceoff:		;auto: asstab $1B. 93G puckfaceoff (logic93_4): this is where the 
 	plx
 	stx.b a3
 	rtl
-SetLCmode:		;auto: CODE_80A70F. 93G SetLCmode (logic93_1): open the line change box for player X (abut of the puck carrier)
+SetLCmode:		;93G SetLCmode (logic93_1): open the line change box for player X (abut of the puck carrier)
 	lda.w OptLine
 	bne .rtl
 	jsl.l loadTeamStruct		; loadTeamStruct: a2 = team of X, bank $8F: 93G loadTeamStruct
@@ -761,7 +761,7 @@ SetLCmode:		;auto: CODE_80A70F. 93G SetLCmode (logic93_1): open the line change 
 	jmp.w SetLCmode2
 .rtl:
 	rtl
-SetLCmode2:		;auto: CODE_80A748. 93G SetLCmode2 (logic93_1 IDA showfaceoff): a2 = team; draw the lc box, one row per eligible line (button letter + line name)
+SetLCmode2:		;93G SetLCmode2 (logic93_1 IDA showfaceoff): a2 = team; draw the lc box, one row per eligible line (button letter + line name)
 	jsl.l setlccords
 	inc.b d0		; box size +1
 	inc.b d1
@@ -862,7 +862,7 @@ SetLCmode2:		;auto: CODE_80A748. 93G SetLCmode2 (logic93_1 IDA showfaceoff): a2 
 	jmp.w print
 .btn:		;SNES button letter for lc rows 0-2 (93G A/B/C)
 	db "YBA"
-ClrHor:		;auto: CODE_80A828. 93G ClrHor (penalty93_1): revert to the vertical ice rink: clear sfhormode, Oldrow, SprSort, clear the text map, printscores1
+ClrHor:		;93G ClrHor (penalty93_1): revert to the vertical ice rink: clear sfhormode, Oldrow, SprSort, clear the text map, printscores1
 	stx.b xsave
 	ldx.w #$0000
 .push:
@@ -905,7 +905,7 @@ ClrHor:		;auto: CODE_80A828. 93G ClrHor (penalty93_1): revert to the vertical ic
 	ldx.b xsave
 	ldx.b a3
 	rtl
-puckfaceoff2:		;auto: asstab $1C. 93G puckfaceoff2 (logic93_4): face off control logic and general setup for action
+puckfaceoff2:		;asstab $1C. 93G puckfaceoff2 (logic93_4): face off control logic and general setup for action
 	lda.w pflags,x
 	bit.w #pfna
 	bne .first
@@ -1387,7 +1387,7 @@ puckfaceoff2:		;auto: asstab $1C. 93G puckfaceoff2 (logic93_4): face off control
 .ptab:		;93G .ptab: faceoff x/y offsets
 	dw 0,-250, -35,-50, 35,-50, -50,-10
 	dw 0,-15, 50,-10, 0,-60
-updatefaceoff:		;auto: CODE_80ACC4. 93G updatefaceoff (logic93_4): X = puck. Drop animation frame from temp1; at 0 erases the faceoff box
+updatefaceoff:		;93G updatefaceoff (logic93_4): X = puck. Drop animation frame from temp1; at 0 erases the faceoff box
 	lda.w temp1,x
 	beq .erase
 	clc		; (temp1+6)/8 <= 2: drop frame 10-d0
@@ -1447,7 +1447,7 @@ updatefaceoff:		;auto: CODE_80ACC4. 93G updatefaceoff (logic93_4): X = puck. Dro
 	lda.w blankchar
 	sta.b d2
 	jml.l eraser		; bank $8D: 93G eraser (d0/d1 size, d2 tile)
-Endfaceoff:		;auto: CODE_80AD34. 93G Endfaceoff (logic93_4): drop the puck: pick the faceoff winner and send the puck off
+Endfaceoff:		;93G Endfaceoff (logic93_4): drop the puck: pick the faceoff winner and send the puck off
 	lda.w seed+2		; puck on the ice sound
 	and.w #$0003
 	clc
@@ -1564,7 +1564,7 @@ Endfaceoff:		;auto: CODE_80AD34. 93G Endfaceoff (logic93_4): drop the puck: pick
 dirtab:		;93G dirtab (logic93_5): x,y speed for each direction 0-7 (92 runspeed 200, diagonal 141)
 	dw 0,200, 141,141, 200,0, 141,-141
 	dw 0,-200, -141,-141, -200,0, -141,141
-random:		;auto: CODE_80AE56. 93G randomd0 seed step: seed = seed*$BB40E62D+1 (32-bit LCG); returns A = seed+1 (middle bytes), rndb1/rndb2 set
+random:		;93G randomd0 seed step: seed = seed*$BB40E62D+1 (32-bit LCG); returns A = seed+1 (middle bytes), rndb1/rndb2 set
 	lda.w seed		; mula = seed (32-bit)
 	sta.b mula
 	lda.w seed+2
@@ -1586,7 +1586,7 @@ random:		;auto: CODE_80AE56. 93G randomd0 seed step: seed = seed*$BB40E62D+1 (32
 	sta.w rndb1
 	clc
 	rtl
-randoma:		;auto: CODE_80AE8B. 93G randomd0 with A = range: returns A = random 0..range-1 (high word of random*range). C clear
+randoma:		;93G randomd0 with A = range: returns A = random 0..range-1 (high word of random*range). C clear
 	pha
 	jsl.l random
 	sta.b mula
@@ -1596,7 +1596,7 @@ randoma:		;auto: CODE_80AE8B. 93G randomd0 with A = range: returns A = random 0.
 	lda.b mulres+2
 	clc
 	rtl
-changeplayer:		;auto: CODE_80AE9D. 93G changeplayer (logic93_1): switch controller d4 (0/2) to the teammate nearest the puck, or sweep check if that is the current player
+changeplayer:		;93G changeplayer (logic93_1): switch controller d4 (0/2) to the teammate nearest the puck, or sweep check if that is the current player
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -1736,7 +1736,7 @@ changeplayer:		;auto: CODE_80AE9D. 93G changeplayer (logic93_1): switch controll
 	bpl .popd
 	ldx.b xsave
 	rtl
-vtoa:		;auto: CODE_80AFA8. 93G vtoa (logic93_5): d0/d1 are x/y distances, returned in d0 as a direction 0-7 (8 = no direction)
+vtoa:		;93G vtoa (logic93_5): d0/d1 are x/y distances, returned in d0 as a direction 0-7 (8 = no direction)
 	lda.b d0
 	ora.b d1
 	beq .nodir		; no direction
