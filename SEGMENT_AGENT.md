@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank82_F000` ($82F93C-$82FFFF). <- CURRENT
+Bank $82 done (bank82_8000 .. bank82_F000 matched). Waiting for the user before the next bank (`bank83_8000`). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -96,8 +96,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank82_C000 | matched | $82B86C | $82CD9F | data | 5428 bytes $82B86C-$82CD9F (start moved by bank82_B000, end moved before the packed rink tiles). SPAList: 59 SPA tables in 93G frames93.asm form (SPAxxx_table, direction offsets, attributes, frame/delay lists as SPF+n), each asserted against its SPA constant |
 | bank82_D000 | matched | $82CDA0 | $82DFFF | data | 4704 bytes $82CDA0-$82DFFF (start moved by bank82_C000). IceRinkTiles: packed rink tiles (decompressor $86FA3E), incbin data/IceRinkTiles.pak 0..$1260 |
 | bank82_E000 | matched | $82E000 | $82F93B | data | 6460 bytes $82E000-$82F93B (end moved to the end of the packed stream). IceRinkTiles continued: incbin data/IceRinkTiles.pak $1260..$2B9C, IceRinkTilesEnd (size asserted) |
-| bank82_F000 | not matched <- CURRENT | $82F93C | $82FFFF | 22% |  |
-| bank83_8000 | not matched | $838000 | $838FFF | 0% | Teamdata $80F8-$C4A9 (92G Teamdata.asm $116C-$32DA) runs through $83C4A9 |
+| bank82_F000 | matched | $82F93C | $82FFFF | 100% | 1732 bytes $82F93C-$82FFFF (start moved by bank82_E000). 93G SetPA2, UpdateScores, PushBits, asscentero (.dedata), PrintPenaltyMessagesString, startpause2; 92G BitstoPW, PasstoText, PWtoBits, ClrPassBits; SNES sndqreset, SPCBootUpload, SPCGameUpload, SPCUpload, QueueSound, BitMaskTable, ContinuePlayoffs, far8DF888, PixelRemap8D/83, marktextlo/hi, muls32, addframe_hi, revplayeracc, ClearTeamStats, printz8B, appendz; $FF fill |
+| bank83_8000 | not matched <- CURRENT | $838000 | $838FFF | 0% | Teamdata $80F8-$C4A9 (92G Teamdata.asm $116C-$32DA) runs through $83C4A9 |
 | bank83_9000 | not matched | $839000 | $839FFF | 0% | Teamdata (92G Teamdata.asm) continues |
 | bank83_A000 | not matched | $83A000 | $83AFFF | 0% | Teamdata (92G Teamdata.asm) continues |
 | bank83_B000 | not matched | $83B000 | $83BFFF | 0% | Teamdata (92G Teamdata.asm) continues |
@@ -230,3 +230,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank82_C000: matched $82B86C-$82CD9F (5428 bytes; bank82_D000 now starts at $82CDA0). SPAList written from the data in 93G frames93.asm style: tables matched to 93G by structure (direction lists, delays, frame groups); 93G-only: SPAgglovel2, SPAgstackr's 93 delays differ, SPAgdive moved to $1490, no SPAfake; SPAstanley and SPAfinjury sit after SPAsiren. SPAwallright/SPAwallleft direction 7 points at the next table header as in 93G. Renamed SPA constants to the frames93.asm names (gglove/gstick/gstack sides swapped, SPAbfall->SPAffall, SPAffall->SPAfinjury, SPAfall3->SPAflip, SPAhold->SPAHold, SPAhold2->SPAhook, SPAslowhit->SPAcatch, SPAglass->SPAbglass, SPAg314->SPAgdive, SPAnomove->SPAinjury1, SPFgoalie->SPFgdive) and added all 59 SPA and the SPF frame bases (SNES numbering). SPAList is now a label. bank80 slices regenerated. MATCH.
 - bank82_D000: matched $82CDA0-$82DFFF (4704 bytes). IceRinkTiles, the packed rink background tiles setupice unpacks to vram $1000 (93G IceRink.map.jim tiles), extracted to data/IceRinkTiles.pak ($2B9C bytes, ends $82F93B); setupice now loads it by label. MATCH.
 - bank82_E000: matched $82E000-$82F93B (6460 bytes; bank82_F000 now starts at the code $82F93C): the rest of the packed rink tiles. MATCH.
+- bank82_F000: matched $82F93C-$82FFFF (1732 bytes). Entries from every jsl/jml into the bank and asstab 6 (asscentero). The SNES password code is 92G (PassWord $1610, passbits $1624 = 8 words, PasstoText, SuperDiv/SuperMult/SuperAdd): bank80 divbig/bignum/far8B817A renamed SuperDiv/passbits/DecodePW. New RAM: options OptPlayMode..OptPerlen, gamenum, TickerNum, the playoff game arrays gst1..gsflags (word per game), sndptr, cursong, sndsettle, mulneg, farptr, sprsetofs; constants gsfhl, gsfso, PWrange, pwlength, sf3alttree. Bank $82 complete. MATCH.

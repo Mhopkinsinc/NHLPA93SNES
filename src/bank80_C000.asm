@@ -154,7 +154,7 @@ sfx:		;auto: CODE_80C28B. 93G sfx (middle93_1): play the sound number pushed bef
 	pla		; $80C2A3: 68  lastsfx = sound number
 	sta.w lastsfx		; $80C2A4: 8D 7F 01
 	beq .ret		; $80C2A7: F0 04
-	jsl.l $82FB79		; $80C2A9: 22 79 FB 82  queue it (bank $82), bank $82: queue sound A
+	jsl.l QueueSound		; $80C2A9: 22 79 FB 82  queue it (bank $82)
 .ret:		;return through jmlvector
 	jml.l $000178		; $80C2AD: 5C 78 01 00  jmlvector
 .drop:
@@ -314,14 +314,14 @@ demoread:		;auto: CODE_80C3D4. 93G demoread (hockey93_01): in demo mode (no cont
 	lda.b d1		; $80C3F3: A5 57
 	bit.w #JOYSTART		; $80C3F5: 89 00 10  Start on pad 2: startpause2
 	beq .any2		; $80C3F8: F0 04
-	jml.l $82FDB5		; $80C3FA: 5C B5 FD 82  bank $82: 93G startpause2
+	jml.l startpause2		; $80C3FA: 5C B5 FD 82
 .any2:
 	lda.b d1		; $80C3FE: A5 57
 	bne .exit		; $80C400: D0 01
 .rtl:
 	rtl		; $80C402: 6B
 .exit:		;end the demo: back to the title screen (93G ExitToOpening)
-	jsl.l $82FA1A		; $80C403: 22 1A FA 82  sound queue reset; on to the title screen, bank $82: reset the sound command queue
+	jsl.l sndqreset		; $80C403: 22 1A FA 82  sound queue reset; on to the title screen
 	jml.l $8B816A		; $80C407: 5C 6A 81 8B  bank $8B: on to the title screen (93G Opening)
 Readjoy1:		;auto: CODE_80C40B. 93G Readjoy1 (middle93_1): read controller 1. d0 = direction, d1 = new presses, d2 = changed, d3 = held
 	phx		; $80C40B: DA
@@ -478,14 +478,14 @@ updateplayers:		;auto: CODE_80C46D. 93G updateplayers (hockey93_02): animation, 
 	sta.b mula		; $80C55B: 85 7D
 	lda.b d2		; $80C55D: A5 5B
 	sta.b mulb		; $80C55F: 85 83
-	jsl.l $82FCDB		; $80C561: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80C561: 22 DB FC 82
 	lda.b mulres+1		; $80C565: A5 94  velocity = velocity * factor / 256
 	sta.w Xvel,x		; $80C567: 9D DF 0A
 	lda.w Yvel,x		; $80C56A: BD FF 0A
 	sta.b mula		; $80C56D: 85 7D
 	lda.b d2		; $80C56F: A5 5B
 	sta.b mulb		; $80C571: 85 83
-	jsl.l $82FCDB		; $80C573: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80C573: 22 DB FC 82
 	lda.b mulres+1		; $80C577: A5 94
 	sta.w Yvel,x		; $80C579: 9D FF 0A
 .x2:		;Xpos += Xvel*velstep (/4 in horizontal mode except in the penalty box)
@@ -508,7 +508,7 @@ updateplayers:		;auto: CODE_80C46D. 93G updateplayers (hockey93_02): animation, 
 	lsr.b mulb		; $80C59E: 46 83
 	lsr.b mulb		; $80C5A0: 46 83
 .x3:
-	jsl.l $82FCDB		; $80C5A2: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80C5A2: 22 DB FC 82
 	adc.w Xfrac,x		; $80C5A6: 7D 1F 09
 	sta.w Xfrac,x		; $80C5A9: 9D 1F 09
 	lda.w Xpos,x		; $80C5AC: BD FF 08
@@ -534,7 +534,7 @@ updateplayers:		;auto: CODE_80C46D. 93G updateplayers (hockey93_02): animation, 
 	lsr.b mulb		; $80C5D6: 46 83
 	lsr.b mulb		; $80C5D8: 46 83
 .y3:
-	jsl.l $82FCDB		; $80C5DA: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80C5DA: 22 DB FC 82
 	adc.w Yfrac,x		; $80C5DE: 7D 7F 09
 	sta.w Yfrac,x		; $80C5E1: 9D 7F 09
 	lda.w Ypos,x		; $80C5E4: BD 5F 09
@@ -554,7 +554,7 @@ updateplayers:		;auto: CODE_80C46D. 93G updateplayers (hockey93_02): animation, 
 	sbc.b gravstep		; $80C600: E5 E6
 	sta.w Zvel,x		; $80C602: 9D 1F 0B
 	sta.b mulb		; $80C605: 85 83
-	jsl.l $82FCDB		; $80C607: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80C607: 22 DB FC 82
 	adc.w Zfrac,x		; $80C60B: 7D BF 09
 	sta.w Zfrac,x		; $80C60E: 9D BF 09
 	lda.w Zpos,x		; $80C611: BD 9F 09
@@ -772,7 +772,7 @@ updateplayers:		;auto: CODE_80C46D. 93G updateplayers (hockey93_02): animation, 
 	sta.b mula		; $80C7DF: 85 7D
 	lda.w pspeed,x		; $80C7E1: BD 6F 12
 	sta.b mulb		; $80C7E4: 85 83
-	jsl.l $82FCDB		; $80C7E6: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80C7E6: 22 DB FC 82
 	lda.b tmp0		; $80C7EA: A5 73
 	sta.b mula		; $80C7EC: 85 7D
 	jsl.l divs		; $80C7EE: 22 6C 99 80
@@ -781,7 +781,7 @@ updateplayers:		;auto: CODE_80C46D. 93G updateplayers (hockey93_02): animation, 
 	sta.b mula		; $80C7F8: 85 7D
 	lda.w pspeed,x		; $80C7FA: BD 6F 12
 	sta.b mulb		; $80C7FD: 85 83
-	jsl.l $82FCDB		; $80C7FF: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80C7FF: 22 DB FC 82
 	lda.b tmp0		; $80C803: A5 73
 	sta.b mula		; $80C805: 85 7D
 	jsl.l divs		; $80C807: 22 6C 99 80
@@ -1489,7 +1489,7 @@ wallcoll:		;auto: CODE_80CCDE. 93G wallcoll (hockey93_04): d0/d1 = cos/sin of th
 	sta.b mulb		; $80CCFF: 85 83
 	lda.w Yvel,x		; $80CD01: BD FF 0A
 	sta.b mula		; $80CD04: 85 7D
-	jsl.l $82FCDB		; $80CD06: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80CD06: 22 DB FC 82
 	sta.b d0		; $80CD0A: 85 53
 	lda.b mulres+2		; $80CD0C: A5 95
 	sta.b d0+2		; $80CD0E: 85 55
@@ -1497,7 +1497,7 @@ wallcoll:		;auto: CODE_80CCDE. 93G wallcoll (hockey93_04): d0/d1 = cos/sin of th
 	sta.b mula		; $80CD13: 85 7D
 	lda.b d1		; $80CD15: A5 57
 	sta.b mulb		; $80CD17: 85 83
-	jsl.l $82FCDB		; $80CD19: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80CD19: 22 DB FC 82
 	lda.b d0		; $80CD1D: A5 53
 	sec		; $80CD1F: 38
 	sbc.b mulres		; $80CD20: E5 93
@@ -1513,7 +1513,7 @@ wallcoll:		;auto: CODE_80CCDE. 93G wallcoll (hockey93_04): d0/d1 = cos/sin of th
 	sta.b mula		; $80CD35: 85 7D
 	lda.b $01,s		; $80CD37: A3 01
 	sta.b mulb		; $80CD39: 85 83
-	jsl.l $82FCDB		; $80CD3B: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80CD3B: 22 DB FC 82
 	sta.b d0		; $80CD3F: 85 53
 	lda.b mulres+2		; $80CD41: A5 95
 	sta.b d0+2		; $80CD43: 85 55
@@ -1521,7 +1521,7 @@ wallcoll:		;auto: CODE_80CCDE. 93G wallcoll (hockey93_04): d0/d1 = cos/sin of th
 	sta.b mula		; $80CD48: 85 7D
 	lda.b d1		; $80CD4A: A5 57
 	sta.b mulb		; $80CD4C: 85 83
-	jsl.l $82FCDB		; $80CD4E: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80CD4E: 22 DB FC 82
 	adc.b d0		; $80CD52: 65 53
 	sta.b d0		; $80CD54: 85 53
 	lda.b d0+2		; $80CD56: A5 55
@@ -1676,7 +1676,7 @@ wallcoll:		;auto: CODE_80CCDE. 93G wallcoll (hockey93_04): d0/d1 = cos/sin of th
 	sta.b mula		; $80CE55: 85 7D
 	lda.b d3		; $80CE57: A5 5F
 	sta.b mulb		; $80CE59: 85 83
-	jsl.l $82FCDB		; $80CE5B: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80CE5B: 22 DB FC 82
 	sta.b tmp0		; $80CE5F: 85 73
 	lda.b mulres+2		; $80CE61: A5 95
 	sta.b tmp1		; $80CE63: 85 75
@@ -1684,7 +1684,7 @@ wallcoll:		;auto: CODE_80CCDE. 93G wallcoll (hockey93_04): d0/d1 = cos/sin of th
 	sta.b mula		; $80CE67: 85 7D
 	lda.b d2		; $80CE69: A5 5B
 	sta.b mulb		; $80CE6B: 85 83
-	jsl.l $82FCDB		; $80CE6D: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80CE6D: 22 DB FC 82
 	lda.b tmp0		; $80CE71: A5 73
 	sec		; $80CE73: 38
 	sbc.b mulres		; $80CE74: E5 93
@@ -1698,7 +1698,7 @@ wallcoll:		;auto: CODE_80CCDE. 93G wallcoll (hockey93_04): d0/d1 = cos/sin of th
 	sta.b mula		; $80CE85: 85 7D
 	lda.b d3		; $80CE87: A5 5F
 	sta.b mulb		; $80CE89: 85 83
-	jsl.l $82FCDB		; $80CE8B: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80CE8B: 22 DB FC 82
 	sta.b d3		; $80CE8F: 85 5F
 	lda.b mulres+2		; $80CE91: A5 95
 	sta.b d3+2		; $80CE93: 85 61
@@ -1706,7 +1706,7 @@ wallcoll:		;auto: CODE_80CCDE. 93G wallcoll (hockey93_04): d0/d1 = cos/sin of th
 	sta.b mula		; $80CE97: 85 7D
 	lda.b d2		; $80CE99: A5 5B
 	sta.b mulb		; $80CE9B: 85 83
-	jsl.l $82FCDB		; $80CE9D: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80CE9D: 22 DB FC 82
 	adc.b d3		; $80CEA1: 65 5F
 	sta.b d3		; $80CEA3: 85 5F
 	lda.b d3+2		; $80CEA5: A5 61

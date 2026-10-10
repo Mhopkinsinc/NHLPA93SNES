@@ -596,14 +596,14 @@ assfwatch:		;auto: asstab $15. 93G assfwatch (logic93_2): for a player watching 
 	pha		; $8095D9: 48
 	sta.b mula		; $8095DA: 85 7D
 	sta.b mulb		; $8095DC: 85 83
-	jsl.l $82FCDB		; $8095DE: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $8095DE: 22 DB FC 82
 	sta.b d0		; $8095E2: 85 53
 	lda.b mulres+2		; $8095E4: A5 95
 	sta.b d0+2		; $8095E6: 85 55
 	lda.b $03,s		; $8095E8: A3 03
 	sta.b mula		; $8095EA: 85 7D
 	sta.b mulb		; $8095EC: 85 83
-	jsl.l $82FCDB		; $8095EE: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $8095EE: 22 DB FC 82
 	adc.b d0		; $8095F2: 65 53
 	sta.b d0		; $8095F4: 85 53
 	lda.b mulres+2		; $8095F6: A5 95
@@ -622,7 +622,7 @@ assfwatch:		;auto: asstab $15. 93G assfwatch (logic93_2): for a player watching 
 	sta.b d1		; $80960F: 85 57
 	lda.w #$0050		; $809611: A9 50 00  80 pixels from the fight
 	sta.b mula		; $809614: 85 7D
-	jsl.l $82FCDB		; $809616: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $809616: 22 DB FC 82
 	lda.b d2		; $80961A: A5 5B
 	sta.b mula		; $80961C: 85 7D
 	jsl.l divs		; $80961E: 22 6C 99 80
@@ -665,7 +665,7 @@ assfwatch:		;auto: asstab $15. 93G assfwatch (logic93_2): for a player watching 
 	sta.b mula		; $809660: 85 7D
 	lda.b d1		; $809662: A5 57
 	sta.b mulb		; $809664: 85 83
-	jsl.l $82FCDB		; $809666: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $809666: 22 DB FC 82
 	lda.b d2		; $80966A: A5 5B
 	sta.b mula		; $80966C: 85 7D
 	jsl.l divs		; $80966E: 22 6C 99 80
@@ -975,7 +975,7 @@ findpc_calc:		;auto: CODE_8098C2. 93G findpc .calc: d4 = goal line y, Y = puckcr
 	sta.b mula		; $8098FD: 85 7D
 	lda.b d0		; $8098FF: A5 53
 	sta.b mulb		; $809901: 85 83
-	jsl.l $82FCDB		; $809903: 22 DB FC 82  x offset = puckvx*d0/puckvy, if it fits, bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $809903: 22 DB FC 82  x offset = puckvx*d0/puckvy, if it fits
 	lda.w puckvy		; $809907: AD 1B 0B
 	bit.w #$8000		; $80990A: 89 00 80
 	beq .vy		; $80990D: F0 04
@@ -1663,14 +1663,14 @@ checkpuckcoll_ccx:		;auto: CODE_809D8A. 93G checkpuckcoll .ccx: d4 = object inde
 	lda.b d0		; $809E26: A5 53
 	sta.b mula		; $809E28: 85 7D
 	sta.b mulb		; $809E2A: 85 83
-	jsl.l $82FCDB		; $809E2C: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $809E2C: 22 DB FC 82
 	sta.b d0		; $809E30: 85 53
 	lda.b mulres+2		; $809E32: A5 95
 	sta.b d0+2		; $809E34: 85 55
 	lda.b d1		; $809E36: A5 57
 	sta.b mula		; $809E38: 85 7D
 	sta.b mulb		; $809E3A: 85 83
-	jsl.l $82FCDB		; $809E3C: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $809E3C: 22 DB FC 82
 	adc.b d0		; $809E40: 65 53
 	sta.b d0		; $809E42: 85 53
 	lda.b d0+2		; $809E44: A5 55
@@ -1719,14 +1719,14 @@ checkpuckcoll_ccx:		;auto: CODE_809D8A. 93G checkpuckcoll .ccx: d4 = object inde
 	lda.b d0		; $809E9E: A5 53
 	sta.b mula		; $809EA0: 85 7D
 	sta.b mulb		; $809EA2: 85 83
-	jsl.l $82FCDB		; $809EA4: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $809EA4: 22 DB FC 82
 	sta.b d0		; $809EA8: 85 53
 	lda.b mulres+2		; $809EAA: A5 95
 	sta.b d0+2		; $809EAC: 85 55
 	lda.b d1		; $809EAE: A5 57
 	sta.b mula		; $809EB0: 85 7D
 	sta.b mulb		; $809EB2: 85 83
-	jsl.l $82FCDB		; $809EB4: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $809EB4: 22 DB FC 82
 	adc.b d0		; $809EB8: 65 53
 	sta.b d0		; $809EBA: 85 53
 	lda.b d0+2		; $809EBC: A5 55
@@ -1900,14 +1900,14 @@ puckstick:		;auto: CODE_809F15. 93G puckstick (hockey93_05): puck hits the stick
 	lda.w puckvx		; $80A01A: AD FB 0A
 	sta.b mula		; $80A01D: 85 7D
 	sta.b mulb		; $80A01F: 85 83
-	jsl.l $82FCDB		; $80A021: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80A021: 22 DB FC 82
 	sta.b d0		; $80A025: 85 53
 	lda.b mulres+2		; $80A027: A5 95
 	sta.b d0+2		; $80A029: 85 55
 	lda.w puckvy		; $80A02B: AD 1B 0B
 	sta.b mula		; $80A02E: 85 7D
 	sta.b mulb		; $80A030: 85 83
-	jsl.l $82FCDB		; $80A032: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80A032: 22 DB FC 82
 	adc.b d0		; $80A036: 65 53
 	sta.b d0		; $80A038: 85 53
 	lda.b d0+2		; $80A03A: A5 55

@@ -117,7 +117,7 @@ makepde:		;auto: CODE_80A1B4. 93G makepde (hockey93_05): d0 = rating A (on entry
 	sta.b mula		; $80A1FE: 85 7D
 	lda.b d0		; $80A200: A5 53
 	sta.b mulb		; $80A202: 85 83
-	jsl.l $82FCDB		; $80A204: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80A204: 22 DB FC 82
 	asl a		; $80A208: 0A  *16, high word: *energy/$1000
 	rol.b mulres+2		; $80A209: 26 95
 	asl a		; $80A20B: 0A
@@ -193,14 +193,14 @@ puckbody:		;auto: CODE_80A21A. 93G puckbody (hockey93_05): puck (X) hits player 
 	lda.b d2		; $80A299: A5 5B
 	sta.b mula		; $80A29B: 85 7D
 	sta.b mulb		; $80A29D: 85 83
-	jsl.l $82FCDB		; $80A29F: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80A29F: 22 DB FC 82
 	sta.b d2		; $80A2A3: 85 5B
 	lda.b mulres+2		; $80A2A5: A5 95
 	sta.b d2+2		; $80A2A7: 85 5D
 	lda.b d3		; $80A2A9: A5 5F
 	sta.b mula		; $80A2AB: 85 7D
 	sta.b mulb		; $80A2AD: 85 83
-	jsl.l $82FCDB		; $80A2AF: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80A2AF: 22 DB FC 82
 	adc.b d2		; $80A2B3: 65 5B
 	sta.b d2		; $80A2B5: 85 5B
 	lda.b mulres+2		; $80A2B7: A5 95
@@ -1217,7 +1217,7 @@ puckfaceoff2:		;auto: asstab $1C. 93G puckfaceoff2 (logic93_4): face off control
 	asl a		; $80AB2A: 0A
 	asl a		; $80AB2B: 0A
 	adc.w printx		; $80AB2C: 6D 7B 04
-	jsl.l $82FCCD		; $80AB2F: 22 CD FC 82  mark the box rows dirty, bank $82: textdirtylo = min(A)
+	jsl.l marktextlo		; $80AB2F: 22 CD FC 82  mark the box rows dirty
 	lda.w printy		; $80AB33: AD 7D 04
 	clc		; $80AB36: 18
 	adc.w #$0009		; $80AB37: 69 09 00
@@ -1228,7 +1228,7 @@ puckfaceoff2:		;auto: asstab $1C. 93G puckfaceoff2 (logic93_4): face off control
 	asl a		; $80AB3E: 0A
 	adc.w printx		; $80AB3F: 6D 7B 04
 	adc.w #$000B		; $80AB42: 69 0B 00
-	jsl.l $82FD64		; $80AB45: 22 64 FD 82  bank $82: textdirtyhi = max(A)
+	jsl.l marktexthi		; $80AB45: 22 64 FD 82
 	lda.w #$E949		; $80AB49: A9 49 E9  FaceOffMap (bank $84); fobox nonzero
 	sta.b fobox		; $80AB4C: 85 F4
 	sta.b tmp0		; $80AB4E: 85 73
@@ -1665,7 +1665,7 @@ changeplayer:		;auto: CODE_80AE9D. 93G changeplayer (logic93_1): switch controll
 	sbc.w Xpos,x		; $80AF1E: FD FF 08
 	sta.b mula		; $80AF21: 85 7D
 	sta.b mulb		; $80AF23: 85 83
-	jsl.l $82FCDB		; $80AF25: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80AF25: 22 DB FC 82
 	sta.b d0		; $80AF29: 85 53
 	lda.b mulres+2		; $80AF2B: A5 95
 	sta.b d0+2		; $80AF2D: 85 55
@@ -1674,7 +1674,7 @@ changeplayer:		;auto: CODE_80AE9D. 93G changeplayer (logic93_1): switch controll
 	sbc.w Ypos,x		; $80AF32: FD 5F 09
 	sta.b mula		; $80AF35: 85 7D
 	sta.b mulb		; $80AF37: 85 83
-	jsl.l $82FCDB		; $80AF39: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80AF39: 22 DB FC 82
 	adc.b d0		; $80AF3D: 65 53
 	sta.b d0		; $80AF3F: 85 53
 	lda.b mulres+2		; $80AF41: A5 95

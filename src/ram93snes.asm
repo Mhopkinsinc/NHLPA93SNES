@@ -10,10 +10,12 @@ brightness	= $04	; INIDISP shadow (0-15 brightness, $80 forced blank), written e
 fadeout		= $06	; nonzero: vb2 steps brightness down every 4 frames until 0. SNES stand-in for 93G cramfade
 fadein		= $08	; 1: vb2 steps brightness up every 4 frames to 15; >1: delay count before fading in
 xsave		= $0A	; X saved around the movem-style push/pop loops of the 68k port (stx xsave : ldx #0 ...)
+farptr		= $0C	; long pointer ($0C-$0E) to a frame set table (addframe, addframe_hi)
 vbactive	= $12	; nonzero while the vbint handler runs (or while main code holds vblank off): VBjsr skips it
 vbint		= $14	; address (bank $80) of the vblank handler VBjsr jumps to. 93G vbint
 hbint		= $16	; address (bank $80) of the H/V-timer IRQ handler HBjsr jumps to. Default HBdefault
 hcount		= $18	; +1 per IRQ that is not a timer IRQ (HBdefault); cleared every vblank
+sndptr		= $1A	; long pointer to the SPC upload stream ($1A-$1C, bank in $1C)
 sndqin		= $1D	; sound command queue write index (bank $82 sfx queue at sndqueue, 8 words)
 sndqout		= $1F	; sound command queue read index
 sndlock		= $21	; nonzero while main code changes the sound command queue (bank $82); set by Start during sound init
@@ -39,6 +41,7 @@ tmp2		= $77	; scratch word
 mula		= $7D	; multiply/divide operand A (32-bit with mula+2). Helpers: muls16, mulu (bank $8D/$88), muls (bank $82)
 mulb		= $83	; multiply/divide operand B (32-bit with mulb+2)
 mulres		= $93	; multiply result low word; mulres+2 ($95) = high word (68k swap)
+mulneg		= $98	; muls32: count of negative operands
 mulsign		= $81	; divs: count of negative operands
 mulcnt		= $87	; divs: bit loop count (16)
 DMAListend	= $A3	; byte offset of the end of DMAList (7 bytes per entry); VBlank sends and empties it. 93G DMAListend
@@ -46,6 +49,7 @@ sprclock	= $A7	; sprite VRAM tile cache clock: a slot whose sprslottime is older
 sprpriority	= $BB	; OAM attribute priority bits ORed into every game sprite ($20 at start)
 sprflag		= $AB	; addframe parameter: $8000 = attribute bit 0 / the second faceoff sprite (cleared by addframe)
 sprframe	= $C3	; addframe parameter: sprite frame number (1-based)
+sprsetofs	= $C5	; addframe: first frame number of the frame set that holds sprframe
 sprx		= $C9	; addframe parameter: screen x of the frame
 spry		= $CB	; addframe parameter: screen y
 sprhflip	= $A5	; addframe parameter: $0800 = x flip (attribute bit 11)
@@ -102,6 +106,7 @@ lldisp		= $0189	; count down for the once-a-second screen/game updates ($18 fram
 ltplayer	= $018B	; last touch player (SCnum). 93G ltplayer
 ltx		= $018D	; last touch x. 93G ltx
 lty		= $018F	; last touch y. 93G lty
+gamenum		= $014C	; index of the user game in the playoff game arrays (-1 = none). 93G gamenum
 mesarea		= $0191	; temp area for print strings (length word, then characters). 93G mesarea
 lastplayer	= $017D	; SCnum of the last player who touched the puck (doshot). 93G lastplayer
 Satt		= $01FF	; sprite attribute table (OAM shadow, $220 bytes), sent by VBlank. 93G Satt
@@ -130,10 +135,12 @@ rndb2		= $0493	; high byte of the new seed after each random
 seed		= $04A1	; 32-bit random seed (randomd0). 92 seed, 93G StanleyCupTimer. Its low bits also serve as a quick random
 sfxmutetime	= $04A7	; vcount when sound effects were cut off: sfx are dropped for 180 frames after it
 shotplayer	= $04A5	; SCnum of the player who shot last. 93G shotplayer
+sndsettle	= $049F	; set to 10 after the in-game sample upload (no reader found)
 cuetimer	= $04A9	; frames left of a music cue; sfx are dropped while it runs
 sprslottime	= $04AB	; 512 words: sprclock value when each 32-byte VRAM sprite tile slot was last used
 colorflag1	= $08B7	; cleared by setplayercolors (no reader found)
 colorflag2	= $08B9	; cleared by setplayercolors (no reader found)
+TickerNum	= $08D7	; playoff game the score ticker shows next. 93G TickerNum
 threat		= $08D3	; direction of threat on puck handler (nonzero = threat). 93G threat
 xc1		= $08F5	; scroll lock x (fight). 93G xc1
 yc1		= $08F7	; scroll lock y. 93G yc1
@@ -274,13 +281,28 @@ pchecks		= $1446	; checks per roster player (bytes, +$1A for team 2; 93G team by
 tmpde		= $147A	; energy of each roster player (word per player, +$34 for team 2). 93G tmpde
 tmpdst		= $14E2	; bench/ice/box state of each roster player (+$34 for team 2). 93G tmpdst
 tmboxlist	= $154A	; penalty box list of roster players (bytes, +$1A for team 2, negative ends; 93G team bytes $9A)
+gst1		= $157F	; playoff games: one word per game (8) for each 93G gstruct field. 93G gst1 (team 1)
+gst2		= $158F	; 93G gst2 (team 2)
+gspotwins	= $159F	; 93G gspotwins
+gspobwins	= $15AF	; 93G gspobwins
+gsper		= $15BF	; 93G gsper (period)
+gss1		= $15CF	; 93G gss1 (team 1 score)
+gss2		= $15DF	; 93G gss2
+gsflags		= $15EF	; 93G gsflags (gsf* masks)
 
 ; Options
+OptPlayMode	= $1600	; play mode (0 regular season, 1 continue playoffs, 2/3 new playoffs). 93G OptPlayMode
+OptPlayers	= $1602	; 93G players option
+OptTeam1	= $1604	; 93G team 1
+OptTeam2	= $1606	; 93G team 2
+OptPerlen	= $1608	; period length index. 93G OptPerlen
+PassWord	= $1610	; 16 password characters (indexes into PasstoText; bit 7 hides it). 92G PassWord
 OptPen		= $160A	; penalties (0 = off). 93G OptPen
-bignum		= $1624	; 128-bit number (8 words, low first) that divbig divides (bank $8B)
+passbits	= $1624	; password bits: a 128-bit number, 8 words, low word first (SuperDiv, PushBits). 92G PassBits
 OptLine		= $160C	; line changes (0 = on). 93G OptLine
 
 sndbank		= $164F	; sound set loaded into the SPC (1 = the in-game sounds); sfx are queued only for it
+cursong		= $1651	; song playing on the SPC (0 = none); set by the song starters in banks $86/$89
 DMAList		= $1653	; vram dma list (7-byte entries, see dma* offsets), filled up to DMAListend. 93G DMAList
 printfontset	= $1BCB	; tile base of the selected print font (control code). 93G printfontset
 charofs		= $1BCD	; added to every text map tile written by the game code ($FF00 at boot, 0 in the game screens)
@@ -303,6 +325,11 @@ textmap		= $7E6E74	; text layer tile map buffer (32x32 words); textdirtylo/hi ma
 ReplayBufferEnd	= $7EFF41	; replay buffer end: adda43 wraps to ReplayBufferStart
 ReplayBufferStart	= $7E8174	; first replay frame record
 ; --- constants (values, not addresses) ---
+gsfhl		= $0002	; game shown in the score ticker (93G gsfhl 1)
+gsfso		= $0004	; game over (93G gsfso 2)
+PWrange		= 30	; characters in PasstoText (92G PWrange)
+pwlength	= 16	; password characters (92G pwlength)
+sf3alttree	= $0004	; alt. playoff tree (93G sf3alttree 2)
 ; SPC700 (APU RAM) addresses used by the sound uploads
 SPCSAMPLEDIR	= $2C00	; DSP sample directory (DIR = $2C)
 SPCSAMPLES	= $2C50	; first BRR sample of the in-game set

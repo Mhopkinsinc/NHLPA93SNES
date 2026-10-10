@@ -1,5 +1,5 @@
 ; $80ED38-$80FFFF  ROM $06D38-$07FFF: the packed block at $80ED38, adda43 (hockey93_02), setlccords, startpause, ReadPads,
-; asspuckc (logic93_3), divbig, randomd0s, assgoalie, ClampYPosition, AdjustFacingDirection, GoalieSaveList (logic93_3),
+; asspuckc (logic93_3), SuperDiv, randomd0s, assgoalie, ClampYPosition, AdjustFacingDirection, GoalieSaveList (logic93_3),
 ; checkgoalp_CalcGoalShotDir, CalcAngleOffset (logic93_1), reenergizeteam (penalty93_2), the internal header and the vectors.
 ; Starts at the packed block (boundary moved from $80F008).
 org $80ED38
@@ -393,17 +393,17 @@ asspuckc:		;auto: CODE_80F45B (asstab $10). 93G asspuckc (logic93_3): player X i
 	jmp.w .cd0		; $80F5E6: 4C 65 F5
 .rtl2:
 	rtl		; $80F5E9: 6B
-far8B817A:		;auto: CODE_80F5EA. far trampoline: $82FBC5, then on at $8B817A
-	jsl.l $82FBC5		; $80F5EA: 22 C5 FB 82  bank $82
+DecodePW:		;auto: CODE_80F5EA. 92G DecodePW: translate the password in PassWord to game variables: PWtoBits, then ReadPassBits ($8B817A)
+	jsl.l PWtoBits		; $80F5EA: 22 C5 FB 82
 	jml.l $8B817A		; $80F5EE: 5C 7A 81 8B  bank $8B
 far8B8172:		;auto: CODE_80F5F2. far trampoline: $88F512 (font tile bases), then on at $8B8172
 	jsl.l $88F512		; $80F5F2: 22 12 F5 88  bank $88: font tile bases
 	jml.l $8B8172		; $80F5F6: 5C 72 81 8B  bank $8B
-divbig:		;auto: CODE_80F5FA. SNES: bignum (128 bits) / d0: quotient in bignum, remainder in d0. Shift-subtract over 128 bits with the divisor in mula+0..+16 and the remainder in mulres+0..+14
-	phx		; $80F5FA: DA  remainder = bignum, divisor = d0 << 128
+SuperDiv:		;auto: CODE_80F5FA. 92G SuperDiv: passbits (128 bits) / d0: quotient in passbits, remainder in d0. Shift-subtract over 128 bits with the divisor in mula+0..+16 and the remainder in mulres+0..+14
+	phx		; $80F5FA: DA  remainder = passbits, divisor = d0 << 128
 	ldx.w #$000E		; $80F5FB: A2 0E 00
 .init:
-	lda.w bignum,x		; $80F5FE: BD 24 16
+	lda.w passbits,x		; $80F5FE: BD 24 16
 	sta.b mulres,x		; $80F601: 95 93
 	stz.b mula,x		; $80F603: 74 7D
 	dex		; $80F605: CA
@@ -422,14 +422,14 @@ divbig:		;auto: CODE_80F5FA. SNES: bignum (128 bits) / d0: quotient in bignum, r
 	ror.b mula+4		; $80F61C: 66 81
 	ror.b mula+2		; $80F61E: 66 7F
 	ror.b mula		; $80F620: 66 7D
-	asl.w bignum		; $80F622: 0E 24 16  shift the dividend left
-	rol.w bignum+2		; $80F625: 2E 26 16
-	rol.w bignum+4		; $80F628: 2E 28 16
-	rol.w bignum+6		; $80F62B: 2E 2A 16
-	rol.w bignum+8		; $80F62E: 2E 2C 16
-	rol.w bignum+10		; $80F631: 2E 2E 16
-	rol.w bignum+12		; $80F634: 2E 30 16
-	rol.w bignum+14		; $80F637: 2E 32 16
+	asl.w passbits		; $80F622: 0E 24 16  shift the dividend left
+	rol.w passbits+2		; $80F625: 2E 26 16
+	rol.w passbits+4		; $80F628: 2E 28 16
+	rol.w passbits+6		; $80F62B: 2E 2A 16
+	rol.w passbits+8		; $80F62E: 2E 2C 16
+	rol.w passbits+10		; $80F631: 2E 2E 16
+	rol.w passbits+12		; $80F634: 2E 30 16
+	rol.w passbits+14		; $80F637: 2E 32 16
 	lda.b mulres		; $80F63A: A5 93  remainder >= divisor: subtract, quotient bit 1
 	cmp.b mula		; $80F63C: C5 7D
 	lda.b mulres+2		; $80F63E: A5 95
@@ -473,7 +473,7 @@ divbig:		;auto: CODE_80F5FA. SNES: bignum (128 bits) / d0: quotient in bignum, r
 	lda.b mulres+14		; $80F68B: A5 A1
 	sbc.b mula+14		; $80F68D: E5 8B
 	sta.b mulres+14		; $80F68F: 85 A1
-	inc.w bignum		; $80F691: EE 24 16
+	inc.w passbits		; $80F691: EE 24 16
 .next:
 	dex		; $80F694: CA
 	beq .done		; $80F695: F0 03
@@ -874,14 +874,14 @@ assgoalie:		;auto: CODE_80F6AD (asstab $E). 93G assgoalie (logic93_3): goalie X.
 	lda.b d0		; $80F9CD: A5 53
 	sta.b mula		; $80F9CF: 85 7D
 	sta.b mulb		; $80F9D1: 85 83
-	jsl.l $82FCDB		; $80F9D3: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80F9D3: 22 DB FC 82
 	sta.b d0		; $80F9D7: 85 53
 	lda.b mulres+2		; $80F9D9: A5 95
 	sta.b d0+2		; $80F9DB: 85 55
 	lda.b d1		; $80F9DD: A5 57
 	sta.b mula		; $80F9DF: 85 7D
 	sta.b mulb		; $80F9E1: 85 83
-	jsl.l $82FCDB		; $80F9E3: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80F9E3: 22 DB FC 82
 	sta.b d1		; $80F9E7: 85 57
 	lda.b mulres+2		; $80F9E9: A5 95
 	sta.b d1+2		; $80F9EB: 85 59
@@ -921,7 +921,7 @@ assgoalie:		;auto: CODE_80F6AD (asstab $E). 93G assgoalie (logic93_3): goalie X.
 	sta.b mulb		; $80FA2E: 85 83
 	lda.b d4		; $80FA30: A5 63
 	sta.b mula		; $80FA32: 85 7D
-	jsl.l $82FCDB		; $80FA34: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80FA34: 22 DB FC 82
 	lda.b d2		; $80FA38: A5 5B
 	sta.b mula		; $80FA3A: 85 7D
 	jsl.l divs		; $80FA3C: 22 6C 99 80
@@ -932,7 +932,7 @@ assgoalie:		;auto: CODE_80F6AD (asstab $E). 93G assgoalie (logic93_3): goalie X.
 	sta.b mula		; $80FA49: 85 7D
 	lda.b d0		; $80FA4B: A5 53
 	sta.b mulb		; $80FA4D: 85 83
-	jsl.l $82FCDB		; $80FA4F: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80FA4F: 22 DB FC 82
 	lda.b d2		; $80FA53: A5 5B
 	sta.b mula		; $80FA55: 85 7D
 	jsl.l divs		; $80FA57: 22 6C 99 80
@@ -1413,14 +1413,14 @@ checkgoalp_CalcGoalShotDir:		;auto: CODE_80FD7C. 93G checkgoalp_CalcGoalShotDir 
 	pha		; $80FDED: 48
 	sta.b mula		; $80FDEE: 85 7D
 	sta.b mulb		; $80FDF0: 85 83
-	jsl.l $82FCDB		; $80FDF2: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80FDF2: 22 DB FC 82
 	sta.b d0		; $80FDF6: 85 53
 	lda.b mulres+2		; $80FDF8: A5 95
 	sta.b d0+2		; $80FDFA: 85 55
 	lda.b d1		; $80FDFC: A5 57
 	sta.b mula		; $80FDFE: 85 7D
 	sta.b mulb		; $80FE00: 85 83
-	jsl.l $82FCDB		; $80FE02: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80FE02: 22 DB FC 82
 	sec		; $80FE06: 38
 	adc.b d0		; $80FE07: 65 53
 	sta.b d0		; $80FE09: 85 53
@@ -1499,7 +1499,7 @@ CalcAngleOffset:		;auto: CODE_80FE89. 93G CalcAngleOffset (logic93_1): d4 = (goa
 	sta.b mulb		; $80FE97: 85 83
 	lda.b d0		; $80FE99: A5 53
 	sta.b mula		; $80FE9B: 85 7D
-	jsl.l $82FCDB		; $80FE9D: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80FE9D: 22 DB FC 82
 	sta.b d4		; $80FEA1: 85 63
 	lda.b mulres+2		; $80FEA3: A5 95
 	sta.b d4+2		; $80FEA5: 85 65
@@ -1507,7 +1507,7 @@ CalcAngleOffset:		;auto: CODE_80FE89. 93G CalcAngleOffset (logic93_1): d4 = (goa
 	sta.b mula		; $80FEA9: 85 7D
 	lda.b d3		; $80FEAB: A5 5F
 	sta.b mulb		; $80FEAD: 85 83
-	jsl.l $82FCDB		; $80FEAF: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80FEAF: 22 DB FC 82
 	sta.b d3		; $80FEB3: 85 5F
 	lda.b mulres+2		; $80FEB5: A5 95
 	sta.b d3+2		; $80FEB7: 85 61

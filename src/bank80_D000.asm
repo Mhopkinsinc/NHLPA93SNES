@@ -160,7 +160,7 @@ checkgoal:		;auto: CODE_80CEE7. 93G checkgoal (hockey93_04): collision with the 
 	lda.b d3+1		; $80D007: A5 60
 	sta.b d3		; $80D009: 85 5F
 	sta.b mula		; $80D00B: 85 7D
-	jsl.l $82FCDB		; $80D00D: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80D00D: 22 DB FC 82
 	lda.b d1		; $80D011: A5 57  |d5*d3| < |d1|? else side entry
 	bit.w #$8000		; $80D013: 89 00 80
 	beq .m1		; $80D016: F0 04
@@ -369,7 +369,7 @@ Goal:		;auto: CODE_80D182. 93G Goal (hockey93_04): puck in the goal. Score +1 fo
 	jmp.w .rtl		; $80D192: 4C 28 D3
 .in:
 	jsl.l ChkShotStat		; $80D195: 22 2E D1 80  sound reset, siren, mute other sfx
-	jsl.l $82FA1A		; $80D199: 22 1A FA 82  bank $82: reset the sound command queue
+	jsl.l sndqreset		; $80D199: 22 1A FA 82
 	lda.w #SFXsiren		; $80D19D: A9 A0 00
 	pha		; $80D1A0: 48
 	jsl.l sfx		; $80D1A1: 22 8B C2 80
@@ -681,7 +681,7 @@ checkgoalp:		;auto: CODE_80D3D3. 93G checkgoalp (hockey93_04): player X collisio
 	asl a		; $80D415: 0A
 	sta.b mula		; $80D416: 85 7D
 	sta.b mulb		; $80D418: 85 83
-	jsl.l $82FCDB		; $80D41A: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80D41A: 22 DB FC 82
 	lda.w #$0400		; $80D41E: A9 00 04
 	sta.b mula		; $80D421: 85 7D
 	jsl.l divu		; $80D423: 22 E5 CB 80
@@ -697,7 +697,7 @@ checkgoalp:		;auto: CODE_80D3D3. 93G checkgoalp (hockey93_04): player X collisio
 	asl a		; $80D436: 0A
 	sta.b mula		; $80D437: 85 7D
 	sta.b mulb		; $80D439: 85 83
-	jsl.l $82FCDB		; $80D43B: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80D43B: 22 DB FC 82
 	lda.w #$0079		; $80D43F: A9 79 00
 	sta.b mula		; $80D442: 85 7D
 	jsl.l divu		; $80D444: 22 E5 CB 80
@@ -719,14 +719,14 @@ checkgoalp:		;auto: CODE_80D3D3. 93G checkgoalp (hockey93_04): player X collisio
 	pha		; $80D464: 48
 	sta.b mula		; $80D465: 85 7D
 	sta.b mulb		; $80D467: 85 83
-	jsl.l $82FCDB		; $80D469: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80D469: 22 DB FC 82
 	sta.b d0		; $80D46D: 85 53
 	lda.b mulres+2		; $80D46F: A5 95
 	sta.b d0+2		; $80D471: 85 55
 	lda.b d1		; $80D473: A5 57
 	sta.b mula		; $80D475: 85 7D
 	sta.b mulb		; $80D477: 85 83
-	jsl.l $82FCDB		; $80D479: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80D479: 22 DB FC 82
 	adc.b d0		; $80D47D: 65 53
 	sta.b d0		; $80D47F: 85 53
 	lda.b d0+2		; $80D481: A5 55
@@ -990,7 +990,7 @@ checkcx:		;auto: CODE_80D632. 93G checkcx (hockey93_03): Y = object near X. Oppo
 	pha		; $80D671: 48
 	lda.b d0		; $80D672: A5 53
 	pha		; $80D674: 48
-	jsl.l $82FCDB		; $80D675: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80D675: 22 DB FC 82
 	sta.b d1		; $80D679: 85 57
 	lda.b mulres+2		; $80D67B: A5 95
 	sta.b d1+2		; $80D67D: 85 59
@@ -998,7 +998,7 @@ checkcx:		;auto: CODE_80D632. 93G checkcx (hockey93_03): Y = object near X. Oppo
 	sta.b mula		; $80D681: 85 7D
 	lda.b d0		; $80D683: A5 53
 	sta.b mulb		; $80D685: 85 83
-	jsl.l $82FCDB		; $80D687: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80D687: 22 DB FC 82
 	adc.b d1		; $80D68B: 65 57
 	sta.b d1		; $80D68D: 85 57
 	lda.b d1+2		; $80D68F: A5 59
@@ -1073,7 +1073,7 @@ checkcx:		;auto: CODE_80D632. 93G checkcx (hockey93_03): Y = object near X. Oppo
 	sta.b mula		; $80D718: 85 7D
 	lda.b d1		; $80D71A: A5 57
 	sta.b mulb		; $80D71C: 85 83
-	jsl.l $82FCDB		; $80D71E: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80D71E: 22 DB FC 82
 	sta.b d1		; $80D722: 85 57
 	lda.b mulres+2		; $80D724: A5 95
 	sta.b d1+2		; $80D726: 85 59
@@ -1081,7 +1081,7 @@ checkcx:		;auto: CODE_80D632. 93G checkcx (hockey93_03): Y = object near X. Oppo
 	sta.b mula		; $80D72A: 85 7D
 	lda.b d0		; $80D72C: A5 53
 	sta.b mulb		; $80D72E: 85 83
-	jsl.l $82FCDB		; $80D730: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80D730: 22 DB FC 82
 	sec		; $80D734: 38
 	sbc.b d1		; $80D735: E5 57
 	sta.b d0		; $80D737: 85 53
@@ -1125,7 +1125,7 @@ checkcx:		;auto: CODE_80D632. 93G checkcx (hockey93_03): Y = object near X. Oppo
 	sta.b mulb		; $80D77D: 85 83
 	lda.b d4		; $80D77F: A5 63
 	sta.b mula		; $80D781: 85 7D
-	jsl.l $82FCDB		; $80D783: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80D783: 22 DB FC 82
 	lda.b d1		; $80D787: A5 57
 	sta.b mula		; $80D789: 85 7D
 	jsl.l divs		; $80D78B: 22 6C 99 80
@@ -1150,7 +1150,7 @@ checkcx:		;auto: CODE_80D632. 93G checkcx (hockey93_03): Y = object near X. Oppo
 	sta.b mula		; $80D7B0: 85 7D
 	lda.b d3		; $80D7B2: A5 5F
 	sta.b mulb		; $80D7B4: 85 83
-	jsl.l $82FCDB		; $80D7B6: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80D7B6: 22 DB FC 82
 	sta.b tmp0		; $80D7BA: 85 73
 	lda.b mulres+2		; $80D7BC: A5 95
 	sta.b tmp1		; $80D7BE: 85 75
@@ -1158,7 +1158,7 @@ checkcx:		;auto: CODE_80D632. 93G checkcx (hockey93_03): Y = object near X. Oppo
 	sta.b mula		; $80D7C2: 85 7D
 	lda.b d2		; $80D7C4: A5 5B
 	sta.b mulb		; $80D7C6: 85 83
-	jsl.l $82FCDB		; $80D7C8: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80D7C8: 22 DB FC 82
 	adc.b tmp0		; $80D7CC: 65 73
 	sta.b tmp0		; $80D7CE: 85 73
 	lda.b tmp1		; $80D7D0: A5 75
@@ -1179,7 +1179,7 @@ checkcx:		;auto: CODE_80D632. 93G checkcx (hockey93_03): Y = object near X. Oppo
 	sta.b mula		; $80D7EB: 85 7D
 	lda.b d2		; $80D7ED: A5 5B
 	sta.b mulb		; $80D7EF: 85 83
-	jsl.l $82FCDB		; $80D7F1: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80D7F1: 22 DB FC 82
 	sta.b tmp0		; $80D7F5: 85 73
 	lda.b mulres+2		; $80D7F7: A5 95
 	sta.b tmp1		; $80D7F9: 85 75
@@ -1187,7 +1187,7 @@ checkcx:		;auto: CODE_80D632. 93G checkcx (hockey93_03): Y = object near X. Oppo
 	sta.b mula		; $80D7FD: 85 7D
 	lda.b d3		; $80D7FF: A5 5F
 	sta.b mulb		; $80D801: 85 83
-	jsl.l $82FCDB		; $80D803: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80D803: 22 DB FC 82
 	sec		; $80D807: 38
 	sbc.b tmp0		; $80D808: E5 73
 	sta.b tmp0		; $80D80A: 85 73
@@ -1209,7 +1209,7 @@ checkcx:		;auto: CODE_80D632. 93G checkcx (hockey93_03): Y = object near X. Oppo
 	sta.b mula		; $80D827: 85 7D
 	lda.b d2		; $80D829: A5 5B
 	sta.b mulb		; $80D82B: 85 83
-	jsl.l $82FCDB		; $80D82D: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80D82D: 22 DB FC 82
 	lsr.b mulres+2		; $80D831: 46 95
 	ror a		; $80D833: 6A
 	lsr.b mulres+2		; $80D834: 46 95
@@ -1225,7 +1225,7 @@ checkcx:		;auto: CODE_80D632. 93G checkcx (hockey93_03): Y = object near X. Oppo
 	sta.b mula		; $80D846: 85 7D
 	lda.b d3		; $80D848: A5 5F
 	sta.b mulb		; $80D84A: 85 83
-	jsl.l $82FCDB		; $80D84C: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80D84C: 22 DB FC 82
 	lsr.b mulres+2		; $80D850: 46 95
 	ror a		; $80D852: 6A
 	lsr.b mulres+2		; $80D853: 46 95
@@ -2048,7 +2048,7 @@ SetInst:		;auto: CODE_80DE89. 93G SetInst (hockey93_04): d0 = fight rating X nee
 	sta.w pf2fight,y		; $80DEE5: 99 5F 11
 	jmp.w .inst		; $80DEE8: 4C EB DE
 .inst:		;X in a shoulder check: PenInst for the first teammate on the ice without a penalty
-	jsl.l $82FA1A		; $80DEEB: 22 1A FA 82  sound reset, bank $82: reset the sound command queue
+	jsl.l sndqreset		; $80DEEB: 22 1A FA 82  sound reset
 	lda.w SPA,x		; $80DEEF: BD FF 0D
 	cmp.w #SPAshoulderchkl		; $80DEF2: C9 02 0B
 	beq .chk		; $80DEF5: F0 05
@@ -2097,7 +2097,7 @@ doinput:		;auto: CODE_80DF3F. 93G doinput (logic93_1): controller input for play
 	bne .pause2		; $80DF4C: D0 04
 	jml.l $8F8E03		; $80DF4E: 5C 03 8E 8F  bank $8F: 93G startpause1
 .pause2:
-	jml.l $82FDB5		; $80DF52: 5C B5 FD 82  bank $82: 93G startpause2
+	jml.l startpause2		; $80DF52: 5C B5 FD 82
 .nostart:
 	lda.w sfhormode		; $80DF56: AD 8E 12  horizontal mode: dpad +90 degrees
 	beq .nhor		; $80DF59: F0 0E

@@ -1055,7 +1055,7 @@ Stop4Pen:		;auto: CODE_80E7F7. 93G Stop4Pen (penalty93_1): a0 = PenBuf entry +2.
 	sbc.w sfxmutetime		; $80E8CF: ED A7 04
 	cmp.w #$003C		; $80E8D2: C9 3C 00
 	bcc .snd		; $80E8D5: 90 04
-	jsl.l $82FA1A		; $80E8D7: 22 1A FA 82  bank $82: reset the sound command queue
+	jsl.l sndqreset		; $80E8D7: 22 1A FA 82
 .snd:
 	lda.w #SFXwhistle		; $80E8DB: A9 89 00  whistle, Pencntdwn = 0, gmpen, SetPA PenWhistle
 	pha		; $80E8DE: 48
@@ -1572,7 +1572,7 @@ UpdatePA:		;auto: CODE_80ECC7. 93G UpdatePA (penalty93_1): animate the ref (SetP
 	sbc.b d7		; $80ECCD: E5 6F
 	sta.w RefCnt		; $80ECCF: 8D EA 12
 	bpl .zero		; $80ECD2: 10 04
-	jsl.l $82F93C		; $80ECD4: 22 3C F9 82  SetPA2, bank $82: 93G SetPA2
+	jsl.l SetPA2		; $80ECD4: 22 3C F9 82  SetPA2
 .zero:		;93G .1
 	lda.w penmsgtimer		; $80ECD8: AD E8 12
 	sec		; $80ECDB: 38
@@ -1581,7 +1581,7 @@ UpdatePA:		;auto: CODE_80ECC7. 93G UpdatePA (penalty93_1): animate the ref (SetP
 	bpl .rtl		; $80ECE1: 10 28
 	lda.w #$7FFF		; $80ECE3: A9 FF 7F
 	sta.w penmsgtimer		; $80ECE6: 8D E8 12
-	jsl.l $82FD95		; $80ECE9: 22 95 FD 82  PrintPenaltyMessagesString, then the player name centered at row $B, bank $82: 93G PrintPenaltyMessagesString
+	jsl.l PrintPenaltyMessagesString		; $80ECE9: 22 95 FD 82  PrintPenaltyMessagesString, then the player name centered at row $B
 	jsl.l printz		; $80ECED: 22 0C B9 80
 	dw $0005		; $80ECF1  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$11,$0B
@@ -1613,4 +1613,4 @@ SetPA:		;auto: CODE_80ED0C. 93G SetPA (penalty93_1): start the ref animation for
 	lda.w #$003C		; $80ED2E: A9 3C 00
 	sta.w penmsgtimer		; $80ED31: 8D E8 12
 .pa2:
-	jml.l $82F93C		; $80ED34: 5C 3C F9 82  bank $82: 93G SetPA2
+	jml.l SetPA2		; $80ED34: 5C 3C F9 82

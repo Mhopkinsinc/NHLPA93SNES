@@ -81,7 +81,7 @@ Start:		;auto: CODE_808000. 93G main93 Start + hockey93_01 Begin (RAM clear). Re
 	lda.b #$81		; $808093: A9 81  NMI on, auto joypad read
 	sta.w NMITIMEN		; $808095: 8D 00 42
 	rep #$30		; $808098: C2 30
-	jsl.l $82FA31		; $80809A: 22 31 FA 82  bank $82: wait until the sound command queue is empty
+	jsl.l SPCBootUpload		; $80809A: 22 31 FA 82
 	stz.b sndlock		; $80809E: 64 21
 	stz.b vbactive		; $8080A0: 64 12  vblank handlers may run
 	jsl.l $8F9073		; $8080A2: 22 73 90 8F  bank $8F: $1610-$161F = $1E
@@ -914,14 +914,14 @@ chk4shot:		;auto: CODE_8086E3. 93G chk4shot (logic93_3): computer player X looks
 	sta.b mula		; $808736: 85 7D
 	sta.b mulb		; $808738: 85 83
 	pha		; $80873A: 48
-	jsl.l $82FCDB		; $80873B: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80873B: 22 DB FC 82
 	sta.b d0		; $80873F: 85 53
 	lda.b mulres+2		; $808741: A5 95
 	sta.b d0+2		; $808743: 85 55
 	lda.b d1		; $808745: A5 57
 	sta.b mula		; $808747: 85 7D
 	sta.b mulb		; $808749: 85 83
-	jsl.l $82FCDB		; $80874B: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80874B: 22 DB FC 82
 	adc.b d0		; $80874F: 65 53
 	sta.b tmp0		; $808751: 85 73
 	lda.b mulres+2		; $808753: A5 95
@@ -1186,14 +1186,14 @@ assnearest:		;auto: CODE_808834 (asstab $11). 93G assnearest (logic93_4): assign
 	lda.b d0		; $808957: A5 53
 	sta.b mula		; $808959: 85 7D
 	sta.b mulb		; $80895B: 85 83
-	jsl.l $82FCDB		; $80895D: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80895D: 22 DB FC 82
 	sta.b d0		; $808961: 85 53
 	lda.b mulres+2		; $808963: A5 95
 	sta.b d0+2		; $808965: 85 55
 	lda.b d1		; $808967: A5 57
 	sta.b mula		; $808969: 85 7D
 	sta.b mulb		; $80896B: 85 83
-	jsl.l $82FCDB		; $80896D: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80896D: 22 DB FC 82
 	adc.b d0		; $808971: 65 53
 	sta.b d0		; $808973: 85 53
 	lda.b mulres+2		; $808975: A5 95
@@ -1621,14 +1621,14 @@ skatetopuck:		;auto: CODE_808C2D. 93G skatetopuck (logic93_5): player X skates t
 	lda.w facedir,x		; $808CDE: BD BF 0D
 	cmp.b tmp0		; $808CE1: C5 73
 	bne .ex		; $808CE3: D0 36
-	jsl.l $82FCDB		; $808CE5: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $808CE5: 22 DB FC 82
 	sta.b d0		; $808CE9: 85 53
 	lda.b mulres+2		; $808CEB: A5 95
 	sta.b d0+2		; $808CED: 85 55
 	lda.b d1		; $808CEF: A5 57
 	sta.b mula		; $808CF1: 85 7D
 	sta.b mulb		; $808CF3: 85 83
-	jsl.l $82FCDB		; $808CF5: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $808CF5: 22 DB FC 82
 	adc.b d0		; $808CF9: 65 53
 	sta.b d0		; $808CFB: 85 53
 	lda.b d0+2		; $808CFD: A5 55
@@ -1674,7 +1674,7 @@ skatetopuck:		;auto: CODE_808C2D. 93G skatetopuck (logic93_5): player X skates t
 	sta.b mula		; $808D52: 85 7D
 	lda.w #$0007		; $808D54: A9 07 00
 	sta.b mulb		; $808D57: 85 83
-	jsl.l $82FCDB		; $808D59: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $808D59: 22 DB FC 82
 	lsr.b mulres+2		; $808D5D: 46 95
 	ror a		; $808D5F: 6A
 	lsr.b mulres+2		; $808D60: 46 95
@@ -1686,7 +1686,7 @@ skatetopuck:		;auto: CODE_808C2D. 93G skatetopuck (logic93_5): player X skates t
 	sta.b mula		; $808D6C: 85 7D
 	lda.w #$0007		; $808D6E: A9 07 00
 	sta.b mulb		; $808D71: 85 83
-	jsl.l $82FCDB		; $808D73: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $808D73: 22 DB FC 82
 	lsr.b mulres+2		; $808D77: 46 95
 	ror a		; $808D79: 6A
 	lsr.b mulres+2		; $808D7A: 46 95
@@ -1922,14 +1922,14 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	pha		; $808F65: 48
 	sta.b mula		; $808F66: 85 7D
 	sta.b mulb		; $808F68: 85 83
-	jsl.l $82FCDB		; $808F6A: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $808F6A: 22 DB FC 82
 	sta.b d0		; $808F6E: 85 53
 	lda.b mulres+2		; $808F70: A5 95
 	sta.b d0+2		; $808F72: 85 55
 	lda.b d1		; $808F74: A5 57
 	sta.b mula		; $808F76: 85 7D
 	sta.b mulb		; $808F78: 85 83
-	jsl.l $82FCDB		; $808F7A: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $808F7A: 22 DB FC 82
 	adc.b d0		; $808F7E: 65 53
 	sta.b d0		; $808F80: 85 53
 	lda.b mulres+2		; $808F82: A5 95
@@ -2018,7 +2018,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	jsl.l muls16		; $809026: 22 96 84 80
 	pla		; $80902A: 68
 	sta.b mula		; $80902B: 85 7D
-	jsl.l $82FCDB		; $80902D: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80902D: 22 DB FC 82
 	lda.b d3		; $809031: A5 5F
 	sta.b mula		; $809033: 85 7D
 	jsl.l divs		; $809035: 22 6C 99 80
@@ -2031,7 +2031,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	jsl.l muls16		; $809047: 22 96 84 80
 	pla		; $80904B: 68
 	sta.b mula		; $80904C: 85 7D
-	jsl.l $82FCDB		; $80904E: 22 DB FC 82  bank $82: muls 32-bit, A/mulres+2 = mula*mulb
+	jsl.l muls32		; $80904E: 22 DB FC 82
 	lda.b d3		; $809052: A5 5F
 	sta.b mula		; $809054: 85 7D
 	jsl.l divs		; $809056: 22 6C 99 80

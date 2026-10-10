@@ -662,11 +662,11 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	dex		; $80B547: CA
 	dex		; $80B548: CA
 	bpl .pal		; $80B549: 10 F0
-	jsl.l $82FA1A		; $80B54B: 22 1A FA 82  sound queue reset (bank $82), bank $82: reset the sound command queue
+	jsl.l sndqreset		; $80B54B: 22 1A FA 82  sound queue reset (bank $82)
 	lda.w sndbank		; $80B54F: AD 4F 16  in-game sound set not loaded yet: load it
 	cmp.w #$0001		; $80B552: C9 01 00
 	beq .gfx		; $80B555: F0 04
-	jsl.l $82FA7A		; $80B557: 22 7A FA 82  bank $82
+	jsl.l SPCGameUpload		; $80B557: 22 7A FA 82
 .gfx:		;decompress each tile set to $7F0000 and send it to vram
 	lda.w #IceRinkTiles		; $80B55B: A9 A0 CD  packed rink tiles (bank82_D000)
 	sta.b tmp0		; $80B55E: 85 73
@@ -1305,7 +1305,7 @@ updatepwrplay:		;auto: CODE_80B9F4. 93G updatepwrplay (penalty93_1): show the po
 	sta.b a3+2		; $80BA7C: 85 41
 	lda.w #$0002		; $80BA7E: A9 02 00
 	sta.b [a3]		; $80BA81: 87 3F
-	jsl.l $82FDD3		; $80BA83: 22 D3 FD 82  appendz (bank $82), bank $82: 93G appendz (inline string follows)
+	jsl.l appendz		; $80BA83: 22 D3 FD 82  appendz (bank $82)
 	dw $0005		; $80BA87  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$01,$19
 	lda.b a0		; $80BA8C: A5 33
