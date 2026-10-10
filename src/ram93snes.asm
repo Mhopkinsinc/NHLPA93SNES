@@ -75,6 +75,9 @@ crowdcnt	= $DA	; count down to the next crowd animation step. 93G crowdcnt
 crowdframe	= $DC	; crowd frame: low byte = random extra frame (loud crowd), high byte ($DD) = frame from cd0. 93G crowdframe
 crowdlevel	= $DE	; level of crowd excitement (+$50 per punch, +$258 for a won fight, +$C8 for a faceoff win). 93G crowdlevel
 crowdstep	= $E0	; animation step for the crowd (0-$1E). 93G crowdstep
+bosgames	= $D6	; 0-6 game of the best of seven series, 7 = single games. 92G bosgames
+deltax		= $EA	; avdgoal: x correction around the goal. 93G deltax
+deltay		= $EC	; avdgoal: y correction. 93G deltay
 impactstep	= $E2	; d7*2: impact decay this game frame (game loop)
 velstep		= $E4	; d7*16: velocity to position scale this game frame (93G d4 in updateplayers)
 gravstep	= $E6	; d7*96: gravity this game frame (93G 2*d4 + 4*d4)
@@ -141,6 +144,10 @@ passspeed	= $043D	; speed of pass/shot. 93G passspeed
 passReceiverPlayerNum	= $043F	; SCnum the last pass was aimed at (negative = none). 93G passReceiverPlayerNum
 PKBonus		= $0441	; setplayer: penalty kill bonus (negative). 93G PKBonus
 PlList		= $0443	; 12 bytes: wanted roster players (6), then their positions (6). 93G PlList
+pojoy		= $044F	; playoff joystick indicator (2+: two players). 92G POJoy (93G playoffroundoffset)
+postarts	= $0451	; 0-31: playoff tree layout; negative after DecodePW = bad password. 93G postarts
+potree		= $0453	; 32 bytes: team in each playoff tree slot (16+8+4+2+1+1). 93G potree
+potreeteam	= $0473	; the user's slot in the first playoff round. 93G potreeteam
 PPBonus		= $0475	; setplayer: power play bonus. 93G PPBonus
 printa		= $0477	; attribute (palette/priority bits) for print characters. 93G printa
 printfont	= $0479	; font number (0-3) from the print control code
@@ -182,6 +189,7 @@ Vpos		= $08DF	; ice rink vertical position. 93G Vpos
 Vscroll		= $08E1	; vertical scroll (low 3 bits = BG2 fine scroll). 93G Vscroll
 wcradiusx	= $08E3	; wall collision radius x. 93G wcradiusx
 wcradiusy	= $08E5	; wall collision radius y. 93G wcradiusy
+WinBits		= $08E7	; bits of the teams that go on in the playoff tree. 93G WinBits
 
 ; Sort objects (93G SortCords): structure of arrays, one word per object, 16 objects ($20 bytes per field).
 ; Index with X/Y = SCnum*2. The 93G byte fields (pnum ... handed) are each a word array here.
@@ -335,6 +343,7 @@ PassWord	= $1610	; 16 password characters (indexes into PasstoText; bit 7 hides 
 OptPen		= $160A	; penalties (0 = off). 93G OptPen
 asv		= $1644	; scouting text without delays (down pressed). 93G asv
 passbits	= $1624	; password bits: a 128-bit number, 8 words, low word first (SuperDiv, PushBits). 92G PassBits
+tpassbits	= $1634	; 8 words: passbits before all games are resolved (EncodePW, sf3alttree). 92G tpassbits
 OptLine		= $160C	; line changes (0 = on). 93G OptLine
 
 sndbank		= $164F	; sound set loaded into the SPC (1 = the in-game sounds); sfx are queued only for it
@@ -342,12 +351,14 @@ cursong		= $1651	; song playing on the SPC (0 = none); set by the song starters 
 DMAList		= $1653	; vram dma list (7-byte entries, see dma* offsets), filled up to DMAListend. 93G DMAList
 printfontset	= $1BCB	; tile base of the selected print font (control code). 93G printfontset
 charofs		= $1BCD	; added to every text map tile written by the game code ($FF00 at boot, 0 in the game screens)
+charofs2	= $1BCF	; second tile offset: cleared with charofs by the screen setups (bank $8F adds it at $8FE904)
 BigFontChars	= $1BD1	; vram tiles for the big font. 93G BigFontChars
 unusedchars	= $1BD3	; 14 tiles after the faceoff box; set by setupice, not read
 ExtraChars	= $1BD5	; first free vram tile after the text tiles. 93G ExtraChars
 smallfontchars	= $1BD7	; vram tiles for the small font (print). 93G smallfontchars
 faceoffvrcset	= $1BD9	; vram tiles for the faceoff box. 93G faceoffvrcset
 Framercset	= $1BDB	; vram tiles for the Framer box. 93G Framercset
+logochars	= $1BDD	; vram tiles for the NHLPA logo (game setup and playoff screens, packed at $8C8000)
 refcharshor	= $1BDF	; vram tiles for the little ref (horizontal rink)
 refchars	= $1BE1	; vram tiles for the little ref (vertical rink)
 scorechars	= $1BE5	; vram tiles for the scoreboard / team block maps
@@ -357,6 +368,7 @@ blankchar	= $1BE7	; vram tile of the blank character (93G uses tile $7FF)
 sprframetime	= $7E2000	; 4 bytes per sprite frame: sprclock when its tiles were last sent (sprite VRAM tile cache)
 palbuffer	= $7E6C74	; CGRAM shadow (256 colors, 512 bytes): VBlank_Cram sends it. 93G palbuffer role
 textmap		= $7E6E74	; text layer tile map buffer (32x32 words); textdirtylo/hi mark what to send
+backmap		= $7E7674	; second BG map buffer (32x32 words) after textmap: screen backgrounds (GameSetupMap, Title1Map, EASNMap)
 TestList	= $7F0000	; scouting report paragraph numbers (-1 ends). 93G TestList
 textsave	= $7FF800	; copy of textmap while the pause screen is up
 

@@ -115,7 +115,10 @@ def palette(spec, default_grey=True):
     """List of 128+ RGB colours from FILE[:OFFSET] (BGR555 words), or grey levels."""
     if not spec:
         return [(i * 17, i * 17, i * 17) for i in range(16)] * 16
-    path, _, ofs = spec.partition(':')
+    path, ofs = spec, ''
+    head, sep, tail = spec.rpartition(':')
+    if sep and head and '/' not in tail and '\\' not in tail:
+        path, ofs = head, tail          # FILE:OFFSET (not the drive letter of C:/...)
     data = maybe_unpack(path)
     ofs = int(ofs, 0) if ofs else 0
     cols = []

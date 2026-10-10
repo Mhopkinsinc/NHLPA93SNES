@@ -6,9 +6,9 @@ same names, so the SNES files get their own extensions.
 
 | Extension | Format | Files |
 |-----------|--------|-------|
-| `.map.pak` | Packed screen: map words, then palette, then tiles in one stream (see Screens below) | `Title1`, `EASN`, `RonBarr` |
+| `.map.pak` | Packed screen: map words, then palette, then tiles in one stream (see Screens below) | `Title1`, `EASN`, `RonBarr`, `GameSetup` |
 | `.chr.pak` | Packed SNES 4bpp tiles | `IceRink`, `BigFont`, `RinkSideTiles1`, `RinkSideTiles2`, `MenuTiles88` |
-| `.chr` | SNES 4bpp planar tiles, 32 bytes per 8x8 tile, not packed | `Sprites/setNN.chr` |
+| `.chr` | SNES 4bpp planar tiles, 32 bytes per 8x8 tile, not packed | `Sprites/setNN.chr`, `Framer` |
 | `.pieces` | Sprite frame set header and piece table (see `DrawFrame`, `bank87_C000`) | `Sprites/setNN.pieces` |
 | `.snesmap` | SNES BG map words, not packed: vflip 15, hflip 14, priority 13, palette 12-10, tile 9-0 | `IceRink` (48 x 85), `IceRinkHor`, `Refs` |
 | `.snespal` | SNES palette, BGR555 words, 16 colours per row | `Pals/<team>h`, `Pals/<team>v`, `Pals/Rink` |
@@ -44,6 +44,7 @@ The unpacked data holds the map words, then the palette, then the tiles. Offsets
 |------|-----|---------|-------|-------|
 | `Title1.map.pak` | 32 x 28 at 0 | at $700 | at $800 | title screen (93G `Title1.map.jim`) |
 | `RonBarr.map.pak` | 8 x 9 at 0 | 64 colours at $90 | at $190 | Ron Barr picture (93G `RonBarrMap`) |
+| `GameSetup.map.pak` | 32 x 32 at 0 | 128 colours at $800 | at $900 | game setup backdrop; `--map-size 0x800 --pal-offset 0x800 --tiles-offset 0x900` |
 | `EASN.map.pak` | 32 x 16 at 0 | none | at $400 | EASN logo backdrop (93G `EASN.map.jim`); `--map-size 0x400 --no-pal` |
 
 ## tools/snesgfx.py

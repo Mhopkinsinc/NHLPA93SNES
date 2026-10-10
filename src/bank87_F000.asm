@@ -188,7 +188,7 @@ RestoreReplayFrame:		;auto: CODE_87F3E9. 93G RestoreReplayFrame (hockey93_02): r
 	bpl .popd		; $87F555: 10 F9
 	ldx.b xsave		; $87F557: A6 0A
 	rtl		; $87F559: 6B
-PixelRemap87:		;SNES: 4bpp pixel value remap for 4 tiles of the $88872E data (setupice via $8FE0E4): colours 0-3 only
+PixelRemap87:		;SNES: 4bpp pixel value remap for the 4 FramerTiles (bank $88; setupice via $8FE0E4): colours 0-3 only
 	db $00,$03,$04,$03		; $87F55A
 RinkSideTiles2:		;packed tiles (117: crowd, boards and bench pieces) sent to vram by setupice
 	incbin "../data/RinkSideTiles2.chr.pak"		; $87F55E-$87FF77
