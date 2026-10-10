@@ -47,7 +47,7 @@ printscores1:		;auto: CODE_89E95D. 93G printscores1 (penalty93_2): scoreboard. V
 	lda.w #$008F		; $89E9B1: A9 8F 00
 	sta.b a1+2		; $89E9B4: 85 39
 	jsl.l $8FD68C		; $89E9B6: 22 8C D6 8F  bank $8F: 93G PrintStringFromList
-	jsl.l $8D8549		; $89E9BA: 22 49 85 8D  EASNLogo, bank $8D: 93G EASNLogo
+	jsl.l EASNLogo		; $89E9BA: 22 49 85 8D  EASNLogo, bank $8D: 93G EASNLogo
 	lda.w sflags3		; $89E9BE: AD 90 12  lower line change box is up
 	bit.w #sf3llcs		; $89E9C1: 89 01 00
 	bne .ex		; $89E9C4: D0 73

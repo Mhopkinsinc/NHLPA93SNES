@@ -542,12 +542,12 @@ puckfaceoff:		;auto: asstab $1B. 93G puckfaceoff (logic93_4): this is where the 
 	sta.w pflags,x		; $80A55E: 9D DF 0E
 	lda.w gameclock		; $80A561: AD F2 12  clock out: PeriodOver
 	bne .g6		; $80A564: D0 04
-	jml.l $8D85A9		; $80A566: 5C A9 85 8D  bank $8D: 93G PeriodOver
+	jml.l PeriodOver		; $80A566: 5C A9 85 8D  bank $8D: 93G PeriodOver
 .g6:
 	lda.w gmode		; $80A56A: AD 88 12
 	bit.w #gmendper		; $80A56D: 89 40 00
 	beq .ot		; $80A570: F0 04
-	jml.l $8D85A9		; $80A572: 5C A9 85 8D  bank $8D: 93G PeriodOver
+	jml.l PeriodOver		; $80A572: 5C A9 85 8D  bank $8D: 93G PeriodOver
 .ot:
 	lda.w gsp		; $80A576: AD F0 12  overtime and not tied: clockcont_0
 	cmp.w #$0003		; $80A579: C9 03 00
@@ -769,7 +769,7 @@ SetLCmode2:		;auto: CODE_80A748. 93G SetLCmode2 (logic93_1 IDA showfaceoff): a2 
 	sta.b d2		; $80A753: 85 5B
 	lda.b fobox		; $80A755: A5 F4  faceoff box up: do not clear
 	bne .cords		; $80A757: D0 04
-	jsl.l $8D847C		; $80A759: 22 7C 84 8D  bank $8D: 93G eraser (d0/d1 size, d2 tile)
+	jsl.l eraser		; $80A759: 22 7C 84 8D  bank $8D: 93G eraser (d0/d1 size, d2 tile)
 .cords:
 	jsl.l setlccords		; $80A75D: 22 91 F3 80
 	lda.w printy		; $80A761: AD 7D 04  lower half of the screen?
@@ -1446,7 +1446,7 @@ updatefaceoff:		;auto: CODE_80ACC4. 93G updatefaceoff (logic93_4): X = puck. Dro
 	sta.b d1		; $80AD29: 85 57
 	lda.w blankchar		; $80AD2B: AD E7 1B
 	sta.b d2		; $80AD2E: 85 5B
-	jml.l $8D847C		; $80AD30: 5C 7C 84 8D  bank $8D: 93G eraser (d0/d1 size, d2 tile)
+	jml.l eraser		; $80AD30: 5C 7C 84 8D  bank $8D: 93G eraser (d0/d1 size, d2 tile)
 Endfaceoff:		;auto: CODE_80AD34. 93G Endfaceoff (logic93_4): drop the puck: pick the faceoff winner and send the puck off
 	lda.w seed+2		; $80AD34: AD A3 04  puck on the ice sound
 	and.w #$0003		; $80AD37: 29 03 00

@@ -75,7 +75,7 @@ Start:		;auto: CODE_808000. 93G main93 Start + hockey93_01 Begin (RAM clear). Re
 	bne .validate		; $808082: D0 F9
 	lda.w #$0001		; $808084: A9 01 00  hold the sound queue while the hardware/sound driver starts
 	sta.b sndlock		; $808087: 85 21
-	jsl.l $8D8120		; $808089: 22 20 81 8D  bank $8D: PPU registers off/clear, sound driver start
+	jsl.l InitPPU		; $808089: 22 20 81 8D  bank $8D: PPU registers off/clear, sound driver start
 	sep #$20		; $80808D: E2 20
 	cli		; $80808F: 58
 	lda.w RDNMI		; $808090: AD 10 42  ack a pending NMI
@@ -547,7 +547,7 @@ StopNA:		;auto: CODE_808452. 93G StopNA (logic93_5): slow player X by $70*d7 on 
 	sta.b mula		; $808455: 85 7D
 	lda.b d7		; $808457: A5 6F
 	sta.b mulb		; $808459: 85 83
-	jsl.l $8D871C		; $80845B: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
+	jsl.l mulu16		; $80845B: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
 	lda.w Xvel,x		; $80845F: BD DF 0A
 	bpl .xp		; $808462: 10 0B
 	clc		; $808464: 18
@@ -593,7 +593,7 @@ muls16:		;auto: CODE_808496. 68k muls.w: A = mula*mulb (signed 16-bit result, al
 	sta.b mulb		; $8084AC: 85 83
 	inc.b mula+2		; $8084AE: E6 7F
 .mul:
-	jsl.l $8D871C		; $8084B0: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
+	jsl.l mulu16		; $8084B0: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
 	lsr.b mula+2		; $8084B4: 46 7F  odd count: negate the result
 	bcc .rtl		; $8084B6: 90 0B
 	eor.w #$FFFF		; $8084B8: 49 FF FF
@@ -1547,7 +1547,7 @@ skatetopuck:		;auto: CODE_808C2D. 93G skatetopuck (logic93_5): player X skates t
 .aim:		;every 10 frames: aim at the puck (avoid the goal), maybe sweep check
 	adc.w #$0009		; $808C3F: 69 09 00  +10
 	sta.w temp2,x		; $808C42: 9D 7F 0C
-	jsl.l $8DFE36		; $808C45: 22 36 FE 8D  bank $8D: 93G avdgoal
+	jsl.l avdgoal		; $808C45: 22 36 FE 8D  bank $8D: 93G avdgoal
 	lda.b d1		; $808C49: A5 57
 	pha		; $808C4B: 48
 	lda.b d0		; $808C4C: A5 53
@@ -1877,7 +1877,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	sta.b mulb		; $808F02: 85 83
 	lda.w passspeed		; $808F04: AD 3D 04
 	sta.b mula		; $808F07: 85 7D
-	jsl.l $8D871C		; $808F09: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
+	jsl.l mulu16		; $808F09: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
 	lda.w #$2570		; $808F0D: A9 70 25
 	sta.b mula		; $808F10: 85 7D
 	jsl.l mulu		; $808F12: 22 42 89 88  bank $88: mulu, mulres = mula*mulb
@@ -1966,7 +1966,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	sta.b mulb		; $808FC0: 85 83
 	lda.b d3		; $808FC2: A5 5F
 	sta.b mula		; $808FC4: 85 7D
-	jsl.l $8D871C		; $808FC6: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
+	jsl.l mulu16		; $808FC6: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
 	lsr a		; $808FCA: 4A
 	lsr a		; $808FCB: 4A
 	lsr a		; $808FCC: 4A
@@ -2043,7 +2043,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	sta.b mulb		; $809061: 85 83
 	lda.w passspeed		; $809063: AD 3D 04
 	sta.b mula		; $809066: 85 7D
-	jsl.l $8D871C		; $809068: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
+	jsl.l mulu16		; $809068: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
 	lda.w #$0044		; $80906C: A9 44 00
 	sta.b mula		; $80906F: 85 7D
 	jsl.l mulu		; $809071: 22 42 89 88  bank $88: mulu, mulres = mula*mulb

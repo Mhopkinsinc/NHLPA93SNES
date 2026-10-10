@@ -47,7 +47,7 @@ setlccords:		;auto: CODE_80F391. 93G setlccords (logic93_1): printx/printy for t
 	sta.b mula		; $80F3B4: 85 7D
 	lda.b d0		; $80F3B6: A5 53
 	sta.b mulb		; $80F3B8: 85 83
-	jsl.l $8D871C		; $80F3BA: 22 1C 87 8D  bank $8D: mulu, A = mula*mulb
+	jsl.l mulu16		; $80F3BA: 22 1C 87 8D  bank $8D: mulu, A = mula*mulb
 	adc.w printy		; $80F3BE: 6D 7D 04
 	sta.w printy		; $80F3C1: 8D 7D 04
 	lda.w #$0002		; $80F3C4: A9 02 00  getlchoice 2: no third choice: 2 rows

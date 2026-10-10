@@ -1390,7 +1390,7 @@ InProgress:		;auto: CODE_80EA40. 93G InProgress (penalty93_1): ref in progress. 
 	lda.b d2		; $80EB63: A5 5B
 	and.w #$00FF		; $80EB65: 29 FF 00
 	sta.b mulb		; $80EB68: 85 83
-	jsl.l $8D871C		; $80EB6A: 22 1C 87 8D  bank $8D: mulu, A = mula*mulb
+	jsl.l mulu16		; $80EB6A: 22 1C 87 8D  bank $8D: mulu, A = mula*mulb
 	ora.w #$2000		; $80EB6E: 09 00 20
 	sta.b d2		; $80EB71: 85 5B
 	lda.b a2		; $80EB73: A5 3B
@@ -1590,7 +1590,7 @@ UpdatePA:		;auto: CODE_80ECC7. 93G UpdatePA (penalty93_1): animate the ref (SetP
 	jsl.l printz		; $80ECED: 22 0C B9 80
 	dw $0005		; $80ECF1  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$11,$0B
-	jsl.l $8D8605		; $80ECF6: 22 05 86 8D  bank $8D: 93G GetPlayerName (a1 = name)
+	jsl.l GetPlayerName		; $80ECF6: 22 05 86 8D  bank $8D: 93G GetPlayerName (a1 = name)
 	lda.b [a1]		; $80ECFA: A7 37
 	lsr a		; $80ECFC: 4A
 	sta.b d0		; $80ECFD: 85 53

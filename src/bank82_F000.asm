@@ -418,7 +418,7 @@ ContinuePlayoffs:		;auto: CODE_82FC59. SNES: after a game: EncodePW and PlayoffS
 	and.w #$7F7F		; $82FC79: 29 7F 7F
 	sta.w PassWord		; $82FC7C: 8D 10 16
 	jsl.l DecodePW		; $82FC7F: 22 EA F5 80
-	jsl.l $8D8000		; $82FC83: 22 00 80 8D  bank $8D
+	jsl.l maketree		; $82FC83: 22 00 80 8D  bank $8D
 	lda.w #sf3alttree		; $82FC87: A9 04 00  sf3alttree: $8B8172 after the font bases
 	trb.w sflags3		; $82FC8A: 1C 90 12
 	beq .tree		; $82FC8D: F0 04
@@ -446,7 +446,7 @@ far8DF888:		;auto: CODE_82FC97. SNES: save d0-d7 and a0-a6 on the stack and go o
 	cpx.w #$001C		; $82FCB2: E0 1C 00
 	bne .pusha		; $82FCB5: D0 F6
 	ldx.b xsave		; $82FCB7: A6 0A
-	jml.l $8DF888		; $82FCB9: 5C 88 F8 8D  bank $8D (pulls the saved registers)
+	jml.l StartHL2		; $82FCB9: 5C 88 F8 8D  bank $8D (pulls the saved registers)
 PixelRemap8D:		;SNES: 4bpp pixel value remap for BigFontTiles (setupice via $8FE0E4): colour 0 -> 7, the rest unchanged
 	db $07,$01,$02,$03,$04,$05,$06,$07,$08,$09,$0A,$0B,$0C,$0D,$0E,$0F		; $82FCBD
 marktextlo:		;auto: CODE_82FCCD. SNES: textdirtylo = min(textdirtylo, A)

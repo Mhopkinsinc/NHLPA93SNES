@@ -172,7 +172,7 @@ EraseScoutName:		;auto: CODE_89FCC1. SNES: blank the 11 x 2 showcased player nam
 	sta.b d1		; $89FCCD: 85 57
 	lda.w blankchar		; $89FCCF: AD E7 1B
 	sta.b d2		; $89FCD2: 85 5B
-	jml.l $8D847C		; $89FCD4: 5C 7C 84 8D  bank $8D: 92G eraser
+	jml.l eraser		; $89FCD4: 5C 7C 84 8D  bank $8D: 92G eraser
 GetPlayerRecord:		;auto: CODE_89FCD8. SNES: a0 = roster record of player d0 of team a2 (tmdata: the player data, then name length + 8 bytes per player; 93G does it inline)
 	lda.w #$0083		; $89FCD8: A9 83 00
 	sta.b a0+2		; $89FCDB: 85 35
@@ -217,7 +217,7 @@ StartGame:		;auto: CODE_89FD0C (from $8B8176). 93G StartGame (hockey93_01): rese
 	jsl.l restoreteams		; $89FD2A: 22 3A FD 89
 	jsl.l $8F902A		; $89FD2E: 22 2A 90 8F  bank $8F: 93G InitScores
 	jsl.l UpdateScores		; $89FD32: 22 D1 F9 82
-	jml.l $8D8217		; $89FD36: 5C 17 82 8D  bank $8D: on to the period start
+	jml.l StartPer		; $89FD36: 5C 17 82 8D  bank $8D: on to the period start
 restoreteams:		;auto: CODE_89FD3A. 93G restoreteams (hockey93_01): both rosters to the bench: tmap 6, every tmpdst -2
 	stz.b a2		; $89FD3A: 64 3B
 	jsl.l .r		; $89FD3C: 22 45 FD 89

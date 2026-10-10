@@ -57,7 +57,7 @@ assfight:		;auto: asstab $14. 93G assfight (logic93_2): fighting logic for playe
 	sta.b mula		; $809184: 85 7D
 	lda.b d0		; $809186: A5 53
 	sta.b mulb		; $809188: 85 83
-	jsl.l $8D871C		; $80918A: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
+	jsl.l mulu16		; $80918A: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
 	xba		; $80918E: EB
 	and.w #$00FF		; $80918F: 29 FF 00
 	lsr a		; $809192: 4A
@@ -454,7 +454,7 @@ CwdFight:		;auto: CODE_809493. 93G chkhit .cwd (IDA CwdFight): crowd reacts to a
 	sta.b mulb		; $8094A4: 85 83
 	lda.w #$01F4		; $8094A6: A9 F4 01
 	sta.b mula		; $8094A9: 85 7D
-	jsl.l $8D871C		; $8094AB: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
+	jsl.l mulu16		; $8094AB: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
 	sta.b d0		; $8094AF: 85 53
 	lda.w facedir,x		; $8094B1: BD BF 0D
 	cmp.w #$0002		; $8094B4: C9 02 00  push the other way when facing right
@@ -1922,7 +1922,7 @@ puckstick:		;auto: CODE_809F15. 93G puckstick (hockey93_05): puck hits the stick
 	sta.b mulb		; $80A04F: 85 83
 	lda.w #$02BC		; $80A051: A9 BC 02  * 700
 	sta.b mula		; $80A054: 85 7D
-	jsl.l $8D871C		; $80A056: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
+	jsl.l mulu16		; $80A056: 22 1C 87 8D  bank $8D: mulu, mulres = mula*mulb
 	sta.b d1		; $80A05A: 85 57
 .nohand:
 	lda.b d1		; $80A05C: A5 57
@@ -1996,7 +1996,7 @@ puckglue:		;auto: CODE_80A07D. 93G puckglue (hockey93_05 IDA loc_10F8A): player 
 	ldy.b a2		; $80A0F4: A4 3B
 	lda.w position,y		; $80A0F6: B9 9F 0B
 	beq .goalie		; $80A0F9: F0 04
-	jml.l $8D87FB		; $80A0FB: 5C FB 87 8D  bank $8D: 93G setd0player
+	jml.l setd0player		; $80A0FB: 5C FB 87 8D  bank $8D: 93G setd0player
 .goalie:
 	jsl.l ChkShotStat		; $80A0FF: 22 2E D1 80  ChkShotStat (goalie made a save)
 	ldy.b a2		; $80A103: A4 3B
@@ -2005,8 +2005,8 @@ puckglue:		;auto: CODE_80A07D. 93G puckglue (hockey93_05 IDA loc_10F8A): player 
 	lda.w SPA,y		; $80A10B: B9 FF 0D
 	cmp.w #SPAgdive		; $80A10E: C9 90 14
 	beq .g314		; $80A111: F0 04
-	jml.l $8D87FB		; $80A113: 5C FB 87 8D  bank $8D: 93G setd0player
+	jml.l setd0player		; $80A113: 5C FB 87 8D  bank $8D: 93G setd0player
 .g314:
 	lda.w #$0005		; $80A117: A9 05 00
 	sta.w temp5,y		; $80A11A: 99 DF 0C
-	jml.l $8D87FB		; $80A11D: 5C FB 87 8D  bank $8D: 93G setd0player
+	jml.l setd0player		; $80A11D: 5C FB 87 8D  bank $8D: 93G setd0player

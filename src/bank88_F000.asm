@@ -274,7 +274,7 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	sta.b d1		; $88F277: 85 57
 	lda.w blankchar		; $88F279: AD E7 1B
 	sta.b d2		; $88F27C: 85 5B
-	jsl.l $8D847C		; $88F27E: 22 7C 84 8D  erase the message box, bank $8D: 93G eraser (d0 x d1, tile d2)
+	jsl.l eraser		; $88F27E: 22 7C 84 8D  erase the message box, bank $8D: 93G eraser (d0 x d1, tile d2)
 	jmp.w .topx		; $88F282: 4C 57 F0
 .setup:		;Y: back to the setup screen (new playoffs)
 	lda.w #2		; $88F285: A9 02 00
@@ -293,7 +293,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	stz.w charofs		; $88F2BA: 9C CD 1B
 	stz.w charofs2		; $88F2BD: 9C CF 1B
 	jsl.l $8FE404		; $88F2C0: 22 04 E4 8F  bank $8F: 93G forceblack
-	jsl.l $8D8120		; $88F2C4: 22 20 81 8D  bank $8D: PPU registers off/clear
+	jsl.l InitPPU		; $88F2C4: 22 20 81 8D  bank $8D: PPU registers off/clear
 	sep #$20		; $88F2C8: E2 20
 	cli		; $88F2CA: 58
 	lda.w RDNMI		; $88F2CB: AD 10 42
@@ -687,7 +687,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 .other:
 	lda.w #36		; $88F668: A9 24 00  36 bytes per TeamBlocksMap entry
 	sta.b mulb		; $88F66B: 85 83
-	jsl.l $8D871C		; $88F66D: 22 1C 87 8D  bank $8D: 16-bit multiply
+	jsl.l mulu16		; $88F66D: 22 1C 87 8D  bank $8D: 16-bit multiply
 	tay		; $88F671: A8
 	lda.w #TeamBlocksMap		; $88F672: A9 BA CA
 	sta.b a2		; $88F675: 85 3B
@@ -863,7 +863,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	sta.b mula		; $88F7C9: 85 7D
 	lda.w #8		; $88F7CB: A9 08 00
 	sta.b mulb		; $88F7CE: 85 83
-	jsl.l $8D871C		; $88F7D0: 22 1C 87 8D  bank $8D: 16-bit multiply
+	jsl.l mulu16		; $88F7D0: 22 1C 87 8D  bank $8D: 16-bit multiply
 	adc.b tmp0		; $88F7D4: 65 73
 	asl a		; $88F7D6: 0A
 	tax		; $88F7D7: AA
@@ -908,7 +908,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	lda.w BigFontChars		; $88F82E: AD D1 1B  blank the top and bottom rows with big font tile 0
 	ora.w #$1000		; $88F831: 09 00 10
 	sta.b d2		; $88F834: 85 5B
-	jsl.l $8D847C		; $88F836: 22 7C 84 8D  bank $8D: 93G eraser (d0 x d1, tile d2)
+	jsl.l eraser		; $88F836: 22 7C 84 8D  bank $8D: 93G eraser (d0 x d1, tile d2)
 	stz.w printx		; $88F83A: 9C 7B 04
 	lda.w #104		; $88F83D: A9 68 00
 	sta.w printy		; $88F840: 8D 7D 04
@@ -919,7 +919,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	lda.w BigFontChars		; $88F84D: AD D1 1B
 	ora.w #$1000		; $88F850: 09 00 10
 	sta.b d2		; $88F853: 85 5B
-	jsl.l $8D847C		; $88F855: 22 7C 84 8D  bank $8D: 93G eraser (d0 x d1, tile d2)
+	jsl.l eraser		; $88F855: 22 7C 84 8D  bank $8D: 93G eraser (d0 x d1, tile d2)
 	jsl.l StartSong9		; $88F859: 22 8F FB 89  keep the music going
 .scroll:		;clamp Hscroll, queue the 128-column map window, wait a frame
 	lda.w Hscroll		; $88F85D: AD 56 01
@@ -1512,7 +1512,7 @@ skateto:		;auto: CODE_88FDD0. 93G skateto (logic93_5): a0 = collision avoidance 
 .go:
 	adc.w #11		; $88FE5A: 69 0B 00
 	sta.w temp2,x		; $88FE5D: 9D 7F 0C
-	jsl.l $8DFE36		; $88FE60: 22 36 FE 8D  bank $8D: avdgoal
+	jsl.l avdgoal		; $88FE60: 22 36 FE 8D  bank $8D: avdgoal
 	lda.w #13		; $88FE64: A9 0D 00
 	sta.b d0+2		; $88FE67: 85 55
 	lda.b d0		; $88FE69: A5 53

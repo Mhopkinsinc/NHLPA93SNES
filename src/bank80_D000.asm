@@ -1114,7 +1114,7 @@ checkcx:		;auto: CODE_80D632. 93G checkcx (hockey93_03): Y = object near X. Oppo
 	sta.b mula		; $80D761: 85 7D
 	lda.b evalue		; $80D763: A5 F2
 	sta.b mulb		; $80D765: 85 83
-	jsl.l $8D871C		; $80D767: 22 1C 87 8D  bank $8D: mulu, A = mula*mulb
+	jsl.l mulu16		; $80D767: 22 1C 87 8D  bank $8D: mulu, A = mula*mulb
 	lsr a		; $80D76B: 4A
 	lsr a		; $80D76C: 4A
 	lsr a		; $80D76D: 4A
@@ -1636,7 +1636,7 @@ checkcheck:		;auto: CODE_80DB12. 93G checkcheck (hockey93_03): players in contac
 .b:
 	cmp.w #SPAsweepchk		; $80DB7A: C9 90 0A
 	bne .burst		; $80DB7D: D0 04
-	jml.l $8D8389		; $80DB7F: 5C 89 83 8D  bank $8D: 93G Bcheck
+	jml.l Bcheck		; $80DB7F: 5C 89 83 8D  bank $8D: 93G Bcheck
 .burst:		;X must be in the burst anim
 	lda.w SPA,x		; $80DB83: BD FF 0D
 	cmp.w #SPAburst		; $80DB86: C9 CA 0B
@@ -1974,7 +1974,7 @@ checkfight:		;auto: CODE_80DC95. 93G checkfight (hockey93_04): start of a fight 
 	txa		; $80DE38: 8A  setd0player
 	lsr a		; $80DE39: 4A
 	sta.b d0		; $80DE3A: 85 53
-	jsl.l $8D87FB		; $80DE3C: 22 FB 87 8D  bank $8D: 93G setd0player
+	jsl.l setd0player		; $80DE3C: 22 FB 87 8D  bank $8D: 93G setd0player
 	lda.w #afight		; $80DE40: A9 14 00
 	sta.b d0		; $80DE43: 85 53
 	jsl.l assinsert		; $80DE45: 22 9D B4 80

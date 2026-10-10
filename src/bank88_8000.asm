@@ -450,7 +450,7 @@ EncodePW:		;auto: CODE_88868D. 92G EncodePW (Rev A): after a playoff game, Resol
 	lda.w #$0001		; $888695: A9 01 00
 	sta.w OptPlayMode		; $888698: 8D 00 16
 	jsl.l ResolveGames		; $88869B: 22 53 82 8B  bank $8B: 92G ResolveGames
-	jsl.l $8D8000		; $88869F: 22 00 80 8D  bank $8D: maketree
+	jsl.l maketree		; $88869F: 22 00 80 8D  bank $8D: maketree
 	lda.w gamelevel		; $8886A3: AD 4A 01  finished playoffs
 	cmp.w #$0004		; $8886A6: C9 04 00
 	beq .userwon		; $8886A9: F0 53
@@ -489,7 +489,7 @@ EncodePW:		;auto: CODE_88868D. 92G EncodePW (Rev A): after a playoff game, Resol
 	bpl .cp		; $8886F4: 10 F6
 	jsl.l ReadPassBits		; $8886F6: 22 7A 81 8B  bank $8B: 92G ReadPassBits
 .tree:
-	jml.l $8D8000		; $8886FA: 5C 00 80 8D  bank $8D: maketree
+	jml.l maketree		; $8886FA: 5C 00 80 8D  bank $8D: maketree
 .userwon:
 	jsl.l $8F9073		; $8886FE: 22 73 90 8F  bank $8F: 92G ResetPassWord
 .userfailed:
@@ -685,7 +685,7 @@ DrawGameSetupBack:		;auto: CODE_8888C3. SNES: game setup screen backdrop: textma
 	sta.b mula		; $888912: 85 7D
 	lda.w #$0008		; $888914: A9 08 00
 	sta.b mulb		; $888917: 85 83
-	jsl.l $8D871C		; $888919: 22 1C 87 8D  bank $8D: 16-bit multiply
+	jsl.l mulu16		; $888919: 22 1C 87 8D  bank $8D: 16-bit multiply
 	adc.b tmp0		; $88891D: 65 73
 	asl a		; $88891F: 0A  logo map word + logochars
 	tax		; $888920: AA

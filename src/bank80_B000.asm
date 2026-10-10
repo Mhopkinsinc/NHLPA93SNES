@@ -635,7 +635,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	lda.w #$FF00		; $80B500: A9 00 FF  charofs = $FF00
 	sta.w charofs		; $80B503: 8D CD 1B
 	stz.w charofs+2		; $80B506: 9C CF 1B
-	jsl.l $8D8120		; $80B509: 22 20 81 8D  PPU init (bank $8D), bank $8D: PPU registers off/clear, sound driver start
+	jsl.l InitPPU		; $80B509: 22 20 81 8D  PPU init (bank $8D), bank $8D: PPU registers off/clear, sound driver start
 	sep #$20		; $80B50D: E2 20
 	cli		; $80B50F: 58
 	lda.w RDNMI		; $80B510: AD 10 42
@@ -985,7 +985,7 @@ DoGameFrame:		;auto: CODE_80B7FA. 93G DoGameFrame (hockey93_01): one frame of ga
 periodicevents:		;auto: CODE_80B80D. 93G periodicevents (hockey93_01): every game loop; once a second (lldisp) the slower checks
 	jsl.l PenaltyManager		; $80B80D: 22 C7 E6 80  PenaltyManager
 	jsl.l updatecrowdf		; $80B811: 22 D1 BE 80  updatecrowdf
-	jsl.l $8D865A		; $80B815: 22 5A 86 8D  updatesound, bank $8D: 93G updatesound
+	jsl.l updatesound		; $80B815: 22 5A 86 8D  updatesound, bank $8D: 93G updatesound
 	jsl.l $8F8B11		; $80B819: 22 11 8B 8F  clockcont, bank $8F: 93G clockcont
 	lda.w sfhormode		; $80B81D: AD 8E 12  horizontal: no screen updates
 	bne .rtl		; $80B820: D0 29
@@ -1291,7 +1291,7 @@ updatepwrplay:		;auto: CODE_80B9F4. 93G updatepwrplay (penalty93_1): show the po
 	jsl.l printz		; $80BA46: 22 0C B9 80
 	dw $0012		; $80BA4A  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$01,$19,"   ",$16,$17,$18,$19,$BF,$01,$1A,"   "
-	jsl.l $8D82F0		; $80BA5C: 22 F0 82 8D  bank $8D: 93G GetLowestPen
+	jsl.l GetLowestPen		; $80BA5C: 22 F0 82 8D  bank $8D: 93G GetLowestPen
 	jsl.l $8F87EA		; $80BA60: 22 EA 87 8F  bank $8F: 93G PushTime
 	jsl.l print		; $80BA64: 22 2D B9 80
 	ldx.b a3		; $80BA68: A6 3F
@@ -1328,7 +1328,7 @@ updatepwrplay_clr:		;auto: CODE_80BAAF. 93G updatepwrplay .clrpwrplay: power pla
 	lda.w #sf2pwrplay		; $80BAAF: A9 00 20
 	trb.w sflags		; $80BAB2: 1C 8C 12
 	beq .rtl		; $80BAB5: F0 04
-	jml.l $8D8549		; $80BAB7: 5C 49 85 8D  EASNLogo, bank $8D: 93G EASNLogo
+	jml.l EASNLogo		; $80BAB7: 5C 49 85 8D  EASNLogo, bank $8D: 93G EASNLogo
 .rtl:
 	rtl		; $80BABB: 6B
 printteamname:		;auto: CODE_80BABC. print the team name of team d3 (0 home) at printx/printy, then printy += 2

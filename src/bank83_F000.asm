@@ -272,7 +272,7 @@ Restart:		;auto: CODE_83FA87. SNES: restart the game from scratch (93G Begin rol
 	pha		; $83FA96: 48
 	plb		; $83FA97: AB
 	rep #$30		; $83FA98: C2 30
-	jsl.l $8D8120		; $83FA9A: 22 20 81 8D  bank $8D
+	jsl.l InitPPU		; $83FA9A: 22 20 81 8D  bank $8D
 	ldx.w #$0000		; $83FA9E: A2 00 00
 .clr:
 	stz.b vcount,x		; $83FAA1: 74 00

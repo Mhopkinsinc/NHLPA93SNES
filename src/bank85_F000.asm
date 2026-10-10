@@ -512,13 +512,13 @@ PrintTeamNames:		;auto: CODE_85FF1E. SNES: regular season: HomeTeam/VisTeam from
 	db $BE,$02,$01
 	lda.w VisTeam		; $85FF5A: AD 9C 12
 	sta.b d1		; $85FF5D: 85 57
-	jsl.l $8D84E2		; $85FF5F: 22 E2 84 8D  bank $8D: print team d1 name
+	jsl.l DrawTeamBlocks		; $85FF5F: 22 E2 84 8D  bank $8D: print team d1 name
 	jsl.l printz		; $85FF63: 22 0C B9 80
 	dw $0005		; $85FF67  printz inline string: length (counts itself), then control bytes / text
 	db $BE,$15,$01
 	lda.w HomeTeam		; $85FF6C: AD 9A 12
 	sta.b d1		; $85FF6F: 85 57
-	jsl.l $8D84E2		; $85FF71: 22 E2 84 8D  bank $8D: print team d1 name
+	jsl.l DrawTeamBlocks		; $85FF71: 22 E2 84 8D  bank $8D: print team d1 name
 	jsl.l setteams		; $85FF75: 22 29 FC 86
 	stx.b xsave		; $85FF79: 86 0A
 	ldx.w #$000A		; $85FF7B: A2 0A 00

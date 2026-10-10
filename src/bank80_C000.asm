@@ -631,9 +631,9 @@ updateplayers:		;auto: CODE_80C46D. 93G updateplayers (hockey93_02): animation, 
 	asl a		; $80C6B3: 0A
 	asl a		; $80C6B4: 0A
 	tax		; $80C6B5: AA
-	lda.l $8D86A8,x		; $80C6B6: BF A8 86 8D  asstab (bank $8D) entry into jmlvector
+	lda.l asstab,x		; $80C6B6: BF A8 86 8D  asstab (bank $8D) entry into jmlvector
 	sta.w jmlvector+1		; $80C6BA: 8D 79 01
-	lda.l $8D86A8+1,x		; $80C6BD: BF A9 86 8D
+	lda.l asstab+1,x		; $80C6BD: BF A9 86 8D
 	sta.w jmlvector+2		; $80C6C1: 8D 7A 01
 	ldx.b a3		; $80C6C4: A6 3F
 	jsl.l $8FDBF9		; $80C6C6: 22 F9 DB 8F  loadTeamStruct, then the assignment, bank $8F: 93G loadTeamStruct

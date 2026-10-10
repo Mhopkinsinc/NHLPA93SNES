@@ -510,7 +510,7 @@ DisplayStats:		;auto: CODE_84FAE3. 92G DisplayStats (penalty.asm): the STATS pag
 	sta.b d1		; $84FB02: 85 57
 	lda.w smallfontchars		; $84FB04: AD D7 1B
 	sta.b d2		; $84FB07: 85 5B
-	jsl.l $8D847C		; $84FB09: 22 7C 84 8D  bank $8D: 92G eraser
+	jsl.l eraser		; $84FB09: 22 7C 84 8D  bank $8D: 92G eraser
 	jsl.l printz		; $84FB0D: 22 0C B9 80
 	dw $000B		; $84FB11  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$0D,$06,"      "

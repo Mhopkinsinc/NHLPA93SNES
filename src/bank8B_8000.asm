@@ -60,7 +60,7 @@ NewPO:		;auto: CODE_8B8000. 92G NewPO: new playoffs with the same team 1: random
 	dec.b d0		; $8B8075: C6 53
 	bpl .cg		; $8B8077: 10 F4
 .n0:
-	jml.l $8D8000		; $8B8079: 5C 00 80 8D  bank $8D: maketree
+	jml.l maketree		; $8B8079: 5C 00 80 8D  bank $8D: maketree
 FigureJoy:		;auto: CODE_8B807D. 92G FigureJoy: set cont1team/cont2team: in the playoffs from the po team's game (gamenum, OptTeam2, HomeTeam/VisTeam) and pojoy; else from OptPlayers. Not after the
 		;   demo (notdemo = 0)
 	stz.w cont1team		; $8B807D: 9C 96 12
@@ -416,7 +416,7 @@ ResolveGames:		;auto: CODE_8B8253. 92G ResolveGames: the played game's score int
 	sta.w WinBits		; $8B838A: 8D E7 08
 	lda.b d3		; $8B838D: A5 5F
 	sta.b mulb		; $8B838F: 85 83
-	jsl.l $8D871C		; $8B8391: 22 1C 87 8D  bank $8D: 16-bit multiply
+	jsl.l mulu16		; $8B8391: 22 1C 87 8D  bank $8D: 16-bit multiply
 	tsb.w WinBits		; $8B8395: 0C E7 08
 	inc.w gamelevel		; $8B8398: EE 4A 01
 .rtl:
@@ -458,7 +458,7 @@ ResolveGames:		;auto: CODE_8B8253. 92G ResolveGames: the played game's score int
 	sta.w WinBits		; $8B83DC: 8D E7 08
 	lda.b d3		; $8B83DF: A5 5F
 	sta.b mulb		; $8B83E1: 85 83
-	jsl.l $8D871C		; $8B83E3: 22 1C 87 8D  bank $8D: 16-bit multiply
+	jsl.l mulu16		; $8B83E3: 22 1C 87 8D  bank $8D: 16-bit multiply
 	tsb.w WinBits		; $8B83E7: 0C E7 08
 	inc.w gamelevel		; $8B83EA: EE 4A 01
 	rtl		; $8B83ED: 6B
