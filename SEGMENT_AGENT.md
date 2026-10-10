@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank87_9000` ($879000-$879FFF). <- CURRENT
+`bank87_A000` ($87A000-$87AFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -130,8 +130,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank86_E000 | matched | $86E000 | $86EFFF | data | 4096 bytes $86E000-$86EFFF. BootSamples (incbin data/bootsamples.brr $3837..$4837) |
 | bank86_F000 | matched | $86F000 | $86FFFF | 100% | 4096 bytes $86F000-$86FFFF. BootSamples end and the end block (size asserted); SNES DecompressGraphics, StartSong6, StartSong7 (no caller), ScoutNamePos, PickStartingGoalie; 93G UpdateLineChange, setteams, ProcessInputWithRepeat, GetPeriodTimeRemaining, GetPeriodTime (.timetab), lcfound2, assscore (asstab 7); $FF fill |
 | bank87_8000 | matched | $878000 | $878FFF | data | 4096 bytes $878000-$878FFF. SpriteSet2 (frame set 2, frames 145-184: stop and skate backwards): header, frame table, pieces (data/Sprites/set02.pieces), tiles (set02.chr) |
-| bank87_9000 | not matched <- CURRENT | $879000 | $879FFF | 0% |  |
-| bank87_A000 | not matched | $87A000 | $87AFFF | 0% |  |
+| bank87_9000 | matched | $879000 | $879FFF | data | 4096 bytes $879000-$879FFF. SpriteSet2 tiles (incbin data/Sprites/set02.chr slice) |
+| bank87_A000 | not matched <- CURRENT | $87A000 | $87AFFF | 0% |  |
 | bank87_B000 | not matched | $87B000 | $87BFFF | 0% |  |
 | bank87_C000 | not matched | $87C000 | $87CFFF | 10% |  |
 | bank87_D000 | not matched | $87D000 | $87DFFF | 13% |  |
@@ -265,3 +265,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank86_E000: matched $86E000-$86EFFF (4096 bytes): boot BRR samples. MATCH.
 - bank86_F000: matched $86F000-$86FFFF (4096 bytes). DecompressGraphics (the packed stream format is in its comment; its pointer/distance are tmp1+1/tmp2+2), the song starters, setteams ($13F6 renamed tmteam: the team number, 93G team struct $28; the bank $84 showcase restarts when it changes), ProcessInputWithRepeat (repeatdelay), the period clock helpers, lcfound2, PickStartingGoalie, assscore. Bank $86 complete. MATCH.
 - bank87_8000: matched $878000-$878FFF (4096 bytes): sprite frame set 2, frames 145-184 (SPFstop .. SPFskateb+23). MATCH.
+- bank87_9000: matched $879000-$879FFF (4096 bytes): SpriteSet2 tiles. MATCH.
