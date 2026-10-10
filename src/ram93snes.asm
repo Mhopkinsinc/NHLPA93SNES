@@ -135,6 +135,7 @@ PadControlBits	= $0431	; SCnum nibbles of the pad-controlled players ($FFFF = no
 psitem		= $0485	; pause menu item (0-4). 92G psitem
 sprpieces	= $0487	; addframe: pieces left in the frame
 padcont		= $0433	; 4 words. 93G padcont
+nibblebuffer	= $041F	; 4 words: the weights WeightedRandomSelect picks from (SetScore). 93G nibblebuffer
 oldvcount	= $0427	; vcount at the last game frame (d7 = vcount - oldvcount). 93G oldvcount
 goalcue		= $0429	; nonzero: home team just scored (lead 0-2): assfaceoff plays the goal music cue at the next faceoff
 percue		= $042B	; nonzero: period just started: assfaceoff plays the period music cue
@@ -454,6 +455,7 @@ ifok		= $0004	; icing possible (93G ifok 2)
 attrxflip	= $0800	; x flip (93G attribute bit 3)
 attryflip	= $1000	; y flip (93G attribute bit 4)
 ; tmflags bits
+tmfstartlc	= $0001	; start line change mode at the next lineinput (93G tmflags bit 0)
 tmfmid		= $0002	; nearest player takes the spot between puck and own goal (93G tmflags bit 2)
 tmflcc		= $0001	; line change box needs redrawing (93G tmflcc 0)
 tmflast		= $0004	; next touch overwrites the last touch only (93G tmflags bit 3)
