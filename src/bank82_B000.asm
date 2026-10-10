@@ -3,4 +3,4 @@
 org $82B000
 	incbin "../data/gamesamples.brr":$AFAC..$B814		; $82B000-$82B867
 GameSamplesEnd:
-	dw $0000, SPCRESUME		; $82B868 end block: length 0, start the driver at $0800
+	dw $0000, SPCRESUME		; end block: length 0, start the driver at $0800

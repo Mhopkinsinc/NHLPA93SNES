@@ -4,6 +4,6 @@
 ; driver at $0400). The driver runs on through bank86_A000.
 org $868000
 BootSoundUpload:		;boot SPC upload: the sound driver and its sample set (sndbank 2)
-	dw SPCDRIVERSIZE, SPCDRIVER		; $868000 block 1: the driver code
+	dw SPCDRIVERSIZE, SPCDRIVER		; block 1: the driver code
 SPCDriver:		;SPC700 sound driver code, loaded at APU $0400 (not disassembled: SPC700 code)
 	incbin "../data/spc/driver.spc700":0..$FFC		; $868004-$868FFF

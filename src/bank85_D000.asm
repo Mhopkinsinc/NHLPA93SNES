@@ -6,20 +6,20 @@ org $85D000
 SpriteSet4End:
 	assert SpriteSet4End-SpriteSet4 == $5A4+640*32
 GetShifter:		;auto: CODE_85D5A4. 92G/93G GetShifter: d1 = number of games - 1, d2 = first bit of WinBits for the playoff gamelevel
-	lda.w #-16		; $85D5A4: A9 F0 FF
-	sta.b d2		; $85D5A7: 85 5B
-	lda.w #16		; $85D5A9: A9 10 00
-	sta.b d1		; $85D5AC: 85 57
-	ldy.w gamelevel		; $85D5AE: AC 4A 01
+	lda.w #-16
+	sta.b d2
+	lda.w #16
+	sta.b d1
+	ldy.w gamelevel
 .3:		;92G .3
-	lda.b d2		; $85D5B1: A5 5B
-	clc		; $85D5B3: 18
-	adc.b d1		; $85D5B4: 65 57
-	sta.b d2		; $85D5B6: 85 5B
-	lsr.b d1		; $85D5B8: 46 57
-	dey		; $85D5BA: 88
-	bpl .3		; $85D5BB: 10 F4
-	dec.b d1		; $85D5BD: C6 57
-	rtl		; $85D5BF: 6B
+	lda.b d2
+	clc
+	adc.b d1
+	sta.b d2
+	lsr.b d1
+	dey
+	bpl .3
+	dec.b d1
+	rtl
 Title1Map:		;93G Title1Map (Title1.map.jim): the title screen backdrop, packed (map, palette, tiles)
 	incbin "../data/Title1.map.pak":0..$A40		; $85D5C0-$85DFFF
