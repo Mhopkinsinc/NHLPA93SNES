@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank84_A000` ($84A000-$84AFFF). <- CURRENT
+`bank84_B000` ($84B000-$84BFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -107,8 +107,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank83_F000 | matched | $83F72B | $83FFFF | 100% | 2261 bytes $83F72B-$83FFFF (start moved by bank83_E000). RinkPalette (data/Pals/Rink.pal); 92G Pausemode, PauseMenu (.gj/.rm/.sr/.go/.jump), PauseReadJoy (.rjoy); SNES Team Roster item (.ros), PauseResume, PauseLeave, Restart; 93G RefsMap (data/Refs.map, 7 frames), assgoalietopuck; $FF fill |
 | bank84_8000 | matched | $848000 | $848FFF | data | 4096 bytes $848000-$848FFF. SpriteSet9 (frame set 9, frames 406-461 = SPFGoalie..+55): header, frame index table, pieces (data/Sprites/set09.pieces), tiles (data/Sprites/set09.chr 0..$9D0) |
 | bank84_9000 | matched | $849000 | $849FFF | data | 4096 bytes $849000-$849FFF. SpriteSet9 tiles: incbin data/Sprites/set09.chr $9D0..$19D0 |
-| bank84_A000 | not matched <- CURRENT | $84A000 | $84AFFF | 0% |  |
-| bank84_B000 | not matched | $84B000 | $84BFFF | 0% |  |
+| bank84_A000 | matched | $84A000 | $84AFFF | data | 4096 bytes $84A000-$84AFFF. SpriteSet9 tiles: incbin data/Sprites/set09.chr $19D0..$29D0 |
+| bank84_B000 | not matched <- CURRENT | $84B000 | $84BFFF | 0% |  |
 | bank84_C000 | not matched | $84C000 | $84CFFF | 0% |  |
 | bank84_D000 | not matched | $84D000 | $84DFFF | 0% |  |
 | bank84_E000 | not matched | $84E000 | $84EFFF | 24% |  |
@@ -241,3 +241,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank83_F000: matched $83F72B-$83FFFF (2261 bytes). The game palette, the pause screen (92G Pausemode with a fifth item, Team Roster; menu strings are in bank $8F), Restart, the ref window frames RefsMap (data/Refs.map), and asstab $F assgoalietopuck at $83FDFC (found from the 4-byte asstab). Bank $83 complete. MATCH.
 - bank84_8000: matched $848000-$848FFF (4096 bytes). Bank $84 starts with sprite frame set 9 of the addframe frame set table $8FE67D (15 sets): the goalie frames 406-461. Frame set format worked out from $85FBB9: frames, pieces, tiles, piece table offset, tile offset, first piece per frame, 4-byte pieces, 4bpp tiles. Pieces and tiles extracted to data/Sprites. MATCH.
 - bank84_9000: matched $849000-$849FFF (4096 bytes): SpriteSet9 tiles. MATCH.
+- bank84_A000: matched $84A000-$84AFFF (4096 bytes): SpriteSet9 tiles. MATCH.
