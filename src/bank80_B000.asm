@@ -740,9 +740,9 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	stz.w VMDATAL		; $80B5FF: 9C 18 21
 	dex		; $80B602: CA
 	bne .blank		; $80B603: D0 FA
-	lda.w #$C6D8		; $80B605: A9 D8 C6  bank $83 data
+	lda.w #BigFontTiles		; $80B605: A9 D8 C6  packed big font tiles (bank83_C000)
 	sta.b tmp0		; $80B608: 85 73
-	lda.w #$0083		; $80B60A: A9 83 00
+	lda.w #BigFontTiles>>16		; $80B60A: A9 83 00
 	sta.b tmp1		; $80B60D: 85 75
 	jsl.l $86FA3E		; $80B60F: 22 3E FA 86  bank $86: 93G DecompressGraphics ([tmp0] -> $7F0000)
 	stz.b a0		; $80B613: 64 33  sprite frame list from the $7F0000 data

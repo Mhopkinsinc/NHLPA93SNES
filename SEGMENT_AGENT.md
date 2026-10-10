@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank83_C000` ($83BCA8-$83CFFF). <- CURRENT
+`bank83_D000` ($83CC0C-$83DFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -101,8 +101,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank83_9000 | matched | $838D83 | $839D7C | data | 4090 bytes $838D83-$839D7C (boundaries moved to the team records). Team records Chicago .. LongIsland in 93G teamdata93.asm form |
 | bank83_A000 | matched | $839D7D | $83AD01 | data | 3973 bytes $839D7D-$83AD01 (boundaries moved to the team records). Team records Minnesota .. Philadelphia in 93G teamdata93.asm form |
 | bank83_B000 | matched | $83AD02 | $83BCA7 | data | 4006 bytes $83AD02-$83BCA7 (boundaries moved to the team records). Team records Pittsburgh .. Toronto in 93G teamdata93.asm form |
-| bank83_C000 | not matched <- CURRENT | $83BCA8 | $83CFFF | 0% | Teamdata (92G Teamdata.asm) continues |
-| bank83_D000 | not matched | $83D000 | $83DFFF | 0% | Scouting report intro text $D630 (93G $2CEC8) |
+| bank83_C000 | matched | $83BCA8 | $83CC0B | data | 3940 bytes $83BCA8-$83CC0B (boundaries moved to the team record and the end of the packed tiles). Team records Vancouver, Winnipeg, Washington; playoffseats (34 trees, = 93G); BigFontTiles incbin data/BigFont.pak (packed, $86FA3E) |
+| bank83_D000 | not matched <- CURRENT | $83CC0C | $83DFFF | 0% | Scouting report intro text $D630 (93G $2CEC8) |
 | bank83_E000 | not matched | $83E000 | $83EFFF | 0% |  |
 | bank83_F000 | not matched | $83F000 | $82FFFF | -0% |  |
 | bank84_8000 | not matched | $848000 | $848FFF | 0% |  |
@@ -235,3 +235,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank83_9000: matched $838D83-$839D7C (4090 bytes): team records Chicago .. LongIsland, same values as 93G. MATCH.
 - bank83_A000: matched $839D7D-$83AD01 (3973 bytes): team records Minnesota .. Philadelphia, same values as 93G. MATCH.
 - bank83_B000: matched $83AD02-$83BCA7 (4006 bytes): team records Pittsburgh .. Toronto, same values as 93G. MATCH.
+- bank83_C000: matched $83BCA8-$83CC0B (3940 bytes; bank83_D000 now starts at the code $83CC0C): the last team records, playoffseats (same bytes as 93G teamdata93.asm), and the packed big font tiles (100 tiles, 93G BigFont.map.jim chars) extracted to data/BigFont.pak, loaded by setupice by label. TeamList now uses labels for all 26 teams. MATCH.

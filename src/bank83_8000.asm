@@ -23,27 +23,27 @@ TeamList:		;93G TeamList: long pointer to each team record (TeamList index = tea
 	dd Boston		; $838000 team 0
 	dd Buffalo		; $838004 team 1
 	dd Calgary		; $838008 team 2
-	dd $838D83		; $83800C team 3: Chicago (written as a label once its segment is named)
-	dd $839032		; $838010 team 4: Detroit (written as a label once its segment is named)
-	dd $8392DD		; $838014 team 5: Edmonton (written as a label once its segment is named)
-	dd $83957E		; $838018 team 6: Hartford (written as a label once its segment is named)
-	dd $839ADF		; $83801C team 7: LongIsland (written as a label once its segment is named)
-	dd $839823		; $838020 team 8: LosAngeles (written as a label once its segment is named)
-	dd $839D7D		; $838024 team 9: Minnesota (written as a label once its segment is named)
-	dd $83A00E		; $838028 team 10: Montreal (written as a label once its segment is named)
-	dd $83A2D8		; $83802C team 11: NewJersey (written as a label once its segment is named)
-	dd $83A583		; $838030 team 12: NewYork (written as a label once its segment is named)
-	dd $83A83F		; $838034 team 13: Ottawa (written as a label once its segment is named)
-	dd $83AA52		; $838038 team 14: Philadelphia (written as a label once its segment is named)
-	dd $83AD02		; $83803C team 15: Pittsburgh (written as a label once its segment is named)
-	dd $83AF9D		; $838040 team 16: Quebec (written as a label once its segment is named)
-	dd $83B26A		; $838044 team 17: SanJose (written as a label once its segment is named)
-	dd $83B516		; $838048 team 18: StLouis (written as a label once its segment is named)
-	dd $83B7C3		; $83804C team 19: TampaBay (written as a label once its segment is named)
-	dd $83B9FA		; $838050 team 20: Toronto (written as a label once its segment is named)
-	dd $83BCA8		; $838054 team 21: Vancouver (written as a label once its segment is named)
-	dd $83C204		; $838058 team 22: Washington (written as a label once its segment is named)
-	dd $83BF4F		; $83805C team 23: Winnipeg (written as a label once its segment is named)
+	dd Chicago		; $83800C team 3
+	dd Detroit		; $838010 team 4
+	dd Edmonton		; $838014 team 5
+	dd Hartford		; $838018 team 6
+	dd LongIsland		; $83801C team 7
+	dd LosAngeles		; $838020 team 8
+	dd Minnesota		; $838024 team 9
+	dd Montreal		; $838028 team 10
+	dd NewJersey		; $83802C team 11
+	dd NewYork		; $838030 team 12
+	dd Ottawa		; $838034 team 13
+	dd Philadelphia		; $838038 team 14
+	dd Pittsburgh		; $83803C team 15
+	dd Quebec		; $838040 team 16
+	dd SanJose		; $838044 team 17
+	dd StLouis		; $838048 team 18
+	dd TampaBay		; $83804C team 19
+	dd Toronto		; $838050 team 20
+	dd Vancouver		; $838054 team 21
+	dd Washington		; $838058 team 22
+	dd Winnipeg		; $83805C team 23
 	dd AllStarsEast		; $838060 team 24
 	dd AllStarsWest		; $838064 team 25
 	assert (TeamListEnd-TeamList)/4 == NumofTeams
