@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank82_B000` ($82B000-$82BFFF). <- CURRENT
+`bank82_C000` ($82B86C-$82CFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -92,8 +92,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank82_8000 | matched | $828000 | $828FFF | data | 4096 bytes $828000-$828FFF. GameSamples continued: incbin data/gamesamples.brr $7FAC..$8FAC |
 | bank82_9000 | matched | $829000 | $829FFF | data | 4096 bytes $829000-$829FFF. GameSamples continued: incbin data/gamesamples.brr $8FAC..$9FAC |
 | bank82_A000 | matched | $82A000 | $82AFFF | data | 4096 bytes $82A000-$82AFFF. GameSamples continued: incbin data/gamesamples.brr $9FAC..$AFAC |
-| bank82_B000 | not matched <- CURRENT | $82B000 | $82BFFF | 0% |  |
-| bank82_C000 | not matched | $82C000 | $82CFFF | 0% |  |
+| bank82_B000 | matched | $82B000 | $82B86B | data | data: 2156 bytes $82B000-$82B86B (end moved from $82BFFF to the end of the sound stream). GameSamples end: incbin data/gamesamples.brr $AFAC..$B814, GameSamplesEnd, end block (length 0, SPCRESUME) |
+| bank82_C000 | not matched <- CURRENT | $82B86C | $82CFFF | 0% |  |
 | bank82_D000 | not matched | $82D000 | $82DFFF | 0% |  |
 | bank82_E000 | not matched | $82E000 | $82EFFF | 0% |  |
 | bank82_F000 | not matched | $82F000 | $82FFFF | 22% |  |
@@ -226,3 +226,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank82_8000: matched $828000-$828FFF (4096 bytes): BRR samples of the in-game sample set, incbin data/gamesamples.brr $7FAC..$8FAC. MATCH.
 - bank82_9000: matched $829000-$829FFF (4096 bytes): BRR samples of the in-game sample set, incbin data/gamesamples.brr $8FAC..$9FAC. MATCH.
 - bank82_A000: matched $82A000-$82AFFF (4096 bytes): BRR samples of the in-game sample set, incbin data/gamesamples.brr $9FAC..$AFAC. MATCH.
+- bank82_B000: matched $82B000-$82B86B (2156 bytes; bank82_C000 now starts at SPAList $82B86C): the last BRR samples and the end block of the in-game upload stream. MATCH.
