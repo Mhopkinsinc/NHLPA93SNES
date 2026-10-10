@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-Bank $83 done (bank83_8000 .. bank83_F000 matched). Waiting for the user before the next bank (`bank84_8000`). <- CURRENT
+`bank84_9000` ($849000-$849FFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -105,8 +105,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank83_D000 | matched | $83CC0C | $83DFFF | 100% | 4084 bytes $83CC0C-$83DFFF (start moved by bank83_C000). SNES PlayerNumName; IceRinkMap (48x85 words, incbin data/IceRink.map 0..$1335) |
 | bank83_E000 | matched | $83E000 | $83F72A | data | 5931 bytes $83E000-$83F72A (end moved before the rink palette). IceRinkMap end (incbin $1335..$1FE0, size asserted), HorRinkMap 48x28 (incbin data/IceRinkHor.map, size asserted) |
 | bank83_F000 | matched | $83F72B | $83FFFF | 100% | 2261 bytes $83F72B-$83FFFF (start moved by bank83_E000). RinkPalette (data/Pals/Rink.pal); 92G Pausemode, PauseMenu (.gj/.rm/.sr/.go/.jump), PauseReadJoy (.rjoy); SNES Team Roster item (.ros), PauseResume, PauseLeave, Restart; 93G RefsMap (data/Refs.map, 7 frames), assgoalietopuck; $FF fill |
-| bank84_8000 | not matched <- CURRENT | $848000 | $848FFF | 0% |  |
-| bank84_9000 | not matched | $849000 | $849FFF | 0% |  |
+| bank84_8000 | matched | $848000 | $848FFF | data | 4096 bytes $848000-$848FFF. SpriteSet9 (frame set 9, frames 406-461 = SPFGoalie..+55): header, frame index table, pieces (data/Sprites/set09.pieces), tiles (data/Sprites/set09.chr 0..$9D0) |
+| bank84_9000 | not matched <- CURRENT | $849000 | $849FFF | 0% |  |
 | bank84_A000 | not matched | $84A000 | $84AFFF | 0% |  |
 | bank84_B000 | not matched | $84B000 | $84BFFF | 0% |  |
 | bank84_C000 | not matched | $84C000 | $84CFFF | 0% |  |
@@ -239,3 +239,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank83_D000: matched $83CC0C-$83DFFF (4084 bytes). PlayerNumName (uniform number and name of a roster player into mesarea), then the vertical rink tile map IceRinkMap (48 x 85 words; the bank $89 loader reads it with a $60 row stride) extracted to data/IceRink.map. The row note about scouting report text at $83D630 was wrong: that is rink map data. New RAM: psitem, pausetimer, demoflag, textsave; JOY dpad/shoulder masks. MATCH.
 - bank83_E000: matched $83E000-$83F72A (5931 bytes; bank83_F000 now starts at the rink palette $83F72B): the rest of the vertical rink map and the horizontal rink map (48 x 28 words, data/IceRinkHor.map), which the bank $8F SetHor code sends 32 columns at a time. MATCH.
 - bank83_F000: matched $83F72B-$83FFFF (2261 bytes). The game palette, the pause screen (92G Pausemode with a fifth item, Team Roster; menu strings are in bank $8F), Restart, the ref window frames RefsMap (data/Refs.map), and asstab $F assgoalietopuck at $83FDFC (found from the 4-byte asstab). Bank $83 complete. MATCH.
+- bank84_8000: matched $848000-$848FFF (4096 bytes). Bank $84 starts with sprite frame set 9 of the addframe frame set table $8FE67D (15 sets): the goalie frames 406-461. Frame set format worked out from $85FBB9: frames, pieces, tiles, piece table offset, tile offset, first piece per frame, 4-byte pieces, 4bpp tiles. Pieces and tiles extracted to data/Sprites. MATCH.
