@@ -2,7 +2,9 @@
 ; DefaultMenus, checkagr, WeightedRandomSelect, forceblack, passmode/dopass, FrameSetTable, CompLine, TeamRoster, addframe, Pmenu with the
 ; pause menu lists, GetPadTeam, setpde. Ends before setoptions (boundaries moved from $8FE00E / $8FF002).
 org $8FE00A
-SetupTeamForIntermission:		;93G SetupTeamForIntermission: ResetBench; both teams re-energized, line 0 (3/5 when a team is a man short or up)
+SetupTeamForIntermission:		;reset the bench, then for each team refill energy and pick the starting line: 92 Pw1 (3) for the team with more players on ice, PK1 (5) for the team with fewer,
+		;   else 0. Called from Intermission (93G penalty93_2)
+		;   SNES: ResetBench; both teams re-energized, line 0 (3/5 when a team is a man short or up)
 	jsl.l ResetBench
 	stz.b a2
 	lda.w #$0002
@@ -167,7 +169,8 @@ RemapTiles:		;SNES: d0 4bpp tiles at [a0] to vram with each pixel value remapped
 	rtl
 PixelRemap8F:		;SNES: 4bpp pixel value remap for RemapTiles: colour 1 stays, the rest 0
 	db $00,$01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-playeracc:		;93G playeracc (logic93_5): accelerate player X in direction d2 (dirtab8F, Wallsin/Wallcos, weight and legstr), cap at MaxSpeed; energy use
+playeracc:		;d2 = direction of acc (93G logic93_5)
+		;   SNES: accelerate player X in direction d2 (dirtab8F, Wallsin/Wallcos, weight and legstr), cap at MaxSpeed; energy use
 	asl.b d2
 	asl.b d2
 	ldx.b d2
@@ -366,7 +369,8 @@ dirtab8F:		;93G dirtab: x, y acceleration per direction 0-7 (playeracc)
 	dw -565,-565
 	dw -800,0
 	dw -565,565
-ClearPenaltyBuffer:		;93G ClearPenaltyBuffer: clear the 32 words of the penalty list (PenBuf)
+ClearPenaltyBuffer:		;clear PenBuf (92 inlined this in PenGoalStuff). Also called from clockcont (93G penalty93_1)
+		;   SNES: clear the 32 words of the penalty list (PenBuf)
 	lda.w #$001F
 	sta.b d0
 	lda.w #PenBuf
@@ -394,7 +398,8 @@ randomd0sd0:		;93G randomd0s with the range in d0: d0 = random -d0..+d0 (randomd
 	sta.b d0
 	clc
 	rtl
-DefaultMenus:		;93G DefaultMenus: the 7 options at $1600 from .tab; notdemo set
+DefaultMenus:		;set default menu choices for beginning of game. Called once from Begin (jsr abs.l). (93G hockey93_09)
+		;   SNES: the 7 options at $1600 from .tab; notdemo set
 	lda.w #$FFFF
 	sta.w notdemo
 	lda.w #OptPlayMode
@@ -419,7 +424,9 @@ DefaultMenus:		;93G DefaultMenus: the 7 options at $1600 from .tab; notdemo set
 	rtl
 .tab:		;93G DefaultMenus .tab: OptPlayMode, OptPlayers, OptTeam1, OptTeam2, OptPerlen, OptPen, OptLine
 	dw $0000,$0001,$000F,$0003,$0001,$0000,$0001
-checkagr:		;93G checkagr: d0 = random value by the GGSleft rating of player X (x2 joystick controlled, /2 near the puck): small values call a penalty
+checkagr:		;penalty roll for player a3. Range = (20 - byte $73) * 13, doubled for a joystick player, halved within $28 of the puck in x and y. Return d0 = randomd0 of that range; the callers
+		;   call a penalty when it is small. Called from checkcheck .cc, holdcheck and Bcheck (93G hockey93_03)
+		;   SNES: d0 = random value by the GGSleft rating of player X (x2 joystick controlled, /2 near the puck): small values call a penalty
 	lda.w #$0014
 	sec
 	sbc.w GGSleft,x
@@ -456,7 +463,9 @@ checkagr:		;93G checkagr: d0 = random value by the GGSleft rating of player X (x
 	lsr.b d0
 .gorandomd0:
 	jml.l randomd0
-WeightedRandomSelect:		;93G WeightedRandomSelect: d0 = random index 0..d0-1 weighted by the words in nibblebuffer
+WeightedRandomSelect:		;d0 = number of word weights at nibblebuffer. Return d0 = random index, picked with those weights. Called from SetScore_getscore and UpdateTeamNameisplay (93G
+		;   logic93_5)
+		;   SNES: d0 = random index 0..d0-1 weighted by the words in nibblebuffer
 	lda.b d1+2
 	pha
 	lda.b d1
@@ -506,7 +515,8 @@ WeightedRandomSelect:		;93G WeightedRandomSelect: d0 = random index 0..d0-1 weig
 	pla
 	sta.b d1+2
 	rtl
-forceblack:		;93G forceblack role: the default vblank/IRQ handlers, the sprite VRAM caches reset, wait a frame, empty DMAList
+forceblack:		;fade all colors to black but don't upset palfadenew (93G middle93_1)
+		;   SNES: role: the default vblank/IRQ handlers, the sprite VRAM caches reset, wait a frame, empty DMAList
 	phx
 	lda.w #vb2_blank
 	sta.b vbint
@@ -538,7 +548,8 @@ forceblack:		;93G forceblack role: the default vblank/IRQ handlers, the sprite V
 	stz.b DMAListend
 	plx
 	rtl
-passmode:		;93G passmode: B held: a dpad direction sets passdir (d0 | 8) before dopass
+passmode:		;dpad sets passdir until bbut changes (93G logic93_1)
+		;   SNES: B held: a dpad direction sets passdir (d0 | 8) before dopass
 	lda.b d2
 	bit.w #$8000
 	bne dopass
@@ -552,7 +563,8 @@ passmode:		;93G passmode: B held: a dpad direction sets passdir (d0 | 8) before 
 	bra dopass
 .rtl:
 	rtl
-dopass:		;93G dopass: pass the puck: the team mate nearest the passdir lane (or passdir), puck velocity, SPA, pfalock
+dopass:		;pass the puck in passdir, to the best teammate there if any. (93G logic93_1)
+		;   SNES: the team mate nearest the passdir lane (or passdir), puck velocity, SPA, pfalock
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -832,7 +844,8 @@ FrameSetTable:		;SNES: long pointers to the 15 sprite frame sets (addframe), the
 	dd SpriteSet13
 	dd SpriteSet14
 	dd 0		; end
-CompLine:		;93G CompLine: the computer team picks a line by the man advantage, the score late in the game and the line energies (getlinee)
+CompLine:		;find good line for comp to switch to. a2 = team, a1 = other team. Called from chk4lc and puckfaceoff (93G logic93_4)
+		;   SNES: the computer team picks a line by the man advantage, the score late in the game and the line energies (getlinee)
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -1418,7 +1431,8 @@ RosterLineNames:		;SNES: the Team Roster line names (15-byte strings)
 	db "{Pen. Kill 1}"
 	dw 15
 	db "{Pen. Kill 2 "
-addframe:		;93G addframe: sprite frame sprframe at sprx/spry: find its frame set in FrameSetTable (sprsetofs), then DrawFrame; frames $293 and up are drawn by addframe_hi
+addframe:		;a3 = cords.l frame/oldframe VRsize VRchar. Project the object with find3d, then addframe2. (93G video93_2)
+		;   SNES: sprite frame sprframe at sprx/spry: find its frame set in FrameSetTable (sprsetofs), then DrawFrame; frames $293 and up are drawn by addframe_hi
 	lda.b sprframe
 	cmp.w #$0293
 	bcc .sprframelt
@@ -1617,7 +1631,8 @@ GetPadTeam:		;SNES: a2 = team of the controller that paused (cont1team/cont2team
 	inc.b a2
 .rtl:
 	rtl
-setpde:		;93G setpde: tmpde of player d1 (team a2) = d0 (not below 0)
+setpde:		;d1 = rostnum of player * 2, a2 = team struct (93G hockey93_05)
+		;   SNES: tmpde of player d1 (team a2) = d0 (not below 0)
 	lda.b a2
 	beq .noa2
 	lda.w #$0034

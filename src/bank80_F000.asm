@@ -8,7 +8,8 @@ RonBarrMap:		;93G RonBarrMap (RonBarr.map.jim): the Ron Barr picture of the scou
 	incbin "../data/RonBarr.map.pak"		; $80ED38-$80F36D
 RonBarrMapEnd:
 	assert RonBarrMapEnd-RonBarrMap == $636
-adda43:		;93G adda43 (hockey93_02): a4 += replaysize, wrapping from ReplayBufferEnd to ReplayBufferStart
+adda43:		;a4 += replaysize, wrapping from replayend to replaystart (93G hockey93_02)
+		;   SNES: a4 += replaysize, wrapping from ReplayBufferEnd to ReplayBufferStart
 	lda.b a4
 	clc
 	adc.w #replaysize
@@ -27,7 +28,8 @@ adda43:		;93G adda43 (hockey93_02): a4 += replaysize, wrapping from ReplayBuffer
 	sta.b a4+2
 .rtl:
 	rtl
-setlccords:		;93G setlccords (logic93_1): printx/printy for the line change box of team a2 (21 rows lower for the home team, flipped by gmdir); d0/d1 = Framer box size
+setlccords:		;set printx/y to cords for lc box on team a2 (93G logic93_1)
+		;   SNES: printx/printy for the line change box of team a2 (21 rows lower for the home team, flipped by gmdir); d0/d1 = Framer box size
 	stz.b d0
 	lda.b a2
 	bne .pr
@@ -110,7 +112,8 @@ ReadPads:		;SNES: once per frame (padvcount) read the 4 auto-read pads into joyp
 	lda.w joypad4
 	sta.w padlast1+6
 	rtl
-asspuckc:		;asstab $10. 93G asspuckc (logic93_3): player X is the puck carrier: every aioff frames checkob, chk4lc, chk4shot, chk4pass; skate to a postab spot (bank $8F) with
+asspuckc:		;asstab $10. player a3 is puck handler (93G logic93_3)
+		;   SNES: player X is the puck carrier: every aioff frames checkob, chk4lc, chk4shot, chk4pass; skate to a postab spot (bank $8F) with
 		;   .chkdir
 	txa		; not the carrier: assexit
 	lsr a
@@ -298,13 +301,15 @@ asspuckc:		;asstab $10. 93G asspuckc (logic93_3): player X is the puck carrier: 
 	jmp.w .cd0
 .rtl2:
 	rtl
-DecodePW:		;92G DecodePW: translate the password in PassWord to game variables: PWtoBits, then ReadPassBits ($8B817A)
+DecodePW:		;translate char password in PassWord to variables used in game (92G hockey)
+		;   SNES: translate the password in PassWord to game variables: PWtoBits, then ReadPassBits ($8B817A)
 	jsl.l PWtoBits
 	jml.l ReadPassBits		; bank $8B
 PlayoffScreenOpening4:		;SNES: PlayoffScreen, then on to Opening4 (92G: the playoff tree, then the next game)
 	jsl.l PlayoffScreen		; bank $88: 93G PlayoffScreen (font tile bases, the playoff tree)
 	jml.l Opening4		; bank $8B
-SuperDiv:		;92G SuperDiv: passbits (128 bits) / d0: quotient in passbits, remainder in d0. Shift-subtract over 128 bits with the divisor in mula+0..+16 and the remainder in
+SuperDiv:		;5 words at a3 divided by 1 word (d0). 92 SuperDiv. (93G hockey93_09)
+		;   SNES: passbits (128 bits) / d0: quotient in passbits, remainder in d0. Shift-subtract over 128 bits with the divisor in mula+0..+16 and the remainder in
 		;   mulres+0..+14
 	phx		; remainder = passbits, divisor = d0 << 128
 	ldx.w #$000E
@@ -390,7 +395,8 @@ SuperDiv:		;92G SuperDiv: passbits (128 bits) / d0: quotient in passbits, remain
 	sta.b d0
 	clc
 	rtl
-randomd0s:		;93G randomd0s: A = random -A..A (randoma of 2A, minus A)
+randomd0s:		;IDA: sub_D7B2 (Rev A lst). d0 = range. Return d0 = random number (-range < d0 < range) (93G middle93_1)
+		;   SNES: A = random -A..A (randoma of 2A, minus A)
 	sta.b tmp0
 	asl a
 	jsl.l randoma
@@ -398,7 +404,8 @@ randomd0s:		;93G randomd0s: A = random -A..A (randoma of 2A, minus A)
 	sbc.b tmp0
 	clc
 	rtl
-assgoalie:		;asstab $E. 93G assgoalie (logic93_3): goalie X. Skate back to the crease, hold/pass the puck, cover a loose puck, follow the puck and lead it, saves
+assgoalie:		;asstab $E. Player a3 is goalie. Also entered from assnearest (93G logic93_3)
+		;   SNES: goalie X. Skate back to the crease, hold/pass the puck, cover a loose puck, follow the puck and lead it, saves
 		;   (GoalieSaveList), hug the post, rush a loose puck (agoalietopuck)
 	lda.w pfalock,x		; anim locked: nothing
 	beq .go
@@ -1199,7 +1206,8 @@ ClampYPosition:		;93G ClampYPosition (logic93_3): d1 = y clamped to +-$103, minu
 	sbc.b d3
 	sta.b d1
 	rtl
-AdjustFacingDirection:		;93G AdjustFacingDirection (logic93_3): turn facedir of goalie X one step toward d0, not past the sides of the net
+AdjustFacingDirection:		;Turn facedir one step (93G logic93_3)
+		;   SNES: turn facedir of goalie X one step toward d0, not past the sides of the net
 	lda.w facedir,x
 	sta.b d1
 	lda.b d0
@@ -1259,7 +1267,8 @@ AdjustFacingDirection:		;93G AdjustFacingDirection (logic93_3): turn facedir of 
 	rtl
 GoalieSaveList:		;93G GoalieSaveList (logic93_3): save anims by index: glove 0/1, stack 2/3, stick 4/5
 	dw SPAgglover,SPAgglovel,SPAgstackr,SPAgstackl,SPAgstickr,SPAgstickl
-checkgoalp_CalcGoalShotDir:		;93G checkgoalp_CalcGoalShotDir (logic93_1): if the opposing goalie covers the middle of the net, passdir 2 or 6 to shoot at the open side, else 0.
+checkgoalp_CalcGoalShotDir:		;IDA name kept: 92 checkgoalp is the goal/net collision in hockey93_04. 93 only. If the opposing goalie (93G logic93_1)
+		;   SNES: if the opposing goalie covers the middle of the net, passdir 2 or 6 to shoot at the open side, else 0.
 		;   Skipped for joystick players
 	lda.w pflags,x		; joystick player: skip
 	bit.w #pfjoycon
@@ -1396,7 +1405,8 @@ checkgoalp_CalcGoalShotDir:		;93G checkgoalp_CalcGoalShotDir (logic93_1): if the
 	sta.w passdir
 .rtl:
 	rtl
-CalcAngleOffset:		;93G CalcAngleOffset (logic93_1): d4 = (goalie vector d0/d1 x post vector d3/d4 from the puck) / d2
+CalcAngleOffset:		;d4 = cross product of goalie vector d0/d1 and post vector (93G logic93_1)
+		;   SNES: d4 = (goalie vector d0/d1 x post vector d3/d4 from the puck) / d2
 	lda.b d3
 	sec
 	sbc.w puckx
@@ -1431,7 +1441,9 @@ CalcAngleOffset:		;93G CalcAngleOffset (logic93_1): d4 = (goalie vector d0/d1 x 
 	jsl.l divs
 	sta.b d4
 	rtl
-reenergizeteam:		;93G reenergizeteam (penalty93_2): max energy for every player of team a2; TMPDOUT players go to the bench
+reenergizeteam:		;set all players to max energy on team a2. 93 also moves players marked -3 in tmpdst to the bench (-2). Called from SetupTeamForIntermission and StartHL2 .setteam (93G
+		;   penalty93_2)
+		;   SNES: max energy for every player of team a2; TMPDOUT players go to the bench
 	lda.w #$0032
 	sta.b d0
 .top:

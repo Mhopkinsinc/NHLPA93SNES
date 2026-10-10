@@ -1,7 +1,8 @@
 ; $8E8000-$8E900A  ROM $70000-$7100A: Gameloop (hockey93_01, with the DoGameFrame time steps), PlayerShortName, assbench (logic93_2, asstab $B);
 ; then SpriteSet3 (frame set 3: celebrations), tiles continue to bank8E_D000.
 org $8E8000
-Gameloop:		;93G Gameloop (hockey93_01): wait for a new frame, time steps from d7, clock, music cue timers, crowd cheers, DoGameFrame, demoread, goalie
+Gameloop:		;main loop for game (93G hockey93_01)
+		;   SNES: wait for a new frame, time steps from d7, clock, music cue timers, crowd cheers, DoGameFrame, demoread, goalie
 		;   puck-handling penalty, line change end, Pausemode
 	lda.b vcount		; wait for the next frame
 	cmp.w oldvcount
@@ -308,7 +309,8 @@ PlayerShortName:		;SNES: mesarea = "<number> <first initial>. <last name>" of ro
 	bpl .popd
 	ldx.b xsave
 	rtl
-assbench:		;asstab $B. 93G assbench (logic93_2): player X skates to the bench door and leaves; the new player (newpnum) comes on (setplayer)
+assbench:		;asstab $B. player a3 should goto bench (93G logic93_2)
+		;   SNES: player X skates to the bench door and leaves; the new player (newpnum) comes on (setplayer)
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rtl

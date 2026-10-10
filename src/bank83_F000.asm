@@ -312,7 +312,8 @@ RefsMap:		;93G RefsMap: the ref window frames, 7 frames of 8 x 7 words (data/Ref
 	incbin "../data/Refs.snesmap"		; $83FAEC-$83FDFB
 RefsMapEnd:
 	assert RefsMapEnd-RefsMap == 7*$70
-assgoalietopuck:		;asstab $F. 93G assgoalietopuck (logic93_3): goalie skates out to a loose puck (inserted by assgoalie) while the puck moves toward him and the tmnear stats
+assgoalietopuck:		;asstab $F. 93 only: goalie skates out to a loose puck (inserted by (93G logic93_3)
+		;   SNES: goalie skates out to a loose puck (inserted by assgoalie) while the puck moves toward him and the tmnear stats
 		;   allow it, else assexit
 	lda.w pflags,x		; joystick controlled or clock stopped: assexit
 	and.w #pfjoycon

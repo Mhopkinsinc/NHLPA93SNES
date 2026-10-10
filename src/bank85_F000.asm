@@ -541,7 +541,8 @@ PrintTeamNames:		;SNES: regular season: HomeTeam/VisTeam from the options; print
 	rtl
 nullrtl85:		;does nothing
 	rtl
-ResetClock:		;93G ResetClock (hockey93_01): set the period length (GetPeriodTime; regular season overtime is 10:00) and stop the clock
+ResetClock:		;set period length and stop clock (93G hockey93_01)
+		;   SNES: set the period length (GetPeriodTime; regular season overtime is 10:00) and stop the clock
 	jsl.l GetPeriodTime
 	lda.w gsp		; gsp >= 3 (overtime) and OptPlayMode 0: 600 seconds
 	sec

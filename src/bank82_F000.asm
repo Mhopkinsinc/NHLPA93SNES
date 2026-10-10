@@ -3,7 +3,8 @@
 ; and SNES helpers: the SPC700 uploads and the sound queue, muls32, textmap dirty marks, inline string far calls, trampolines.
 ; Starts after the packed rink tiles (boundary moved from $82F000). Ends with $FF fill.
 org $82F93C
-SetPA2:		;93G SetPA2 (penalty93_1): next frame/delay pair of the ref animation from the PenaltyList entry of RefPen. A negative pair is the last one (RefStep = -1). RefCnt =
+SetPA2:		;update animation for ref. Next frame/delay pair from the PenaltyList animation of RefPen. Also called from UpdatePA (93G penalty93_1)
+		;   SNES: A negative pair is the last one (RefStep = -1). RefCnt =
 		;   delay*8, then PushRef
 	phx
 	stx.b xsave
@@ -86,7 +87,8 @@ SetPA2:		;93G SetPA2 (penalty93_1): next frame/delay pair of the ref animation f
 	ldx.b xsave
 	plx
 	rtl
-UpdateScores:		;93G UpdateScores (penalty93_2): update the ticker scores of the other playoff games (not gamenum, not over)
+UpdateScores:		;update ticker score values. Called from PeriodOver (93G penalty93_2)
+		;   SNES: update the ticker scores of the other playoff games (not gamenum, not over)
 	jsl.l GetShifter		; GetShifter: d1 = games - 1
 	lda.b d1
 	sta.w TickerNum
@@ -109,7 +111,8 @@ UpdateScores:		;93G UpdateScores (penalty93_2): update the ticker scores of the 
 	dec.b d1
 	bpl .top
 	rtl
-BitstoPW:		;92G BitstoPW: convert passbits into the 16 password characters (SuperDiv by PWrange)
+BitstoPW:		;convert passbits into password text (92G hockey)
+		;   SNES: convert passbits into the 16 password characters (SuperDiv by PWrange)
 	ldx.w #$000F
 .zero:
 	lda.w #PWrange		; PassWord[x] = passbits mod PWrange
@@ -342,7 +345,8 @@ QueueSound:		;SNES: queue sound command A (sfx/song number) for the SPC. Dropped
 	rtl
 PasstoText:		;92G PasstoText: characters used in the password text (PWrange = 30, the 31st is the blank)
 	db "BCDFGHJKLMNPRSTVWXYZ0123456789-"
-PWtoBits:		;92G PWtoBits: convert the password text into passbits (ClrPassBits, then SuperMult by PWrange and SuperAdd per character)
+PWtoBits:		;convert password text into passbits (92G hockey)
+		;   SNES: convert the password text into passbits (ClrPassBits, then SuperMult by PWrange and SuperAdd per character)
 	jsl.l ClrPassBits
 	ldx.w #$0000
 .zero:
@@ -358,7 +362,8 @@ PWtoBits:		;92G PWtoBits: convert the password text into passbits (ClrPassBits, 
 	cpx.w #pwlength
 	bne .zero
 	rtl
-ClrPassBits:		;92G ClrPassBits: clear passbits
+ClrPassBits:		;92 ClrPassBits: clr the 5 words of bits at a3 (93G hockey93_09)
+		;   SNES: clear passbits
 	stz.w passbits
 	stz.w passbits+2
 	stz.w passbits+4
@@ -368,7 +373,8 @@ ClrPassBits:		;92G ClrPassBits: clear passbits
 	stz.w passbits+12
 	stz.w passbits+14
 	rtl
-PushBits:		;93G PushBits (hockey93_09, IDA EncodeValueToPassword): passbits = passbits * d1 + d0
+PushBits:		;92 PushBits: bits = bits * d1 + d0. (93G hockey93_09)
+		;   SNES: passbits = passbits * d1 + d0
 	stx.b xsave
 	ldx.w #$0000
 .push:
@@ -562,11 +568,13 @@ PrintPenaltyMessagesString:		;93G PrintPenaltyMessagesString (penalty93_1): blan
 	dw $001B		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$05,$0B,"                      "
 	rtl
-startpause2:		;93G startpause2 (hockey93_01): pause started by controller 2 (sflags bit 1), then startpause
+startpause2:		;pause intiated by cont 2 (93G hockey93_01)
+		;   SNES: pause started by controller 2 (sflags bit 1), then startpause
 	lda.w #sfpj
 	tsb.w sflags
 	jml.l startpause
-printbigz:		;SNES: printz for printbig: the string follows the jsl inline (length word counting itself); step the return address past it and go to printbig
+printbigz:		;see print big. String macro should follow the bsr/jsr to this routine. 93 keeps a1 (92 popped the return into a1) (93G middle93_2)
+		;   SNES: printz for printbig: the string follows the jsl inline (length word counting itself); step the return address past it and go to printbig
 	lda.b $03,s		; farptr-style: a1 = the inline string after the caller
 	sta.b a1+2
 	lda.b $01,s
@@ -577,7 +585,8 @@ printbigz:		;SNES: printz for printbig: the string follows the jsl inline (lengt
 	adc.b $01,s
 	sta.b $01,s
 	jml.l printbig		; bank $8B: print the inline string
-appendz:		;SNES: like printbigz, for appstring $8F87C9 (append an inline string)
+appendz:		;see appstring. String macro should follow the bsr/jsr to this routine (93G middle93_2)
+		;   SNES: like printbigz, for appstring $8F87C9 (append an inline string)
 	lda.b $03,s
 	sta.b a1+2
 	lda.b $01,s
@@ -588,7 +597,8 @@ appendz:		;SNES: like printbigz, for appstring $8F87C9 (append an inline string)
 	adc.b $01,s
 	sta.b $01,s
 	jml.l appstring		; bank $8F: appstring
-asscentero:		;asstab 6. 93G asscentero (logic93_3): player X is the center on offense. Every aidef frames: acenterd when the other team has the puck, else a random spot in the
+asscentero:		;asstab 6. player a3 is center on offense (93G logic93_3)
+		;   SNES: player X is the center on offense. Every aidef frames: acenterd when the other team has the puck, else a random spot in the
 		;   zone of the puck (.dedata), skateto with EvadePC
 	lda.w pfalock,x		; anim locked: nothing
 	beq .clk

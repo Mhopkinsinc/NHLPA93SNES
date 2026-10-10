@@ -7,7 +7,8 @@ HotList:		;93G HotList: hot spot (stick blade) x, y bytes for every sprite frame
 RinkLogoTiles:		;SNES: packed rink logo tiles (14 tiles, $1C0 bytes unpacked), sent to vram after FaceOffTiles by setupice. Kept in data/HotList.bin after the hot spots
 	incbin "../data/HotList.bin":$44A..$5F6		; $84F386-$84F531
 RinkLogoTilesEnd:
-UpdateScoutingDisplay:		;93G UpdateScoutingDisplay (hockey93_07): when ScoutingReportTimer runs out (at once with asv), print the next word of ScoutingReportText. ~ { } [ ] print
+UpdateScoutingDisplay:		;called every frame by ScoutingReport. When ScoutingReportTimer runs out (at once if asv (93G hockey93_07)
+		;   SNES: ~ { } [ ] print
 		;   a team or goalie name
 	lda.w ScoutingReportTimer		; text finished ($7FFF)
 	sec
@@ -266,7 +267,8 @@ UpdateScoutingDisplay:		;93G UpdateScoutingDisplay (hockey93_07): when ScoutingR
 .pad:
 	dec.b d1
 	jmp.w .print
-ScrollDisplayUp:		;93G ScrollDisplayUp (hockey93_07): next text line (column 0); after line 7 move the text box up one row ($89FC8F copies 8 textmap rows)
+ScrollDisplayUp:		;next text line for UpdateScoutingDisplay (column 0). After line 7, move the text box up (93G hockey93_07)
+		;   SNES: next text line (column 0); after line 7 move the text box up one row ($89FC8F copies 8 textmap rows)
 	stz.w DispAttribCtr
 	inc.w VertLineScrolling
 	lda.w VertLineScrolling
@@ -618,7 +620,8 @@ DisplayStats:		;92G DisplayStats (penalty.asm): the STATS page of the pause menu
 	jml.l print
 DisplayStats_sslist:		;92G .sslist: stat, second stat (-1 = none)
 	dw tmshots,-1, tmPwrGoals,tmPwrPlays, tmPenalties,tmPenmin, tmchecks,-1, -1,-1
-GetNameandAttrib:		;93G GetNameandAttrib (stats93): print player d0 (number and name), then at x 26 the column d4 (attribjmp); columns above 2 average the rating nibbles masked by
+GetNameandAttrib:		;print player d0's name, then at x $1E the column picked by (93G stats93)
+		;   SNES: print player d0 (number and name), then at x 26 the column d4 (attribjmp); columns above 2 average the rating nibbles masked by
 		;   d4 high word
 	stx.b xsave
 	ldx.w #$0000
@@ -764,7 +767,8 @@ GetNameandAttrib:		;93G GetNameandAttrib (stats93): print player d0 (number and 
 	rtl
 attribjmp:		;93G attribjmp: GetNameandAttrib column handlers, offsets from attribjmp
 	dw AttribStatus-attribjmp,AttribEnergy-attribjmp,AttribHanded-attribjmp,AttribWeight-attribjmp,AttribFighting-attribjmp,AttribRating-attribjmp
-AttribStatus:		;93G AttribStatus: tmpdst of player d0: Ice/Bench/Injury, or the penalty time (injured: Inj G, $4000: C)
+AttribStatus:		;IDA: no label ("jump for status"). Player d0's word at $66(a2): (93G stats93)
+		;   SNES: tmpdst of player d0: Ice/Bench/Injury, or the penalty time (injured: Inj G, $4000: C)
 	asl.b d0
 	lda.b a2
 	beq .tm
@@ -822,7 +826,8 @@ StatusTextTbl:		;93G StatusTextTbl: AttribStatus strings
 	%String("Inj G ")
 	%String("  ")
 	%String(" C")
-AttribEnergy:		;93G AttribEnergy: tmpde of player d0 / 40, max 100
+AttribEnergy:		;IDA: no label ("jump for energy"). $32(a2) word / 40, max 100 (93G stats93)
+		;   SNES: tmpde of player d0 / 40, max 100
 	asl.b d0
 	lda.b a2
 	beq .tm
@@ -841,12 +846,13 @@ AttribEnergy:		;93G AttribEnergy: tmpde of player d0 / 40, max 100
 .pr:
 	sta.b d0
 	bra AttribPrintPct
-AttribFighting:		;93G AttribFighting: bit 0 of the nibble is handedness, only bits 1-3 count
+AttribFighting:		;IDA: no label ("jump for fighting"). Bit 0 of the nibble is (93G stats93)
+		;   SNES: bit 0 of the nibble is handedness, only bits 1-3 count
 	lda.b d0
 	and.w #$000E
 	sta.b d0
 	dec.b d1
-AttribRating:		;93G AttribRating: sum d0 of d1/15 ratings as a percentage
+AttribRating:		;IDA: no label. Sum d0 of d1/15 ratings as a percentage (93G stats93)
 	lda.w #$0064
 	sta.b mula
 	lda.b d0
@@ -865,7 +871,7 @@ AttribPrintPct:		;93G AttribPrintPct: print d0 4 wide plus padding
 	dw $0004		; printz inline string: length (counts itself), then control bytes / text
 	db "  "
 	rtl
-AttribHanded:		;93G AttribHanded: bit 0 of the sum
+AttribHanded:		;IDA: no label ("jump for handedness"). Bit 0 of the sum (93G stats93)
 	lda.b d0
 	and.w #$0001
 	sta.b d0
@@ -877,7 +883,7 @@ AttribHanded:		;93G AttribHanded: bit 0 of the sum
 HandedTextTbl:		;93G HandedTextTbl: AttribHanded strings (93G Righty, Lefty)
 	%String("Right ")
 	%String("Left  ")
-AttribWeight:		;93G AttribWeight: 140 + 8 * rating lb
+AttribWeight:		;IDA: no label ("jump for Weight"). 140 + 8 * rating lb (93G stats93)
 	lda.b d0
 	asl a
 	asl a

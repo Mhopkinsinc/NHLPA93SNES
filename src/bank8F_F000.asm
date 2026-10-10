@@ -3,7 +3,8 @@
 ; GetPlayerCount, GetPlayerNameWithAttrib, Acheck, divs16, doplayeracc, ResetAndSelectPlayers, cd0, MusicCue, sfx8F and the goal box
 ; (93G DisplayPlayerAttributeMenu) with attrText. The end of the ROM.
 org $8FEE83
-setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap backdrop, small font and Framer tiles (remapped), NHLPA logo, team blocks; Up/Down
+setoptions:		;options screen display and input. Called from PeriodOver (hockey93_06). (93G hockey93_08)
+		;   SNES: the options screen: GameSetupMap backdrop, small font and Framer tiles (remapped), NHLPA logo, team blocks; Up/Down
 		;   picks a line (.nms), Left/Right changes it (.IncItem), Start goes to maketree; after $12C0 idle frames a demo with random teams
 	lda.w #vb2_blank
 	sta.b vbint
@@ -624,7 +625,8 @@ PixelRemapFramer:		;SNES: RemapTiles table for the Framer tiles (setoptions)
 	db $00,$01,$0A,$03,$04,$05,$06,$02,$08,$09,$0A,$0B,$0C,$0D,$0E,$0F
 PixelRemapFont:		;SNES: RemapTiles table for the small font (setoptions)
 	db $00,$0F,$00,$00,$04,$05,$06,$07,$08,$09,$0A,$0B,$0C,$0D,$0E,$0F
-UnpackNibbles:		;93G UnpackNibbles (logic93_5): d0 nibbles at [a0], high nibble first, to words at nibblebuffer; saves d0-d2, a0-a1
+UnpackNibbles:		;a0 = packed data, d0 = count. Unpacks d0 4-bit values (high nibble first) into words at nibblebuffer. Called from UpdateTeamNameisplay (93G logic93_5)
+		;   SNES: d0 nibbles at [a0], high nibble first, to words at nibblebuffer; saves d0-d2, a0-a1
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -695,7 +697,9 @@ UnpackNibbles:		;93G UnpackNibbles (logic93_5): d0 nibbles at [a0], high nibble 
 	bpl .popd
 	ldx.b xsave
 	rtl
-PushNumberWidth:		;93G PushNumberWidth (middle93_2): a1 = PushWidthBuf: d0 as a d1 digit decimal string, right aligned with leading spaces (the last digit always shown)
+PushNumberWidth:		;IDA: pushnumber (Rev A lst DeterStrLength?). 93: convert d0 into a d1 digit base 10 string, leading zeros as spaces (the last digit always shown). Return a1 = string at
+		;   PushWidthBuf (93G middle93_2)
+		;   SNES: a1 = PushWidthBuf: d0 as a d1 digit decimal string, right aligned with leading spaces (the last digit always shown)
 	lda.w #PushWidthBuf
 	sta.b a1
 	lda.w #$0000
@@ -781,7 +785,8 @@ StatsReport:		;92G StatsReport role: clear the text screen, send 28 rows of HorR
 	dec.b tmp0
 	bne .loop3
 	jmp.w USBoard
-Findhittype:		;93G Findhittype (logic93_1): swing type of player X for launch direction d0: A = 0 forehand (Z set), 1 backhand; .xflip when attribute bit $800 (x
+Findhittype:		;look for type of swing (forhand or backhand) (93G logic93_1)
+		;   SNES: swing type of player X for launch direction d0: A = 0 forehand (Z set), 1 backhand; .xflip when attribute bit $800 (x
 		;   flip)
 	lda.b d0
 	eor.w #$FFFF
@@ -810,7 +815,8 @@ Findhittype:		;93G Findhittype (logic93_1): swing type of player X for launch di
 	db $00,$00,$00
 .noflip:		;1 = backhand for d0 1-4 (93G %00011110)
 	db $00,$01,$01,$01,$01,$00,$00,$00
-prefmes:		;93G prefmes (penalty93_1): print the message of penalty d0 (negative clears it). Vertical: framed under the ref at y $A, centred by its length; horizontal (sfhormode):
+prefmes:		;print message for penalty d0 (negative clears it). Vertical mode: framed under the ref. Horizontal mode: one centered line on row $B (93G penalty93_1)
+		;   SNES: print the message of penalty d0 (negative clears it). Vertical: framed under the ref at y $A, centred by its length; horizontal (sfhormode):
 		;   PrintPenaltyMessagesString, one centred line at x $11, y $B. Saves d0-d2, a1
 	stx.b xsave
 	ldx.w #$0000
@@ -945,13 +951,16 @@ prefmes:		;93G prefmes (penalty93_1): print the message of penalty d0 (negative 
 	bpl .popd
 	ldx.b xsave
 	rtl
-CheckInjury:		;93G CheckInjury (hockey93_01): once a second: count InjCntDown down; at zero ShowInjuryBox
+CheckInjury:		;called once per second. Count down InjCntDown, act on it at zero (93G hockey93_01)
+		;   SNES: once a second: count InjCntDown down; at zero ShowInjuryBox
 	dec.w InjCntDown
 	bne .rtl
 	jmp.w ShowInjuryBox
 .rtl:
 	rtl
-setInjuryType:		;93G setInjuryType (hockey93_03): player a2 is injured: pflags bit $1000, crowdlevel + $12C, sfx $8C, the scroll locked on him (xc1/yc1, sflags $40), TempPlOffset
+setInjuryType:		;sets period injury. a2 = player injured, a3 = player checking. Marks a2 unavailable, pumps up the crowd, plays sfx $D, locks the scroll on a2, sets TempPlOffset (pnum, bit
+		;   15 set for the away team) and puts $FFFD (injured for the period) in a2's tmpdst. Called from FallDown and from logic93_2 chkhit .fall (IDA FightFall) (93G hockey93_03)
+		;   SNES: player a2 is injured: pflags bit $1000, crowdlevel + $12C, sfx $8C, the scroll locked on him (xc1/yc1, sflags $40), TempPlOffset
 		;   = pnum (| $8000 for the visitors), his tmpdst = $FFFD (out for the period)
 	ldy.b a2
 	lda.w pflags,y
@@ -1024,7 +1033,8 @@ sublist:		;93G sublist (hockey93_11): substitution lists by position: word offse
 	db -1
 priolist:		;93G priolist: positions in order of importance (SetPlList, releasepl, getlinee); no pad byte on the SNES
 	db 0,1,2,4,3,5,6
-ShowInjuryBox:		;93G ShowInjuryBox (hockey93_10): "Injury to:" the player TempPlOffset (GetPlayerNameWithAttrib), "Out for period", or "the game" when pf2fight of the puck is set.
+ShowInjuryBox:		;93 only: injury box "Injury to:" player TempPlOffset (set by setInjuryType), (93G hockey93_10)
+		;   SNES: "Injury to:" the player TempPlOffset (GetPlayerNameWithAttrib), "Out for period", or "the game" when pf2fight of the puck is set.
 		;   Jumped to by CheckInjury; saves d0-d2, a0-a4, ends with X = a3
 	stx.b xsave
 	ldx.w #$0000
@@ -1085,7 +1095,8 @@ ShowInjuryBox:		;93G ShowInjuryBox (hockey93_10): "Injury to:" the player TempPl
 	ldx.b xsave
 	ldx.b a3
 	rtl
-passtoa0:		;93G passtoa0 (logic93_1): pass the puck from player a3 to player a0 (no pass count on the SNES): lead him by his velocity, solve the travel time d2
+passtoa0:		;pass puck to player a0 (93G logic93_1)
+		;   SNES: pass the puck from player a3 to player a0 (no pass count on the SNES): lead him by his velocity, solve the travel time d2
 		;   (sroot, divs16; 1-$18), then puckvz, the puck temp1/nopuck, the target temp3/temp4, puckvx/puckvy
 	jsl.l loadTeamStruct
 	lda.b a0
@@ -1361,7 +1372,8 @@ passtoa0:		;93G passtoa0 (logic93_1): pass the puck from player a3 to player a0 
 	sta.b d1
 	sta.w puckvy
 	rtl
-GetPlayerCount:		;93G GetPlayerCount: d0 = roster players of team a2 (its bank $83 team record: Player entries until the empty one); saves a0
+GetPlayerCount:		;d0 = players on team a2 (records until a length word of 2) (93G stats93)
+		;   SNES: d0 = roster players of team a2 (its bank $83 team record: Player entries until the empty one); saves a0
 	lda.b a0+2		; save a0
 	pha
 	lda.b a0
@@ -1392,7 +1404,8 @@ GetPlayerCount:		;93G GetPlayerCount: d0 = roster players of team a2 (its bank $
 	pla
 	sta.b a0+2
 	rtl
-GetPlayerNameWithAttrib:		;93G GetPlayerNameWithAttrib: a1 = the name of player TempPlOffset (PlayerShortName; bit 15 = the visitors); saves d0, a2
+GetPlayerNameWithAttrib:		;93 only: a1 = mesarea "NN F. Last" (FormatPlayerNameWithAttrib) for player (93G hockey93_10)
+		;   SNES: a1 = the name of player TempPlOffset (PlayerShortName; bit 15 = the visitors); saves d0, a2
 	lda.b d0+2
 	pha
 	lda.b d0
@@ -1420,7 +1433,8 @@ GetPlayerNameWithAttrib:		;93G GetPlayerNameWithAttrib: a1 = the name of player 
 	pla
 	sta.b d0+2
 	rtl
-Acheck:		;93G Acheck (logic93_1): player X holds a0: pfalock, SPAhook, or SPAHold when he has impact and a0 is not ahead. SNES: with pfgoal clear the bmi tests the pfgoal load, so
+Acheck:		;start hold (or hook if a0 is ahead, $CB0) on player a0. Also entered (93G logic93_1)
+		;   SNES: player X holds a0: pfalock, SPAhook, or SPAHold when he has impact and a0 is not ahead. SNES: with pfgoal clear the bmi tests the pfgoal load, so
 		;   always SPAHold then
 	ldy.b a0
 	lda.w #SPAhook
@@ -1489,7 +1503,8 @@ divs16:		;SNES: signed 16 / 16 divide: A = mulres = mulb / mula (toward zero; al
 	sta.b mulb
 	clc
 	rtl
-doplayeracc:		;93G doplayeracc (logic93_5): player X skates in direction d0 (0-7; 8 glides, 9 stops when moving); goalies use goalieacc. Sets pfrev to skate backwards in his own
+doplayeracc:		;player a3 gets acc. in d0 dir (93G logic93_5)
+		;   SNES: player X skates in direction d0 (0-7; 8 glides, 9 stops when moving); goalies use goalieacc. Sets pfrev to skate backwards in his own
 		;   zone, turns facedir/facefrac toward d0 (.ftab * d7, slower when fast), SPAturnl/SPAturnr or SPAglide/SPAglideback; revplayeracc when moving
 	lda.w position,x
 	bne .position
@@ -1733,7 +1748,8 @@ doplayeracc:		;93G doplayeracc (logic93_5): player X skates in direction d0 (0-7
 	rtl
 .ftab:		;93G .ftab: turn rate by the direction difference (93G $10)
 	dw 0,23,23,23,0,-23,-23,-23
-ResetAndSelectPlayers:		;93G ResetAndSelectPlayers (logic93_4): c1playernum/c2playernum = -1, then changeplayer for each human team (d4 = 0, 2)
+ResetAndSelectPlayers:		;93 split from 92 puckfaceoff2: c1playernum/c2playernum = -1, then changeplayer for each human team. Called from puckfaceoff2 (93G logic93_4)
+		;   SNES: c1playernum/c2playernum = -1, then changeplayer for each human team (d4 = 0, 2)
 	lda.w #$FFFF
 	sta.w c1playernum
 	sta.w c2playernum
@@ -1791,7 +1807,8 @@ sfx8F:		;SNES: bank $8F copy of sfx: queue the sound pushed before the jsl (0 = 
 .lt:
 	pla
 	bra .loop
-DisplayPlayerAttributeMenu:		;93G DisplayPlayerAttributeMenu (hockey93_10), really the goal box: close both line change boxes (lcfound2), Framer at x $B, y 2 (5-8 tall by the
+DisplayPlayerAttributeMenu:		;93 only: goal box. Closes both line change boxes, then printbig "GOAL!" (or "HAT (93G hockey93_10)
+		;   SNES: , really the goal box: close both line change boxes (lcfound2), Framer at x $B, y 2 (5-8 tall by the
 		;   assists), printbig "GOAL!" or "HAT TRICK!" (the scorer's third goal, tmgoals), the scorer and "Assist by:" names from the last ScoreSum entry; saves d0-d2, a0-a4, ends with X = a3
 	stx.b xsave
 	ldx.w #$0000

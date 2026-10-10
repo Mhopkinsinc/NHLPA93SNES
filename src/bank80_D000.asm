@@ -2,7 +2,8 @@
 ; (penalty93_1), checkplcoll, checkcx, newcheck, checkint, FallDown, checkcheck (hockey93_03), checkfight, SetInst (hockey93_04),
 ; doinput, faceoffinput, holdplayer (logic93_1). Starts at checkgoal (boundary moved from $80D002), ends before setpads.
 org $80CEE7
-checkgoal:		;93G checkgoal (hockey93_04): collision with the goal/net. a2 = goal object, X = object, d2/d3 = x/y. Not the puck: checkgoalp. Puck in the goal area: over the top
+checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 = x/y. Called from checkwallcoll (93G hockey93_04)
+		;   SNES: collision with the goal/net. a2 = goal object, X = object, d2/d3 = x/y. Not the puck: checkgoalp. Puck in the goal area: over the top
 		;   (Zvel), through the mouth (Goal), off a post (deflect) or off the side/back (wallcoll)
 	lda.w Zpos,x		; Zpos > 13 (goal height): over the goal
 	sec
@@ -310,7 +311,8 @@ checkgoal:		;93G checkgoal (hockey93_04): collision with the goal/net. a2 = goal
 	sta.b d1
 .wc:
 	jmp.w wallcoll
-ChkShotStat:		;93G ChkShotStat (penalty93_2): if a shot was taken (sf2shot, cleared here), add 1 to the shooting team tmshots
+ChkShotStat:		;add to shot stat if a shot was taken. 93 also raises the crowd and counts the shot for the shooter and against the other team's goalie (93G penalty93_2)
+		;   SNES: if a shot was taken (sf2shot, cleared here), add 1 to the shooting team tmshots
 	lda.w #sf2shot
 	trb.w sflags
 	beq .rtl
@@ -359,7 +361,8 @@ addteamstat:		;add d0 to the team word stat at d1 (+2 for team 2, pfteam of X). 
 	adc.b d0
 	sta.w $0000,y
 	rtl
-Goal:		;93G Goal (hockey93_04): puck in the goal. Score +1 for the scoring team (a2, a1 = the other team), siren, ScoreSum entry, goal counts, PenGoalStuff, printscores1, ascore
+Goal:		;puck in goal. a3 = puck. Entered from checkgoal (93G hockey93_04)
+		;   SNES: puck in the goal. Score +1 for the scoring team (a2, a1 = the other team), siren, ScoreSum entry, goal counts, PenGoalStuff, printscores1, ascore
 		;   for the scorers, puck into the net, siren SPA and PenGoal
 	lda.w gmclock		; clock stopped: no goal
 	beq .go
@@ -551,7 +554,9 @@ Goal:		;93G Goal (hockey93_04): puck in the goal. Score +1 for the scoring team 
 	plx
 .rtl:
 	rtl
-PenGoalStuff:		;93G PenGoalStuff (penalty93_1): after a goal. a1 = scored on team, a2 = scoring team. If the scoring team had more players on the ice, release the first scored on
+PenGoalStuff:		;do this stuff after a goal. a1 = scored on team, a2 = scoring team. If the scoring team had more players on ice, the first scored on player in the box without a coincidental
+		;   penalty is released (93G penalty93_1)
+		;   SNES: a1 = scored on team, a2 = scoring team. If the scoring team had more players on the ice, release the first scored on
 		;   player in the box without a coincidental penalty
 	stx.b xsave
 	ldx.w #$0000
@@ -643,7 +648,8 @@ PenGoalStuff:		;93G PenGoalStuff (penalty93_1): after a goal. a1 = scored on tea
 	bpl .popd
 	ldx.b xsave
 	rtl
-checkgoalp:		;93G checkgoalp (hockey93_04): player X collision with the goal/net a2 (oval, radius x 32, y 11). CheckBump, then wallcoll with the normal
+checkgoalp:		;check for player a3 collision with goal/net a2. Entered from checkgoal (93G hockey93_04)
+		;   SNES: player X collision with the goal/net a2 (oval, radius x 32, y 11). CheckBump, then wallcoll with the normal
 	lda.w pflags,x
 	bit.w #pf2npc
 	beq .npc
@@ -767,7 +773,8 @@ checkgoalp:		;93G checkgoalp (hockey93_04): player X collision with the goal/net
 	sta.b d3
 .rtl:
 	rtl
-CheckBump:		;93G CheckBump (hockey93_04): goalie X against the net a2 with the puck near (1 in 32): if moving faster than $2000, bump the net (Xvel/Yvel / 4), stop and call
+CheckBump:		;supply minimum separation velocity for coll with walls/goal/net. a2 = goal, a3 = player. Called from checkgoalp (93G hockey93_04)
+		;   SNES: goalie X against the net a2 with the puck near (1 in 32): if moving faster than $2000, bump the net (Xvel/Yvel / 4), stop and call
 		;   PenGhold
 	stx.b xsave
 	ldx.w #$0000
@@ -861,7 +868,8 @@ CheckBump:		;93G CheckBump (hockey93_04): goalie X against the net a2 with the p
 	lda.w #PenGhold
 	sta.b d0
 	jmp.w AddPenalty2
-checkplcoll:		;93G checkplcoll (hockey93_03): d2/d3 = x/y, X = object. Walk up and down the OOlist from X and call checkcx for each object within 14 in y
+checkplcoll:		;d2/d3 = x/y cords, a3 = struct. Walk up and down the OOlist from a3 and call checkcx for each object within $10 in y (92 collrad*2). Called from checkcoll (93G hockey93_03)
+		;   SNES: d2/d3 = x/y, X = object. Walk up and down the OOlist from X and call checkcx for each object within 14 in y
 	lda.w pflags,x
 	bit.w #pf2npc
 	beq .pl
@@ -959,7 +967,9 @@ checkplcoll:		;93G checkplcoll (hockey93_03): d2/d3 = x/y, X = object. Walk up a
 	bne .down
 .ex:
 	rtl
-checkcx:		;93G checkcx (hockey93_03): Y = object near X. Opposing players add impact and run newcheck, checkint, checkcheck and checkfight; then momentum moves from X to a2
+checkcx:		;d4 = obj. # * 2 for possible coll so check x range and distance for coll. d2 = x, d5 = delta y, a3 = moving object. Opposing players add impact and run newcheck, checkint,
+		;   checkcheck and checkfight; then momentum moves from a3 to a2. Called from checkplcoll (93G hockey93_03)
+		;   SNES: Y = object near X. Opposing players add impact and run newcheck, checkint, checkcheck and checkfight; then momentum moves from X to a2
 		;   (weights + 140, elasticity evalue)
 	stx.b xsave
 	ldx.w #$0000
@@ -1259,7 +1269,9 @@ checkcx:		;93G checkcx (hockey93_03): Y = object near X. Opposing players add im
 	pla
 	pla
 	bra .exit
-newcheck:		;93G newcheck (hockey93_03): check sound SFXcheck + random 0/1
+newcheck:		;start a new check sound. 93: one of 4 sounds $1C-$1F (92: one of 5 from SFXcheck = 18), never the last one again. Called from checkcx; FallDown branches here when the player who
+		;   fell did not have the puck (93G hockey93_03)
+		;   SNES: check sound SFXcheck + random 0/1
 	lda.w seed+1
 	and.w #$0001
 	clc
@@ -1267,7 +1279,8 @@ newcheck:		;93G newcheck (hockey93_03): check sound SFXcheck + random 0/1
 	pha
 	jsl.l sfx
 	rtl
-checkint:		;93G checkint (hockey93_03): interference: goalie a2 against a3 and the other way round
+checkint:		;check for interference penalty. player a2 interferes with a3 or vice-versa; goalie is only player who cause an interference call. Called from checkcx (93G hockey93_03)
+		;   SNES: goalie a2 against a3 and the other way round
 	lda.b d0+2		; a2 and a3 swapped for the second call
 	pha
 	lda.b d0
@@ -1352,7 +1365,9 @@ checkint:		;93G checkint (hockey93_03): interference: goalie a2 against a3 and t
 	lda.w #PenInt
 	sta.b d0
 	jmp.w AddPenalty
-FallDown:		;93G FallDown (hockey93_03): player a2 falls, X is the hitter. Stumble for some players, check stats, fall back/forward/third fall, injuries with a penalty and crowd
+FallDown:		;player a2 falls down, player a3 is the hitting player. 93 adds anim $13A0 in place of a fall for some players, check stats for the hitter, a third fall anim ($1524), and injuries
+		;   (setInjuryType) with a penalty. Called from checkint .ci, checkcheck .cc and Bcheck; also entered from setd0player (hockey93_05) (93G hockey93_03)
+		;   SNES: player a2 falls, X is the hitter. Stumble for some players, check stats, fall back/forward/third fall, injuries with a penalty and crowd
 		;   sounds
 	ldy.b a2		; players only, not fighting
 	cpy.w #$0018
@@ -1575,7 +1590,8 @@ FallDown:		;93G FallDown (hockey93_03): player a2 falls, X is the hitter. Stumbl
 	jsl.l sfx
 .rtl:
 	rtl
-checkcheck:		;93G checkcheck (hockey93_03): players in contact: .cc for X on a2, then for a2 on X. d4 = impact
+checkcheck:		;player is in contact look for various contact events. Runs .cc for a3 on a2, then for a2 on a3. d4 = impact. Called from checkcx (93G hockey93_03)
+		;   SNES: players in contact: .cc for X on a2, then for a2 on X. d4 = impact
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -1759,7 +1775,8 @@ checkcheck:		;93G checkcheck (hockey93_03): players in contact: .cc for X on a2,
 	jmp.w FallDown
 .list:		;check anim by direction
 	dw SPAshoulderchkl,SPAshoulderchkr,SPAhipchkr,SPAhipchkr,SPAhipchkr,SPAhipchkl,SPAhipchkl,SPAshoulderchkl
-checkfight:		;93G checkfight (hockey93_04): start of a fight between a2 and X. Both impact >= 10, no anim lock, no penalty, no goalie, clock running, no highlight, the puck not
+checkfight:		;look for start of fight between players a2 & a3. Called from checkcx (hockey93_03) (93G hockey93_04)
+		;   SNES: start of a fight between a2 and X. Both impact >= 10, no anim lock, no penalty, no goalie, clock running, no highlight, the puck not
 		;   fighting or on a faceoff. SetInst both ways with d0 = 10 + max(0, 40 - ChkCnt)/4
 	ldy.b a2
 	lda.w impact,x
@@ -2002,7 +2019,8 @@ checkfight:		;93G checkfight (hockey93_04): start of a fight between a2 and X. B
 	sta.b d1
 	sta.w pf2aip,x
 	jmp.w SetSPA
-SetInst:		;93G SetInst (hockey93_04): d0 = fight rating X needs. If fightagg of X >= d0, of a2 >= 2 and >= $10 - 2 * a2 checks, set pf2fight on both. Then 92 style: an instigator
+SetInst:		;d0 = fight rating a3 needs. Called twice from checkfight (a2/a3 swapped) (93G hockey93_04)
+		;   SNES: If fightagg of X >= d0, of a2 >= 2 and >= $10 - 2 * a2 checks, set pf2fight on both. Then 92 style: an instigator
 		;   penalty for a shoulder check
 	lda.w fightagg,x
 	cmp.b d0
@@ -2096,7 +2114,8 @@ SetInst:		;93G SetInst (hockey93_04): d0 = fight rating X needs. If fightagg of 
 	ldx.b a4
 	stx.b a3
 	rtl
-doinput:		;93G doinput (logic93_1): controller input for player X. d0 = dpad, d1 = new buttons, d4 = controller 0/2
+doinput:		;process controller input (93G logic93_1)
+		;   SNES: controller input for player X. d0 = dpad, d1 = new buttons, d4 = controller 0/2
 	jsl.l setpads		; setpads; Start: pause
 	lda.b d1
 	bit.w #JOYSTART
@@ -2244,7 +2263,8 @@ doinput:		;93G doinput (logic93_1): controller input for player X. d0 = dpad, d1
 	tsb.w sflags
 .rtl2:
 	rtl
-faceoffinput:		;93G faceoffinput (logic93_1): faceoff player X: dpad into fodir1/fodir2, B pulls (SPAfaceoff)
+faceoffinput:		;controller processing for faceoff (93G logic93_1)
+		;   SNES: faceoff player X: dpad into fodir1/fodir2, B pulls (SPAfaceoff)
 	txa		; faceoff player only
 	asl a
 	asl a
@@ -2283,7 +2303,8 @@ faceoffinput:		;93G faceoffinput (logic93_1): faceoff player X: dpad into fodir1
 	jmp.w SetSPA
 .rtl:
 	rtl
-holdplayer:		;93G holdplayer (logic93_1): Y pressed: hold. With impact, hold the last player who hit X (Acheck)
+holdplayer:		;abut press hold (92 Holdplayer). a0 = the player this one is (93G logic93_1)
+		;   SNES: Y pressed: hold. With impact, hold the last player who hit X (Acheck)
 	lda.w #SPAhook		; pfalock
 	sta.b d1
 	sta.w pfalock,x

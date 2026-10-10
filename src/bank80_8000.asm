@@ -91,7 +91,8 @@ Start:		;93G main93 Start + hockey93_01 Begin (RAM clear). Reset vector. Native 
 	jml.l Opening		; bank $8B: on to the title screen (93G Opening)
 BRKHalt:		;BRK vector: hang. No 92G/93G counterpart (68k traps go to IRQ7 rte)
 	bra BRKHalt
-VBjsr:		;93G VBjsr (hockey93_01, IDA VBLANK). NMI: ack RDNMI, skip if vbactive, else "rts" into the vbint handler
+VBjsr:		;Vertical blank interrupt (vector $78), jumps through the vbint RAM vector (93G hockey93_01)
+		;   SNES: NMI: ack RDNMI, skip if vbactive, else "rts" into the vbint handler
 	rep #$30
 	pha
 	lda.w RDNMI
@@ -118,7 +119,8 @@ vb2_blank:		;vbint target: vb2 with the screen held in forced blank. Resets hbin
 	lda.w #HBdefault
 	sta.b hbint
 	bra vb2_main
-vb2:		;93G vb2 (video93_1): vblank for fades only, no dma. INIDISP from brightness, then vb2_main
+vb2:		;vblank used for palfades only no dmas (vbint target). (93G video93_1)
+		;   SNES: vblank for fades only, no dma. INIDISP from brightness, then vb2_main
 	sep #$20
 	lda.b brightness
 	sta.w INIDISP
@@ -167,7 +169,8 @@ vb2_main:		;common vblank tail: vcount, sound tick (93G p_music_vblank), brightn
 	rti
 VBlank_long:		;vbint target (set by bank $80E3B3): jml into VBlank so it runs from the FastROM bank $80
 	jml.l VBlank
-VBlank:		;93G VBlank / DumpSprites2+DoDMAList role: forced blank, run DMAList (ch7), BG2 scroll from Hscroll/vramrow/Vscroll, OAM dma from Satt; one shot: sets vbint back to vb2
+VBlank:		;main vblank code for game play (vbint target, set by setupice). (93G video93_1)
+		;   SNES: DumpSprites2+DoDMAList role: forced blank, run DMAList (ch7), BG2 scroll from Hscroll/vramrow/Vscroll, OAM dma from Satt; one shot: sets vbint back to vb2
 	sep #$20
 	lda.b #INIDISP_FBLANK
 	sta.w INIDISP
@@ -462,7 +465,8 @@ HBdefault:		;default hbint: count hcount, restore regs, rti
 	plx
 	pla
 	rti
-goalieacc:		;93G goalieacc (logic93_5): goalie gets acc. in direction d0. Turns facedir one step toward d0, then playeracc
+goalieacc:		;goalie gets acc. in direction d0. 93 turns facedir one step toward d0 (92 set it directly) (93G logic93_5)
+		;   SNES: turns facedir one step toward d0, then playeracc
 	lda.w #SPAgready		; 93G SPAgready (2)
 	sta.b d1
 	lda.b d0
@@ -504,7 +508,8 @@ goalieacc:		;93G goalieacc (logic93_5): goalie gets acc. in direction d0. Turns 
 	lda.w facedir,x
 	sta.b d2
 	jml.l playeracc		; d2 = facedir, bank $8F: 93G playeracc (d2 = direction)
-dostop:		;93G dostop (logic93_5 IDA loc_D538): player X stops. Stop animation (and sound for the puck carrier) if fast, then StopNA
+dostop:		;player a3 stops. Entered from doplayeracc and noturn0 (93G logic93_5)
+		;   SNES: player X stops. Stop animation (and sound for the puck carrier) if fast, then StopNA
 	lda.w Xvel,x
 	bit.w #$8000
 	beq .xabs
@@ -542,7 +547,8 @@ dostop:		;93G dostop (logic93_5 IDA loc_D538): player X stops. Stop animation (a
 	sta.w pf2aip,x
 .setspa:
 	jsl.l SetSPA
-StopNA:		;93G StopNA (logic93_5): slow player X by $70*d7 on each axis (93G 150), no animation change
+StopNA:		;slow player a3 by 150 on each axis, no animation change. Falls in from dostop, also entered from goalieacc and others (93G logic93_5)
+		;   SNES: slow player X by $70*d7 on each axis (93G 150), no animation change
 	lda.w #$0070		; $70 per frame (93G 150)
 	sta.b mula
 	lda.b d7
@@ -604,7 +610,8 @@ muls16:		;68k muls.w: A = mula*mulb (signed 16-bit result, also in mula/mulb/mul
 	clc
 .rtl:
 	rtl
-getpde:		;93G getpde: d0 = energy of player X (tmpde of its team, entry pnum)
+getpde:		;get player a3's energy level into d0. Return a2 = his team struct, d1 = pnum*2 (93G hockey93_05)
+		;   SNES: d0 = energy of player X (tmpde of its team, entry pnum)
 	lda.w pfteam,x
 	beq .team
 	lda.w #$0002		; a2 = 2: away team
@@ -641,7 +648,8 @@ MaxSpeed:		;93G MaxSpeed (logic93_5): max speed^2 for each leg speed rating leve
 	dd (33*266)*(33*266)
 	dd (34*266)*(34*266)
 	dd (35*266)*(35*266)
-check4bench:		;93G check4bench (logic93_1): should player X go to the bench? Pops its return address when it takes over
+check4bench:		;check if player a3 should go to bench. Called from assbench (93G logic93_1)
+		;   SNES: should player X go to the bench? Pops its return address when it takes over
 	lda.w pflags,x
 	bit.w #pfjoycon|pf2pen		; joystick controlled, or penalty (93G btst #4,pflags2)
 	bne .rts
@@ -694,7 +702,8 @@ check4bench:		;93G check4bench (logic93_1): should player X go to the bench? Pop
 	lda.w position,x		; d0 = position (newpos is negative here)
 	sta.b d0
 	jmp.w Setplass
-checkob:		;93G checkob (logic93_4): bring up the little warning ref if a player on your team is over the blue line. Called from doinput and asspuckc
+checkob:		;bring up little warning ref if a player on your team is over blue line. Called from doinput and asspuckc (93G logic93_4)
+		;   SNES: bring up the little warning ref if a player on your team is over the blue line. Called from doinput and asspuckc
 	lda.w gmode
 	bit.w #gmoffs		; offsides off: nothing to do
 	bne .push
@@ -825,7 +834,8 @@ checkob:		;93G checkob (logic93_4): bring up the little warning ref if a player 
 	dec.b d0
 	bpl .top1
 	bra .nob
-chk4lc:		;93G chk4lc (logic93_3): should the computer call a line change? Then shoot the puck in (CompShoot)
+chk4lc:		;see if computer should call line change (93G logic93_3)
+		;   SNES: should the computer call a line change? Then shoot the puck in (CompShoot)
 	lda.w pucky
 	sta.b d0
 	lda.w pfgoal,x
@@ -871,7 +881,8 @@ chk4lc:		;93G chk4lc (logic93_3): should the computer call a line change? Then s
 	jmp.w CompShoot
 .rts:
 	rtl
-chk4shot:		;93G chk4shot (logic93_3): computer player X looks for a shot. Called from asspuckc
+chk4shot:		;player a3 looks for shot (computer controlled) (93G logic93_3)
+		;   SNES: computer player X looks for a shot. Called from asspuckc
 	jsl.l chkpk
 	bne .npk
 	lda.w threat		; threat on the puck carrier
@@ -1004,7 +1015,8 @@ chk4shot:		;93G chk4shot (logic93_3): computer player X looks for a shot. Called
 	bra CompShoot
 .rts:
 	rtl
-CompShoot:		;93G CompShoot (logic93_3): computer player X shoots. Pops the caller (addq #4,sp), temp2b = swing time, assignment ashoot
+CompShoot:		;player a3 shoots (computer controlled player) (93G logic93_3)
+		;   SNES: computer player X shoots. Pops the caller (addq #4,sp), temp2b = swing time, assignment ashoot
 	pla		; pop the caller (93G addq #4,sp)
 	sep #$20
 	pla
@@ -1036,7 +1048,8 @@ CompShoot:		;93G CompShoot (logic93_3): computer player X shoots. Pops the calle
 	lda.w #ashoot		; ashoot
 	sta.b d0
 	jmp.w assreplace
-assnearest:		;asstab $11. 93G assnearest (logic93_4): assignment for the player nearest the puck who does not have it
+assnearest:		;asstab $11. this is a special assignment used for the player who is nearest the puck but doesn't have it. Assignment anearest ($11) (93G logic93_4)
+		;   SNES: assignment for the player nearest the puck who does not have it
 	lda.w pflags,x
 	bit.w #pfna		; pfna
 	beq .nna
@@ -1406,7 +1419,8 @@ assnearest:		;asstab $11. 93G assnearest (logic93_4): assignment for the player 
 .topuck:
 	jsl.l skatetopuck
 	jmp.w check4check
-check4check:		;93G check4check (logic93_4): look for a good chance to check an opponent. Falls in from assnearest; also entered from assfwatch and asswingd
+check4check:		;look for good opportunity for checking opponent. Falls in from assnearest; also entered from assfwatch and asswingd (93G logic93_4)
+		;   SNES: look for a good chance to check an opponent. Falls in from assnearest; also entered from assfwatch and asswingd
 	lda.w #$0014
 	sec
 	sbc.w aggress,x
@@ -1477,7 +1491,8 @@ check4check:		;93G check4check (logic93_4): look for a good chance to check an o
 	bpl .loop
 .rts:
 	rtl
-burst:		;93G burst (logic93_1): check button: speed burst in the facing direction (costs energy), lock in SPAburst. Also entered from check4check
+burst:		;cbut press check/speed. Also entered from check4check (93G logic93_1)
+		;   SNES: check button: speed burst in the facing direction (costs energy), lock in SPAburst. Also entered from check4check
 	jsl.l getpde
 	lda.w OptLine		; line changes off: no energy cost
 	bne .spd
@@ -1536,7 +1551,8 @@ burst:		;93G burst (logic93_1): check button: speed burst in the facing directio
 	sta.b d1
 	sta.w pfalock,x
 	jmp.w SetSPA
-skatetopuck:		;93G skatetopuck (logic93_5): player X skates to the puck. d7 = elapsed frames
+skatetopuck:		;player a3 should skate to puck. d7 = elapse frames (93G logic93_5)
+		;   SNES: player X skates to the puck. d7 = elapsed frames
 	jsl.l skatetopuckinit		; bank $8B: 93G skatetopuckinit (d0/d1 = puck spot)
 	lda.w temp2,x
 	sec
@@ -1699,12 +1715,14 @@ skatetopuck:		;93G skatetopuck (logic93_5): player X skates to the puck. d7 = el
 	sta.w Yvel,x
 .acc:
 	jml.l doplayeracc		; bank $8F: 93G doplayeracc (d0 = direction)
-Sweepcheck:		;93G Sweepcheck (logic93_1): start a sweep check on player X
+Sweepcheck:		;start sweep check on player a3 (93G logic93_1)
+		;   SNES: start a sweep check on player X
 	lda.w #SPAsweepchk		; 93G SPAsweepchk $B44, pfalock
 	sta.b d1
 	sta.w pfalock,x
 	jmp.w SetSPA
-chkpk:		;93G chkpk (logic93_3): Z set if player X is killing a penalty. No power play returns NE
+chkpk:		;return z flag set if killing penalty (93G logic93_3)
+		;   SNES: Z set if player X is killing a penalty. No power play returns NE
 	lda.w sflags
 	and.w #sf2pwrplay		; sf2pwrplay
 	bne chkpk2
@@ -1721,7 +1739,7 @@ chkpk2:		;93G chkpk2 (logic93_3): Z set if player X is on the short-handed team 
 	lda.w sflags
 	and.w #sf2pwrtm
 	rtl
-assshoot:		;asstab $12. 93G assshoot (logic93_4): assignment for computer shooting
+assshoot:		;asstab $12. assignment for computer shooting. Assignment ashoot ($12) (93G logic93_4)
 	lda.w pflags,x
 	bit.w #pfna		; pfna
 	beq .nna
@@ -1745,7 +1763,8 @@ assshoot:		;asstab $12. 93G assshoot (logic93_4): assignment for computer shooti
 	lda.w #cbut
 	tsb.b d2
 	bra ShotMode
-SetShotMode:		;93G SetShotMode (logic93_1): start a shot by player X: shot mode, direction to goal, shot animation
+SetShotMode:		;initiate shot by player a3 (93G logic93_1)
+		;   SNES: start a shot by player X: shot mode, direction to goal, shot animation
 	lda.w #$0008		; default shot direction: none
 	sta.w passdir
 	lda.w #sfssdir
@@ -1808,7 +1827,8 @@ ShotMode:		;93G ShotMode (logic93_1): shot input. d0 = dpad, d2 = changed button
 	bra doshot
 .rts:
 	rtl
-doshot:		;93G doshot (logic93_1): stick is at the puck, launch it toward the goal
+doshot:		;stick is at puck so launch puck toward goal (93G logic93_1)
+		;   SNES: stick is at the puck, launch it toward the goal
 	stx.b xsave
 	ldx.w #$0000
 .pushd:		;movem d0-d7/a0-a3 to the stack

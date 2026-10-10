@@ -2,7 +2,8 @@
 ; assfaceoff, assexit, assfaceoffp1 (logic93_2/4/5), randomd0, puck logic pucknorm with findpc, divs, a2touchpuck, a2offsides,
 ; GetHot, puckIChk, ChkOffsides (logic93_4/5), and the puck/player collision checkpuckcoll, puckstick, puckglue (hockey93_04/05).
 org $80910F
-asspassrec:		;asstab $13. 93G asspassrec (logic93_4 IDA loc_BFC6): assignment for catching a pass
+asspassrec:		;asstab $13. assignment for catching pass. Assignment apassrec ($13) (93G logic93_4)
+		;   SNES: assignment for catching a pass
 	lda.w pfalock,x
 	bne .rts		; locked
 	lda.w gmclock		; clock stopped
@@ -264,7 +265,8 @@ assfight:		;asstab $14. 93G assfight (logic93_2): fighting logic for player X. T
 	rtl
 .al:		;93G .al: punch animations SPAfhigh, SPAflow, SPAfgrab
 	dw SPAfhigh,SPAflow,SPAfgrab
-chkhit:		;93G chkhit (logic93_2): part of the fight, is player X hit by opponent a0?
+chkhit:		;part of fight to see if player is hit (93G logic93_2)
+		;   SNES: part of the fight, is player X hit by opponent a0?
 	stx.b xsave
 	ldx.w #$0000
 .pushd:		;movem d0/a0-a3 to the stack
@@ -561,7 +563,8 @@ FightFall:		;93G chkhit .fall (IDA FightFall): X lost the fight: the a0 player g
 .snd:
 	jsl.l sfx
 	jmp.w chkhit_ex
-assfwatch:		;asstab $15. 93G assfwatch (logic93_2): for a player watching a fight: skate to a spot 80 pixels from the fight
+assfwatch:		;asstab $15. for player who is watching fight (93G logic93_2)
+		;   SNES: for a player watching a fight: skate to a spot 80 pixels from the fight
 	lda.w pfalock,x
 	beq .joy
 	jmp.w .rts
@@ -696,7 +699,8 @@ assfwatch:		;asstab $15. 93G assfwatch (logic93_2): for a player watching a figh
 	jmp.w check4check
 .rts:
 	rtl
-assfaceoff:		;asstab $16. 93G assfaceoff (logic93_2): players do nothing until the faceoff is over. SNES: also starts the goal / period / mid-period music cues
+assfaceoff:		;asstab $16. players do nothing until faceoff is over (93G logic93_2)
+		;   SNES: also starts the goal / period / mid-period music cues
 	lda.w pfalock,x
 	bne .rts
 	lda.w sflags
@@ -731,7 +735,8 @@ assfaceoff:		;asstab $16. 93G assfaceoff (logic93_2): players do nothing until t
 	jsl.l StartSong5		; bank $89: mid-period music cue
 .rts:
 	rtl
-assexit:		;93G assexit (logic93_5): exit the current assignment of player X
+assexit:		;exit current assignment on player a3 (93G logic93_5)
+		;   SNES: exit the current assignment of player X
 	lda.w assnum,x
 	inc a		; next assignment
 	and.w #$0007
@@ -740,7 +745,8 @@ assexit:		;93G assexit (logic93_5): exit the current assignment of player X
 	ora.w #pfna		; pfna
 	sta.w pflags,x
 	rtl
-assfaceoffp1:		;asstab $17. 93G assfaceoffp1 (logic93_2): assignment for the players taking the faceoff
+assfaceoffp1:		;asstab $17. assignment for players actually participating in faceoff (93G logic93_2)
+		;   SNES: assignment for the players taking the faceoff
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rts
@@ -809,12 +815,14 @@ assfaceoffp1:		;asstab $17. 93G assfaceoffp1 (logic93_2): assignment for the pla
 	lda.w #$0014		; nopuck = 20
 	sta.w nopuck,x
 	jmp.w assexit
-randomd0:		;93G randomd0: d0 = random 0..d0-1 (via randoma)
+randomd0:		;d0 = range. Return random number in d0 (0 <= d0 < range) (93G middle93_1)
+		;   SNES: d0 = random 0..d0-1 (via randoma)
 	lda.b d0
 	jsl.l randoma
 	sta.b d0
 	rtl
-pucknorm:		;asstab $18. 93G pucknorm (logic93_4): assignment for the puck most of the time. X = puck, d7 = elapsed frames
+pucknorm:		;asstab $18. assignment for puck most of the time. a3 = puck, d7 = elapse frames since last call (93G logic93_4)
+		;   SNES: assignment for the puck most of the time. X = puck, d7 = elapsed frames
 	lda.w #pfna
 	trb.w pflags+puckobj		; pfna
 	beq .nna
@@ -912,7 +920,8 @@ pucknorm:		;asstab $18. 93G pucknorm (logic93_4): assignment for the puck most o
 .flat:
 	jsl.l pucknothing		; pucknothing: stop spinning
 	jmp.w checkpuckcoll		; 93G bra checkpuckcoll
-findpc:		;93G findpc (logic93_5): when and where will the puck cross each goal line
+findpc:		;find puck crossing lines: calculate when puck will cross goalline (if at all). Called from pucknorm (93G logic93_5)
+		;   SNES: when and where will the puck cross each goal line
 	stx.b xsave
 	ldx.w #$0000
 .push:
@@ -1082,7 +1091,8 @@ divs:		;68k divs: A = mulres = mulb (32-bit) / mula, signed 16-bit quotient. C c
 	lda.b mulres
 	clc
 	rtl
-a2touchpuck:		;93G a2touchpuck (logic93_5): player a2 touches the puck: last touch, offsides, icing
+a2touchpuck:		;player a2 touches puck. Look for penalties/offsides/other junk. Called from pucknorm, puckstick and others (93G logic93_5)
+		;   SNES: last touch, offsides, icing
 	ldy.b a2
 	lda.w Xpos,y
 	sta.w ltx		; ltx/lty/ltplayer
@@ -1188,7 +1198,8 @@ a2touchpuck:		;93G a2touchpuck (logic93_5): player a2 touches the puck: last tou
 	lda.w #ifok		; ifok
 	tsb.w iflags
 	rtl
-a2offsides:		;93G a2offsides (logic93_5): player a2 touched the puck: offsides if his team is flagged and the puck is past the blue line
+a2offsides:		;player a2 touched the puck: offsides penalty if his team is flagged and the puck is past the blue line. Called from a2touchpuck (93G logic93_5)
+		;   SNES: offsides if his team is flagged and the puck is past the blue line
 	ldy.b a2
 	lda.w gmode
 	bit.w #gmoffs
@@ -1237,7 +1248,8 @@ a2offsides:		;93G a2offsides (logic93_5): player a2 touched the puck: offsides i
 	sty.b a2
 .rtl:
 	rtl
-GetHot:		;93G GetHot (logic93_5): A = object index; d0/d1 = its hot spot x/y from HotList (bank84_F000, a byte pair per frame)
+GetHot:		;push long address of structure to get hot spot from. Hot spot x/y returned in d0/d1. 93 reads a byte pair per frame from HotList (92 framelist SprStrHot) (93G logic93_5)
+		;   SNES: A = object index; d0/d1 = its hot spot x/y from HotList (bank84_F000, a byte pair per frame)
 	phx
 	tay
 	stz.b d0
@@ -1294,7 +1306,8 @@ GetHot:		;93G GetHot (logic93_5): A = object index; d0/d1 = its hot spot x/y fro
 .ex:
 	plx
 	rtl
-puckIChk:		;93G puckIChk (logic93_5): check for icing. Called from pucknorm
+puckIChk:		;check for icing of puck penalty. Called from pucknorm (93G logic93_5)
+		;   SNES: Called from pucknorm
 	lda.w iflags
 	bit.w #ifok		; ifok and not ifcgl, puck loose
 	beq .rtl
@@ -1332,7 +1345,8 @@ puckIChk:		;93G puckIChk (logic93_5): check for icing. Called from pucknorm
 	lda.w #ifcgl		; ifcgl
 	tsb.w iflags
 	rtl
-ChkOffsides:		;93G ChkOffsides (logic93_5): flag a team offsides when the puck crosses its blue line. Called from pucknorm
+ChkOffsides:		;check for offsides penalty. a3 = puck. 93 flags the whole team (tmflags bit 4), 92 flagged each player (pf3oside). Called from pucknorm (93G logic93_5)
+		;   SNES: flag a team offsides when the puck crosses its blue line. Called from pucknorm
 	lda.w gmode
 	bit.w #gmoffs
 	beq .rtl
@@ -1469,7 +1483,9 @@ ChkOffsides:		;93G ChkOffsides (logic93_5): flag a team offsides when the puck c
 	dec.b d2
 	bpl .loop2
 	rtl
-ClearOffsidesIfAllPlayers:		;93G ClearOffsidesIfAllPlayers (logic93_5): a2 = team; clear tmfoffside once no skater is past the blue line
+ClearOffsidesIfAllPlayers:		;a2 = team struct. Clears the team offsides flag (tmflags bit 4) once no skater on ice is past the blue line ($58, sign by pfgoal). Called twice from ChkOffsides
+		;   (93G logic93_5)
+		;   SNES: clear tmfoffside once no skater is past the blue line
 	ldy.b a2
 	lda.w tmflags,y		; tmfoffside
 	bit.w #tmfoffside
@@ -1513,7 +1529,8 @@ ClearOffsidesIfAllPlayers:		;93G ClearOffsidesIfAllPlayers (logic93_5): a2 = tea
 	and.w #~tmfoffside&$FFFF		; clear tmfoffside
 	sta.w tmflags,y
 	rtl
-checkpuckcoll:		;93G checkpuckcoll (hockey93_04): puck collision with the players within 22 in y (OOlist up and down from the puck)
+checkpuckcoll:		;look for puck coll with players. a3 = puck. Entered from pucknorm (logic93_4) (93G hockey93_04)
+		;   SNES: puck collision with the players within 22 in y (OOlist up and down from the puck)
 	lda.w Zpos+puckobj		; puck feet in the air (Zpos > 16): no collision
 	sec
 	sbc.w #$0010
@@ -1774,7 +1791,8 @@ checkpuckcoll_ccx:		;93G checkpuckcoll .ccx: d4 = object index: stick (puckstick
 	bcs .exit
 	jsl.l puckgoalie
 	bra .exit
-puckstick:		;93G puckstick (hockey93_05): puck hits the stick of player a2. d0 = distance^2 (from checkpuckcoll_ccx)
+puckstick:		;puck collides with stick (93G hockey93_05)
+		;   SNES: puck hits the stick of player a2. d0 = distance^2 (from checkpuckcoll_ccx)
 	ldy.b a2
 	lda.w position,y
 	bne .p0
@@ -1939,7 +1957,8 @@ puckstick:		;93G puckstick (hockey93_05): puck hits the stick of player a2. d0 =
 	lda.w #$0008		; too fast: nopuck 8, deflect
 	sta.w nopuck,y
 	jmp.w .stdef
-puckglue:		;93G puckglue (hockey93_05 IDA loc_10F8A): player a2 takes the puck. Falls into setd0player (bank $8D)
+puckglue:		;Player a2 takes the puck (92 puckstick .glue) (93G hockey93_05)
+		;   SNES: Falls into setd0player (bank $8D)
 	lda.w seed+2		; pickup sound (one of 4)
 	and.w #$0003
 	clc

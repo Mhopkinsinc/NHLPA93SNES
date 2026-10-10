@@ -2,7 +2,8 @@
 ; NewPO93, eraser, DrawTeamBlocks, EASNLogo (penalty93_2), PeriodOver, GetPlayerName, updatesound, asstab, mulu16, puckshadow, setd0player;
 ; then SpriteSet10 (frame set 10), tiles continue to bank8D_E000.
 org $8D8000
-maketree:		;93G maketree (hockey93_09): potree from playoffseats (postarts) and WinBits; reset the games of this round (.sett), then FigureJoy
+maketree:		;make playoff tree (potree) from playoffseats/winbits. 92 MakeTree. (93G hockey93_09)
+		;   SNES: potree from playoffseats (postarts) and WinBits; reset the games of this round (.sett), then FigureJoy
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -233,7 +234,8 @@ InitPPU:		;SNES: all PPU and CPU I/O registers to their reset values (forced bla
 	sta.w MEMSEL
 	rep #$30
 	rtl
-StartPer:		;93G StartPer (hockey93_01): reset the stack, rink and clock, faceoff at centre ice, music cue timers, replay reset; then the game loop ($8E8000)
+StartPer:		;start a period: reset stack, rink and clock, face off, run the game loop (93G hockey93_01)
+		;   SNES: reset the stack, rink and clock, faceoff at centre ice, music cue timers, replay reset; then the game loop ($8E8000)
 	lda.w #$1FFF		; reset the stack
 	tcs
 	jsl.l Readjoy1
@@ -312,7 +314,9 @@ StartPer:		;93G StartPer (hockey93_01): reset the stack, rink and clock, faceoff
 	stz.w lastframevc
 	stz.w oldvcount
 	jml.l Gameloop		; the game loop (bank $8E)
-GetLowestPen:		;93G GetLowestPen (penalty93_1): a2 = team on the power play, a3 = the other. d0 = power play time left from the penalty box times
+GetLowestPen:		;92 name; 93 body differs (92 built a release-order PlList). a2 = team on the power play, a3 = shorthanded team. Return d0 = power play time left from the penalty box times.
+		;   Called from updatepwrplay (93G penalty93_1)
+		;   SNES: d0 = power play time left from the penalty box times
 	stz.b d0
 	stz.b d3
 	lda.b a2
@@ -396,7 +400,9 @@ GetLowestPen:		;93G GetLowestPen (penalty93_1): a2 = team on the power play, a3 
 	sta.b d0
 .rtl:
 	rtl
-Bcheck:		;93G Bcheck (hockey93_03): a2 checks a3 with SPA $B44: if a3 is in front (within one direction) he falls; checkagr may call a penalty $20 (charging) on
+Bcheck:		;player a2 is in SPA $B44 and a3 is the other player. Entered from checkcheck .cc. If OptPen is 0 and a2 is joystick controlled, a2 needs randomd0($10 + a2 checking rating - a3
+		;   legstr) >= $C. If a3 is within 1 direction of where a2 faces, a3 falls and checkagr may call penalty $20 on a2. Sets collflag to -1 (93G hockey93_03)
+		;   SNES: a2 checks a3 with SPA $B44: if a3 is in front (within one direction) he falls; checkagr may call a penalty $20 (charging) on
 		;   a2
 	ldy.b a2
 	lda.w pfalock,x
@@ -517,7 +523,8 @@ NewPO93:		;93G NewPO (hockey93_09): continue the playoffs from passbits (ReadPas
 	ldx.b xsave
 	ldx.b a3
 	rtl
-eraser:		;92G eraser: fill d0 x d1 textmap words at printx/printy (print map printm) with tile d2 (+ printfontset)
+eraser:		;fill rectangle with char. d0/d1 = x/y size of rectangle, d2 = char word to fill with, printx/y/m define top left corner to start at (93G middle93_2)
+		;   SNES: fill d0 x d1 textmap words at printx/printy (print map printm) with tile d2 (+ printfontset)
 	phx
 	lda.b d2
 	clc
@@ -581,7 +588,8 @@ eraser:		;92G eraser: fill d0 x d1 textmap words at printx/printy (print map pri
 	sta.b textdirtyhi
 .rtl:
 	rtl
-DrawTeamBlocks:		;93G DrawTeamBlocks (hockey93_06): the 9 x 2 TeamBlocksMap block of team d1 into textmap at printx/printy (scorechars, printa)
+DrawTeamBlocks:		;draw team block d1 (team*2) from TeamBlocks.map at printx/printy; the user's team (potree entry (93G hockey93_06)
+		;   SNES: the 9 x 2 TeamBlocksMap block of team d1 into textmap at printx/printy (scorechars, printa)
 	lda.b a2
 	pha
 	phx
@@ -638,7 +646,8 @@ DrawTeamBlocks:		;93G DrawTeamBlocks (hockey93_06): the 9 x 2 TeamBlocksMap bloc
 	pla
 	sta.b a2
 	rtl
-EASNLogo:		;93G EASNLogo (penalty93_2): the EASN logo (7 x 2 words, $8F824D) at x 1, y $19 of the rink map unless a power play is on
+EASNLogo:		;Draw easn.map at x 1, y $19 on the vertical ice rink if no power play. Falls into DrawEASNMap (93G penalty93_2)
+		;   SNES: the EASN logo (7 x 2 words, $8F824D) at x 1, y $19 of the rink map unless a power play is on
 	lda.w sflags
 	bit.w #sf2pwrplay
 	bne .rtl
@@ -684,7 +693,8 @@ EASNLogo:		;93G EASNLogo (penalty93_2): the EASN logo (7 x 2 words, $8F824D) at 
 	sta.b textdirtyhi
 .rtl:
 	rtl
-PeriodOver:		;93G PeriodOver (hockey93_06): next period (gmdir flips); overtime only for a tied playoff game; gsp 4 = game over (ContinuePlayoffs), else StartPer
+PeriodOver:		;what to do if period over. Branched to from puckfaceoff (logic93_4) when the clock runs out. (93G hockey93_06)
+		;   SNES: next period (gmdir flips); overtime only for a tied playoff game; gsp 4 = game over (ContinuePlayoffs), else StartPer
 	jsl.l forceblack
 	inc.w gsp		; next period
 	lda.w gmode
@@ -718,7 +728,8 @@ PeriodOver:		;93G PeriodOver (hockey93_06): next period (gmdir flips); overtime 
 	jml.l ContinuePlayoffs
 .per:
 	jmp.w StartPer
-GetPlayerName:		;SNES: mesarea = number and name of player TempPlOffset (bit 15: away team) via PlayerNumName
+GetPlayerName:		;93 only: a1 = mesarea "NN First Last" (getname) for player TempPlOffset (bit 15 set: away (93G hockey93_10)
+		;   SNES: mesarea = number and name of player TempPlOffset (bit 15: away team) via PlayerNumName
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -768,7 +779,8 @@ GetPlayerName:		;SNES: mesarea = number and name of player TempPlOffset (bit 15:
 	bpl .popd
 	ldx.b xsave
 	rtl
-updatesound:		;93G updatesound: move the crowd volume (asv) toward crowdlevel; send it to the sound driver when it changes (crowdvol)
+updatesound:		;move the crowd noise volume (psg noise channel) toward crowdlevel. (93G video93_2)
+		;   SNES: move the crowd volume (asv) toward crowdlevel; send it to the sound driver when it changes (crowdvol)
 	ldy.b d7
 	lda.b crowdlevel		; target volume crowdlevel * 8 + $200 (max $CFF)
 	asl a
@@ -916,7 +928,8 @@ mulu16:		;SNES: 16-bit multiply: A = mula = mulb = mulres = low word of mula * m
 	sta.b mulb
 	clc
 	rtl
-puckshadow:		;asstab $19. 93G puckshadow: the shadow object follows the puck (frame $189); else parks it behind the goal
+puckshadow:		;asstab $19. assignment for puck shadow. a3 = puck shadow (struct after the puck) (93G logic93_5)
+		;   SNES: the shadow object follows the puck (frame $189); else parks it behind the goal
 	lda.w frame,x
 	cmp.w #$0189		; puck frame: shadow under the puck
 	bne .none
@@ -949,7 +962,8 @@ puckshadow:		;asstab $19. 93G puckshadow: the shadow object follows the puck (fr
 	dec.w Zpos,x
 .rtl:
 	rtl
-setd0player:		;93G setd0player: give player d0 to the controller of his team (setc1player/setc2player) unless a controller has him already
+setd0player:		;give control of player d0 to a controller if his team is controlled (93G hockey93_05)
+		;   SNES: give player d0 to the controller of his team (setc1player/setc2player) unless a controller has him already
 	lda.b d0
 	cmp.w c1playernum
 	beq .rtl

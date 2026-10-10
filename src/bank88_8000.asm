@@ -133,7 +133,8 @@ mulu32:		;SNES: 32-bit multiply with the 8x8 hardware multiplier: A = mulres (32
 	lda.b mulres
 	clc
 	rtl
-getlinee:		;93G getlinee (penalty93_2): d0 = line number, a2 = team. Returns d0 = average energy (tmpde) of the skaters of that line (priolist $8FF820 picks the positions)
+getlinee:		;d0 = line number, a2 = team struct. Return d0 = energy level of this line (93G penalty93_2)
+		;   SNES: Returns d0 = average energy (tmpde) of the skaters of that line (priolist $8FF820 picks the positions)
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -224,7 +225,8 @@ getlinee:		;93G getlinee (penalty93_2): d0 = line number, a2 = team. Returns d0 
 	bpl .popd
 	ldx.b xsave
 	rtl
-WritePassBits:		;92G WritePassBits: playoff state into passbits (PushBits with each range), then the 9-bit checksum of the values (d7) with range 512
+WritePassBits:		;transfer game variables to the password bits at a3. 92 WritePassBits, without the checksum. (93G hockey93_09)
+		;   SNES: playoff state into passbits (PushBits with each range), then the 9-bit checksum of the values (d7) with range 512
 	jsl.l ClrPassBits
 	stz.b d7
 	lda.w postarts		; PushBits ranges: postarts 32, bosgames 8, gamelevel 4, potreeteam 16, pojoy 4, WinBits $4000
@@ -288,7 +290,8 @@ WritePassBits:		;92G WritePassBits: playoff state into passbits (PushBits with e
 	adc.b d0
 	sta.b d7
 	jml.l PushBits
-noturn0:		;93G noturn0 (logic93_5): wanted direction needs no turn; glide/stop/skate animation, then revplayeracc (93G noturn). d0 = direction - facedir
+noturn0:		;doplayeracc when the wanted direction needs no turn (.ftab entry 0). d0 = direction minus facedir, times 2 (93G logic93_5)
+		;   SNES: glide/stop/skate animation, then revplayeracc (93G noturn). d0 = direction - facedir
 	lda.w #$0002		; d4 (here d2) = 2, 6 skating backwards
 	sta.b d4
 	lda.w pfrev,x
@@ -363,7 +366,8 @@ noturn0:		;93G noturn0 (logic93_5): wanted direction needs no turn; glide/stop/s
 .set:
 	jsl.l SetSPA
 	jml.l revplayeracc
-PWprint:		;92G PWprint: print the 16 password characters (PassWord through PasstoText) at printx/printy, unless PassWord bit 7 hides it
+PWprint:		;print pass word (from PassWord (92G hockey)
+		;   SNES: print the 16 password characters (PassWord through PasstoText) at printx/printy, unless PassWord bit 7 hides it
 	lda.w PassWord
 	bit.w #$0080
 	beq .show
@@ -442,7 +446,8 @@ PWprint:		;92G PWprint: print the 16 password characters (PassWord through Passt
 	ldx.b xsave
 .rtl:
 	rtl
-EncodePW:		;92G EncodePW (Rev A): after a playoff game, ResolveGames and maketree; then the new password, or new playoffs when the user won or went out
+EncodePW:		;after playoff game compute winners and password if needed. Called from GameOver (hockey93_06). (93G hockey93_09)
+		;   SNES: after a playoff game, ResolveGames and maketree; then the new password, or new playoffs when the user won or went out
 	lda.w OptPlayMode
 	bne .po
 	jmp.w .rtl
@@ -510,7 +515,8 @@ FramerMap:		;93G Framer.map.jim: the 3 x 3 box pieces (corner, edge, side, centr
 	dw $8000,$8001,$C000
 FramerTiles:		;the 4 Framer box tiles (4bpp, data/Framer.chr): vram by $8FDCFD; setupice remaps them with PixelRemap87
 	incbin "../data/Framer.chr"		; $88872E-$8887AD
-showcrowd:		;93G showcrowd (video93_1): crowd sprites: up to 3 frames per PBnum nibble (penalty box), then the two crowdframe frames (not on the horizontal rink)
+showcrowd:		;draw crowd sprites: up to 3 frames per PBnum nibble, then the two crowdframe frames. (93G video93_1)
+		;   SNES: up to 3 frames per PBnum nibble (penalty box), then the two crowdframe frames (not on the horizontal rink)
 	stz.b a1
 	lda.w Hpos
 	sta.b d4
@@ -592,7 +598,8 @@ showcrowd:		;93G showcrowd (video93_1): crowd sprites: up to 3 frames per PBnum 
 	adc.b d5
 	sta.b spry
 	jml.l addframe_hi
-SuperMult:		;92G SuperMult: passbits (8 words) *= d0, by shift and add (mulres..mulres+15 hold the shifted copy)
+SuperMult:		;1 word (d0) multiplied by the 5 words at a3. 92 SuperMult. (93G hockey93_09)
+		;   SNES: passbits (8 words) *= d0, by shift and add (mulres..mulres+15 hold the shifted copy)
 	phx
 	ldx.w #$000E
 .copy:

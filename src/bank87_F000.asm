@@ -4,7 +4,8 @@ org $87F000
 	incbin "../data/Sprites/set06.chr":$1C17..$2000		; $87F000-$87F3E8
 SpriteSet6End:
 	assert SpriteSet6End-SpriteSet6 == $1E4+256*32
-RestoreReplayFrame:		;93G RestoreReplayFrame (hockey93_02): replay frame record [a4] back into the objects (x, y 12 bits, frame, flip bits), rostnum/position pairs, puck and
+RestoreReplayFrame:		;a4 = current replay frame address to convert into normal (93G hockey93_02)
+		;   SNES: replay frame record [a4] back into the objects (x, y 12 bits, frame, flip bits), rostnum/position pairs, puck and
 		;   shadow z, lastsfx, d7 = frame delay, PadControlBits, crowdframe, glovecords, PBnum, Hpos/Vpos (not when sfscrl)
 	stx.b xsave
 	ldx.w #$0000
@@ -192,7 +193,8 @@ PixelRemap87:		;SNES: 4bpp pixel value remap for the 4 FramerTiles (bank $88; se
 	db $00,$03,$04,$03
 RefTiles:		;packed ref window tiles for the vertical rink (117): setupice sends them to refchars
 	incbin "../data/Ref.chr.pak"		; $87F55E-$87FF77
-assepen:		;asstab $A. 93G assepen (logic93_2): player X leaves the penalty box: PBnum - $10/1, onto the ice at x $88, SPAwallleft; then out of the area (assexit)
+assepen:		;asstab $A. player a3 should exit penalty area (93G logic93_2)
+		;   SNES: player X leaves the penalty box: PBnum - $10/1, onto the ice at x $88, SPAwallleft; then out of the area (assexit)
 	lda.w pflags,x
 	bit.w #pfna
 	beq .nna

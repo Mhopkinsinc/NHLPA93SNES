@@ -172,7 +172,8 @@ BigFontIndex:		;SNES: big font index of each character $20-$5A (*2 into BigFontM
 	db $33,$CB,$36,$38,$3A,$3C,$3E,$40,$42,$44,$BB,$00,$00,$00,$00,$48
 	db $4A,$00,$02,$04,$06,$08,$0A,$0C,$0E,$F0,$11,$13,$15,$17,$19,$1B
 	db $1D,$1F,$21,$23,$25,$27,$29,$2B,$2D,$2F,$31
-showclock:		;93G showclock (video93_2): the game clock m:ss at x 3, y $18 (horizontal rink: x $D, y 4; not when gsp = 4); not in replay
+showclock:		;put the game clock in the dma list. Called from setvideo; returns unless dfclock is set. (93G video93_2)
+		;   SNES: the game clock m:ss at x 3, y $18 (horizontal rink: x $D, y 4; not when gsp = 4); not in replay
 	lda.w sflags
 	bit.w #sf2replay
 	beq .nosf2replay
@@ -233,7 +234,8 @@ showclock:		;93G showclock (video93_2): the game clock m:ss at x 3, y $18 (horiz
 	jml.l print
 .rtl:
 	rtl
-asseben:		;asstab 9. 93G asseben (logic93_2): player X comes onto the ice from the bench door (SPAwallright), then assexit
+asseben:		;asstab 9. player a3 should exit bench area (93G logic93_2)
+		;   SNES: player X comes onto the ice from the bench door (SPAwallright), then assexit
 	lda.w pfalock,x
 	bne .rtl
 	lda.w pflags,x
@@ -276,7 +278,8 @@ asseben:		;asstab 9. 93G asseben (logic93_2): player X comes onto the ice from t
 	lda.w #$1000
 	sta.w Xvel,x
 	jml.l assexit
-PushRef:		;93G PushRef: ref window frame d0 (RefsMap or RefsMapHor, 8 x 7 words) into textmap; d0 $40 erases the window and prefmes
+PushRef:		;tell vblank what to display. d0 = ref frame, $40 clears the window. 93: the horizontal ref uses RefMap2 (93G penalty93_1)
+		;   SNES: ref window frame d0 (RefsMap or RefsMapHor, 8 x 7 words) into textmap; d0 $40 erases the window and prefmes
 	phx
 	stx.b xsave
 	ldx.w #$0000
@@ -412,7 +415,8 @@ PushRef:		;93G PushRef: ref window frame d0 (RefsMap or RefsMapHor, 8 x 7 words)
 	ldx.b xsave
 	plx
 	rtl
-SetHor:		;93G SetHor: switch to the horizontal rink (scoreboard screen): half puck speed, forceblack, sfhormode, StatsReport
+SetHor:		;switch graphics to horizontal ice rink graphics mode. 93 does not remap the fonts (93G penalty93_1)
+		;   SNES: switch to the horizontal rink (scoreboard screen): half puck speed, forceblack, sfhormode, StatsReport
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -476,7 +480,8 @@ SetHor:		;93G SetHor: switch to the horizontal rink (scoreboard screen): half pu
 	ldx.b xsave
 	ldx.b a3
 	rtl
-USBoard:		;93G USBoard (penalty93_2): printscores1, then each team's penalty box players and their time (.dispen)
+USBoard:		;update score board, including the players in the penalty box and their time remaining. Called from InProgress and SetHor (93G penalty93_2)
+		;   SNES: printscores1, then each team's penalty box players and their time (.dispen)
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -582,7 +587,9 @@ USBoard:		;93G USBoard (penalty93_2): printscores1, then each team's penalty box
 	beq .loop2
 	jsl.l pplpen
 	bra .loop2
-pplpen:		;93G pplpen: one penalty box line: player number and time left (rows up to y $A)
+pplpen:		;Print one penalty box line: player number and time remaining. a2 = team, d0 = roster offset (player*2). Only rows up to y $A are printed; printy += 1. Called from USBoard .dispen
+		;   (93G penalty93_2)
+		;   SNES: player number and time left (rows up to y $A)
 	lda.w printy
 	cmp.w #$000B
 	bcs USBoard_rtl
@@ -668,7 +675,9 @@ pushnumber:		;93G pushnumber: mesarea string of the decimal number d0 (built bac
 	sbc.b a1
 	sta.b [a1]
 	rtl
-Intermission:		;93G Intermission (SNES form): the pause menu screen with the ticker scores of the other games (IntermissionTick), then the highlights
+Intermission:		;end of period junk (zamboni/stats). 93 opens the pause menu screen (item list by period, +5 in playoffs), shows the ticker scores of the other games, then the highlights.
+		;   Start on either pad cuts it short. Called from PeriodOver (93G penalty93_2)
+		;   SNES: the pause menu screen with the ticker scores of the other games (IntermissionTick), then the highlights
 	jsl.l sndqreset
 	jsl.l SetupTeamForIntermission
 	lda.w #$0000
@@ -790,12 +799,14 @@ TickerNext:		;SNES: next ticker game (restart at the last game of the round), Ne
 	bmi IntermissionTick_rtl
 .goNewTicker2:
 	jmp.w NewTicker2
-KillCrowd:		;93G KillCrowd: crowd volume $88 (silence) to the sound driver
+KillCrowd:		;silence the crowd noise (psg). Called from Reset, SetupPauseScreen, ... (93G video93_2)
+		;   SNES: crowd volume $88 (silence) to the sound driver
 	lda.w #$0088
 	pha
 	jsl.l sfx8F
 	rtl
-appstring:		;93G appstring: append string [a1] to the string [a3]
+appstring:		;append string a1 to string a3 (93G middle93_2)
+		;   SNES: append string [a1] to the string [a3]
 	lda.w #$0002
 	sta.b tmp0
 	lda.b [a3]
@@ -815,7 +826,8 @@ appstring:		;93G appstring: append string [a1] to the string [a3]
 	lda.b tmp1
 	sta.b [a3]
 	rtl
-PushTime:		;93G PushTime: mesarea string m:ss of the time d0 (seconds)
+PushTime:		;convert d0 into string format of minutes:seconds. Return a1 = string. 93 pads the minutes to 2 places with a space (93G middle93_2)
+		;   SNES: mesarea string m:ss of the time d0 (seconds)
 	lda.w #mesarea+30
 	sta.b a1
 	lda.w #mesarea>>16
@@ -867,12 +879,14 @@ PushTime:		;93G PushTime: mesarea string m:ss of the time d0 (seconds)
 	sbc.b a1
 	sta.b [a1]
 	rtl
-NewTicker:		;93G NewTicker: once the clock is at 8:00 or less, the next ticker score
+NewTicker:		;show the next ticker score once the clock is at 8:00 or less. d3 = -1 if not. Called from chkprogress. Falls into NewTicker2 (93G penalty93_2)
+		;   SNES: once the clock is at 8:00 or less, the next ticker score
 	lda.w gameclock
 	cmp.w #$01E1
 	bcc NewTicker2
 	rtl
-NewTicker2:		;93G NewTicker2/CheckGameTickerStatus: d3 = next ticker game (not the user game, no highlight coming, series not over)
+NewTicker2:		;goto next ticker. Return d3 = game, or neg if none left (93 has no OptPlayMode check). Falls into CheckGameTickerStatus (93G penalty93_2)
+		;   SNES: d3 = next ticker game (not the user game, no highlight coming, series not over)
 	lda.w OptPlayMode
 	beq .rtl
 	lda.w TickerNum
@@ -885,7 +899,8 @@ NewTicker2:		;93G NewTicker2/CheckGameTickerStatus: d3 = next ticker game (not t
 	bra NewTicker3
 .rtl:
 	rtl
-NewTicker3:		;93G NewTicker3: the ticker box for game d3: GameLabels round name, period, both teams with scores (TickerTeam)
+NewTicker3:		;display ticker score for game d3 (a0 = gstruct entry), skip if d3 is negative. Called from chkprogress, Intermission and StartHL2 (93G penalty93_2)
+		;   SNES: the ticker box for game d3: GameLabels round name, period, both teams with scores (TickerTeam)
 	lda.b d3
 	asl a
 	sta.b a0
@@ -1031,7 +1046,8 @@ GameLabels:		;SNES GameLabels (93G GameLabels): the ticker round names by playof
 	db "EA Cup Semifinal"
 	dw 14
 	db "EA Cup final"
-showzam:		;93G showzam role: on the horizontal rink the zamboni sprite ($22D) moves with the time since vcountmark
+showzam:		;zamboni. Called from setvideo. (93G video93_1)
+		;   SNES: role: on the horizontal rink the zamboni sprite ($22D) moves with the time since vcountmark
 	lda.b vcount
 	ldy.b vcount+2
 	cmp.b vcount
@@ -1054,7 +1070,8 @@ showzam:		;93G showzam role: on the horizontal rink the zamboni sprite ($22D) mo
 	jsl.l addframe
 .rtl:
 	rtl
-waitxsr:		;92G waitxsr: wait d0 frames or until a pad button (d1)
+waitxsr:		;special version of waitx for zamboni crossing (92G middle)
+		;   SNES: wait d0 frames or until a pad button (d1)
 	lda.b d0
 	pha
 .loop:
@@ -1077,7 +1094,8 @@ waitxsr:		;92G waitxsr: wait d0 frames or until a pad button (d1)
 .exit:
 	pla
 	rtl
-clockcont:		;93G clockcont (hockey93_01): clock at 0: freezewindow, then clockcont_0
+clockcont:		;monitor period clock and initiate various clock activated events (93G hockey93_01)
+		;   SNES: clock at 0: freezewindow, then clockcont_0
 	lda.w gmclock
 	ora.w gameclock
 	bne .rtl
@@ -1085,7 +1103,8 @@ clockcont:		;93G clockcont (hockey93_01): clock at 0: freezewindow, then clockco
 	jmp.w clockcont_0
 .rtl:
 	rtl
-clockcont_0:		;93G clockcont_0: end of period: puck pucknorm; third period winners celebrate (assscore, the Stanley Cup in the final), the game clock stops
+clockcont_0:		;end of period. Also entered from puckfaceoff+2E (93G hockey93_01)
+		;   SNES: puck pucknorm; third period winners celebrate (assscore, the Stanley Cup in the final), the game clock stops
 	ldx.w #$001C
 	stx.b a3
 	lda.w #$18
@@ -1200,7 +1219,8 @@ clockcont_0:		;93G clockcont_0: end of period: puck pucknorm; third period winne
 	lda.w #$0002
 	sta.b d0
 	jml.l AddPenalty2
-DoHiLights:		;92G DoHiLights: in the playoffs play the highlight of each game of the round that asks for one (gsfhl, StartHL2)
+DoHiLights:		;hilites logic: search for hilite game and show hilite (93 has no OptPlayMode check). Called from Intermission (93G penalty93_2)
+		;   SNES: in the playoffs play the highlight of each game of the round that asks for one (gsfhl, StartHL2)
 	lda.w OptPlayMode
 	beq .rtl
 	jsl.l GetShifter
@@ -1224,7 +1244,8 @@ DoHiLights:		;92G DoHiLights: in the playoffs play the highlight of each game of
 	bpl .loop
 .rtl:
 	rtl
-assdopen:		;asstab $D. 93G assdopen (logic93_2): add player X to the penalty box (PBnum), position -1, frame 0
+assdopen:		;asstab $D. add player a3 to penalty box (93G logic93_2)
+		;   SNES: add player X to the penalty box (PBnum), position -1, frame 0
 	lda.w pfalock,x
 	bne .rtl
 	lda.w #$0010
@@ -1243,7 +1264,8 @@ assdopen:		;asstab $D. 93G assdopen (logic93_2): add player X to the penalty box
 	stz.w frame,x
 .rtl:
 	rtl
-updatepentime:		;93G updatepentime: once a second count down the penalty box times of both teams; release players whose time is up
+updatepentime:		;update the time remaining on all penalized players, once a second. 93: sets sflags3 bit 6 on that tick. Falls into ProcessPenaltyList for team 2 (93G penalty93_1)
+		;   SNES: once a second count down the penalty box times of both teams; release players whose time is up
 	lda.w #$0020
 	trb.w sflags3
 	lda.w gmclock
@@ -1364,7 +1386,8 @@ updatepentime:		;93G updatepentime: once a second count down the penalty box tim
 	lda.w #$0000
 	sta.w tmpdst,y
 	jmp.w RemovePlayerFromList
-linebar:		;93G linebar: energy bar of line d0 (getlinee) as 5 small font characters
+linebar:		;draw the energy bar of line d0 for team a2 at printx/printy (bitmap from the bar map, 16 steps). Called from SetLCmode2 (93G penalty93_2)
+		;   SNES: energy bar of line d0 (getlinee) as 5 small font characters
 	jsl.l getlinee
 	lda.w printa
 	pha
@@ -1428,11 +1451,13 @@ lcfound:		;93G lcfound (logic93_1): d2 = line choice 0-2: getlchoice; loadTeamSt
 	jml.l lcfound2
 .rtl:
 	rtl
-startpause1:		;93G startpause1: pause started by controller 1 (sfpj off), startpause
+startpause1:		;pause intiated by cont 1 (93G hockey93_01)
+		;   SNES: pause started by controller 1 (sfpj off), startpause
 	lda.w #$0002
 	trb.w sflags
 	jml.l startpause
-PauseExit:		;92G PauseExit: restore textmap (textsave), sflags and the rink, printscores1, setvideo
+PauseExit:		;restore graphics and return from pause mode (92G hockey)
+		;   SNES: restore textmap (textsave), sflags and the rink, printscores1, setvideo
 	stz.w cuetimer
 	stz.w crowdvol
 	jsl.l forceblack
@@ -1463,7 +1488,8 @@ PauseExit:		;92G PauseExit: restore textmap (textsave), sflags and the rink, pri
 	sta.w lastframevc
 	sta.w oldvcount
 	rtl
-suba4:		;93G suba4: replay a4 one frame back (wrap at ReplayBufferStart unless sfwrap), RestoreReplayFrame; d7 = 0 at the end
+suba4:		;a4 = address in replay buffer of current (93G hockey93_02)
+		;   SNES: replay a4 one frame back (wrap at ReplayBufferStart unless sfwrap), RestoreReplayFrame; d7 = 0 at the end
 	lda.b a4
 	cmp.w #ReplayBufferStart
 	bne .a4ne
@@ -1506,7 +1532,8 @@ suba4:		;93G suba4: replay a4 one frame back (wrap at ReplayBufferStart unless s
 	jsl.l RestoreReplayFrame
 	stz.b d7
 	rtl
-adda4:		;93G adda4: replay a4 one frame on unless it reaches ReplayBufferPtr; d7 = 0 at the end
+adda4:		;a4 = address in replay buffer of current (93G hockey93_02)
+		;   SNES: replay a4 one frame on unless it reaches ReplayBufferPtr; d7 = 0 at the end
 	stz.b d7
 	lda.w sflags
 	bit.w #sf2drec
@@ -1694,7 +1721,8 @@ ShowRinkRows:		;93G show_rink role: DMAList entries for the IceRinkMap rows that
 	rtl
 jdtab8F:		;93G jdtab: buttons r,l,d,u -> direction 0-7, 8 = none (checksso)
 	db 8,0,4,8,6,7,5,8,2,1,3,8,8,8,8,8
-InitScores:		;93G InitScores: playoff rounds 0-1: random scores so far for the other games of the round (SetScore 1-3 times)
+InitScores:		;initialize other games scores/period in playoffs (93 has no OptPlayMode check). Called from StartGame (93G penalty93_2)
+		;   SNES: playoff rounds 0-1: random scores so far for the other games of the round (SetScore 1-3 times)
 	lda.w OptPlayMode
 	beq .rtl
 	lda.w gamelevel
@@ -1730,7 +1758,8 @@ InitScores:		;93G InitScores: playoff rounds 0-1: random scores so far for the o
 	bpl .loop
 .rtl:
 	rtl
-ResetPassWord:		;92G ResetPassWord: PassWord = 16 blanks ($1E) with bit 7 clear
+ResetPassWord:		;copy '-' char into password (92G hockey)
+		;   SNES: PassWord = 16 blanks ($1E) with bit 7 clear
 	sep #$30
 	stz.w PassWord
 	ldy.b #$0F

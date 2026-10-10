@@ -4,7 +4,8 @@ org $8DF00C
 	incbin "../data/BigFont.chr.pak":$144..$9C0		; $8DF00C-$8DF887
 BigFontTilesEnd:
 	assert BigFontTilesEnd-BigFontTiles == $9C0
-StartHL2:		;92G StartHL2: play the highlight of playoff game a0: "Highlight from game:", then 1-3 minutes of that game with its score; Start
+StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied game is replayed (beq StartHL2) (93G penalty93_2)
+		;   SNES: play the highlight of playoff game a0: "Highlight from game:", then 1-3 minutes of that game with its score; Start
 		;   or A ends it, a tie gets a random winner
 	lda.w sflags3		; Start pressed before: no more highlights
 	bit.w #sf3sbut
@@ -489,7 +490,8 @@ StartHL2:		;92G StartHL2: play the highlight of playoff game a0: "Highlight from
 	dw 100,40
 	dw -10,10
 	dw -50,0
-asspenalty:		;asstab $C. 93G asspenalty (logic93_2): player X skates to the penalty box (temp3/temp4 by PBnum), glides in, faces the ice (SPAwallright), then adopen
+asspenalty:		;asstab $C. player a3 should goto penalty box (93G logic93_2)
+		;   SNES: player X skates to the penalty box (temp3/temp4 by PBnum), glides in, faces the ice (SPAwallright), then adopen
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rtl
@@ -641,7 +643,8 @@ asspenalty:		;asstab $C. 93G asspenalty (logic93_2): player X skates to the pena
 	lda.w #rtss>>16
 	sta.b a0+2
 	jml.l skateto
-clrplayer:		;93G clrplayer: take the joystick off player X (changeplayer)
+clrplayer:		;take the joystick off player a3 (92 asspenalty .clrplayer) (93G logic93_2)
+		;   SNES: take the joystick off player X (changeplayer)
 	lda.w pflags,x
 	bit.w #pfjoycon
 	beq asspenalty_rtl
@@ -655,7 +658,8 @@ clrplayer:		;93G clrplayer: take the joystick off player X (changeplayer)
 	inc.b d4
 .ch:
 	jml.l changeplayer
-avdgoal:		;93G avdgoal (logic93_5, SNES form): if the path d0/d1 crosses a goal line (y +-254) within 40 of the net, aim beside the net (x +-60) instead
+avdgoal:		;don't try to skate thru goal: if d0/d1 cords intersect thru goal then provide new d0/d1 cords. a3 = player. 93 .gl 254 ($FE), .yr/.ye 35 (92 258/30/30), .xr 80 (93G logic93_5)
+		;   SNES: if the path d0/d1 crosses a goal line (y +-254) within 40 of the net, aim beside the net (x +-60) instead
 	stz.b tmp2
 	lda.w #-258		; goal line at y -258 ($FEFE) and 258 ($102)
 	jsl.l .ch1

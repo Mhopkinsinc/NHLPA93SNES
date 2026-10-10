@@ -6,7 +6,9 @@ org $86F000
 BootSamplesEnd:
 	assert BootSamplesEnd-BootSamples == BOOTSAMPLESIZE
 	dw $0000, SPCDRIVER		; end block: length 0, start the driver at $0400
-DecompressGraphics:		;SNES: unpack the stream at [tmp0] to $7F0000 (output pointer tmp1+1..+3, copy distance tmp2+2). Control byte: $00-$1F copy n+1 bytes; $2x n+1 zeros; $3x n+3
+DecompressGraphics:		;send tiles to vram. a2 = data: word count of tiles (0 = none, bit 15 set = compressed by DecompressBytecode), then the tiles. d4 = start char, returns d4 = end char +
+		;   1. Uses remap with callbackPtr when it is set, else DoDMApro (93G middle93_2)
+		;   SNES: unpack the stream at [tmp0] to $7F0000 (output pointer tmp1+1..+3, copy distance tmp2+2). Control byte: $00-$1F copy n+1 bytes; $2x n+1 zeros; $3x n+3
 		;   times the next byte; $40-$7F, $8x, $9x, $Ax, $Bx copy from earlier output going up; $C0-$DF, $Ex, $Fx going down; $E0 $00 ends
 	stz.b tmp1+1		; output pointer = $7F0000
 	lda.w #TestList>>16
@@ -222,7 +224,8 @@ DecompressGraphics:		;SNES: unpack the stream at [tmp0] to $7F0000 (output point
 	bra .down
 .end:
 	rtl
-UpdateLineChange:		;93G UpdateLineChange (hockey93_01): once a second with line changes on, players on the bench (TMPDBENCH) regain 10 energy up to $1000, both teams
+UpdateLineChange:		;called once per second. Restore energy for players on the bench (93G hockey93_01)
+		;   SNES: once a second with line changes on, players on the bench (TMPDBENCH) regain 10 energy up to $1000, both teams
 	lda.w OptLine
 	bne .rtl
 	stz.b a2		; home team, then the away team
@@ -297,7 +300,8 @@ StartSong7:		;SNES: start song 7 (driver command 2); no caller found
 	sta.w cursong
 .rtl:
 	rtl
-setteams:		;93G setteams (hockey93_06) with InitTeamSructure: use HomeTeam/VisTeam to set the team structs (tmsort, tmteam, tmdata from TeamList). Falls in from ClearTeamStats
+setteams:		;use hometeam/visteam to set team structures. Falls in from clearTeamStats, also called from hockey93_08. (93G hockey93_06)
+		;   SNES: with InitTeamSructure: use HomeTeam/VisTeam to set the team structs (tmsort, tmteam, tmdata from TeamList). Falls in from ClearTeamStats
 	stz.w tmsort		; home: tmsort 0, away: tmsort $0C
 	lda.w #$000C
 	sta.w tmsort+2
@@ -316,7 +320,9 @@ setteams:		;93G setteams (hockey93_06) with InitTeamSructure: use HomeTeam/VisTe
 	lda.l TeamList,x
 	sta.w tmdata+2
 	rtl
-ProcessInputWithRepeat:		;93G ProcessInputWithRepeat (middle93_1): nodiag (nullrtl85), then key repeat: a change (d2) resets the delay to 15 frames; while the same buttons stay
+ProcessInputWithRepeat:		;nodiag, then key repeat on d1-d3 from Readjoy1/2. A change (d2) resets the delay to 15 frames; while the same buttons stay held, every 4 frames return d1 = held
+		;   buttons (d3). Called from Pausemode, menus and IntermissionLoop (93G middle93_1)
+		;   SNES: nodiag (nullrtl85), then key repeat: a change (d2) resets the delay to 15 frames; while the same buttons stay
 		;   held, every 4 frames d1 = held buttons (d3)
 	jsl.l nullrtl85
 	lda.b d3
@@ -345,7 +351,8 @@ ScoutNamePos:		;SNES: print position of a showcased player name: x 1, y 10; the 
 	sta.w printx
 .rtl:
 	rtl
-GetPeriodTimeRemaining:		;93G GetPeriodTimeRemaining (hockey93_04): d0 = (gsp << 14 | PerTimeTotal) - gameclock (Goal and InProgress log it)
+GetPeriodTimeRemaining:		;return d0 = (gsp << 14 | PerTimeTotal) - gameclock. Called from Goal (ScoreSum entry) and InProgress (penalty93_1) (93G hockey93_04)
+		;   SNES: d0 = (gsp << 14 | PerTimeTotal) - gameclock (Goal and InProgress log it)
 	lda.w gsp		; gsp in bits 14-15
 	xba
 	and.w #$FF00
@@ -360,7 +367,8 @@ GetPeriodTimeRemaining:		;93G GetPeriodTimeRemaining (hockey93_04): d0 = (gsp <<
 	sbc.w gameclock
 	sta.b d0
 	rtl
-GetPeriodTime:		;93G GetPeriodTime (hockey93_01): d0 = period length in seconds for OptPerlen
+GetPeriodTime:		;return d0 = period length in seconds for the period length option (93G hockey93_01)
+		;   SNES: d0 = period length in seconds for OptPerlen
 	phx
 	lda.w OptPerlen
 	asl a
@@ -371,7 +379,8 @@ GetPeriodTime:		;93G GetPeriodTime (hockey93_01): d0 = period length in seconds 
 	rtl
 GetPeriodTime_timetab:		;93G .timetab (IDA PeriodTimeTable): 5, 10, 20 minutes, 30 seconds
 	dw 5*60,10*60,20*60,30
-lcfound2:		;93G lcfound2 (logic93_1): close the line change box (setlccords; the lower box clears sf3llcs), erase it unless the faceoff box is up, then printscores1
+lcfound2:		;close lc box. Also called from lineinput (93G logic93_1)
+		;   SNES: close the line change box (setlccords; the lower box clears sf3llcs), erase it unless the faceoff box is up, then printscores1
 	jsl.l setlccords
 	lda.w printy
 	sec
@@ -482,7 +491,8 @@ PickStartingGoalie:		;SNES: tmgoalie of team a2 = 0 ($8B807D); a computer team i
 	bpl .popd
 	ldx.b xsave
 	rtl
-assscore:		;asstab 7. 93G assscore (logic93_2): player X celebrates, the scorer pumps his arm. SNES: velocities * 3/4 each frame, the carrier drops the puck (nopuck 1800)
+assscore:		;asstab 7. player a3 celebrates, if scoring player then do arm pump (93G logic93_2)
+		;   SNES: player X celebrates, the scorer pumps his arm. SNES: velocities * 3/4 each frame, the carrier drops the puck (nopuck 1800)
 	lda.w Xvel,x		; Xvel, Yvel *= $C0/256
 	sta.b mula
 	lda.w #$00C0

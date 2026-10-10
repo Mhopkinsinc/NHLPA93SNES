@@ -130,7 +130,8 @@ Credits:		;93G Credits: the title screen credit lines (length word, text); $FE e
 	db $FF
 	dw 3
 	db $FF
-lineinput:		;93G lineinput (logic93_1): line change input, d1 = new buttons: Y/B/A choose line choice 0-2 (lcfound); else skate with the dpad
+lineinput:		;process input for line changes (93G logic93_1)
+		;   SNES: line change input, d1 = new buttons: Y/B/A choose line choice 0-2 (lcfound); else skate with the dpad
 	lda.b d1
 	pha
 	stz.b a2
@@ -243,7 +244,8 @@ getlchoice:		;93G getlchoice (logic93_1): d0 = choice 0-2 of team a2 -> d0 = lin
 	db 0,1,2, 1,2,0, 2,0,1, 0,1,2, 0,1,2, 0,1,2, 0,1,2		; no power play: lines 0-6
 	db 3,4,-1, 3,4,-1, 3,4,-1, 3,4,-1, 4,3,-1, 3,4,-1, 3,4,-1		; penalty killing: lines 0-6
 	db 5,6,-1, 5,6,-1, 5,6,-1, 5,6,-1, 5,6,-1, 5,6,-1, 6,5,-1		; power play: lines 0-6
-SetScore:		;93G SetScore (penalty93_2): one period of playoff game a0: random goals by ScoreOdds (.getscore); after period 3 a game within one
+SetScore:		;add to score for game in a0. After period 3 a game within one goal goes to OT (gsper 3) and asks for a highlight (93G penalty93_2)
+		;   SNES: one period of playoff game a0: random goals by ScoreOdds (.getscore); after period 3 a game within one
 		;   goal goes to overtime and asks for a highlight
 	ldy.b a0
 	lda.w gsper,y

@@ -4,7 +4,9 @@ org $89E000
 	incbin "../data/Sprites/set13.chr":$46A3..$5000		; $89E000-$89E95C
 SpriteSet13End:
 	assert SpriteSet13End-SpriteSet13 == $5DA+640*32
-printscores1:		;93G printscores1 (penalty93_2): scoreboard. Vertical rink: period box and score box (team names and scores); horizontal rink (.sbscreen): period, team names, scores
+printscores1:		;draw scoreboard. Vertical rink: period box and the score box (team names and scores). Horizontal rink (.sbscreen): period and both team logos with big scores. Called from
+		;   USBoard, Pausemode, lcfound2 and others (93G penalty93_2)
+		;   SNES: Vertical rink: period box and score box (team names and scores); horizontal rink (.sbscreen): period, team names, scores
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -164,7 +166,8 @@ PrintPerLabel:		;SNES: print the PerLabels ($8F8236) entry for gsp (93G AdvanceS
 	dec.b d0
 	bpl .next
 	jml.l print
-PrintTeamNameAndScore:		;93G PrintTeamNameAndScore: team name of team a2 (d3 = home/away), then its score as 2 characters (blank tens)
+PrintTeamNameAndScore:		;print the team name of team a2 at printx/printy, then its score as 2 digits at x $1C. Called twice from printscores1 (93G penalty93_2)
+		;   SNES: team name of team a2 (d3 = home/away), then its score as 2 characters (blank tens)
 	jsl.l printteamname
 	lda.w #mesarea
 	sta.b a1
@@ -190,7 +193,8 @@ PrintTeamNameAndScore:		;93G PrintTeamNameAndScore: team name of team a2 (d3 = h
 	jml.l print
 nullrtl89:		;does nothing (printscores1 calls it)
 	rtl
-p_music_vblank:		;93G p_music_vblank role: every other frame send the next queued sound command (sndqueue) to APUIO0, a counter to APUIO1
+p_music_vblank:		;92 name (vblank handler). Clear the change bits, run the 8 track slots (d7 = track 7-0), (93G sound93)
+		;   SNES: role: every other frame send the next queued sound command (sndqueue) to APUIO0, a counter to APUIO1
 	lda.w sndsettle		; wait after the sample upload
 	bne .settle
 	sep #$30

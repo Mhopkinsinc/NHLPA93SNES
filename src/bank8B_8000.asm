@@ -1,7 +1,8 @@
 ; $8B8000-$8B9002  ROM $58000-$59002: the 92G playoff code: NewPO, FigureJoy, Opening/Opening4, ReadPassBits, ResolveGames; then SpriteSet5
 ; (frame set 5: the falls), tiles continue to bank8B_F000.
 org $8B8000
-NewPO:		;92G NewPO: new playoffs with the same team 1: random postarts whose playoffseats hold OptTeam1 (all-star teams count as team 23), clear the series, then maketree
+NewPO:		;93 continue playoffs: read the playoff state back from the password bits, rebuild the tree. (93G hockey93_09)
+		;   SNES: new playoffs with the same team 1: random postarts whose playoffseats hold OptTeam1 (all-star teams count as team 23), clear the series, then maketree
 	lda.w #32		; d0 = random 0-31
 	sta.b d0
 	jsl.l randomd0
@@ -61,7 +62,8 @@ NewPO:		;92G NewPO: new playoffs with the same team 1: random postarts whose pla
 	bpl .cg
 .n0:
 	jml.l maketree		; bank $8D: maketree
-FigureJoy:		;92G FigureJoy: set cont1team/cont2team: in the playoffs from the po team's game (gamenum, OptTeam2, HomeTeam/VisTeam) and pojoy; else from OptPlayers. Not after the
+FigureJoy:		;set cont1team/cont2team appropriately. Called from maketree and UpdateTeamNameisplay (hockey93_08). (93G hockey93_09)
+		;   SNES: in the playoffs from the po team's game (gamenum, OptTeam2, HomeTeam/VisTeam) and pojoy; else from OptPlayers. Not after the
 		;   demo (notdemo = 0)
 	stz.w cont1team
 	stz.w cont2team
@@ -166,13 +168,15 @@ FigureJoy:		;92G FigureJoy: set cont1team/cont2team: in the playoffs from the po
 	dw 2,0
 	dw 1,1
 	dw 1,2
-Opening:		;92G Opening: TitleScreen, then Restart (93G Opening2: the setup screens)
+Opening:		;title screen, then into Opening2. Jumped to from Begin (hockey93_01). Same as 92 REV A (93G hockey93_06)
+		;   SNES: TitleScreen, then Restart (93G Opening2: the setup screens)
 	jsl.l TitleScreen
 	jml.l Restart
 Opening4:		;92G Opening4: ScoutingReport ($8FDC0D), then StartGame
 	jsl.l ScoutingReport		; bank $8F: 93G ScoutingReport
 	jml.l StartGame
-ReadPassBits:		;92G ReadPassBits: passbits back into the playoff state (SuperDiv by each range, the reverse of WritePassBits); a bad 9-bit checksum sets postarts -1
+ReadPassBits:		;translate the password bits at a3 (5 words) to the playoff variables. 92 ReadPassBits. (93G hockey93_09)
+		;   SNES: passbits back into the playoff state (SuperDiv by each range, the reverse of WritePassBits); a bad 9-bit checksum sets postarts -1
 	lda.w #512		; checksum first (range 512)
 	sta.b d0
 	jsl.l SuperDiv
@@ -263,7 +267,8 @@ ReadPassBits:		;92G ReadPassBits: passbits back into the playoff state (SuperDiv
 	adc.b d0
 	sta.b d7
 	rtl
-ResolveGames:		;92G ResolveGames: the played game's score into its gstruct, wins for all series of the round; when the round is over (or single games) WinBits and gamelevel move on
+ResolveGames:		;compute winners and losers for playoff matchups. 92 ResolveGames. Called from EncodePW (hockey93_09) (93G hockey93_10)
+		;   SNES: the played game's score into its gstruct, wins for all series of the round; when the round is over (or single games) WinBits and gamelevel move on
 	lda.w gamenum
 	asl a
 	sta.b d0

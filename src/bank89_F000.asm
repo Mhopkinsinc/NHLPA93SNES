@@ -202,7 +202,8 @@ MesAreaDone:		;SNES: end a string built in mesarea: length = a1 - mesarea, a1 = 
 	lda.w #mesarea
 	sta.b a1
 	rtl
-StartGame:		;93G StartGame (hockey93_01): reset the game state (gmode, offsides option, team stats, scores, gsp), restoreteams, then on to the period start
+StartGame:		;reset game state for a new game, then start the first period (93G hockey93_01)
+		;   SNES: reset the game state (gmode, offsides option, team stats, scores, gsp), restoreteams, then on to the period start
 	stz.w gmode
 	lda.w OptPen		; OptPen 1: offsides on
 	cmp.w #1
@@ -218,7 +219,8 @@ StartGame:		;93G StartGame (hockey93_01): reset the game state (gmode, offsides 
 	jsl.l InitScores		; bank $8F: 93G InitScores
 	jsl.l UpdateScores
 	jml.l StartPer		; bank $8D: on to the period start
-restoreteams:		;93G restoreteams (hockey93_01): both rosters to the bench: tmap 6, every tmpdst -2
+restoreteams:		;Put both teams' rosters on the bench (93G hockey93_01)
+		;   SNES: both rosters to the bench: tmap 6, every tmpdst -2
 	stz.b a2
 	jsl.l .r
 	lda.w #$0002
@@ -243,7 +245,8 @@ restoreteams:		;93G restoreteams (hockey93_01): both rosters to the bench: tmap 
 	dec.b d0
 	bpl .pl
 	rtl
-EvadePC:		;93G EvadePC (logic93_3, the 92G form): within 40 of the puck carrier (after one frame of both velocities) d0 = direction away from him
+EvadePC:		;player a3 should avoid the puck carrier if he's on my team (93G logic93_3)
+		;   SNES: within 40 of the puck carrier (after one frame of both velocities) d0 = direction away from him
 	lda.w puckc
 	bmi .rtl
 	lda.w Xvel+1,x		; x after one frame, relative to the puck carrier
@@ -295,7 +298,8 @@ EvadePC:		;93G EvadePC (logic93_3, the 92G form): within 40 of the puck carrier 
 	jml.l vtoa
 .rtl:
 	rtl
-asswingd:		;asstab 3. 93G asswingd (logic93_2): wing on defence: cover his side between the puck and the goal; awingo when the team gets the puck
+asswingd:		;asstab 3. player a3 is wing on defense (93G logic93_2)
+		;   SNES: wing on defence: cover his side between the puck and the goal; awingo when the team gets the puck
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rtl

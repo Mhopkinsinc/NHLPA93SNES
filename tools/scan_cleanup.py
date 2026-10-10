@@ -69,7 +69,7 @@ for f in files:
         if AUTOTRACE.search(line):
             hit('auto_trace', f, n, line)
         m = GLOBAL.match(line)
-        if m and not m[2].strip().startswith(('db', 'dw', 'dl', 'dd', 'incbin')) and ';' not in m[2]:
+        if m and not m[1].endswith('End') and not m[2].strip().startswith(('db', 'dw', 'dl', 'dd', 'incbin')) and ';' not in m[2]:
             nxt = lines[n] if n < len(lines) else ''
             if not nxt.strip().startswith(';'):
                 hit('global_no_comment', f, n, line)

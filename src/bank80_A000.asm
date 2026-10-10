@@ -2,7 +2,8 @@
 ; makepde, pucknothing, the faceoff (puckfaceoff, puckfaceoff2, updatefaceoff, Endfaceoff: logic93_4) with the line change box
 ; (SetLCmode, SetLCmode2) and ClrHor, dirtab, random/randoma, changeplayer, vtoa (logic93_5 / middle93_1).
 org $80A121
-deflect:		;93G deflect (hockey93_05): random puck direction on a deflection. Entered from puckstick .stdef
+deflect:		;random puck direction on deflection puck = a3. Entered from puckstick .stdef (93G hockey93_05)
+		;   SNES: Entered from puckstick .stdef
 	lda.w #$FFFF		; puck loose
 	sta.w puckc
 	lda.w #$1000		; random velocity +-$1000 in y and x, 0..$1000 up
@@ -15,7 +16,8 @@ deflect:		;93G deflect (hockey93_05): random puck direction on a deflection. Ent
 	jsl.l randoma
 	sta.w puckvz
 	jmp.w puckflip		; puckflip
-setc1player:		;93G setc1player (logic93_1): restore the old player and give controller 1 to player d0
+setc1player:		;restore old player and switch to new d0 player on cont. 1 (93G logic93_1)
+		;   SNES: restore the old player and give controller 1 to player d0
 	lda.b d0
 	cmp.w c1playernum
 	beq .rtl
@@ -26,7 +28,8 @@ setc1player:		;93G setc1player (logic93_1): restore the old player and give cont
 	sta.w c1playernum
 .rtl:
 	rtl
-setc2player:		;93G setc2player (logic93_1): same for controller 2
+setc2player:		;restore old player and switch to new d0 player on cont. 2 (93G logic93_1)
+		;   SNES: same for controller 2
 	lda.b d0
 	cmp.w c2playernum
 	beq .rtl
@@ -37,7 +40,8 @@ setc2player:		;93G setc2player (logic93_1): same for controller 2
 	sta.w c2playernum
 .rtl:
 	rtl
-restorepl:		;93G restorepl (logic93_1 IDA retorepl): release old joystick player d1, give d0 the joystick. A player in line change mode keeps control (d0 = d1)
+restorepl:		;Restore old joy controlled player d1, give d0 (93G logic93_1)
+		;   SNES: release old joystick player d1, give d0 the joystick. A player in line change mode keeps control (d0 = d1)
 	stz.b a0
 	lda.b d1
 	bmi .spd
@@ -69,7 +73,8 @@ restorepl:		;93G restorepl (logic93_1 IDA retorepl): release old joystick player
 	sta.w pflags,y
 .rtl:
 	rtl
-makepde:		;93G makepde (hockey93_05): d0 = rating A (on entry) scaled by the energy of player a0: A*energy/$1000
+makepde:		;pass d0 as value to be scaled by player a0's energy level (93G hockey93_05)
+		;   SNES: d0 = rating A (on entry) scaled by the energy of player a0: A*energy/$1000
 	pha
 	stx.b xsave
 	ldx.w #$0000
@@ -130,7 +135,8 @@ makepde:		;93G makepde (hockey93_05): d0 = rating A (on entry) scaled by the ene
 	sta.b d0
 	clc
 	rtl
-puckbody:		;93G puckbody (hockey93_05): puck (X) hits player a2. d0 = distance^2. A fast high puck knocks a2 down (FallDown), a slower one plays SPAcatch
+puckbody:		;puck hits player a2. a3 = puck, d0 = distance^2 (from checkpuckcoll .ccx) (93G hockey93_05)
+		;   SNES: puck (X) hits player a2. d0 = distance^2. A fast high puck knocks a2 down (FallDown), a slower one plays SPAcatch
 	lda.w Zpos,x		; puck above 8: always a hit
 	sec
 	sbc.w #$0008
@@ -238,7 +244,8 @@ puckbody:		;93G puckbody (hockey93_05): puck (X) hits player a2. d0 = distance^2
 	stx.b a3
 	sty.b a2
 	rtl
-puckgoalie:		;93G puckgoalie (hockey93_05): puck (X) hits goalie a2. d0/d1 = goalie - puck x/y. SNES: save odds from the four save ratings, no .list2 frame table
+puckgoalie:		;puck hits goalie a2. a3 = puck, d0/d1 = goalie - puck x/y (93G hockey93_05)
+		;   SNES: puck (X) hits goalie a2. d0/d1 = goalie - puck x/y. SNES: save odds from the four save ratings, no .list2 frame table
 	lda.w gmode
 	bit.w #gmhl		; gmhl
 	beq .go
@@ -516,7 +523,8 @@ puckgoalie:		;93G puckgoalie (hockey93_05): puck (X) hits goalie a2. d0/d1 = goa
 .hold:
 	stz.w Zvel,x
 	jmp.w puckglue		; puckglue: goalie holds the puck
-pucknothing:		;asstab $1A. 93G pucknothing / puckunflip (logic93_4 / logic93_5): puck just slides; stop spinning (93G pucknothing is bra puckunflip)
+pucknothing:		;asstab $1A. puck just slides along. Rev A listing labels this puckunflip (93G logic93_4)
+		;   SNES: puckunflip (logic93_4 / logic93_5): puck just slides; stop spinning (93G pucknothing is bra puckunflip)
 	lda.w SPAnum+puckobj
 	cmp.w #$0008		; SPAnum 2*4..6*4: flip the face
 	bcc .k
@@ -736,7 +744,8 @@ puckfaceoff:		;asstab $1B. 93G puckfaceoff (logic93_4): this is where the action
 	plx
 	stx.b a3
 	rtl
-SetLCmode:		;93G SetLCmode (logic93_1): open the line change box for player X (abut of the puck carrier)
+SetLCmode:		;Initiate line change option if available (abut (93G logic93_1)
+		;   SNES: open the line change box for player X (abut of the puck carrier)
 	lda.w OptLine
 	bne .rtl
 	jsl.l loadTeamStruct		; loadTeamStruct: a2 = team of X, bank $8F: 93G loadTeamStruct
@@ -761,7 +770,8 @@ SetLCmode:		;93G SetLCmode (logic93_1): open the line change box for player X (a
 	jmp.w SetLCmode2
 .rtl:
 	rtl
-SetLCmode2:		;93G SetLCmode2 (logic93_1 IDA showfaceoff): a2 = team; draw the lc box, one row per eligible line (button letter + line name)
+SetLCmode2:		;a2 = team struct for lc. Draw the lc box with (93G logic93_1)
+		;   SNES: draw the lc box, one row per eligible line (button letter + line name)
 	jsl.l setlccords
 	inc.b d0		; box size +1
 	inc.b d1
@@ -862,7 +872,8 @@ SetLCmode2:		;93G SetLCmode2 (logic93_1 IDA showfaceoff): a2 = team; draw the lc
 	jmp.w print
 .btn:		;SNES button letter for lc rows 0-2 (93G A/B/C)
 	db "YBA"
-ClrHor:		;93G ClrHor (penalty93_1): revert to the vertical ice rink: clear sfhormode, Oldrow, SprSort, clear the text map, printscores1
+ClrHor:		;revert the graphics back to vertical ice rink mode. 93 does not remap the fonts (93G penalty93_1)
+		;   SNES: revert to the vertical ice rink: clear sfhormode, Oldrow, SprSort, clear the text map, printscores1
 	stx.b xsave
 	ldx.w #$0000
 .push:
@@ -1387,7 +1398,8 @@ puckfaceoff2:		;asstab $1C. 93G puckfaceoff2 (logic93_4): face off control logic
 .ptab:		;93G .ptab: faceoff x/y offsets
 	dw 0,-250, -35,-50, 35,-50, -50,-10
 	dw 0,-15, 50,-10, 0,-60
-updatefaceoff:		;93G updatefaceoff (logic93_4): X = puck. Drop animation frame from temp1; at 0 erases the faceoff box
+updatefaceoff:		;a3 = puck. Drop animation frame from temp1; at 0 erases the faceoff box (92 did that in Endfaceoff). Entered from puckfaceoff2 (93G logic93_4)
+		;   SNES: X = puck. Drop animation frame from temp1; at 0 erases the faceoff box
 	lda.w temp1,x
 	beq .erase
 	clc		; (temp1+6)/8 <= 2: drop frame 10-d0
@@ -1736,7 +1748,8 @@ changeplayer:		;93G changeplayer (logic93_1): switch controller d4 (0/2) to the 
 	bpl .popd
 	ldx.b xsave
 	rtl
-vtoa:		;93G vtoa (logic93_5): d0/d1 are x/y distances, returned in d0 as a direction 0-7 (8 = no direction)
+vtoa:		;d0/d1 are x/y distances which are converted into direction 0-7 and returned in d0 (8 = no direction) (93G logic93_5)
+		;   SNES: d0/d1 are x/y distances, returned in d0 as a direction 0-7 (8 = no direction)
 	lda.b d0
 	ora.b d1
 	beq .nodir		; no direction

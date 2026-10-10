@@ -131,7 +131,8 @@ AddPenalty2:		;93G AddPenalty2 (penalty93_1): forced penalties like face off and
 	ldx.b xsave
 .rtl:
 	rtl
-freezewindow:		;93G freezewindow (hockey93_02): lock scrolling at the current position
+freezewindow:		;lock scrolling to current position (93G hockey93_02)
+		;   SNES: lock scrolling at the current position
 	lda.w Vpos		; yc1 = Vpos, xc1 = Hpos, sfslock
 	sta.w yc1
 	lda.w Hpos
@@ -139,7 +140,8 @@ freezewindow:		;93G freezewindow (hockey93_02): lock scrolling at the current po
 	lda.w #sfslock
 	tsb.w sflags
 	rtl
-sfx:		;93G sfx (middle93_1): play the sound number pushed before the jsl (it is pulled here). Dropped within 180 frames of sfxmutetime; remembered in lastsfx
+sfx:		;play sound effect number. One word passed on stack (93G middle93_1)
+		;   SNES: play the sound number pushed before the jsl (it is pulled here). Dropped within 180 frames of sfxmutetime; remembered in lastsfx
 	pla		; return address +1 into jmlvector
 	inc a
 	sta.w jmlvector+1
@@ -161,7 +163,8 @@ sfx:		;93G sfx (middle93_1): play the sound number pushed before the jsl (it is 
 .drop:
 	pla
 	bra .ret
-updatereplay:		;93G updatereplay (hockey93_02): save this frame into the replay buffer (positions, frames, players, puck, sound, pads, crowd, gloves, box, scroll)
+updatereplay:		;called every frame to save replay events, d7 = elapsed frames (93G hockey93_02)
+		;   SNES: save this frame into the replay buffer (positions, frames, players, puck, sound, pads, crowd, gloves, box, scroll)
 	lda.w gmode
 	bit.w #gmhl		; gmhl: no recording
 	beq .rec
@@ -299,7 +302,8 @@ updatereplay:		;93G updatereplay (hockey93_02): save this frame into the replay 
 	sta.b [a0]
 .rtl:
 	rtl
-demoread:		;93G demoread (hockey93_01): in demo mode (no controller team), Start pauses and any other button ends the demo
+demoread:		;monitor joystick if in demo mode (called every game loop) (93G hockey93_01)
+		;   SNES: in demo mode (no controller team), Start pauses and any other button ends the demo
 	lda.w cont1team		; a controller team: not a demo
 	ora.w cont2team
 	bne .rtl
@@ -324,7 +328,9 @@ demoread:		;93G demoread (hockey93_01): in demo mode (no controller team), Start
 .exit:		;end the demo: back to the title screen (93G ExitToOpening)
 	jsl.l sndqreset		; sound queue reset; on to the title screen
 	jml.l Opening		; bank $8B: on to the title screen (93G Opening)
-Readjoy1:		;93G Readjoy1 (middle93_1): read controller 1. d0 = direction, d1 = new presses, d2 = changed, d3 = held
+Readjoy1:		;read controller 1. Return d0 = direction (bit 0-3) and new button (bit 4-7) presses, d1 = new presses (all 8 bits), d2 = changed buttons (all 8), d3 = current held buttons (all
+		;   8) (93G middle93_1)
+		;   SNES: d0 = direction, d1 = new presses, d2 = changed, d3 = held
 	phx
 	ldx.w #$0000
 	jsl.l ReadJoy
@@ -339,7 +345,8 @@ Readjoy1:		;93G Readjoy1 (middle93_1): read controller 1. d0 = direction, d1 = n
 	and.b d1
 	sta.b d1
 	rtl
-Readjoy2:		;93G Readjoy2 (middle93_1): read controller 2
+Readjoy2:		;read controller 2. Return d0 = direction (bit 0-3) and new button (bit 4-7) presses, d1 = new presses (all 8 bits), d2 = changed buttons (all 8), d3 = current held buttons (all
+		;   8) (93G middle93_1)
 	phx
 	ldx.w #$0002
 	jsl.l ReadJoy
@@ -354,7 +361,8 @@ Readjoy2:		;93G Readjoy2 (middle93_1): read controller 2
 	and.b d1
 	sta.b d1
 	rtl
-ReadJoy:		;93G ReadJoy (middle93_1): X = 0/2: d1 = buttons held, d0 = direction from jdtab
+ReadJoy:		;read controller a0. Return d0 = direction (bit 0-3) and new button (bit 4-7) presses, d1 = buttons down (all 8 bits) (93G middle93_1)
+		;   SNES: X = 0/2: d1 = buttons held, d0 = direction from jdtab
 	lda.w joypad1,x		; buttons
 	sta.b d0+2
 	sta.b d1
@@ -860,7 +868,9 @@ updateplayers:		;93G updateplayers (hockey93_02): animation, velocity, position,
 	sta.w carriedy
 .rtl:
 	rtl
-checkcoll:		;93G checkcoll (hockey93_03): d2/d3 = new x/y of object X. Wall collision (hot spot, end of the stick), player collision, then keep OOlist sorted
+checkcoll:		;d2 = new x cord, d3 = new y cord, a3 = struct of object. Check wall collision (around the hot spot and the end of the stick) and player collisions, then move a3 in the OOlist
+		;   sort order by its y. If a player collision set collflag, restore the old x/y instead. 93 no longer clears Wallcos/Wallsin first. Called from updateplayers (93G hockey93_03)
+		;   SNES: d2/d3 = new x/y of object X. Wall collision (hot spot, end of the stick), player collision, then keep OOlist sorted
 	stz.b collflag		; collflag = 0
 	lda.w sfhormode		; horizontal: exg d2,d3
 	beq .nhor1
@@ -1067,7 +1077,8 @@ checkcoll:		;93G checkcoll (hockey93_03): d2/d3 = new x/y of object X. Wall coll
 	lda.w OldYpos,x
 	sta.w Ypos,x
 	rtl
-checkwallcoll:		;93G checkwallcoll (hockey93_04): d2/d3 = x/y, object X, wcradiusx/y. Corner circles, goals, then side and end boards
+checkwallcoll:		;d2/d3 = x/y to test, a3 = object, wcradiusx/wcradiusy = radius. Called from checkcoll (hockey93_03) (93G hockey93_04)
+		;   SNES: d2/d3 = x/y, object X, wcradiusx/y. Corner circles, goals, then side and end boards
 	lda.w #$012A		; d3 = $12A - wcradiusy, d2 = $88 - wcradiusx; corner centers 64 in
 	sec
 	sbc.w wcradiusy
@@ -1303,7 +1314,8 @@ checkwallcoll:		;93G checkwallcoll (hockey93_04): d2/d3 = x/y, object X, wcradiu
 	bvs .b4
 .rtl:
 	rtl
-sroot:		;93G sroot (middle93_1): d0 = sqrt(d0, 32-bit) by binary search on the square
+sroot:		;Square Root, this returns (d0.L)^.5 in d0. 93: values above $F00000 use a binary search (93G middle93_1)
+		;   SNES: d0 = sqrt(d0, 32-bit) by binary search on the square
 	stz.b tmp0
 	lda.w #$1000
 	sta.b tmp1
@@ -1365,7 +1377,8 @@ divu:		;68k divu: A = mulres = mulb (32-bit) / mula; mulres+2 = remainder. C cle
 	sta.b mulb
 	clc
 	rtl
-wallcollb:		;93G wallcollb (hockey93_04): object X hits a wall (d0/d1 = cos/sin). The puck may go over the glass; otherwise wallcoll
+wallcollb:		;check for puck over wall. a3 = object, d0/d1 = cos/sin of the wall. Called from checkwallcoll (93G hockey93_04)
+		;   SNES: object X hits a wall (d0/d1 = cos/sin). The puck may go over the glass; otherwise wallcoll
 	cpx.w #$001C		; not the puck: wallcoll
 	beq .puck
 	jmp.w wallcoll
@@ -1468,7 +1481,8 @@ wallcollb:		;93G wallcollb (hockey93_04): object X hits a wall (d0/d1 = cos/sin)
 	stx.b a3
 .rtl:
 	rtl
-wallcoll:		;93G wallcoll (hockey93_04): d0/d1 = cos/sin of the wall; bounce object X: puck loses speed, flips, sound; players sound on a hard hit
+wallcoll:		;d0 = cosine, d1 = sine of angle of incidence with wall, a3 = object. Called from checkgoal, checkgoalp, wallcollb (93G hockey93_04)
+		;   SNES: d0/d1 = cos/sin of the wall; bounce object X: puck loses speed, flips, sound; players sound on a hard hit
 	lda.b d0		; Wallcos/Wallsin
 	sta.w Wallcos,x
 	lda.b d1
@@ -1731,7 +1745,8 @@ wallcoll:		;93G wallcoll (hockey93_04): d0/d1 = cos/sin of the wall; bounce obje
 	bpl .pop
 	ldx.b xsave
 	rtl
-puckflip:		;93G puckflip (logic93_5): start the puck spinning. d0 bit 0 = flip
+puckflip:		;start puck spinning. a3 = puck, d0 bit 0 = flip. Called from checkgoal, wallcoll and others (93G logic93_5)
+		;   SNES: start the puck spinning. d0 bit 0 = flip
 	lda.b d0
 	and.w #$0001		; facedir of the puck ^= d0 bit 0, & 3
 	sta.b d0

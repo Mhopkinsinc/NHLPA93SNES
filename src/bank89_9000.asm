@@ -4,7 +4,8 @@ org $899000
 	incbin "../data/Sprites/set11.chr":$F10..$1000		; $899000-$8990EF
 SpriteSet11End:
 	assert SpriteSet11End-SpriteSet11 == $F0+128*32
-ReplayMode:		;93G ReplayMode (hockey93_02, the 92G form without tracking): replay icon, rewind to the first frame; dpad scrolls, A plays/stops, Y
+ReplayMode:		;this is instant replay play-back control and display code. (93G hockey93_02)
+		;   SNES: replay icon, rewind to the first frame; dpad scrolls, A plays/stops, Y
 		;   rewinds, B steps (slow motion), L/R one frame, Start leaves
 	stz.b DMAListend
 	stz.b crowdlevel
