@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank84_D000` ($84D000-$84DFFF). <- CURRENT
+`bank84_E000` ($84E949-$84EFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -110,8 +110,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank84_A000 | matched | $84A000 | $84AFFF | data | 4096 bytes $84A000-$84AFFF. SpriteSet9 tiles: incbin data/Sprites/set09.chr $19D0..$29D0 |
 | bank84_B000 | matched | $84B000 | $84BFFF | data | 4096 bytes $84B000-$84BFFF. SpriteSet9 tiles: incbin data/Sprites/set09.chr $29D0..$39D0 |
 | bank84_C000 | matched | $84C000 | $84CFFF | data | 4096 bytes $84C000-$84CFFF. SpriteSet9 tiles: incbin data/Sprites/set09.chr $39D0..$49D0 |
-| bank84_D000 | not matched <- CURRENT | $84D000 | $84DFFF | 0% |  |
-| bank84_E000 | not matched | $84E000 | $84EFFF | 24% |  |
+| bank84_D000 | matched | $84D000 | $84E948 | data | 6473 bytes $84D000-$84E948 (end moved to the end of the text). SpriteSet9 tiles end (size asserted); ScoutingReportText incbin data/Text/ScoutingReportText.bin (93G ScoutingReportText) |
+| bank84_E000 | not matched <- CURRENT | $84E949 | $84EFFF | 24% |  |
 | bank84_F000 | not matched | $84F00C | $84FFFF | 8% | Title credits $FAAA-$FCF4 (93G $4B3C-$4D7E); penalty DisplayStats $FAEC (92G $A784); Ice/Bench/Inj strings $FDC8 (93G $78E8) |
 | bank85_8000 | not matched | $858000 | $858FFF | 0% |  |
 | bank85_9000 | not matched | $859000 | $859FFF | 0% |  |
@@ -244,3 +244,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank84_A000: matched $84A000-$84AFFF (4096 bytes): SpriteSet9 tiles. MATCH.
 - bank84_B000: matched $84B000-$84BFFF (4096 bytes): SpriteSet9 tiles. MATCH.
 - bank84_C000: matched $84C000-$84CFFF (4096 bytes): SpriteSet9 tiles. MATCH.
+- bank84_D000: matched $84D000-$84E948 (6473 bytes; bank84_E000 now starts at $84E949): the last frame set 9 tiles and the scouting report text, extracted to data/Text/ScoutingReportText.bin like 93G. The bank83_D000 row note about the scouting text at $83D630 meant $84D630. MATCH.
