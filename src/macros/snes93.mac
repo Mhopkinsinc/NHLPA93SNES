@@ -1,0 +1,16 @@
+; NHLPA Hockey '93 (SNES) macros. Included once by nhlpa93snes.asm, before the bank files (like 93G macros/genesis93.mac).
+; Player, String and hex2 build the bank $83 team data (93G teamdata93.asm) with the 93G macro names.
+
+macro Player(name, w1, w2, w3, w4)		;93G Player: length word (counts itself), name, ratings as 4 big-endian words
+?l:	dw ?e-?l
+	db "<name>"
+?e:	db <w1>>>8,<w1>&$FF,<w2>>>8,<w2>&$FF,<w3>>>8,<w3>&$FF,<w4>>>8,<w4>&$FF
+endmacro
+macro String(text)		;93G String/StringB: length word (counts itself), then the text
+?l:	dw ?e-?l
+	db "<text>"
+?e:
+endmacro
+macro hex2(w1, w2, w3, w4)		;93G hex2: 4 words as big-endian bytes
+	db <w1>>>8,<w1>&$FF,<w2>>>8,<w2>&$FF,<w3>>>8,<w3>&$FF,<w4>>>8,<w4>&$FF
+endmacro

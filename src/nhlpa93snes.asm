@@ -4,6 +4,7 @@ asar 1.91
 lorom
 check bankcross off
 incsrc "inc/snes_regs.asm"
+incsrc "macros/snes93.mac"
 incsrc "ram93snes.asm"
 incsrc "bank80_8000.asm"
 incsrc "bank80_9000.asm"

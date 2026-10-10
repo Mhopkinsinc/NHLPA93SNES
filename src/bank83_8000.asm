@@ -5,20 +5,6 @@
 ; Ends at the end of Calgary (boundary moved from $838FFF).
 org $838000
 
-macro Player(name, w1, w2, w3, w4)		;93G Player: length word (counts itself), name, ratings as 4 big-endian words
-?l:	dw ?e-?l
-	db "<name>"
-?e:	db <w1>>>8,<w1>&$FF,<w2>>>8,<w2>&$FF,<w3>>>8,<w3>&$FF,<w4>>>8,<w4>&$FF
-endmacro
-macro String(text)		;93G String/StringB: length word (counts itself), then the text
-?l:	dw ?e-?l
-	db "<text>"
-?e:
-endmacro
-macro hex2(w1, w2, w3, w4)		;93G hex2: 4 words as big-endian bytes
-	db <w1>>>8,<w1>&$FF,<w2>>>8,<w2>&$FF,<w3>>>8,<w3>&$FF,<w4>>>8,<w4>&$FF
-endmacro
-
 TeamList:		;93G TeamList: long pointer to each team record (TeamList index = team number)
 	dd Boston		; $838000 team 0
 	dd Buffalo		; $838004 team 1
