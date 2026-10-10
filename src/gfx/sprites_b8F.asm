@@ -1,5 +1,6 @@
-; $8F9085-$8FA004  ROM $79085-$7A004: SpriteSet1, sprite frame set 1 of the frame set table at $8FE67D: frames 97-144 (SPFswing: the
-; shot and swing frames). Format as SpriteSet9 (bank84_8000); tiles continue to bank8F_D000. Starts after the code (boundary moved from $8F9000).
+; gfx/sprites_b8F: sprite frame sets (SpriteSetN, see FrameSetTable): header, frame table, pieces, 4bpp tiles.
+; Bank $8F. Each block keeps its ROM address with org; blocks of other modules sit between them.
+
 org $8F9085
 SpriteSet1:		;frame set 1 (SPFswing): frames 97-144
 	dw 48		; frames
@@ -16,7 +17,9 @@ SpriteSet1:		;frame set 1 (SPFswing): frames 97-144
 	dw 215,224,232,238,243,248,252,255
 	dw 258
 .pieces:		;x, y, tile, attributes per piece
-	incbin "../data/Sprites/set01.pieces"		; $8F90F1-$8F94F8
+	incbin "../../data/Sprites/set01.pieces"		; $8F90F1-$8F94F8
 	assert .tiles-.pieces == 4*258
 .tiles:		;512 4bpp tiles (32 bytes each)
-	incbin "../data/Sprites/set01.chr":0..$B0C		; $8F94F9-$8FA004
+	incbin "../../data/Sprites/set01.chr"
+SpriteSet1End:
+	assert SpriteSet1End-SpriteSet1 == $474+512*32
