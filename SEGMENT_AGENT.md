@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank87_C000` ($87C000-$87CFFF). <- CURRENT
+`bank87_D000` ($87D205-$87DFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -120,7 +120,7 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank85_C000 | matched | $85C000 | $85CFFF | data | 4096 bytes $85C000-$85CFFF. SpriteSet4 tiles (incbin data/Sprites/set04.chr slice) |
 | bank85_D000 | matched | $85D000 | $85DFFF | 100% | 4096 bytes $85D000-$85DFFF. SpriteSet4 tiles end (size asserted); 93G/92G GetShifter; Title1Map start (93G Title1Map: packed title screen, data/Title1.pak) |
 | bank85_E000 | matched | $85E000 | $85EFFF | data | 4096 bytes $85E000-$85EFFF. Title1Map continued (incbin $A40..$1A40) |
-| bank85_F000 | matched | $85F000 | $85FFFF | 100% | 4096 bytes $85F000-$85FFFF. Title1Map end (size asserted); SNES DrawFrameSet (sprite emitter with the VRAM tile cache); 93G getpzjoy, ResetClock; SNES PrintTeamNames, nullrtl85; $FF fill |
+| bank85_F000 | matched | $85F000 | $85FFFF | 100% | 4096 bytes $85F000-$85FFFF. Title1Map end (size asserted); SNES DrawFrameHi (sprite emitter with the VRAM tile cache, frames $293 and up); 93G getpzjoy, ResetClock; SNES PrintTeamNames, nullrtl85; $FF fill |
 | bank86_8000 | matched | $868000 | $868FFF | data | 4096 bytes $868000-$868FFF. BootSoundUpload (boot SPC upload stream), block 1 header, SPCDriver (SPC700 driver code, data/spc/driver.bin 0..$FFC) |
 | bank86_9000 | matched | $869000 | $869FFF | data | 4096 bytes $869000-$869FFF. SPCDriver continued (incbin $FFC..$1FFC) |
 | bank86_A000 | matched | $86A000 | $86AFFF | data | 4096 bytes $86A000-$86AFFF. SPCDriver end (size asserted), BootInstruments (29 x 6 bytes to APU $2B00), BootSampleDir (9 entries), BootSamples start (data/bootsamples.brr) |
@@ -133,8 +133,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank87_9000 | matched | $879000 | $879FFF | data | 4096 bytes $879000-$879FFF. SpriteSet2 tiles (incbin data/Sprites/set02.chr slice) |
 | bank87_A000 | matched | $87A000 | $87AFFF | data | 4096 bytes $87A000-$87AFFF. SpriteSet2 tiles (incbin data/Sprites/set02.chr slice) |
 | bank87_B000 | matched | $87B000 | $87BFFF | data | 4096 bytes $87B000-$87BFFF. SpriteSet2 tiles (incbin data/Sprites/set02.chr slice) |
-| bank87_C000 | not matched <- CURRENT | $87C000 | $87CFFF | 10% |  |
-| bank87_D000 | not matched | $87D000 | $87DFFF | 13% |  |
+| bank87_C000 | matched | $87C000 | $87D204 | 100% | 4613 bytes $87C000-$87D204 (end moved to the end of DrawFrame). SpriteSet2 end (size asserted); EASNMap (93G EASN.map.jim, packed, data/EASN.pak); RinkSideTiles1 (packed, data/RinkSideTiles1.pak); TeamBlocksMap (26 x 6x3 words); SNES DrawFrame, addframe_end |
+| bank87_D000 | not matched <- CURRENT | $87D205 | $87DFFF | 13% |  |
 | bank87_E000 | not matched | $87E005 | $87EFFF | 0% |  |
 | bank87_F000 | not matched | $87F005 | $86FFFF | -0% |  |
 | bank88_8000 | not matched | $888000 | $888FFF | 28% |  |
@@ -268,3 +268,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank87_9000: matched $879000-$879FFF (4096 bytes): SpriteSet2 tiles. MATCH.
 - bank87_A000: matched $87A000-$87AFFF (4096 bytes): SpriteSet2 tiles. MATCH.
 - bank87_B000: matched $87B000-$87BFFF (4096 bytes): SpriteSet2 tiles. MATCH.
+- bank87_C000: matched $87C000-$87D204 (4613 bytes; bank87_D000 now starts at SpriteSet6 $87D205). Rendered the packed blocks: $87C3A0 is the EASN logo backdrop (93G EASN.map.jim), $87C6B4 rink surround tiles. TeamBlocksMap: one 6 x 3 tile block per team. DrawFrame draws frames below $293 (4-byte pieces); the bank $85 emitter (6-byte pieces, $293 and up) is renamed DrawFrameHi. MATCH.

@@ -1,4 +1,4 @@
-; $85F000-$85FFFF  ROM $2F000-$2FFFF: the end of Title1Map (packed title screen, see bank85_D000), then DrawFrameSet: the SNES sprite
+; $85F000-$85FFFF  ROM $2F000-$2FFFF: the end of Title1Map (packed title screen, see bank85_D000), then DrawFrameHi: the SNES sprite
 ; emitter for addframe (OAM entries, the sprite VRAM tile cache and the tile dma list), getpzjoy, PrintTeamNames, ResetClock.
 ; The cache: sprframetime (4 bytes per frame: sprclock when sent, VRAM slot), sprslottime (sprclock per 32-byte slot);
 ; a slot is free when sprclock - its time >= sprslotlife.
@@ -6,10 +6,10 @@ org $85F000
 	incbin "../data/Title1.pak":$1A40..$25F9		; $85F000-$85FBB8
 Title1MapEnd:
 	assert Title1MapEnd-Title1Map == $25F9
-DrawFrameSet:		;auto: CODE_85FBB9 (from addframe_hi). SNES: draw frame sprframe of the frame set at [farptr] (sprsetofs = its first frame number) at sprx/spry: for each piece an OAM entry, and the piece tiles to a free VRAM slot through DMAList when not cached
+DrawFrameHi:		;auto: CODE_85FBB9 (from addframe_hi). SNES: draw frame sprframe ($293 and up, 6-byte pieces) of the frame set at [farptr] (sprsetofs = its first frame number) at sprx/spry: for each piece an OAM entry, and the piece tiles to a free VRAM slot through DMAList when not cached
 	lda.b sprnodraw		; $85FBB9: A5 C7
 	beq .go		; $85FBBB: F0 04
-	jml.l $87D1FE		; $85FBBD: 5C FE D1 87  bank $87: addframe end (clear sprhflip, sprvflip, sprflag)
+	jml.l addframe_end		; $85FBBD: 5C FE D1 87
 .go:		;sprtileptr = the set + $200 (tiles)
 	lda.b farptr+1		; $85FBC1: A5 0D
 	sta.b sprtileptr+1		; $85FBC3: 85 10
@@ -34,14 +34,14 @@ DrawFrameSet:		;auto: CODE_85FBB9 (from addframe_hi). SNES: draw frame sprframe 
 	sec		; $85FBE5: 38
 	sbc.b sprframe		; $85FBE6: E5 C3
 	bne .cnt		; $85FBE8: D0 04
-	jml.l $87D1FE		; $85FBEA: 5C FE D1 87  bank $87: addframe end (clear sprhflip, sprvflip, sprflag)
+	jml.l addframe_end		; $85FBEA: 5C FE D1 87
 .cnt:
 	sta.w sprpieces		; $85FBEE: 8D 87 04
 .piece:		;next piece; OAM full (128): done
 	lda.b sprcount		; $85FBF1: A5 A9
 	cmp.w #$0080		; $85FBF3: C9 80 00
 	bne .pc		; $85FBF6: D0 04
-	jml.l $87D1FE		; $85FBF8: 5C FE D1 87  bank $87: addframe end (clear sprhflip, sprvflip, sprflag)
+	jml.l addframe_end		; $85FBF8: 5C FE D1 87
 .pc:		;sprox/sproy = piece x/y + sprx/spry, sprtile, sprpal, sprpattr from the 6-byte piece
 	lda.b sprframe		; $85FBFC: A5 C3
 	asl a		; $85FBFE: 0A

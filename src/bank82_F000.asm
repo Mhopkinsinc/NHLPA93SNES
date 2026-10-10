@@ -492,7 +492,7 @@ addframe_hi:		;auto: CODE_82FD17. SNES addframe path for sprframe >= $293: find 
 	lda.b sprframe		; $82FD17: A5 C3
 	cmp.w #$0293		; $82FD19: C9 93 02
 	bcs .hi		; $82FD1C: B0 04
-	jml.l $87D1FE		; $82FD1E: 5C FE D1 87  bank $87: addframe for frames below $293
+	jml.l addframe_end		; $82FD1E: 5C FE D1 87
 .hi:
 	dec.b sprframe		; $82FD22: C6 C3
 	stz.b sprsetofs		; $82FD24: 64 C5
@@ -508,7 +508,7 @@ addframe_hi:		;auto: CODE_82FD17. SNES addframe path for sprframe >= $293: find 
 	sec		; $82FD3C: 38
 	sbc.b [farptr]		; $82FD3D: E7 0C
 	bcs .next		; $82FD3F: B0 04
-	jml.l DrawFrameSet		; $82FD41: 5C B9 FB 85
+	jml.l DrawFrameHi		; $82FD41: 5C B9 FB 85
 .next:
 	sta.b sprframe		; $82FD45: 85 C3
 	lda.b sprsetofs		; $82FD47: A5 C5
