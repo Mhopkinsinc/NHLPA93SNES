@@ -118,9 +118,9 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank85_A000 | matched | $85A000 | $85AFFF | data | 4096 bytes $85A000-$85AFFF. SpriteSet4 tiles (incbin data/Sprites/set04.chr slice) |
 | bank85_B000 | matched | $85B000 | $85BFFF | data | 4096 bytes $85B000-$85BFFF. SpriteSet4 tiles (incbin data/Sprites/set04.chr slice) |
 | bank85_C000 | matched | $85C000 | $85CFFF | data | 4096 bytes $85C000-$85CFFF. SpriteSet4 tiles (incbin data/Sprites/set04.chr slice) |
-| bank85_D000 | matched | $85D000 | $85DFFF | 100% | 4096 bytes $85D000-$85DFFF. SpriteSet4 tiles end (size asserted); 93G/92G GetShifter; MenuScreen88 start (packed screen, data/MenuScreen88.pak) |
-| bank85_E000 | matched | $85E000 | $85EFFF | data | 4096 bytes $85E000-$85EFFF. MenuScreen88 continued (incbin $A40..$1A40) |
-| bank85_F000 | matched | $85F000 | $85FFFF | 100% | 4096 bytes $85F000-$85FFFF. MenuScreen88 end (size asserted); SNES DrawFrameSet (sprite emitter with the VRAM tile cache); 93G getpzjoy, ResetClock; SNES PrintTeamNames, nullrtl85; $FF fill |
+| bank85_D000 | matched | $85D000 | $85DFFF | 100% | 4096 bytes $85D000-$85DFFF. SpriteSet4 tiles end (size asserted); 93G/92G GetShifter; Title1Map start (93G Title1Map: packed title screen, data/Title1.pak) |
+| bank85_E000 | matched | $85E000 | $85EFFF | data | 4096 bytes $85E000-$85EFFF. Title1Map continued (incbin $A40..$1A40) |
+| bank85_F000 | matched | $85F000 | $85FFFF | 100% | 4096 bytes $85F000-$85FFFF. Title1Map end (size asserted); SNES DrawFrameSet (sprite emitter with the VRAM tile cache); 93G getpzjoy, ResetClock; SNES PrintTeamNames, nullrtl85; $FF fill |
 | bank86_8000 | not matched <- CURRENT | $868000 | $868FFF | 0% |  |
 | bank86_9000 | not matched | $869000 | $869FFF | 0% |  |
 | bank86_A000 | not matched | $86A000 | $86AFFF | 0% |  |
@@ -252,6 +252,7 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank85_A000: matched $85A000-$85AFFF (4096 bytes): SpriteSet4 tiles. MATCH.
 - bank85_B000: matched $85B000-$85BFFF (4096 bytes): SpriteSet4 tiles. MATCH.
 - bank85_C000: matched $85C000-$85CFFF (4096 bytes): SpriteSet4 tiles. MATCH.
-- bank85_D000: matched $85D000-$85DFFF (4096 bytes): the last frame set 4 tiles, GetShifter ($85D5A4, gamelevel $014A), and the start of MenuScreen88, the packed full screen (map, 128 colours, 408 tiles) of the bank $88 menu screen at $88F2B0. MATCH.
+- bank85_D000: matched $85D000-$85DFFF (4096 bytes): the last frame set 4 tiles, GetShifter ($85D5A4, gamelevel $014A), and the start of the packed title screen (map, 128 colours, 408 tiles) shown by the bank $88 title screen at $88F2B0. MATCH.
 - bank85_E000: matched $85E000-$85EFFF (4096 bytes): packed menu screen continued. MATCH.
 - bank85_F000: matched $85F000-$85FFFF (4096 bytes). DrawFrameSet: the SNES sprite emitter behind addframe (OAM entries in Satt/SattHi, 8x8 and 16x16 VRAM slot rotors, tile uploads through DMAList, cache by sprframetime/sprslottime). New RAM: the emitter DP variables (sprcount, sprpal, sprpattr, sprbigslot(end), sprslot(end), sprtile, sprox, sproy, sprtileptr, sprnodraw, sprpieces), SattHi, HomeTeam/VisTeam ($129A/$129C; PenaltyBufferEnd is now PenBuf-2), PerTimeTotal, gamelevel, sfpj. Bank $85 complete. MATCH.
+- bank85 follow-up: MenuScreen88 renamed Title1Map (data/Title1.pak): rendered, it is the title screen (goalie and the NHLPA Hockey '93 logo), the 93G Title1Map / Title1.map.jim backdrop; $88F2B0 is the title screen code. MATCH.

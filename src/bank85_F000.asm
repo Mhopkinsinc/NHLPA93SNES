@@ -1,11 +1,11 @@
-; $85F000-$85FFFF  ROM $2F000-$2FFFF: the end of MenuScreen88 (packed, see bank85_D000), then DrawFrameSet: the SNES sprite
+; $85F000-$85FFFF  ROM $2F000-$2FFFF: the end of Title1Map (packed title screen, see bank85_D000), then DrawFrameSet: the SNES sprite
 ; emitter for addframe (OAM entries, the sprite VRAM tile cache and the tile dma list), getpzjoy, PrintTeamNames, ResetClock.
 ; The cache: sprframetime (4 bytes per frame: sprclock when sent, VRAM slot), sprslottime (sprclock per 32-byte slot);
 ; a slot is free when sprclock - its time >= sprslotlife.
 org $85F000
-	incbin "../data/MenuScreen88.pak":$1A40..$25F9		; $85F000-$85FBB8
-MenuScreen88End:
-	assert MenuScreen88End-MenuScreen88 == $25F9
+	incbin "../data/Title1.pak":$1A40..$25F9		; $85F000-$85FBB8
+Title1MapEnd:
+	assert Title1MapEnd-Title1Map == $25F9
 DrawFrameSet:		;auto: CODE_85FBB9 (from addframe_hi). SNES: draw frame sprframe of the frame set at [farptr] (sprsetofs = its first frame number) at sprx/spry: for each piece an OAM entry, and the piece tiles to a free VRAM slot through DMAList when not cached
 	lda.b sprnodraw		; $85FBB9: A5 C7
 	beq .go		; $85FBBB: F0 04

@@ -1,6 +1,6 @@
 ; $85D000-$85DFFF  ROM $2D000-$2DFFF: the last SpriteSet4 tiles, GetShifter (93G penalty93_2 / 92G), then the start of
-; MenuScreen88, a full screen packed for the decompressor $86FA3E (data/MenuScreen88.pak, $85D5C0-$85FBB8): unpacked it is a
-; 32 x 28 tile map ($7F0000), 128 colours ($7F0700) and 408 tiles ($7F0800); the bank $88 menu screen setup at $88F2B0 shows it.
+; Title1Map, the title screen (goalie and the NHLPA Hockey '93 logo) packed for the decompressor $86FA3E (data/Title1.pak, $85D5C0-$85FBB8): unpacked it is a
+; 32 x 28 tile map ($7F0000), 128 colours ($7F0700) and 408 tiles ($7F0800); the bank $88 title screen ($88F2B0, 93G TitleScreen) shows it.
 org $85D000
 	incbin "../data/Sprites/set04.chr":$4A5C..$5000		; $85D000-$85D5A3
 SpriteSet4End:
@@ -21,5 +21,5 @@ GetShifter:		;auto: CODE_85D5A4. 92G/93G GetShifter: d1 = number of games - 1, d
 	bpl .3		; $85D5BB: 10 F4
 	dec.b d1		; $85D5BD: C6 57
 	rtl		; $85D5BF: 6B
-MenuScreen88:		;packed menu screen (map, palette, tiles)
-	incbin "../data/MenuScreen88.pak":0..$A40		; $85D5C0-$85DFFF
+Title1Map:		;93G Title1Map (Title1.map.jim): the title screen backdrop, packed (map, palette, tiles)
+	incbin "../data/Title1.pak":0..$A40		; $85D5C0-$85DFFF
