@@ -9,9 +9,9 @@ same names, so the SNES files get their own extensions.
 | `.map.pak` | Packed screen: map words, then palette, then tiles in one stream (see Screens below) | `Title1`, `EASN`, `RonBarr`, `GameSetup`, `NHLPALogo` |
 | `.chr.pak` | Packed SNES 4bpp tiles | `IceRink`, `SmallFont`, `BigFont`, `FaceOff`, `Ref`, `RefHor`, `PlayoffTiles` (palette first), `TeamBlocks` |
 | `.chr` | SNES 4bpp planar tiles, 32 bytes per 8x8 tile, not packed | `Sprites/setNN.chr`, `Framer` |
-| `.pieces` | Sprite frame set header and piece table (see `DrawFrame`, `bank87_C000`) | `Sprites/setNN.pieces` |
+| `.pieces` | Sprite frame pieces (see Sprites below) | `Sprites/setNN.pieces` |
 | `.snesmap` | SNES BG map words, not packed: vflip 15, hflip 14, priority 13, palette 12-10, tile 9-0 | `IceRink` (48 x 85), `IceRinkHor`, `Refs` (7 ref frames of 8 x 7), `RefsHor` (17 frames) |
-| `.snespal` | SNES palette, BGR555 words, 16 colours per row | `Pals/<team>h`, `Pals/<team>v`, `Pals/Rink` |
+| `.snespal` | Palette, 16 colours per row. `Pals/Rink`: SNES BGR555 words. `Pals/<team>h`, `Pals/<team>v`: 93G colour words `0000 BBBB GGGG RRRR`, high byte first, which `SetTeamColors` ($80B706) converts to BGR555 | `Pals/<team>h`, `Pals/<team>v`, `Pals/Rink` |
 | `.brr` | SPC700 BRR sound samples (the sample block of an SPC upload stream) | `bootsamples`, `gamesamples` |
 | `.spc700` | SPC700 sound driver code, uploaded to APU $0400 | `spc/driver` |
 | `.bin` | Tables or text with their own format, described where they are included | `HotList`, `Text/ScoutingReportText` |
@@ -48,6 +48,19 @@ The unpacked data holds the map words, then the palette, then the tiles. Offsets
 | `NHLPALogo.map.pak` | 8 x 10 at 0 | 128 colours at $A0 | at $1A0 | NHLPA logo; `--width 8 --map-size 0xA0 --pal-offset 0xA0 --tiles-offset 0x1A0` |
 | `EASN.map.pak` | 32 x 16 at 0 | none | at $400 | EASN logo backdrop (93G `EASN.map.jim`); `--map-size 0x400 --no-pal` |
 
+## Sprites (`Sprites/setNN`)
+
+`FrameSetTable` ($8FE67D) lists the 15 frame sets. Each set's header in `src/bank*.asm` (`SpriteSetN:`) gives the frame,
+piece and tile counts and the first piece of each frame (`.frames`). `setNN.pieces` holds the pieces and `setNN.chr` the 4bpp tiles.
+Frame numbers (`sprframe`, the `SPF` names in `ram93snes.asm`) run on from set to set, starting at 1 (set 0).
+
+- Sets 0-13 (frames 1-658, `DrawFrame` $87CE62): 4-byte pieces: x, y (signed bytes), tile, attributes.
+- Set 14 (frames 659-720, `DrawFrameHi` $85FBB9): 6-byte pieces: x, y (signed words), tile, attributes. These are the crowd:
+  659-689 for the vertical rink, at `IceRink.snesmap` pixel positions, and 690-720 for the horizontal rink.
+- Attributes: tile bits 8-9 (bits 0-1), palette (bits 2-4), 16 x 16 (bit 5: tiles t, t+1 over t+16, t+17), hflip (6), vflip (7).
+  Palette 2 is the home team colours; `sprflag` $8000 moves it to palette 3, the visitor colours.
+- The first piece is on top (OAM order).
+
 ## tools/snesgfx.py
 
 This script unpacks and renders the assets above, for checking a guess about what a block holds. Rendering needs Pillow
@@ -60,6 +73,13 @@ python tools/snesgfx.py screen data/Title1.map.pak -o title.png
 python tools/snesgfx.py screen data/RonBarr.map.pak --width 8 --map-size 0x90 --pal-offset 0x90 --tiles-offset 0x190 -o ronbarr.png
 python tools/snesgfx.py tiles data/BigFont.chr.pak --columns 16 -o bigfont.png
 python tools/snesgfx.py map data/IceRink.snesmap --tiles data/IceRink.chr.pak --width 48 --pal data/Pals/Rink.snespal -o rink.png
+python tools/snesgfx.py sprites 0 -o set00.png                     # frame set 0, labelled with frame numbers and SPF names
+python tools/snesgfx.py sprites all -o sprites.png                 # sprites00.png .. sprites14.png
+python tools/snesgfx.py sprites --frames 406-461 --team MTL --visitor -o goalie.png
+python tools/snesgfx.py sprites --frames 41-48 -o skate.gif        # a .gif output is an animation
+python tools/snesgfx.py sprites --frames 659-689 --rink -o crowd.gif   # the crowd frames on the rink map
 ```
 
 A `.pak` input is unpacked automatically. `--pal FILE[:OFFSET]` takes any file that holds BGR555 words. Without it, colours are grey levels.
+`sprites` uses the game palette: `Pals/Rink` with sprite rows 2/3 from the `--team` colours (default BOS; `--visitor-team` for another visitor).
+Other options: `--bg RRGGBB|transparent`, `--origin` (marks sprx/spry), `--no-labels`, `--columns`, `--scale`, `--delay` (GIF ms).

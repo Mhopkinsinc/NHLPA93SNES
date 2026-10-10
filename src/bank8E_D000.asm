@@ -19,5 +19,5 @@ SpriteSet14:		;frame set 14: frames 659-720, 6-byte pieces (DrawFrameHi)
 	dw 606,611,618,628,633,647,667,682		; $8EDA01
 	dw 696,706,710,712,714,717,718,721		; $8EDA11
 	dw 724,727,730,733,736,739,742		; $8EDA21
-.pieces:		;x, y, tile, attributes and 2 more bytes per piece (6 bytes, DrawFrameHi)
+.pieces:		;x, y (signed words), tile, attributes per piece (6 bytes, DrawFrameHi)
 	incbin "../data/Sprites/set14.pieces":0..$5DC		; $8EDA2F-$8EE00A
