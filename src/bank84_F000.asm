@@ -1,4 +1,4 @@
-; $84EF3C-$84FFFF  ROM $26F3C-$27FFF: HotList, UpdateScoutingDisplay, ScrollDisplayUp (hockey93_07), MenuTiles88, InitSortObjects and
+; $84EF3C-$84FFFF  ROM $26F3C-$27FFF: HotList, UpdateScoutingDisplay, ScrollDisplayUp (hockey93_07), PlayoffTiles, InitSortObjects and
 ; its tables, Readjoy12, DisplayStats (92G penalty.asm), GetNameandAttrib, attribjmp and its handlers (stats93), $FF fill.
 ; Starts at HotList (boundary moved from $84F00C).
 org $84EF3C
@@ -320,8 +320,8 @@ ScrollDisplayUp:		;auto: CODE_84F734. 93G ScrollDisplayUp (hockey93_07): next te
 	bpl .pop		; $84F798: 10 F9
 	ldx.b xsave		; $84F79A: A6 0A
 	rtl		; $84F79C: 6B
-MenuTiles88:		;packed tiles (decompressor $86FA3E) that the bank $88 screen setup ($88F55B) sends to vram $1000 (data/MenuTiles88.chr.pak)
-	incbin "../data/MenuTiles88.chr.pak"		; $84F79D-$84F815
+PlayoffTiles:		;packed playoff screen palette and tiles (decompressor $86FA3E): 128 colours, then 6 tiles; PlayoffScreen sends them to vram $1000
+	incbin "../data/PlayoffTiles.chr.pak"		; $84F79D-$84F815
 InitSortObjects:		;auto: CODE_84F816. SNES: clear the sort objects, then set the 4 sso arrows, the 5 ffo objects and the 16 sort objects from SsoInitTable, FfoInitTable and SortObjInitTable; then
 		;   SprSort
 	ldx.w #$0000		; $84F816: A2 00 00  SortCords (all fields of the 16 objects)

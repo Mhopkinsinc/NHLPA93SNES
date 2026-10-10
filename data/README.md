@@ -7,7 +7,7 @@ same names, so the SNES files get their own extensions.
 | Extension | Format | Files |
 |-----------|--------|-------|
 | `.map.pak` | Packed screen: map words, then palette, then tiles in one stream (see Screens below) | `Title1`, `EASN`, `RonBarr`, `GameSetup` |
-| `.chr.pak` | Packed SNES 4bpp tiles | `IceRink`, `BigFont`, `RinkSideTiles1`, `RinkSideTiles2`, `MenuTiles88`, `TeamBlocks` |
+| `.chr.pak` | Packed SNES 4bpp tiles | `IceRink`, `BigFont`, `RinkSideTiles1`, `RinkSideTiles2`, `PlayoffTiles` (palette first), `TeamBlocks` |
 | `.chr` | SNES 4bpp planar tiles, 32 bytes per 8x8 tile, not packed | `Sprites/setNN.chr`, `Framer` |
 | `.pieces` | Sprite frame set header and piece table (see `DrawFrame`, `bank87_C000`) | `Sprites/setNN.pieces` |
 | `.snesmap` | SNES BG map words, not packed: vflip 15, hflip 14, priority 13, palette 12-10, tile 9-0 | `IceRink` (48 x 85), `IceRinkHor`, `Refs` |

@@ -632,6 +632,7 @@ JOYRIGHT	= $0100	; dpad right (93G rbut)
 JOYLEFT		= $0200	; dpad left (93G lbut)
 JOYDOWN		= $0400	; dpad down (93G dbut)
 JOYUP		= $0800	; dpad up (93G ubut)
+JOYA		= $0080	; A button (92G cbut on the password screen)
 bbut		= $8000	; B: pass / switch player (93G bbut)
 abut		= $4000	; Y: hold / line change (93G abut)
 ; injury
