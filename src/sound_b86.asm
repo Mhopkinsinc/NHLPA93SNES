@@ -1,7 +1,11 @@
-; $86A000-$86AFFF  ROM $32000-$32FFF: the end of SPCDriver, then the other blocks of BootSoundUpload: BootInstruments (APU $2B00),
-; BootSampleDir (APU $2C00) and the start of BootSamples (data/bootsamples.brr, APU $2C30, continued to bank86_F000).
-org $86A000
-	incbin "../data/spc/driver.spc700":$1FFC..$26E7		; $86A000-$86A6EA
+; sound_b86: 93G sound93: SPC700 uploads, the sound queue, music cues (93G keeps ScoutingReportText here too).
+; Bank $86. Each block keeps its ROM address with org; blocks of other modules sit between them.
+
+org $868000
+BootSoundUpload:		;boot SPC upload: the sound driver and its sample set (sndbank 2)
+	dw SPCDRIVERSIZE, SPCDRIVER		; block 1: the driver code
+SPCDriver:		;SPC700 sound driver code, loaded at APU $0400 (not disassembled: SPC700 code)
+	incbin "../data/spc/driver.spc700"
 SPCDriverEnd:
 	assert SPCDriverEnd-SPCDriver == SPCDRIVERSIZE
 	dw BootInstrumentsEnd-BootInstruments, SPCINSTR		; block 2: the instrument table
@@ -50,4 +54,43 @@ BootSampleDir:		;DSP sample directory: per sample the APU address of its start a
 BootSampleDirEnd:
 	dw BOOTSAMPLESIZE, SPCBOOTSAMPLES		; block 4: the BRR samples
 BootSamples:		;BRR samples of the boot set (9-byte blocks), $86A7C9-$86FA39
-	incbin "../data/bootsamples.brr":0..$837		; $86A7C9-$86AFFF
+	incbin "../data/bootsamples.brr"
+BootSamplesEnd:
+	assert BootSamplesEnd-BootSamples == BOOTSAMPLESIZE
+	dw $0000, SPCDRIVER		; end block: length 0, start the driver at $0400
+
+org $86FBE1
+StartSong6:		;SNES: start song 6 (the title screen music: TitleScreen $88F3A1, $8FF05C) unless it plays: the boot sound set (SPCBootUpload), then driver command 3
+	lda.w cursong
+	cmp.w #6
+	beq .rtl
+	lda.w sndbank
+	cmp.w #2
+	beq .cmd
+	jsl.l SPCBootUpload
+.cmd:
+	sep #$20		; APUIO0 = 3: play song 6
+	lda.b #$03
+	sta.w APUIO0
+	rep #$30
+	lda.w #6
+	sta.w cursong
+.rtl:
+	rtl
+StartSong7:		;SNES: start song 7 (driver command 2); no caller found
+	lda.w cursong
+	cmp.w #7
+	beq .rtl
+	lda.w sndbank
+	cmp.w #2
+	beq .cmd
+	jsl.l SPCBootUpload
+.cmd:
+	sep #$20
+	lda.b #$02
+	sta.w APUIO0
+	rep #$30
+	lda.w #7
+	sta.w cursong
+.rtl:
+	rtl
