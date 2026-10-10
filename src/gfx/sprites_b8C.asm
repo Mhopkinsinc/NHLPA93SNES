@@ -1,10 +1,7 @@
-; $8C8000-$8C8FFF  ROM $60000-$60FFF: NHLPALogo (the packed NHLPA logo picture), then SpriteSet0 (frame set 0: skating and turning
-; frames 1-96), tiles continue to bank8C_F000.
-org $8C8000
-NHLPALogo:		;SNES: the NHLPA logo, packed (data/NHLPALogo.map.pak): 8 x 10 map, 128 colours at $A0, 53 tiles at $1A0; game setup and playoff screens
-	incbin "../data/NHLPALogo.map.pak"		; $8C8000-$8C8459
-NHLPALogoEnd:
-	assert NHLPALogoEnd-NHLPALogo == $45A
+; gfx/sprites_b8C: sprite frame sets (SpriteSetN, see FrameSetTable): header, frame table, pieces, 4bpp tiles.
+; Bank $8C. Each block keeps its ROM address with org; blocks of other modules sit between them.
+
+org $8C845A
 SpriteSet0:		;frame set 0 (SPFskatewp, SPFskate, SPFturnl, SPFturnr): frames 1-96
 	dw 96		; frames
 	dw 445		; pieces
@@ -26,7 +23,9 @@ SpriteSet0:		;frame set 0 (SPFskatewp, SPFskate, SPFturnl, SPFturnr): frames 1-9
 	dw 397,399,405,412,416,424,434,441
 	dw 445
 .pieces:		;x, y, tile, attributes per piece
-	incbin "../data/Sprites/set00.pieces"		; $8C8526-$8C8C19
+	incbin "../../data/Sprites/set00.pieces"		; $8C8526-$8C8C19
 	assert .tiles-.pieces == 4*445
 .tiles:		;896 4bpp tiles (32 bytes each)
-	incbin "../data/Sprites/set00.chr":0..$3E6		; $8C8C1A-$8C8FFF
+	incbin "../../data/Sprites/set00.chr"
+SpriteSet0End:
+	assert SpriteSet0End-SpriteSet0 == $7C0+896*32
