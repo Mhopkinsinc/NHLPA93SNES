@@ -347,6 +347,7 @@ asv		= $1644	; scouting text without delays (down pressed). 93G asv
 passbits	= $1624	; password bits: a 128-bit number, 8 words, low word first (SuperDiv, PushBits). 92G PassBits
 tpassbits	= $1634	; 8 words: passbits before all games are resolved (EncodePW, sf3alttree). 92G tpassbits
 OptLine		= $160C	; line changes (0 = on). 93G OptLine
+notdemo		= $160E	; $FFFF once a player set up the game, 0 after the attract demo (FigureJoy: no controller teams). 92G demoflag role
 
 sndbank		= $164F	; sound set loaded into the SPC (1 = the in-game sounds); sfx are queued only for it
 cursong		= $1651	; song playing on the SPC (0 = none); set by the song starters in banks $86/$89

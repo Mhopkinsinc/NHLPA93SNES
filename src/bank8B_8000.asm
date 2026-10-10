@@ -1,472 +1,485 @@
-; $8B8000-$8B8FFF  ROM $58000  (from src/bank8B.asm; quick pass, TODO segment agents refine)
+; $8B8000-$8B9002  ROM $58000-$59002: the 92G playoff code: NewPO, FigureJoy, Opening/Opening4, ReadPassBits, ResolveGames; then SpriteSet5
+; (frame set 5: the falls), tiles continue to bank8B_F000.
 org $8B8000
-
-CODE_8B8000:		; M=16 X=16
-	lda.w #$0020		; $8B8000: A9 20 00
-	sta.b $53		; $8B8003: 85 53
-	jsl.l $8097A3		; $8B8005: 22 A3 97 80
-CODE_8B8009:		; M=16 X=16
-	lda.b $53		; $8B8009: A5 53
+NewPO:		;auto: CODE_8B8000. 92G NewPO: new playoffs with the same team 1: random postarts whose playoffseats hold OptTeam1 (all-star teams count as team 23), clear the series, then maketree
+	lda.w #32		; $8B8000: A9 20 00  d0 = random 0-31
+	sta.b d0		; $8B8003: 85 53
+	jsl.l randomd0		; $8B8005: 22 A3 97 80
+.top:
+	lda.b d0		; $8B8009: A5 53
 	inc a		; $8B800B: 1A
 	and.w #$001F		; $8B800C: 29 1F 00
-	sta.b $53		; $8B800F: 85 53
+	sta.b d0		; $8B800F: 85 53
 	asl a		; $8B8011: 0A
 	asl a		; $8B8012: 0A
 	asl a		; $8B8013: 0A
 	asl a		; $8B8014: 0A
-	adc.w #$C4B8		; $8B8015: 69 B8 C4
-	sta.b $33		; $8B8018: 85 33
-	lda.w #$0083		; $8B801A: A9 83 00
-	sta.b $35		; $8B801D: 85 35
-	lda.w #$000F		; $8B801F: A9 0F 00
-	sta.b $57		; $8B8022: 85 57
-	lda.w $1604		; $8B8024: AD 04 16
-	sta.b $5B		; $8B8027: 85 5B
-	cmp.w #$0018		; $8B8029: C9 18 00
-	bcc CODE_8B8033		; $8B802C: 90 05
-	lda.w #$0017		; $8B802E: A9 17 00
-	sta.b $5B		; $8B8031: 85 5B
-CODE_8B8033:		; M=16 X=16
-	lda.b [$33]		; $8B8033: A7 33
-	inc.b $33		; $8B8035: E6 33
+	adc.w #playoffseats		; $8B8015: 69 B8 C4  a0 = playoffseats + 16 * d0
+	sta.b a0		; $8B8018: 85 33
+	lda.w #playoffseats>>16		; $8B801A: A9 83 00
+	sta.b a0+2		; $8B801D: 85 35
+	lda.w #15		; $8B801F: A9 0F 00
+	sta.b d1		; $8B8022: 85 57
+	lda.w OptTeam1		; $8B8024: AD 04 16
+	sta.b d2		; $8B8027: 85 5B
+	cmp.w #24		; $8B8029: C9 18 00  all-star teams (24+): team 23
+	bcc .loop		; $8B802C: 90 05
+	lda.w #23		; $8B802E: A9 17 00
+	sta.b d2		; $8B8031: 85 5B
+.loop:
+	lda.b [a0]		; $8B8033: A7 33
+	inc.b a0		; $8B8035: E6 33
 	and.w #$00FF		; $8B8037: 29 FF 00
-	cmp.b $5B		; $8B803A: C5 5B
-	beq CODE_8B8044		; $8B803C: F0 06
-	dec.b $57		; $8B803E: C6 57
-	bpl CODE_8B8033		; $8B8040: 10 F1
-	bra CODE_8B8009		; $8B8042: 80 C5
-CODE_8B8044:		; M=16 X=16
-	lda.b $57		; $8B8044: A5 57
+	cmp.b d2		; $8B803A: C5 5B
+	beq .found		; $8B803C: F0 06
+	dec.b d1		; $8B803E: C6 57
+	bpl .loop		; $8B8040: 10 F1
+	bra .top		; $8B8042: 80 C5
+.found:
+	lda.b d1		; $8B8044: A5 57  potreeteam = slot of OptTeam1
 	eor.w #$000F		; $8B8046: 49 0F 00
-	sta.b $57		; $8B8049: 85 57
-	sta.w $0473		; $8B804B: 8D 73 04
-	lda.b $53		; $8B804E: A5 53
-	sta.w $0451		; $8B8050: 8D 51 04
-	stz.w $014A		; $8B8053: 9C 4A 01
-	lda.w #$0007		; $8B8056: A9 07 00
-	sta.b $D6		; $8B8059: 85 D6
-	lda.w $1600		; $8B805B: AD 00 16
-	cmp.w #$0002		; $8B805E: C9 02 00
-	beq CODE_8B8079		; $8B8061: F0 16
-	stz.b $D6		; $8B8063: 64 D6
-	lda.w #$0007		; $8B8065: A9 07 00
-	sta.b $53		; $8B8068: 85 53
+	sta.b d1		; $8B8049: 85 57
+	sta.w potreeteam		; $8B804B: 8D 73 04
+	lda.b d0		; $8B804E: A5 53
+	sta.w postarts		; $8B8050: 8D 51 04
+	stz.w gamelevel		; $8B8053: 9C 4A 01
+	lda.w #7		; $8B8056: A9 07 00  bosgames 7: single games (OptPlayMode 2)
+	sta.b bosgames		; $8B8059: 85 D6
+	lda.w OptPlayMode		; $8B805B: AD 00 16
+	cmp.w #2		; $8B805E: C9 02 00
+	beq .n0		; $8B8061: F0 16
+	stz.b bosgames		; $8B8063: 64 D6  best of seven: clear the series
+	lda.w #7		; $8B8065: A9 07 00
+	sta.b d0		; $8B8068: 85 53
 	ldx.w #$0000		; $8B806A: A2 00 00
-CODE_8B806D:		; M=16 X=16
-	stz.w $159F,x		; $8B806D: 9E 9F 15
-	stz.w $15AF,x		; $8B8070: 9E AF 15
+.cg:
+	stz.w gspotwins,x		; $8B806D: 9E 9F 15
+	stz.w gspobwins,x		; $8B8070: 9E AF 15
 	inx		; $8B8073: E8
 	inx		; $8B8074: E8
-	dec.b $53		; $8B8075: C6 53
-	bpl CODE_8B806D		; $8B8077: 10 F4
-CODE_8B8079:		; M=16 X=16
-	jml.l $8D8000		; $8B8079: 5C 00 80 8D
-CODE_8B807D:		; M=16 X=16
-	stz.w $1296		; $8B807D: 9C 96 12
-	stz.w $1298		; $8B8080: 9C 98 12
-	lda.w $160E		; $8B8083: AD 0E 16
-	beq CODE_8B80CB		; $8B8086: F0 43
-	lda.w $1600		; $8B8088: AD 00 16
-	bne CODE_8B8090		; $8B808B: D0 03
-	jmp.w $8117		; $8B808D: 4C 17 81
-CODE_8B8090:		; M=16 X=16
-	jsl.l $85D5A4		; $8B8090: 22 A4 D5 85
-	lda.w #$0453		; $8B8094: A9 53 04
-	sta.b $33		; $8B8097: 85 33
+	dec.b d0		; $8B8075: C6 53
+	bpl .cg		; $8B8077: 10 F4
+.n0:
+	jml.l $8D8000		; $8B8079: 5C 00 80 8D  bank $8D: maketree
+FigureJoy:		;auto: CODE_8B807D. 92G FigureJoy: set cont1team/cont2team: in the playoffs from the po team's game (gamenum, OptTeam2, HomeTeam/VisTeam) and pojoy; else from OptPlayers. Not after the
+		;   demo (notdemo = 0)
+	stz.w cont1team		; $8B807D: 9C 96 12
+	stz.w cont2team		; $8B8080: 9C 98 12
+	lda.w notdemo		; $8B8083: AD 0E 16  after the demo: no controller teams
+	beq .rtl		; $8B8086: F0 43
+	lda.w OptPlayMode		; $8B8088: AD 00 16
+	bne .po		; $8B808B: D0 03
+	jmp.w .fjnpo		; $8B808D: 4C 17 81
+.po:
+	jsl.l GetShifter		; $8B8090: 22 A4 D5 85
+	lda.w #potree		; $8B8094: A9 53 04  d2 = the po team
+	sta.b a0		; $8B8097: 85 33
 	lda.w #$0000		; $8B8099: A9 00 00
-	sta.b $35		; $8B809C: 85 35
-	ldy.w $0473		; $8B809E: AC 73 04
-	lda.b [$33],y		; $8B80A1: B7 33
+	sta.b a0+2		; $8B809C: 85 35
+	ldy.w potreeteam		; $8B809E: AC 73 04
+	lda.b [a0],y		; $8B80A1: B7 33
 	and.w #$00FF		; $8B80A3: 29 FF 00
-	sta.b $5B		; $8B80A6: 85 5B
-	lda.b $57		; $8B80A8: A5 57
+	sta.b d2		; $8B80A6: 85 5B
+	lda.b d1		; $8B80A8: A5 57
 	asl a		; $8B80AA: 0A
-	sta.b $37		; $8B80AB: 85 37
-	lda.w #$FFFF		; $8B80AD: A9 FF FF
-	sta.w $014C		; $8B80B0: 8D 4C 01
-	stz.b $53		; $8B80B3: 64 53
-CODE_8B80B5:		; M=16 X=16
-	lda.b $5B		; $8B80B5: A5 5B
-	ldy.b $37		; $8B80B7: A4 37
-	cmp.w $157F,y		; $8B80B9: D9 7F 15
-	beq CODE_8B80D9		; $8B80BC: F0 1B
-	cmp.w $158F,y		; $8B80BE: D9 8F 15
-	beq CODE_8B80CC		; $8B80C1: F0 09
-	dec.b $37		; $8B80C3: C6 37
-	dec.b $37		; $8B80C5: C6 37
-	dec.b $57		; $8B80C7: C6 57
-	bpl CODE_8B80B5		; $8B80C9: 10 EA
-CODE_8B80CB:		; M=16 X=16
+	sta.b a1		; $8B80AB: 85 37
+	lda.w #$FFFF		; $8B80AD: A9 FF FF  gamenum -1: po team not playing
+	sta.w gamenum		; $8B80B0: 8D 4C 01
+	stz.b d0		; $8B80B3: 64 53
+.f0:
+	lda.b d2		; $8B80B5: A5 5B
+	ldy.b a1		; $8B80B7: A4 37
+	cmp.w gst1,y		; $8B80B9: D9 7F 15
+	beq .it1		; $8B80BC: F0 1B
+	cmp.w gst2,y		; $8B80BE: D9 8F 15
+	beq .it2		; $8B80C1: F0 09
+	dec.b a1		; $8B80C3: C6 37
+	dec.b a1		; $8B80C5: C6 37
+	dec.b d1		; $8B80C7: C6 57
+	bpl .f0		; $8B80C9: 10 EA
+.rtl:		;po team not in the playoffs
 	rtl		; $8B80CB: 6B
-CODE_8B80CC:		; M=16 X=16
-	lda.w #$0004		; $8B80CC: A9 04 00
-	sta.b $53		; $8B80CF: 85 53
-	lda.w $157F,y		; $8B80D1: B9 7F 15
-	sta.w $1606		; $8B80D4: 8D 06 16
-	bra CODE_8B80E1		; $8B80D7: 80 08
-CODE_8B80D9:		; M=16 X=16
-	stz.b $53		; $8B80D9: 64 53
-	lda.w $158F,y		; $8B80DB: B9 8F 15
-	sta.w $1606		; $8B80DE: 8D 06 16
-CODE_8B80E1:		; M=16 X=16
-	lda.b $53		; $8B80E1: A5 53
+.it2:
+	lda.w #4		; $8B80CC: A9 04 00
+	sta.b d0		; $8B80CF: 85 53
+	lda.w gst1,y		; $8B80D1: B9 7F 15
+	sta.w OptTeam2		; $8B80D4: 8D 06 16
+	bra .itx		; $8B80D7: 80 08
+.it1:
+	stz.b d0		; $8B80D9: 64 53
+	lda.w gst2,y		; $8B80DB: B9 8F 15
+	sta.w OptTeam2		; $8B80DE: 8D 06 16
+.itx:
+	lda.b d0		; $8B80E1: A5 53
 	clc		; $8B80E3: 18
-	adc.w $044F		; $8B80E4: 6D 4F 04
-	sta.b $53		; $8B80E7: 85 53
-	lda.b $57		; $8B80E9: A5 57
-	sta.w $014C		; $8B80EB: 8D 4C 01
-	lda.w $157F,y		; $8B80EE: B9 7F 15
-	sta.w $129A		; $8B80F1: 8D 9A 12
-	lda.w $158F,y		; $8B80F4: B9 8F 15
-	sta.w $129C		; $8B80F7: 8D 9C 12
-	asl.b $53		; $8B80FA: 06 53
-	asl.b $53		; $8B80FC: 06 53
-	lda.w #$8136		; $8B80FE: A9 36 81
-	sta.b $33		; $8B8101: 85 33
-	lda.w #$008B		; $8B8103: A9 8B 00
-	sta.b $35		; $8B8106: 85 35
-	ldy.b $53		; $8B8108: A4 53
-	lda.b [$33],y		; $8B810A: B7 33
-	sta.w $1296		; $8B810C: 8D 96 12
+	adc.w pojoy		; $8B80E4: 6D 4F 04
+	sta.b d0		; $8B80E7: 85 53
+	lda.b d1		; $8B80E9: A5 57
+	sta.w gamenum		; $8B80EB: 8D 4C 01
+	lda.w gst1,y		; $8B80EE: B9 7F 15
+	sta.w HomeTeam		; $8B80F1: 8D 9A 12
+	lda.w gst2,y		; $8B80F4: B9 8F 15
+	sta.w VisTeam		; $8B80F7: 8D 9C 12
+	asl.b d0		; $8B80FA: 06 53
+	asl.b d0		; $8B80FC: 06 53
+	lda.w #.pojoylist		; $8B80FE: A9 36 81  .pojoylist entry (pojoy + 4 if the po team is team 2)
+	sta.b a0		; $8B8101: 85 33
+	lda.w #.pojoylist>>16		; $8B8103: A9 8B 00
+	sta.b a0+2		; $8B8106: 85 35
+	ldy.b d0		; $8B8108: A4 53
+	lda.b [a0],y		; $8B810A: B7 33
+	sta.w cont1team		; $8B810C: 8D 96 12
 	iny		; $8B810F: C8
 	iny		; $8B8110: C8
-	lda.b [$33],y		; $8B8111: B7 33
-	sta.w $1298		; $8B8113: 8D 98 12
+	lda.b [a0],y		; $8B8111: B7 33
+	sta.w cont2team		; $8B8113: 8D 98 12
 	rtl		; $8B8116: 6B
-CODE_8B8117:		; M=16 X=16
-	lda.w $1602		; $8B8117: AD 02 16
+.fjnpo:
+	lda.w OptPlayers		; $8B8117: AD 02 16  regular season: .noplist by OptPlayers
 	asl a		; $8B811A: 0A
 	asl a		; $8B811B: 0A
-	sta.b $53		; $8B811C: 85 53
+	sta.b d0		; $8B811C: 85 53
 	tay		; $8B811E: A8
-	lda.w #$8156		; $8B811F: A9 56 81
-	sta.b $33		; $8B8122: 85 33
-	lda.w #$008B		; $8B8124: A9 8B 00
-	sta.b $35		; $8B8127: 85 35
-	lda.b [$33],y		; $8B8129: B7 33
-	sta.w $1296		; $8B812B: 8D 96 12
+	lda.w #.noplist		; $8B811F: A9 56 81
+	sta.b a0		; $8B8122: 85 33
+	lda.w #.noplist>>16		; $8B8124: A9 8B 00
+	sta.b a0+2		; $8B8127: 85 35
+	lda.b [a0],y		; $8B8129: B7 33
+	sta.w cont1team		; $8B812B: 8D 96 12
 	iny		; $8B812E: C8
 	iny		; $8B812F: C8
-	lda.b [$33],y		; $8B8130: B7 33
-	sta.w $1298		; $8B8132: 8D 98 12
+	lda.b [a0],y		; $8B8130: B7 33
+	sta.w cont2team		; $8B8132: 8D 98 12
 	rtl		; $8B8135: 6B
-	db $01,$00,$00,$00,$01,$00,$01,$00,$01,$00,$02,$00,$02,$00,$01,$00	; $8B8136
-	db $02,$00,$00,$00,$02,$00,$02,$00,$02,$00,$01,$00,$01,$00,$02,$00	; $8B8146
-	db $00,$00,$00,$00,$01,$00,$00,$00,$02,$00,$00,$00,$01,$00,$01,$00	; $8B8156
-	db $01,$00,$02,$00	; $8B8166
-CODE_8B816A:		; M=16 X=16
-	jsl.l $88F2B0		; $8B816A: 22 B0 F2 88
-	jml.l $83FA87		; $8B816E: 5C 87 FA 83
-CODE_8B8172:		; M=16 X=16
-	jsl.l $8FDC0D		; $8B8172: 22 0D DC 8F
-	jml.l $89FD0C		; $8B8176: 5C 0C FD 89
-CODE_8B817A:		; M=16 X=16
-	lda.w #$0200		; $8B817A: A9 00 02
-	sta.b $53		; $8B817D: 85 53
-	jsl.l $80F5FA		; $8B817F: 22 FA F5 80
-	lda.b $53		; $8B8183: A5 53
+.pojoylist:		;92G .pojoylist: cont1team, cont2team by pojoy 0-3 (the po team as team 1), then as team 2
+	dw 1,0		; $8B8136
+	dw 1,1		; $8B813A
+	dw 1,2		; $8B813E
+	dw 2,1		; $8B8142
+	dw 2,0		; $8B8146
+	dw 2,2		; $8B814A
+	dw 2,1		; $8B814E
+	dw 1,2		; $8B8152
+.noplist:		;92G .noplist: cont1team, cont2team by OptPlayers
+	dw 0,0		; $8B8156
+	dw 1,0		; $8B815A
+	dw 2,0		; $8B815E
+	dw 1,1		; $8B8162
+	dw 1,2		; $8B8166
+Opening:		;auto: CODE_8B816A (from Start, $80C407). 92G Opening: TitleScreen, then Restart (93G Opening2: the setup screens)
+	jsl.l TitleScreen		; $8B816A: 22 B0 F2 88
+	jml.l $83FA87		; $8B816E: 5C 87 FA 83  Restart
+Opening4:		;auto: CODE_8B8172 (from ContinuePlayoffs, far8B8172). 92G Opening4: ScoutingReport ($8FDC0D), then StartGame
+	jsl.l $8FDC0D		; $8B8172: 22 0D DC 8F  bank $8F: 93G ScoutingReport
+	jml.l StartGame		; $8B8176: 5C 0C FD 89
+ReadPassBits:		;auto: CODE_8B817A. 92G ReadPassBits: passbits back into the playoff state (SuperDiv by each range, the reverse of WritePassBits); a bad 9-bit checksum sets postarts -1
+	lda.w #512		; $8B817A: A9 00 02  checksum first (range 512)
+	sta.b d0		; $8B817D: 85 53
+	jsl.l SuperDiv		; $8B817F: 22 FA F5 80
+	lda.b d0		; $8B8183: A5 53
 	pha		; $8B8185: 48
-	stz.b $6F		; $8B8186: 64 6F
-	lda.w #$0007		; $8B8188: A9 07 00
-	sta.b $5B		; $8B818B: 85 5B
-	lda.w #$000E		; $8B818D: A9 0E 00
-	sta.b $37		; $8B8190: 85 37
-CODE_8B8192:		; M=16 X=16
-	ldy.b $37		; $8B8192: A4 37
-	lda.w $15EF,y		; $8B8194: B9 EF 15
+	stz.b d7		; $8B8186: 64 6F
+	lda.w #7		; $8B8188: A9 07 00
+	sta.b d2		; $8B818B: 85 5B
+	lda.w #14		; $8B818D: A9 0E 00
+	sta.b a1		; $8B8190: 85 37
+.gs:		;the 8 series scores, range 5
+	ldy.b a1		; $8B8192: A4 37
+	lda.w gsflags,y		; $8B8194: B9 EF 15  gsftf off
 	and.w #$FFFB		; $8B8197: 29 FB FF
-	sta.w $15EF,y		; $8B819A: 99 EF 15
-	lda.w #$0005		; $8B819D: A9 05 00
-	sta.b $53		; $8B81A0: 85 53
-	jsl.l $8B8247		; $8B81A2: 22 47 82 8B
-	lda.b $53		; $8B81A6: A5 53
-	ldy.b $37		; $8B81A8: A4 37
-	sta.w $15AF,y		; $8B81AA: 99 AF 15
-	cmp.w #$0004		; $8B81AD: C9 04 00
-	bne CODE_8B81BB		; $8B81B0: D0 09
-	lda.w $15EF,y		; $8B81B2: B9 EF 15
+	sta.w gsflags,y		; $8B819A: 99 EF 15
+	lda.w #5		; $8B819D: A9 05 00
+	sta.b d0		; $8B81A0: 85 53
+	jsl.l .sd		; $8B81A2: 22 47 82 8B
+	lda.b d0		; $8B81A6: A5 53
+	ldy.b a1		; $8B81A8: A4 37
+	sta.w gspobwins,y		; $8B81AA: 99 AF 15
+	cmp.w #4		; $8B81AD: C9 04 00  4 wins: gsftf (series over)
+	bne .g1		; $8B81B0: D0 09
+	lda.w gsflags,y		; $8B81B2: B9 EF 15
 	ora.w #$0004		; $8B81B5: 09 04 00
-	sta.w $15EF,y		; $8B81B8: 99 EF 15
-CODE_8B81BB:		; M=16 X=16
-	lda.w #$0005		; $8B81BB: A9 05 00
-	sta.b $53		; $8B81BE: 85 53
-	jsl.l $8B8247		; $8B81C0: 22 47 82 8B
-	ldy.b $37		; $8B81C4: A4 37
-	lda.b $53		; $8B81C6: A5 53
-	sta.w $159F,y		; $8B81C8: 99 9F 15
-	cmp.w #$0004		; $8B81CB: C9 04 00
-	bne CODE_8B81D9		; $8B81CE: D0 09
-	lda.w $15EF,y		; $8B81D0: B9 EF 15
+	sta.w gsflags,y		; $8B81B8: 99 EF 15
+.g1:
+	lda.w #5		; $8B81BB: A9 05 00
+	sta.b d0		; $8B81BE: 85 53
+	jsl.l .sd		; $8B81C0: 22 47 82 8B
+	ldy.b a1		; $8B81C4: A4 37
+	lda.b d0		; $8B81C6: A5 53
+	sta.w gspotwins,y		; $8B81C8: 99 9F 15
+	cmp.w #4		; $8B81CB: C9 04 00
+	bne .g2		; $8B81CE: D0 09
+	lda.w gsflags,y		; $8B81D0: B9 EF 15
 	ora.w #$0004		; $8B81D3: 09 04 00
-	sta.w $15EF,y		; $8B81D6: 99 EF 15
-CODE_8B81D9:		; M=16 X=16
-	dec.b $37		; $8B81D9: C6 37
-	dec.b $37		; $8B81DB: C6 37
-	dec.b $5B		; $8B81DD: C6 5B
-	bpl CODE_8B8192		; $8B81DF: 10 B1
+	sta.w gsflags,y		; $8B81D6: 99 EF 15
+.g2:
+	dec.b a1		; $8B81D9: C6 37
+	dec.b a1		; $8B81DB: C6 37
+	dec.b d2		; $8B81DD: C6 5B
+	bpl .gs		; $8B81DF: 10 B1
 	lda.w #$4000		; $8B81E1: A9 00 40
-	sta.b $53		; $8B81E4: 85 53
-	jsl.l $8B8247		; $8B81E6: 22 47 82 8B
-	lda.b $53		; $8B81EA: A5 53
-	sta.w $08E7		; $8B81EC: 8D E7 08
-	lda.w #$0004		; $8B81EF: A9 04 00
-	sta.b $53		; $8B81F2: 85 53
-	jsl.l $8B8247		; $8B81F4: 22 47 82 8B
-	lda.b $53		; $8B81F8: A5 53
-	sta.w $044F		; $8B81FA: 8D 4F 04
-	lda.w #$0010		; $8B81FD: A9 10 00
-	sta.b $53		; $8B8200: 85 53
-	jsl.l $8B8247		; $8B8202: 22 47 82 8B
-	lda.b $53		; $8B8206: A5 53
-	sta.w $0473		; $8B8208: 8D 73 04
-	lda.w #$0004		; $8B820B: A9 04 00
-	sta.b $53		; $8B820E: 85 53
-	jsl.l $8B8247		; $8B8210: 22 47 82 8B
-	lda.b $53		; $8B8214: A5 53
-	sta.w $014A		; $8B8216: 8D 4A 01
-	lda.w #$0008		; $8B8219: A9 08 00
-	sta.b $53		; $8B821C: 85 53
-	jsl.l $8B8247		; $8B821E: 22 47 82 8B
-	lda.b $53		; $8B8222: A5 53
-	sta.b $D6		; $8B8224: 85 D6
-	lda.w #$0020		; $8B8226: A9 20 00
-	sta.b $53		; $8B8229: 85 53
-	jsl.l $8B8247		; $8B822B: 22 47 82 8B
-	lda.b $53		; $8B822F: A5 53
-	sta.w $0451		; $8B8231: 8D 51 04
-	lda.b $6F		; $8B8234: A5 6F
+	sta.b d0		; $8B81E4: 85 53
+	jsl.l .sd		; $8B81E6: 22 47 82 8B
+	lda.b d0		; $8B81EA: A5 53
+	sta.w WinBits		; $8B81EC: 8D E7 08
+	lda.w #4		; $8B81EF: A9 04 00
+	sta.b d0		; $8B81F2: 85 53
+	jsl.l .sd		; $8B81F4: 22 47 82 8B
+	lda.b d0		; $8B81F8: A5 53
+	sta.w pojoy		; $8B81FA: 8D 4F 04
+	lda.w #16		; $8B81FD: A9 10 00
+	sta.b d0		; $8B8200: 85 53
+	jsl.l .sd		; $8B8202: 22 47 82 8B
+	lda.b d0		; $8B8206: A5 53
+	sta.w potreeteam		; $8B8208: 8D 73 04
+	lda.w #4		; $8B820B: A9 04 00
+	sta.b d0		; $8B820E: 85 53
+	jsl.l .sd		; $8B8210: 22 47 82 8B
+	lda.b d0		; $8B8214: A5 53
+	sta.w gamelevel		; $8B8216: 8D 4A 01
+	lda.w #8		; $8B8219: A9 08 00
+	sta.b d0		; $8B821C: 85 53
+	jsl.l .sd		; $8B821E: 22 47 82 8B
+	lda.b d0		; $8B8222: A5 53
+	sta.b bosgames		; $8B8224: 85 D6
+	lda.w #32		; $8B8226: A9 20 00
+	sta.b d0		; $8B8229: 85 53
+	jsl.l .sd		; $8B822B: 22 47 82 8B
+	lda.b d0		; $8B822F: A5 53
+	sta.w postarts		; $8B8231: 8D 51 04
+	lda.b d7		; $8B8234: A5 6F
 	and.w #$01FF		; $8B8236: 29 FF 01
-	sta.b $73		; $8B8239: 85 73
+	sta.b tmp0		; $8B8239: 85 73
 	pla		; $8B823B: 68
-	cmp.b $73		; $8B823C: C5 73
-	beq CODE_8B8246		; $8B823E: F0 06
-	lda.w #$FFFF		; $8B8240: A9 FF FF
-	sta.w $0451		; $8B8243: 8D 51 04
-CODE_8B8246:		; M=16 X=16
+	cmp.b tmp0		; $8B823C: C5 73
+	beq .rtl		; $8B823E: F0 06
+	lda.w #$FFFF		; $8B8240: A9 FF FF  bad password
+	sta.w postarts		; $8B8243: 8D 51 04
+.rtl:
 	rtl		; $8B8246: 6B
-CODE_8B8247:		; M=16 X=16
-	jsl.l $80F5FA		; $8B8247: 22 FA F5 80
-	lda.b $6F		; $8B824B: A5 6F
+.sd:		;92G .sd: d0 = passbits mod d0 (SuperDiv), added to the checksum d7
+	jsl.l SuperDiv		; $8B8247: 22 FA F5 80
+	lda.b d7		; $8B824B: A5 6F
 	clc		; $8B824D: 18
-	adc.b $53		; $8B824E: 65 53
-	sta.b $6F		; $8B8250: 85 6F
+	adc.b d0		; $8B824E: 65 53
+	sta.b d7		; $8B8250: 85 6F
 	rtl		; $8B8252: 6B
-	db $AD,$4C,$01,$0A,$85,$53,$64,$33,$A8,$AD,$D6,$13,$99,$CF,$15,$AD	; $8B8253
-	db $D8,$13,$99,$DF,$15,$22,$A4,$D5,$85,$A5,$57,$0A,$85,$33,$A5,$D6	; $8B8263
-	db $C9,$07,$00,$D0,$03,$4C,$9C,$83,$A4,$33,$A9,$04,$00,$D9,$9F,$15	; $8B8273
-	db $F0,$2C,$D9,$AF,$15,$F0,$27,$64,$5F,$B9,$EF,$15,$89,$01,$00,$F0	; $8B8283
-	db $05,$A9,$10,$00,$85,$5F,$B9,$CF,$15,$D9,$DF,$15,$10,$07,$A5,$5F	; $8B8293
-	db $49,$10,$00,$85,$5F,$A5,$33,$18,$65,$5F,$AA,$FE,$9F,$15,$C6,$33	; $8B82A3
-	db $C6,$33,$C6,$57,$10,$C2,$E6,$D6,$A5,$D6,$C9,$07,$00,$D0,$03,$4C	; $8B82B3
-	db $4A,$83,$AD,$4C,$01,$0A,$85,$33,$A8,$A9,$04,$00,$D9,$9F,$15,$F0	; $8B82C3
-	db $08,$D9,$AF,$15,$F0,$03,$4C,$9B,$83,$AD,$4A,$01,$38,$E9,$03,$00	; $8B82D3
-	db $30,$04,$70,$04,$80,$61,$70,$5F,$22,$A4,$D5,$85,$A5,$57,$0A,$85	; $8B82E3
-	db $33,$A4,$33,$A5,$57,$CD,$4C,$01,$F0,$2E,$A9,$04,$00,$D9,$9F,$15	; $8B82F3
-	db $F0,$26,$D9,$AF,$15,$F0,$21,$B9,$9F,$15,$1A,$99,$9F,$15,$A9,$C8	; $8B8303
-	db $00,$22,$8B,$AE,$80,$4A,$90,$D9,$B9,$9F,$15,$3A,$99,$9F,$15,$B9	; $8B8313
-	db $AF,$15,$1A,$99,$AF,$15,$80,$C9,$C6,$33,$C6,$33,$C6,$57,$10,$C1	; $8B8323
-	db $22,$A9,$84,$88,$A0,$0E,$00,$B9,$24,$16,$99,$34,$16,$88,$88,$10	; $8B8333
-	db $F6,$A9,$04,$00,$0C,$90,$12,$64,$D6,$22,$A4,$D5,$85,$A5,$57,$0A	; $8B8343
-	db $85,$33,$64,$5F,$A4,$33,$B9,$9F,$15,$C9,$04,$00,$F0,$0A,$A5,$57	; $8B8353
-	db $0A,$AA,$BF,$39,$FC,$82,$04,$5F,$A9,$00,$00,$99,$9F,$15,$99,$AF	; $8B8363
-	db $15,$C6,$33,$C6,$33,$C6,$57,$10,$DB,$A5,$5B,$0A,$AA,$BF,$39,$FC	; $8B8373
-	db $82,$85,$7D,$3A,$2D,$E7,$08,$8D,$E7,$08,$A5,$5F,$85,$83,$22,$1C	; $8B8383
-	db $87,$8D,$0C,$E7,$08,$EE,$4A,$01,$6B,$64,$5F,$A4,$33,$B9,$DF,$15	; $8B8393
-	db $D9,$CF,$15,$90,$0A,$A5,$57,$0A,$AA,$BF,$39,$FC,$82,$04,$5F,$B9	; $8B83A3
-	db $EF,$15,$89,$01,$00,$F0,$0C,$A5,$57,$0A,$AA,$BF,$39,$FC,$82,$45	; $8B83B3
-	db $5F,$85,$5F,$C6,$33,$C6,$33,$C6,$57,$10,$D0,$A5,$5B,$0A,$AA,$BF	; $8B83C3
-	db $39,$FC,$82,$85,$7D,$3A,$2D,$E7,$08,$8D,$E7,$08,$A5,$5F,$85,$83	; $8B83D3
-	db $22,$1C,$87,$8D,$0C,$E7,$08,$EE,$4A,$01,$6B,$40,$00,$15,$02,$80	; $8B83E3
-	db $03,$8C,$00,$E0,$08,$00,$00,$05,$00,$0D,$00,$18,$00,$1F,$00,$24	; $8B83F3
-	db $00,$2A,$00,$32,$00,$39,$00,$41,$00,$4A,$00,$53,$00,$5B,$00,$62	; $8B8403
-	db $00,$6C,$00,$75,$00,$7C,$00,$84,$00,$8E,$00,$98,$00,$A1,$00,$A7	; $8B8413
-	db $00,$B1,$00,$BB,$00,$C4,$00,$CD,$00,$D4,$00,$DD,$00,$E5,$00,$EA	; $8B8423
-	db $00,$F4,$00,$FD,$00,$04,$01,$07,$01,$0F,$01,$16,$01,$1B,$01,$24	; $8B8433
-	db $01,$2F,$01,$3A,$01,$41,$01,$4B,$01,$55,$01,$5D,$01,$64,$01,$6D	; $8B8443
-	db $01,$77,$01,$80,$01,$87,$01,$8E,$01,$98,$01,$A0,$01,$A7,$01,$B0	; $8B8453
-	db $01,$BB,$01,$C7,$01,$CF,$01,$D7,$01,$E2,$01,$EA,$01,$F2,$01,$F9	; $8B8463
-	db $01,$03,$02,$0E,$02,$15,$02,$F4,$EF,$68,$29,$04,$F7,$26,$0B,$04	; $8B8473
-	db $EF,$25,$0B,$05,$E7,$24,$0B,$05,$EF,$23,$0B,$F1,$F1,$66,$29,$09	; $8B8483
-	db $01,$22,$0B,$01,$01,$21,$0B,$F9,$01,$20,$0B,$F1,$01,$1F,$0B,$01	; $8B8493
-	db $F1,$64,$29,$09,$E1,$1E,$0B,$09,$E9,$1D,$0B,$F4,$F7,$62,$29,$04	; $8B84A3
-	db $F7,$1C,$0B,$04,$FF,$1B,$0B,$F4,$07,$1A,$0B,$FC,$07,$19,$0B,$04	; $8B84B3
-	db $07,$18,$0B,$F4,$EF,$17,$0B,$03,$EF,$16,$0B,$03,$0F,$15,$0B,$03	; $8B84C3
-	db $17,$14,$0B,$FB,$19,$13,$0B,$F5,$F5,$60,$29,$05,$FD,$12,$0B,$05	; $8B84D3
-	db $F5,$11,$0B,$0D,$E5,$10,$0B,$0D,$ED,$0F,$0B,$0D,$F5,$0E,$0B,$0B	; $8B84E3
-	db $DD,$0D,$0B,$FD,$F0,$4E,$29,$F5,$E9,$0C,$0B,$F5,$F1,$0B,$0B,$0D	; $8B84F3
-	db $E0,$0A,$0B,$0D,$E8,$09,$0B,$EF,$F1,$4C,$29,$FF,$F1,$4A,$29,$F6	; $8B8503
-	db $01,$08,$0B,$FE,$01,$07,$0B,$01,$E1,$06,$0B,$01,$E9,$05,$0B,$ED	; $8B8513
-	db $00,$04,$0B,$F5,$00,$03,$0B,$FD,$00,$02,$0B,$FC,$F0,$48,$29,$0C	; $8B8523
-	db $F3,$01,$0B,$F6,$08,$46,$29,$E6,$15,$00,$0B,$EE,$15,$FF,$0A,$F3	; $8B8533
-	db $F5,$44,$29,$03,$FD,$D5,$48,$03,$F5,$FE,$0A,$F3,$ED,$FD,$0A,$03	; $8B8543
-	db $DD,$FC,$0A,$03,$E5,$FB,$0A,$03,$ED,$FA,$0A,$F5,$E5,$42,$29,$05	; $8B8553
-	db $E5,$F9,$0A,$05,$ED,$F8,$0A,$F5,$F5,$F7,$0A,$FD,$F5,$F6,$0A,$05	; $8B8563
-	db $F5,$F5,$0A,$00,$FD,$F4,$0A,$08,$FD,$F3,$0A,$F1,$EF,$40,$29,$01	; $8B8573
-	db $EF,$F2,$0A,$01,$F7,$F1,$0A,$F1,$FF,$F0,$0A,$F9,$FF,$EF,$0A,$01	; $8B8583
-	db $FF,$EE,$0A,$09,$F7,$ED,$0A,$09,$FF,$EC,$0A,$FE,$E7,$EB,$0A,$EB	; $8B8593
-	db $F1,$2E,$29,$EB,$01,$EA,$0A,$F3,$01,$E9,$0A,$FB,$F9,$2C,$29,$0B	; $8B85A3
-	db $01,$E8,$0A,$0B,$F9,$E7,$0A,$DB,$FF,$E6,$0A,$E3,$FF,$E5,$0A,$DB	; $8B85B3
-	db $F7,$E4,$0A,$F3,$F4,$2A,$29,$FB,$04,$E3,$0A,$F5,$EC,$E2,$0A,$FD	; $8B85C3
-	db $EC,$E1,$0A,$03,$F9,$E0,$0A,$03,$01,$DF,$0A,$FD,$E8,$DE,$0A,$F4	; $8B85D3
-	db $02,$DD,$0A,$F5,$E8,$28,$29,$F5,$F8,$DC,$0A,$FD,$F8,$DB,$0A,$FD	; $8B85E3
-	db $00,$DA,$0A,$05,$F6,$D9,$0A,$05,$FE,$13,$49,$05,$EB,$D8,$0A,$F1	; $8B85F3
-	db $EF,$26,$29,$01,$EF,$D7,$0A,$01,$F7,$D6,$0A,$F1,$FF,$D5,$0A,$F9	; $8B8603
-	db $FF,$D4,$0A,$01,$FF,$D3,$0A,$01,$07,$D2,$0A,$F9,$DF,$D1,$0A,$F9	; $8B8613
-	db $E7,$D0,$0A,$09,$FD,$CF,$0A,$E2,$EA,$CE,$0A,$E2,$F2,$CD,$0A,$EA	; $8B8623
-	db $F2,$24,$29,$FA,$FA,$CC,$0A,$FA,$F2,$CB,$0A,$FA,$EA,$CA,$0A,$02	; $8B8633
-	db $FA,$22,$29,$FA,$02,$C9,$0A,$06,$0A,$C8,$0A,$F5,$F3,$20,$29,$FD	; $8B8643
-	db $03,$C7,$0A,$F5,$EB,$C6,$0A,$FD,$EB,$C5,$0A,$FD,$E3,$C4,$0A,$05	; $8B8653
-	db $F6,$C3,$0A,$05,$FE,$C2,$0A,$F4,$EB,$0E,$29,$04,$03,$C1,$0A,$04	; $8B8663
-	db $FB,$C0,$0A,$04,$F3,$BF,$0A,$04,$EB,$BE,$0A,$F4,$FB,$0C,$29,$FC	; $8B8673
-	db $E3,$BD,$0A,$EC,$ED,$BC,$0A,$F5,$F2,$0A,$29,$05,$F2,$BB,$0A,$05	; $8B8683
-	db $FA,$BA,$0A,$F5,$02,$B9,$0A,$FD,$02,$B8,$0A,$05,$02,$B7,$0A,$FD	; $8B8693
-	db $EA,$B6,$0A,$ED,$E3,$B5,$0A,$ED,$EB,$B4,$0A,$ED,$F3,$B3,$0A,$F5	; $8B86A3
-	db $F2,$08,$29,$05,$0A,$B2,$0A,$05,$02,$B1,$0A,$05,$FA,$B0,$0A,$05	; $8B86B3
-	db $F2,$AF,$0A,$F5,$02,$06,$29,$ED,$F2,$AE,$0A,$F6,$E2,$AD,$0A,$F6	; $8B86C3
-	db $EA,$AC,$0A,$FE,$E2,$AB,$0A,$F3,$F5,$04,$29,$03,$F5,$AA,$0A,$03	; $8B86D3
-	db $FD,$A9,$0A,$F3,$05,$A8,$0A,$FB,$05,$A7,$0A,$03,$05,$A6,$0A,$FB	; $8B86E3
-	db $ED,$A5,$0A,$F1,$E6,$A4,$0A,$F1,$EE,$A3,$0A,$F1,$F7,$02,$29,$F9	; $8B86F3
-	db $E9,$00,$29,$01,$F9,$A2,$0A,$EF,$E4,$A1,$0A,$EF,$EC,$A0,$0A,$F5	; $8B8703
-	db $EB,$9F,$0A,$F5,$EF,$EE,$28,$F5,$FF,$9E,$0A,$FD,$FF,$9D,$0A,$05	; $8B8713
-	db $EA,$9C,$0A,$05,$F2,$9B,$0A,$05,$FA,$9A,$0A,$ED,$FA,$99,$0A,$F8	; $8B8723
-	db $DA,$98,$0A,$F8,$E2,$97,$0A,$F8,$EA,$96,$0A,$FC,$F1,$EC,$28,$0C	; $8B8733
-	db $FA,$95,$0A,$05,$E9,$94,$0A,$0D,$E2,$93,$0A,$15,$E2,$92,$0A,$FC	; $8B8743
-	db $01,$91,$0A,$F4,$F8,$90,$0A,$F4,$00,$8F,$0A,$F4,$08,$8E,$0A,$EC	; $8B8753
-	db $00,$8D,$0A,$F1,$F3,$EA,$28,$F1,$03,$8C,$0A,$F9,$03,$8B,$0A,$01	; $8B8763
-	db $EB,$8A,$0A,$01,$F3,$89,$0A,$01,$FB,$88,$0A,$F1,$DB,$87,$0A,$F1	; $8B8773
-	db $E3,$86,$0A,$F1,$EB,$85,$0A,$F3,$E9,$E8,$28,$F3,$F9,$84,$0A,$FB	; $8B8783
-	db $F9,$83,$0A,$03,$E9,$82,$0A,$03,$F1,$81,$0A,$EB,$F9,$80,$0A,$EE	; $8B8793
-	db $01,$7F,$0A,$F6,$01,$7E,$0A,$EB,$E8,$7D,$0A,$FE,$EC,$E6,$28,$FE	; $8B87A3
-	db $FC,$7C,$0A,$06,$FC,$7B,$0A,$EE,$F5,$E4,$28,$F6,$DC,$7A,$0A,$F6	; $8B87B3
-	db $E4,$79,$0A,$F6,$EC,$78,$0A,$EC,$F8,$E2,$28,$FC,$00,$77,$0A,$FC	; $8B87C3
-	db $F8,$76,$0A,$04,$F0,$E0,$28,$04,$00,$75,$0A,$0C,$00,$74,$0A,$14	; $8B87D3
-	db $F5,$73,$0A,$1C,$F5,$72,$0A,$1C,$FD,$71,$0A,$F2,$F7,$CE,$28,$02	; $8B87E3
-	db $FF,$70,$0A,$02,$F7,$6F,$0A,$FA,$E7,$6E,$0A,$FA,$EF,$6D,$0A,$02	; $8B87F3
-	db $DF,$6C,$0A,$02,$E7,$6B,$0A,$02,$EF,$6A,$0A,$F3,$F0,$CC,$28,$03	; $8B8803
-	db $E8,$69,$4A,$03,$F0,$68,$4A,$F6,$E6,$67,$0A,$F6,$EE,$66,$0A,$F7	; $8B8813
-	db $EC,$CA,$28,$07,$F4,$65,$0A,$07,$EC,$64,$0A,$EF,$F4,$63,$0A,$F5	; $8B8823
-	db $FC,$62,$0A,$FD,$FC,$61,$0A,$05,$FC,$60,$0A,$00,$D4,$5F,$0A,$00	; $8B8833
-	db $DC,$5E,$0A,$00,$E4,$5D,$0A,$F7,$FC,$C8,$28,$07,$FC,$C6,$28,$17	; $8B8843
-	db $06,$5C,$0A,$17,$0E,$5B,$0A,$FA,$0C,$5A,$0A,$EF,$F4,$59,$0A,$F7	; $8B8853
-	db $F4,$58,$0A,$FF,$F4,$57,$0A,$F7,$EC,$56,$0A,$F2,$F6,$C4,$28,$02	; $8B8863
-	db $FE,$55,$49,$02,$F6,$45,$49,$02,$EE,$55,$0A,$FD,$D9,$54,$0A,$FD	; $8B8873
-	db $E1,$53,$0A,$FD,$E9,$52,$0A,$F8,$E7,$C2,$28,$F8,$F7,$C0,$28,$FF	; $8B8883
-	db $DF,$51,$0A,$F8,$F2,$AE,$28,$F8,$02,$50,$0A,$00,$02,$4F,$0A,$08	; $8B8893
-	db $02,$4E,$0A,$F0,$F2,$4D,$0A,$F4,$EA,$4C,$0A,$FC,$EA,$4B,$0A,$F5	; $8B88A3
-	db $E2,$4A,$0A,$F8,$FF,$AC,$28,$F2,$EF,$AA,$28,$02,$F7,$49,$0A,$02	; $8B88B3
-	db $EF,$48,$0A,$F8,$E7,$47,$0A,$F0,$E5,$46,$0A,$08,$07,$45,$0A,$F8	; $8B88C3
-	db $F2,$A8,$28,$F8,$02,$44,$0A,$00,$02,$43,$0A,$F4,$EA,$42,$0A,$FC	; $8B88D3
-	db $EA,$41,$0A,$F1,$FF,$40,$0A,$F9,$FF,$3F,$0A,$01,$FF,$3E,$0A,$F5	; $8B88E3
-	db $E7,$A6,$28,$05,$E7,$3D,$0A,$05,$EF,$3C,$0A,$F5,$F7,$3B,$0A,$FD	; $8B88F3
-	db $F7,$3A,$0A,$05,$F7,$39,$0A,$0F,$E6,$38,$0A,$0F,$EE,$37,$0A,$F8	; $8B8903
-	db $EE,$A4,$28,$08,$F6,$36,$0A,$08,$EE,$35,$0A,$F8,$FE,$34,$0A,$00	; $8B8913
-	db $FE,$33,$0A,$F0,$F8,$32,$0A,$F0,$00,$31,$0A,$F8,$06,$30,$0A,$E8	; $8B8923
-	db $FF,$2F,$0A,$FA,$F1,$A2,$28,$0A,$F9,$2E,$0A,$0A,$F1,$2D,$0A,$FC	; $8B8933
-	db $01,$2C,$0A,$F4,$F7,$2B,$0A,$F4,$FF,$2A,$0A,$F4,$07,$29,$0A,$EC	; $8B8943
-	db $01,$28,$0A,$0D,$D9,$27,$0A,$0D,$E1,$26,$0A,$0D,$E9,$25,$0A,$FA	; $8B8953
-	db $EF,$A0,$28,$0A,$F7,$24,$0A,$0A,$EF,$23,$0A,$F5,$FF,$22,$0A,$FD	; $8B8963
-	db $FF,$21,$0A,$FC,$07,$20,$0A,$0D,$ED,$1F,$0A,$F2,$F7,$8E,$28,$02	; $8B8973
-	db $F7,$8C,$28,$12,$F7,$1E,$0A,$12,$FF,$1D,$0A,$1A,$F7,$1C,$0A,$FA	; $8B8983
-	db $EF,$1B,$0A,$02,$EF,$1A,$0A,$0A,$EF,$19,$0A,$FC,$E7,$18,$0A,$04	; $8B8993
-	db $E7,$17,$0A,$EB,$EE,$8A,$28,$03,$FE,$16,$0A,$FB,$FE,$15,$0A,$F3	; $8B89A3
-	db $FE,$14,$0A,$EB,$FE,$13,$0A,$FB,$EE,$88,$28,$0B,$F6,$86,$28,$1B	; $8B89B3
-	db $FE,$12,$0A,$1B,$F6,$11,$0A,$23,$F6,$10,$0A,$EA,$F7,$84,$28,$FA	; $8B89C3
-	db $F7,$82,$28,$0A,$F7,$0F,$0A,$0A,$FF,$0E,$0A,$12,$FA,$0D,$0A,$1A	; $8B89D3
-	db $FA,$0C,$0A,$22,$FA,$0B,$0A,$24,$F3,$0A,$0A,$ED,$F7,$80,$28,$FD	; $8B89E3
-	db $F7,$6E,$28,$0D,$FF,$09,$0A,$15,$F9,$08,$0A,$1D,$F9,$07,$0A,$F9	; $8B89F3
-	db $EF,$06,$0A,$01,$EF,$05,$0A,$FA,$EA,$6C,$28,$0A,$02,$04,$0A,$0A	; $8B8A03
-	db $FA,$03,$0A,$0A,$F2,$02,$0A,$0A,$EA,$01,$0A,$FA,$FA,$6A,$28,$12	; $8B8A13
-	db $FA,$00,$0A,$F2,$F2,$FF,$09,$F2,$FA,$FE,$09,$EF,$F0,$68,$28,$F7	; $8B8A23
-	db $00,$FD,$09,$FF,$F6,$66,$28,$0F,$F6,$FC,$09,$0F,$FE,$FB,$09,$FF	; $8B8A33
-	db $06,$FA,$09,$07,$06,$F9,$09,$0F,$06,$F8,$09,$0F,$0E,$F7,$09,$17	; $8B8A43
-	db $0B,$F6,$09,$ED,$F2,$64,$28,$FD,$FA,$62,$28,$03,$0A,$F5,$09,$1B	; $8B8A53
-	db $0A,$F4,$09,$13,$0A,$F3,$09,$0B,$0A,$F2,$09,$0D,$02,$F1,$09,$FC	; $8B8A63
-	db $F2,$F0,$09,$F5,$02,$EF,$09,$F5,$F6,$60,$28,$05,$FE,$EE,$09,$05	; $8B8A73
-	db $F6,$ED,$09,$01,$06,$EC,$09,$09,$0C,$EB,$09,$11,$0C,$EA,$09,$ED	; $8B8A83
-	db $F9,$E9,$09,$F4,$F2,$4E,$28,$04,$F2,$E8,$09,$04,$FA,$E7,$09,$F4	; $8B8A93
-	db $02,$E6,$09,$FC,$02,$E5,$09,$04,$02,$E4,$09,$F8,$0A,$E3,$09,$F8	; $8B8AA3
-	db $EC,$4C,$28,$F8,$FC,$4A,$28,$08,$EE,$E2,$09,$08,$00,$E1,$09,$F0	; $8B8AB3
-	db $FE,$E0,$09,$F0,$06,$DF,$09,$F5,$0E,$DE,$09,$F5,$16,$DD,$09,$F5	; $8B8AC3
-	db $1E,$DC,$09,$FD,$1C,$DB,$09,$F8,$EF,$48,$28,$F3,$FF,$46,$28,$03	; $8B8AD3
-	db $07,$DA,$09,$03,$FF,$D9,$09,$F9,$0F,$D8,$09,$F9,$17,$D7,$09,$F9	; $8B8AE3
-	db $1F,$D6,$09,$01,$1F,$D5,$09,$F7,$F6,$44,$28,$F7,$06,$D4,$09,$FF	; $8B8AF3
-	db $06,$D3,$09,$07,$06,$D2,$09,$F7,$0E,$D1,$09,$F7,$16,$D0,$09,$FF	; $8B8B03
-	db $19,$CF,$09,$F0,$F3,$42,$28,$00,$FB,$CE,$09,$00,$F3,$CD,$09,$E3	; $8B8B13
-	db $03,$CC,$09,$EB,$03,$CB,$09,$EB,$FB,$CA,$09,$F4,$EB,$C9,$09,$FC	; $8B8B23
-	db $EB,$C8,$09,$08,$FA,$C7,$09,$ED,$F7,$40,$28,$FD,$FF,$C6,$09,$FD	; $8B8B33
-	db $F7,$C5,$09,$05,$F7,$C4,$09,$E5,$FF,$C3,$09,$E5,$07,$C2,$09,$DF	; $8B8B43
-	db $08,$C1,$09,$DF,$10,$C0,$09,$00,$EF,$BF,$09,$08,$EF,$69,$48,$F8	; $8B8B53
-	db $EF,$BE,$09,$EB,$FD,$BD,$09,$03,$FD,$BC,$09,$FB,$FD,$BB,$09,$F3	; $8B8B63
-	db $FD,$BA,$09,$FB,$F5,$B9,$09,$03,$F5,$B8,$09,$0B,$F5,$B7,$09,$03	; $8B8B73
-	db $ED,$B6,$09,$E6,$05,$B5,$09,$F7,$05,$B4,$09,$E0,$0A,$B3,$09,$E0	; $8B8B83
-	db $12,$B2,$09,$F4,$F5,$2E,$28,$04,$FD,$B1,$09,$04,$F5,$B0,$09,$EC	; $8B8B93
-	db $FD,$AF,$09,$F7,$05,$AE,$09,$EB,$05,$AD,$09,$E6,$0D,$AC,$09,$E6	; $8B8BA3
-	db $15,$AB,$09,$E0,$F5,$2C,$28,$F0,$F5,$2A,$28,$00,$F5,$AA,$09,$00	; $8B8BB3
-	db $FD,$A9,$09,$08,$FD,$A8,$09,$D8,$F6,$A7,$09,$F0,$E5,$28,$28,$00	; $8B8BC3
-	db $ED,$A6,$09,$F2,$EF,$26,$28,$0A,$FF,$A5,$09,$02,$FF,$A4,$09,$FA	; $8B8BD3
-	db $FF,$A3,$09,$F2,$FF,$A2,$09,$02,$EF,$24,$28,$DA,$F4,$22,$28,$EA	; $8B8BE3
-	db $FC,$A1,$09,$EA,$F4,$A0,$09,$D2,$FC,$9F,$09,$D2,$04,$9E,$09,$EF	; $8B8BF3
-	db $F8,$20,$28,$FF,$F8,$0E,$28,$0F,$F8,$9D,$09,$0F,$00,$9C,$09,$D7	; $8B8C03
-	db $FC,$9B,$09,$DF,$FC,$9A,$09,$E7,$FC,$99,$09,$D1,$02,$98,$09,$FE	; $8B8C13
-	db $F0,$97,$49,$F6,$F0,$96,$49,$EE,$F8,$0C,$28,$FE,$F8,$0A,$28,$0E	; $8B8C23
-	db $F8,$95,$09,$0E,$00,$94,$09,$DE,$FF,$93,$09,$E6,$FF,$92,$09,$F8	; $8B8C33
-	db $E7,$08,$28,$F8,$F7,$06,$28,$F0,$EF,$91,$09,$F0,$F7,$90,$09,$E8	; $8B8C43
-	db $EF,$8F,$09,$08,$FA,$8E,$09,$08,$02,$8D,$09,$FB,$F8,$04,$28,$0B	; $8B8C53
-	db $00,$8C,$09,$0B,$F8,$8B,$09,$F3,$F8,$8A,$09,$03,$08,$89,$09,$DD	; $8B8C63
-	db $F0,$88,$09,$F5,$F0,$87,$09,$ED,$F0,$86,$09,$E5,$F0,$85,$09,$FD	; $8B8C73
-	db $F0,$84,$09,$EC,$F2,$02,$28,$FC,$FA,$83,$09,$FC,$F2,$82,$09,$FC	; $8B8C83
-	db $02,$81,$09,$04,$02,$80,$09,$0C,$02,$7F,$09,$04,$FA,$7E,$09,$04	; $8B8C93
-	db $0A,$7D,$09,$DF,$EB,$7C,$09,$E7,$EB,$7B,$09,$EF,$EB,$7A,$09,$F5	; $8B8CA3
-	db $F3,$00,$28,$FD,$03,$6F,$09,$05,$03,$6E,$09,$05,$FB,$6D,$09,$E8	; $8B8CB3
-	db $EB,$6C,$09,$F0,$EB,$6B,$09,$F8,$EB,$6A,$09,$27,$2C,$1D,$1F,$06	; $8B8CC3
-	db $07,$00,$07,$00,$07,$0F,$08,$03,$03,$03,$02,$2F,$2B,$1F,$18,$06	; $8B8CD3
-	db $05,$00,$07,$00,$0F,$00,$0F,$0C,$0F,$05,$0F,$C0,$C0,$88,$68,$14	; $8B8CE3
-	db $E4,$34,$D4,$E2,$22,$C2,$C2,$02,$02,$1C,$1C,$00,$C0,$80,$F8,$08	; $8B8CF3
-	db $FC,$08,$FC,$1C,$FE,$3C,$FE,$FC,$FE,$E1,$FE,$07,$07,$00,$00,$00	; $8B8D03
-	db $00,$00,$00,$00,$00,$00,$06,$01,$0F,$00,$0F,$07,$07,$00,$00,$00	; $8B8D13
-	db $00,$00,$00,$00,$00,$00,$00,$01,$01,$00,$00,$00,$E0,$E0,$FF,$38	; $8B8D23
-	db $3B,$38,$39,$3C,$3C,$3F,$3E,$3E,$2D,$9C,$93,$E0,$E0,$F8,$F8,$24	; $8B8D33
-	db $3C,$06,$3E,$03,$3F,$01,$3F,$32,$3F,$9C,$9F,$E3,$62,$81,$81,$80	; $8B8D43
-	db $00,$CF,$4F,$FE,$FE,$FB,$F8,$DC,$C0,$27,$30,$1D,$FF,$7E,$FF,$FF	; $8B8D53
-	db $FF,$B0,$FF,$80,$FF,$80,$FF,$C3,$FC,$2F,$30,$00,$00,$80,$80,$80	; $8B8D63
-	db $80,$40,$00,$E4,$04,$52,$02,$D9,$01,$DC,$40,$00,$00,$00,$80,$00	; $8B8D73
-	db $C0,$20,$C0,$7C,$84,$FE,$02,$FF,$01,$BE,$03,$00,$00,$00,$00,$00	; $8B8D83
-	db $00,$00,$00,$00,$00,$80,$80,$18,$18,$02,$02,$00,$01,$00,$01,$00	; $8B8D93
-	db $01,$01,$00,$01,$00,$80,$80,$18,$18,$02,$02,$CF,$00,$39,$80,$07	; $8B8DA3
-	db $84,$29,$48,$24,$44,$10,$40,$00,$00,$10,$00,$1F,$E0,$7F,$80,$7B	; $8B8DB3
-	db $80,$37,$C0,$33,$C1,$3B,$C3,$B8,$79,$60,$78,$0C,$0C,$18,$18,$1C	; $8B8DC3
-	db $0C,$1F,$13,$17,$1C,$0E,$0F,$00,$07,$00,$0F,$02,$0E,$07,$1F,$13	; $8B8DD3
-	db $1F,$1C,$0F,$1F,$03,$0E,$01,$00,$07,$00,$0F,$00,$00,$00,$00,$00	; $8B8DE3
-	db $00,$00,$00,$00,$00,$00,$E0,$28,$C8,$78,$A8,$00,$00,$00,$00,$00	; $8B8DF3
-	db $00,$00,$00,$00,$00,$00,$F0,$10,$F8,$10,$FC,$0A,$08,$0F,$08,$D7	; $8B8E03
-	db $D0,$FE,$70,$F6,$68,$21,$24,$13,$04,$D3,$C4,$F1,$FE,$F3,$FC,$23	; $8B8E13
-	db $FC,$87,$F8,$87,$F8,$03,$3C,$13,$0C,$D3,$CC,$00,$00,$00,$00,$00	; $8B8E23
-	db $00,$C0,$C0,$80,$80,$41,$46,$40,$7F,$60,$6F,$80,$00,$80,$00,$C0	; $8B8E33
-	db $00,$00,$00,$40,$00,$80,$00,$80,$00,$90,$30,$00,$00,$00,$00,$00	; $8B8E43
-	db $00,$00,$00,$00,$01,$00,$01,$00,$1E,$03,$E3,$00,$00,$00,$00,$00	; $8B8E53
-	db $00,$00,$00,$00,$00,$01,$01,$1E,$1E,$E3,$E3,$22,$3C,$22,$3C,$64	; $8B8E63
-	db $68,$30,$F0,$01,$E1,$11,$F1,$16,$F8,$E8,$E7,$01,$3F,$01,$3F,$03	; $8B8E73
-	db $7F,$07,$3F,$0E,$0F,$86,$9F,$10,$1F,$F0,$FF,$00,$00,$00,$00,$00	; $8B8E83
-	db $00,$0F,$00,$4F,$40,$6C,$40,$6B,$43,$28,$00,$00,$00,$00,$00,$00	; $8B8E93
-	db $00,$8F,$C0,$9F,$E0,$9F,$E0,$9C,$E0,$9F,$E0,$00,$00,$00,$00,$00	; $8B8EA3
-	db $00,$E0,$00,$F8,$01,$F6,$05,$66,$05,$C9,$CB,$00,$00,$00,$00,$00	; $8B8EB3
-	db $00,$E0,$00,$FC,$07,$F8,$07,$F8,$07,$30,$0F,$04,$28,$18,$76,$9B	; $8B8EC3
-	db $FB,$CF,$FF,$38,$38,$02,$02,$07,$07,$01,$01,$00,$1E,$00,$1E,$83	; $8B8ED3
-	db $9F,$C7,$CF,$39,$38,$03,$02,$06,$07,$01,$01,$FA,$F8,$ED,$E0,$93	; $8B8EE3
-	db $80,$1F,$01,$3A,$02,$76,$06,$07,$0E,$A2,$97,$01,$FE,$83,$FC,$CF	; $8B8EF3
-	db $B0,$FE,$00,$FD,$00,$F9,$01,$F4,$0F,$4A,$BB,$00,$09,$00,$08,$05	; $8B8F03
-	db $04,$05,$05,$03,$03,$01,$01,$00,$00,$00,$00,$06,$06,$07,$07,$02	; $8B8F13
-	db $07,$02,$07,$00,$03,$01,$01,$00,$00,$00,$00,$90,$97,$CB,$C8,$44	; $8B8F23
-	db $84,$B8,$58,$AE,$4E,$5F,$1F,$73,$73,$01,$01,$80,$9F,$F0,$FF,$3B	; $8B8F33
-	db $FF,$07,$FF,$11,$FF,$B8,$FF,$72,$73,$01,$01,$26,$28,$17,$18,$02	; $8B8F43
-	db $00,$01,$05,$02,$06,$03,$02,$00,$01,$00,$00,$27,$38,$17,$18,$07	; $8B8F53
-	db $08,$02,$0D,$01,$07,$00,$03,$00,$01,$00,$00,$C2,$C1,$40,$41,$27	; $8B8F63
-	db $27,$60,$60,$30,$70,$18,$B8,$CC,$FC,$02,$FA,$7C,$47,$DC,$47,$E7	; $8B8F73
-	db $27,$A0,$E0,$30,$F0,$58,$D8,$0C,$CC,$02,$02,$00,$00,$00,$00,$01	; $8B8F83
-	db $01,$00,$00,$03,$03,$00,$00,$00,$00,$01,$01,$00,$00,$00,$00,$01	; $8B8F93
-	db $01,$00,$00,$03,$03,$00,$00,$00,$00,$01,$01,$80,$98,$C3,$C7,$23	; $8B8FA3
-	db $3F,$CF,$F3,$90,$E8,$28,$58,$E0,$E0,$00,$00,$84,$BC,$DB,$DB,$23	; $8B8FB3
-	db $23,$C3,$C3,$80,$80,$08,$08,$E0,$E0,$00,$00,$01,$1E,$2F,$21,$0E	; $8B8FC3
-	db $0E,$3E,$5A,$4F,$29,$03,$13,$21,$21,$00,$00,$00,$1F,$00,$3F,$31	; $8B8FD3
-	db $7F,$05,$7F,$86,$FF,$C0,$F3,$40,$61,$00,$00,$C8,$44,$8E,$8A,$06	; $8B8FE3
-	db $02,$04,$04,$8C,$8C,$FC,$FC,$F6,$F0,$BA,$80,$38,$FE,$74,$FE,$FC	; $8B8FF3
+ResolveGames:		;auto: CODE_8B8253. 92G ResolveGames: the played game's score into its gstruct, wins for all series of the round; when the round is over (or single games) WinBits and gamelevel move on
+	lda.w gamenum		; $8B8253: AD 4C 01
+	asl a		; $8B8256: 0A
+	sta.b d0		; $8B8257: 85 53
+	stz.b a0		; $8B8259: 64 33  copy the score of the played game
+	tay		; $8B825B: A8
+	lda.w tmscore		; $8B825C: AD D6 13
+	sta.w gss1,y		; $8B825F: 99 CF 15
+	lda.w tmscore+2		; $8B8262: AD D8 13
+	sta.w gss2,y		; $8B8265: 99 DF 15
+	jsl.l GetShifter		; $8B8268: 22 A4 D5 85
+	lda.b d1		; $8B826C: A5 57
+	asl a		; $8B826E: 0A
+	sta.b a0		; $8B826F: 85 33
+	lda.b bosgames		; $8B8271: A5 D6
+	cmp.w #7		; $8B8273: C9 07 00
+	bne .b0		; $8B8276: D0 03
+	jmp.w .notbos		; $8B8278: 4C 9C 83
+.b0:
+	ldy.b a0		; $8B827B: A4 33
+	lda.w #4		; $8B827D: A9 04 00
+	cmp.w gspotwins,y		; $8B8280: D9 9F 15
+	beq .b1		; $8B8283: F0 2C
+	cmp.w gspobwins,y		; $8B8285: D9 AF 15
+	beq .b1		; $8B8288: F0 27
+	stz.b d3		; $8B828A: 64 5F
+	lda.w gsflags,y		; $8B828C: B9 EF 15  gsflags bit 0 (gsftf): teams swapped
+	bit.w #$0001		; $8B828F: 89 01 00
+	beq .nf		; $8B8292: F0 05
+	lda.w #$0010		; $8B8294: A9 10 00
+	sta.b d3		; $8B8297: 85 5F
+.nf:
+	lda.w gss1,y		; $8B8299: B9 CF 15
+	cmp.w gss2,y		; $8B829C: D9 DF 15
+	bpl .ns1		; $8B829F: 10 07
+	lda.b d3		; $8B82A1: A5 5F
+	eor.w #$0010		; $8B82A3: 49 10 00
+	sta.b d3		; $8B82A6: 85 5F
+.ns1:
+	lda.b a0		; $8B82A8: A5 33
+	clc		; $8B82AA: 18
+	adc.b d3		; $8B82AB: 65 5F
+	tax		; $8B82AD: AA
+	inc.w gspotwins,x		; $8B82AE: FE 9F 15
+.b1:
+	dec.b a0		; $8B82B1: C6 33
+	dec.b a0		; $8B82B3: C6 33
+	dec.b d1		; $8B82B5: C6 57
+	bpl .b0		; $8B82B7: 10 C2
+	inc.b bosgames		; $8B82B9: E6 D6  next game of the series
+	lda.b bosgames		; $8B82BB: A5 D6
+	cmp.w #7		; $8B82BD: C9 07 00
+	bne .more		; $8B82C0: D0 03
+	jmp.w .nextround		; $8B82C2: 4C 4A 83
+.more:
+	lda.w gamenum		; $8B82C5: AD 4C 01
+	asl a		; $8B82C8: 0A
+	sta.b a0		; $8B82C9: 85 33
+	tay		; $8B82CB: A8
+	lda.w #4		; $8B82CC: A9 04 00
+	cmp.w gspotwins,y		; $8B82CF: D9 9F 15
+	beq .cround		; $8B82D2: F0 08
+	cmp.w gspobwins,y		; $8B82D4: D9 AF 15
+	beq .cround		; $8B82D7: F0 03
+	jmp.w .rtl		; $8B82D9: 4C 9B 83
+.cround:		;finish the other series of the round
+	lda.w gamelevel		; $8B82DC: AD 4A 01
+	sec		; $8B82DF: 38
+	sbc.w #3		; $8B82E0: E9 03 00
+	bmi .lt		; $8B82E3: 30 04
+	bvs .cr		; $8B82E5: 70 04
+	bra .nextround		; $8B82E7: 80 61
+.lt:
+	bvs .nextround		; $8B82E9: 70 5F
+.cr:
+	jsl.l GetShifter		; $8B82EB: 22 A4 D5 85
+	lda.b d1		; $8B82EF: A5 57
+	asl a		; $8B82F1: 0A
+	sta.b a0		; $8B82F2: 85 33
+.c0:
+	ldy.b a0		; $8B82F4: A4 33
+	lda.b d1		; $8B82F6: A5 57
+	cmp.w gamenum		; $8B82F8: CD 4C 01
+	beq .c1		; $8B82FB: F0 2E
+	lda.w #4		; $8B82FD: A9 04 00
+	cmp.w gspotwins,y		; $8B8300: D9 9F 15
+	beq .c1		; $8B8303: F0 26
+	cmp.w gspobwins,y		; $8B8305: D9 AF 15
+	beq .c1		; $8B8308: F0 21
+	lda.w gspotwins,y		; $8B830A: B9 9F 15
+	inc a		; $8B830D: 1A
+	sta.w gspotwins,y		; $8B830E: 99 9F 15
+	lda.w #200		; $8B8311: A9 C8 00  random series result: 50/50 per game
+	jsl.l randoma		; $8B8314: 22 8B AE 80
+	lsr a		; $8B8318: 4A
+	bcc .c0		; $8B8319: 90 D9
+	lda.w gspotwins,y		; $8B831B: B9 9F 15
+	dec a		; $8B831E: 3A
+	sta.w gspotwins,y		; $8B831F: 99 9F 15
+	lda.w gspobwins,y		; $8B8322: B9 AF 15
+	inc a		; $8B8325: 1A
+	sta.w gspobwins,y		; $8B8326: 99 AF 15
+	bra .c0		; $8B8329: 80 C9
+.c1:
+	dec.b a0		; $8B832B: C6 33
+	dec.b a0		; $8B832D: C6 33
+	dec.b d1		; $8B832F: C6 57
+	bpl .c0		; $8B8331: 10 C1
+	jsl.l WritePassBits		; $8B8333: 22 A9 84 88  sf3alttree: passbits before the rest was resolved
+	ldy.w #$000E		; $8B8337: A0 0E 00
+.cp:
+	lda.w passbits,y		; $8B833A: B9 24 16
+	sta.w tpassbits,y		; $8B833D: 99 34 16
+	dey		; $8B8340: 88
+	dey		; $8B8341: 88
+	bpl .cp		; $8B8342: 10 F6
+	lda.w #sf3alttree		; $8B8344: A9 04 00
+	tsb.w sflags3		; $8B8347: 0C 90 12
+.nextround:
+	stz.b bosgames		; $8B834A: 64 D6
+	jsl.l GetShifter		; $8B834C: 22 A4 D5 85
+	lda.b d1		; $8B8350: A5 57
+	asl a		; $8B8352: 0A
+	sta.b a0		; $8B8353: 85 33
+	stz.b d3		; $8B8355: 64 5F
+.n0:
+	ldy.b a0		; $8B8357: A4 33
+	lda.w gspotwins,y		; $8B8359: B9 9F 15
+	cmp.w #$0004		; $8B835C: C9 04 00
+	beq .n1		; $8B835F: F0 0A
+	lda.b d1		; $8B8361: A5 57
+	asl a		; $8B8363: 0A
+	tax		; $8B8364: AA
+	lda.l BitMaskTable,x		; $8B8365: BF 39 FC 82
+	tsb.b d3		; $8B8369: 04 5F
+.n1:
+	lda.w #$0000		; $8B836B: A9 00 00
+	sta.w gspotwins,y		; $8B836E: 99 9F 15
+	sta.w gspobwins,y		; $8B8371: 99 AF 15
+	dec.b a0		; $8B8374: C6 33
+	dec.b a0		; $8B8376: C6 33
+	dec.b d1		; $8B8378: C6 57
+	bpl .n0		; $8B837A: 10 DB
+	lda.b d2		; $8B837C: A5 5B  WinBits: the winners of level d2
+	asl a		; $8B837E: 0A
+	tax		; $8B837F: AA
+	lda.l BitMaskTable,x		; $8B8380: BF 39 FC 82
+	sta.b mula		; $8B8384: 85 7D
+	dec a		; $8B8386: 3A
+	and.w WinBits		; $8B8387: 2D E7 08
+	sta.w WinBits		; $8B838A: 8D E7 08
+	lda.b d3		; $8B838D: A5 5F
+	sta.b mulb		; $8B838F: 85 83
+	jsl.l $8D871C		; $8B8391: 22 1C 87 8D  bank $8D: 16-bit multiply
+	tsb.w WinBits		; $8B8395: 0C E7 08
+	inc.w gamelevel		; $8B8398: EE 4A 01
+.rtl:
+	rtl		; $8B839B: 6B
+.notbos:		;single games
+	stz.b d3		; $8B839C: 64 5F
+.s0:
+	ldy.b a0		; $8B839E: A4 33
+	lda.w gss2,y		; $8B83A0: B9 DF 15
+	cmp.w gss1,y		; $8B83A3: D9 CF 15
+	bcc .s1		; $8B83A6: 90 0A
+	lda.b d1		; $8B83A8: A5 57
+	asl a		; $8B83AA: 0A
+	tax		; $8B83AB: AA
+	lda.l BitMaskTable,x		; $8B83AC: BF 39 FC 82
+	tsb.b d3		; $8B83B0: 04 5F
+.s1:
+	lda.w gsflags,y		; $8B83B2: B9 EF 15
+	bit.w #$0001		; $8B83B5: 89 01 00
+	beq .s2		; $8B83B8: F0 0C
+	lda.b d1		; $8B83BA: A5 57
+	asl a		; $8B83BC: 0A
+	tax		; $8B83BD: AA
+	lda.l BitMaskTable,x		; $8B83BE: BF 39 FC 82
+	eor.b d3		; $8B83C2: 45 5F
+	sta.b d3		; $8B83C4: 85 5F
+.s2:
+	dec.b a0		; $8B83C6: C6 33
+	dec.b a0		; $8B83C8: C6 33
+	dec.b d1		; $8B83CA: C6 57
+	bpl .s0		; $8B83CC: 10 D0
+	lda.b d2		; $8B83CE: A5 5B
+	asl a		; $8B83D0: 0A
+	tax		; $8B83D1: AA
+	lda.l BitMaskTable,x		; $8B83D2: BF 39 FC 82
+	sta.b mula		; $8B83D6: 85 7D
+	dec a		; $8B83D8: 3A
+	and.w WinBits		; $8B83D9: 2D E7 08
+	sta.w WinBits		; $8B83DC: 8D E7 08
+	lda.b d3		; $8B83DF: A5 5F
+	sta.b mulb		; $8B83E1: 85 83
+	jsl.l $8D871C		; $8B83E3: 22 1C 87 8D  bank $8D: 16-bit multiply
+	tsb.w WinBits		; $8B83E7: 0C E7 08
+	inc.w gamelevel		; $8B83EA: EE 4A 01
+	rtl		; $8B83ED: 6B
+SpriteSet5:		;frame set 5 (falls: SPFfallback, SPFfallfwd): frames 273-336
+	dw 64		; $8B83EE frames
+	dw 533		; $8B83F0 pieces
+	dw 896		; $8B83F2 tiles
+	dw .pieces-SpriteSet5		; $8B83F4
+	dw .tiles-SpriteSet5		; $8B83F6
+.frames:		;first piece of each frame (+1 entry for the end)
+	dw 0,5,13,24,31,36,42,50		; $8B83F8
+	dw 57,65,74,83,91,98,108,117		; $8B8408
+	dw 124,132,142,152,161,167,177,187		; $8B8418
+	dw 196,205,212,221,229,234,244,253		; $8B8428
+	dw 260,263,271,278,283,292,303,314		; $8B8438
+	dw 321,331,341,349,356,365,375,384		; $8B8448
+	dw 391,398,408,416,423,432,443,455		; $8B8458
+	dw 463,471,482,490,498,505,515,526		; $8B8468
+	dw 533		; $8B8478
+.pieces:		;x, y, tile, attributes per piece
+	incbin "../data/Sprites/set05.pieces"		; $8B847A-$8B8CCD
+	assert .tiles-.pieces == 4*533
+.tiles:		;896 4bpp tiles (32 bytes each)
+	incbin "../data/Sprites/set05.chr":0..$335		; $8B8CCE-$8B9002
