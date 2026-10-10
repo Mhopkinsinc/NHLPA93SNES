@@ -88,7 +88,7 @@ Start:		;auto: CODE_808000. 93G main93 Start + hockey93_01 Begin (RAM clear). Re
 	jsl.l $8F9073		; $8080A2: 22 73 90 8F  bank $8F: $1610-$161F = $1E
 	jsl.l $8FE32B		; $8080A6: 22 2B E3 8F  bank $8F: 93G DefaultMenus (initial menu choices at $1600)
 	jsl.l Readjoy12		; $8080AA: 22 D2 FA 84
-	jml.l $8B816A		; $8080AE: 5C 6A 81 8B  bank $8B: on to the title screen (93G Opening)
+	jml.l Opening		; $8080AE: 5C 6A 81 8B  bank $8B: on to the title screen (93G Opening)
 BRKHalt:		;auto: CODE_8080B2. BRK vector: hang. No 92G/93G counterpart (68k traps go to IRQ7 rte)
 	bra BRKHalt		; $8080B2: 80 FE
 VBjsr:		;auto: CODE_8080B4. 93G VBjsr (hockey93_01, IDA VBLANK). NMI: ack RDNMI, skip if vbactive, else "rts" into the vbint handler
@@ -1324,7 +1324,7 @@ assnearest:		;auto: CODE_808834 (asstab $11). 93G assnearest (logic93_4): assign
 .clr:
 	stz.w temp3,x		; $808A7C: 9E 9F 0C
 .mid:		;skate to halfway between the puck spot and the own goal mouth (0,+-$F4)
-	jsl.l $8BFFD3		; $808A7F: 22 D3 FF 8B  bank $8B: 93G skatetopuckinit (d0/d1 = puck spot)
+	jsl.l skatetopuckinit		; $808A7F: 22 D3 FF 8B  bank $8B: 93G skatetopuckinit (d0/d1 = puck spot)
 	lda.b d1		; $808A83: A5 57
 	pha		; $808A85: 48
 	lda.b d0		; $808A86: A5 53
@@ -1537,7 +1537,7 @@ burst:		;auto: CODE_808BAD. 93G burst (logic93_1): check button: speed burst in 
 	sta.w pfalock,x		; $808C27: 9D 7F 11
 	jmp.w SetSPA		; $808C2A: 4C 06 B0
 skatetopuck:		;auto: CODE_808C2D. 93G skatetopuck (logic93_5): player X skates to the puck. d7 = elapsed frames
-	jsl.l $8BFFD3		; $808C2D: 22 D3 FF 8B  bank $8B: 93G skatetopuckinit (d0/d1 = puck spot)
+	jsl.l skatetopuckinit		; $808C2D: 22 D3 FF 8B  bank $8B: 93G skatetopuckinit (d0/d1 = puck spot)
 	lda.w temp2,x		; $808C31: BD 7F 0C
 	sec		; $808C34: 38
 	sbc.b d7		; $808C35: E5 6F

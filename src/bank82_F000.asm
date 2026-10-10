@@ -424,7 +424,7 @@ ContinuePlayoffs:		;auto: CODE_82FC59. SNES: after a game: EncodePW and PlayoffS
 	beq .tree		; $82FC8D: F0 04
 	jml.l far8B8172		; $82FC8F: 5C F2 F5 80
 .tree:
-	jml.l $8B8172		; $82FC93: 5C 72 81 8B  bank $8B
+	jml.l Opening4		; $82FC93: 5C 72 81 8B  bank $8B
 far8DF888:		;auto: CODE_82FC97. SNES: save d0-d7 and a0-a6 on the stack and go on at $8DF888 (it pulls them back)
 	stx.b xsave		; $82FC97: 86 0A
 	ldx.w #$0000		; $82FC99: A2 00 00
@@ -576,7 +576,7 @@ printz8B:		;auto: CODE_82FDBF. SNES: printz-style call with an inline string (le
 	clc		; $82FDCA: 18
 	adc.b $01,s		; $82FDCB: 63 01
 	sta.b $01,s		; $82FDCD: 83 01
-	jml.l $8BFCCE		; $82FDCF: 5C CE FC 8B  bank $8B: print the inline string
+	jml.l printbig		; $82FDCF: 5C CE FC 8B  bank $8B: print the inline string
 appendz:		;auto: CODE_82FDD3. SNES: like printz8B, for appstring $8F87C9 (append an inline string)
 	lda.b $03,s		; $82FDD3: A3 03
 	sta.b a1+2		; $82FDD5: 85 39

@@ -418,7 +418,7 @@ PickStartingGoalie:		;auto: CODE_86FCE3. SNES: tmgoalie of team a2 = 0 ($8B807D)
 	ldy.b a2		; $86FD05: A4 3B
 	lda.w #$0000		; $86FD07: A9 00 00
 	sta.w tmgoalie,y		; $86FD0A: 99 F2 13
-	jsl.l $8B807D		; $86FD0D: 22 7D 80 8B  bank $8B
+	jsl.l FigureJoy		; $86FD0D: 22 7D 80 8B  bank $8B
 	lda.b a2		; $86FD11: A5 3B
 	tay		; $86FD13: A8
 	lsr a		; $86FD14: 4A

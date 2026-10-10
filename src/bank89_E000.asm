@@ -126,14 +126,14 @@ printscores1:		;auto: CODE_89E95D. 93G printscores1 (penalty93_2): scoreboard. V
 	lda.w tmscore		; $89EA6E: AD D6 13  home score in big font
 	sta.b d0		; $89EA71: 85 53
 	jsl.l $8F8682		; $89EA73: 22 82 86 8F  bank $8F: 93G pushnumber
-	jsl.l $8BFCCE		; $89EA77: 22 CE FC 8B  bank $8B: 93G printbig
+	jsl.l printbig		; $89EA77: 22 CE FC 8B  bank $8B: 93G printbig
 	jsl.l printz		; $89EA7B: 22 0C B9 80
 	dw $0005		; $89EA7F  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$07,$04
 	lda.w tmscore+2		; $89EA84: AD D8 13  away score
 	sta.b d0		; $89EA87: 85 53
 	jsl.l $8F8682		; $89EA89: 22 82 86 8F  bank $8F: 93G pushnumber
-	jsl.l $8BFCCE		; $89EA8D: 22 CE FC 8B  bank $8B: 93G printbig
+	jsl.l printbig		; $89EA8D: 22 CE FC 8B  bank $8B: 93G printbig
 	jsl.l printz		; $89EA91: 22 0C B9 80
 	dw $0005		; $89EA95  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$17,$02

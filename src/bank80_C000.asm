@@ -323,7 +323,7 @@ demoread:		;auto: CODE_80C3D4. 93G demoread (hockey93_01): in demo mode (no cont
 	rtl		; $80C402: 6B
 .exit:		;end the demo: back to the title screen (93G ExitToOpening)
 	jsl.l sndqreset		; $80C403: 22 1A FA 82  sound queue reset; on to the title screen
-	jml.l $8B816A		; $80C407: 5C 6A 81 8B  bank $8B: on to the title screen (93G Opening)
+	jml.l Opening		; $80C407: 5C 6A 81 8B  bank $8B: on to the title screen (93G Opening)
 Readjoy1:		;auto: CODE_80C40B. 93G Readjoy1 (middle93_1): read controller 1. d0 = direction, d1 = new presses, d2 = changed, d3 = held
 	phx		; $80C40B: DA
 	ldx.w #$0000		; $80C40C: A2 00 00

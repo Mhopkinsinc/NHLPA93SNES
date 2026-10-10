@@ -449,7 +449,7 @@ EncodePW:		;auto: CODE_88868D. 92G EncodePW (Rev A): after a playoff game, Resol
 .po:
 	lda.w #$0001		; $888695: A9 01 00
 	sta.w OptPlayMode		; $888698: 8D 00 16
-	jsl.l $8B8253		; $88869B: 22 53 82 8B  bank $8B: 92G ResolveGames
+	jsl.l ResolveGames		; $88869B: 22 53 82 8B  bank $8B: 92G ResolveGames
 	jsl.l $8D8000		; $88869F: 22 00 80 8D  bank $8D: maketree
 	lda.w gamelevel		; $8886A3: AD 4A 01  finished playoffs
 	cmp.w #$0004		; $8886A6: C9 04 00
@@ -487,7 +487,7 @@ EncodePW:		;auto: CODE_88868D. 92G EncodePW (Rev A): after a playoff game, Resol
 	dey		; $8886F2: 88
 	dey		; $8886F3: 88
 	bpl .cp		; $8886F4: 10 F6
-	jsl.l $8B817A		; $8886F6: 22 7A 81 8B  bank $8B: 92G ReadPassBits
+	jsl.l ReadPassBits		; $8886F6: 22 7A 81 8B  bank $8B: 92G ReadPassBits
 .tree:
 	jml.l $8D8000		; $8886FA: 5C 00 80 8D  bank $8D: maketree
 .userwon:

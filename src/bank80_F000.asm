@@ -300,10 +300,10 @@ asspuckc:		;auto: CODE_80F45B (asstab $10). 93G asspuckc (logic93_3): player X i
 	rtl		; $80F5E9: 6B
 DecodePW:		;auto: CODE_80F5EA. 92G DecodePW: translate the password in PassWord to game variables: PWtoBits, then ReadPassBits ($8B817A)
 	jsl.l PWtoBits		; $80F5EA: 22 C5 FB 82
-	jml.l $8B817A		; $80F5EE: 5C 7A 81 8B  bank $8B
+	jml.l ReadPassBits		; $80F5EE: 5C 7A 81 8B  bank $8B
 far8B8172:		;auto: CODE_80F5F2. far trampoline: PlayoffScreen ($88F512), then on at $8B8172
 	jsl.l PlayoffScreen		; $80F5F2: 22 12 F5 88  bank $88: 93G PlayoffScreen (font tile bases, the playoff tree)
-	jml.l $8B8172		; $80F5F6: 5C 72 81 8B  bank $8B
+	jml.l Opening4		; $80F5F6: 5C 72 81 8B  bank $8B
 SuperDiv:		;auto: CODE_80F5FA. 92G SuperDiv: passbits (128 bits) / d0: quotient in passbits, remainder in d0. Shift-subtract over 128 bits with the divisor in mula+0..+16 and the remainder in
 		;   mulres+0..+14
 	phx		; $80F5FA: DA  remainder = passbits, divisor = d0 << 128
