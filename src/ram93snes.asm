@@ -325,6 +325,14 @@ textmap		= $7E6E74	; text layer tile map buffer (32x32 words); textdirtylo/hi ma
 ReplayBufferEnd	= $7EFF41	; replay buffer end: adda43 wraps to ReplayBufferStart
 ReplayBufferStart	= $7E8174	; first replay frame record
 ; --- constants (values, not addresses) ---
+; team record offsets (93G teamdata93.asm)
+Playerdata	= 0	; 93G Playerdata
+Palettedata	= 2	; 93G Palettedata
+Teamname	= 4	; 93G Teamname
+LineSets	= 6	; 93G LineSets
+ScoutReport	= 8	; 93G ScoutReport
+ScoreOdds	= 10	; 93G ScoreOdds
+NumofTeams	= 26	; 93G NumofTeams (24 clubs and the 2 All-Star teams)
 gsfhl		= $0002	; game shown in the score ticker (93G gsfhl 1)
 gsfso		= $0004	; game over (93G gsfso 2)
 PWrange		= 30	; characters in PasstoText (92G PWrange)
