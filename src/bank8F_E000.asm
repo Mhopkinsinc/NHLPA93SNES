@@ -1155,7 +1155,7 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	dex
 	dex
 	bpl .loop7
-	jsl.l printz8B
+	jsl.l printbigz
 	dw $0014		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$05,$04,"Team  Roster",$BF,$0B,$01
 	lda.w HomeTeam

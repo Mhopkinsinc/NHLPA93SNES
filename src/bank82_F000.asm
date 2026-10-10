@@ -422,10 +422,10 @@ ContinuePlayoffs:		;SNES: after a game: EncodePW and PlayoffScreen; when the pla
 	lda.w #sf3alttree		; sf3alttree: $8B8172 after the font bases
 	trb.w sflags3
 	beq .tree
-	jml.l far8B8172
+	jml.l PlayoffScreenOpening4
 .tree:
 	jml.l Opening4		; bank $8B
-far8DF888:		;SNES: save d0-d7 and a0-a6 on the stack and go on at $8DF888 (it pulls them back)
+SaveRegsStartHL2:		;SNES: save d0-d7 and a0-a6 on the stack and go on to StartHL2 (it pulls them back)
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -566,7 +566,7 @@ startpause2:		;93G startpause2 (hockey93_01): pause started by controller 2 (sfl
 	lda.w #sfpj
 	tsb.w sflags
 	jml.l startpause
-printz8B:		;SNES: printz-style call with an inline string (length word counting itself): step the return address past it and go to the bank $8B printer $8BFCCE
+printbigz:		;SNES: printz for printbig: the string follows the jsl inline (length word counting itself); step the return address past it and go to printbig
 	lda.b $03,s		; farptr-style: a1 = the inline string after the caller
 	sta.b a1+2
 	lda.b $01,s
@@ -577,7 +577,7 @@ printz8B:		;SNES: printz-style call with an inline string (length word counting 
 	adc.b $01,s
 	sta.b $01,s
 	jml.l printbig		; bank $8B: print the inline string
-appendz:		;SNES: like printz8B, for appstring $8F87C9 (append an inline string)
+appendz:		;SNES: like printbigz, for appstring $8F87C9 (append an inline string)
 	lda.b $03,s
 	sta.b a1+2
 	lda.b $01,s

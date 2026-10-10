@@ -1216,7 +1216,7 @@ DoHiLights:		;92G DoHiLights: in the playoffs play the highlight of each game of
 	beq .gsflags
 	and.w #$FFFD
 	sta.w gsflags,y
-	jsl.l far8DF888
+	jsl.l SaveRegsStartHL2
 .gsflags:
 	dec.b a0
 	dec.b a0

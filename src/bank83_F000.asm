@@ -27,7 +27,7 @@ Pausemode:		;92G Pausemode: game is in pause mode now. Save textmap, stop the so
 	jsl.l setvideo
 	jsl.l KillCrowd		; bank $8F
 .top:		;92G .top: draw the pause screen
-	jsl.l printz8B		; big PAUSE title and the menu frame (22 x 7)
+	jsl.l printbigz		; big PAUSE title and the menu frame (22 x 7)
 	dw $000A		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$0B,$02,"PAUSE"
 	jsl.l printz
@@ -259,7 +259,7 @@ PauseLeave:		;return 0: leave the pause menu
 	lda.w #$0000
 	rtl
 Restart:		;SNES: restart the game from scratch (93G Begin role): native mode, stack, DP and DB 0, clear RAM $0000-$15FE, the sprite VRAM cache, vbint vb2, hbint HBdefault, then
-		; and far8B8172
+		; and PlayoffScreenOpening4
 	sei		; interrupts off, native mode
 	clc
 	xce
@@ -307,7 +307,7 @@ Restart:		;SNES: restart the game from scratch (93G Begin role): native mode, st
 	lda.w #HBdefault
 	sta.b hbint
 	jsl.l setoptions		; bank $8F
-	jml.l far8B8172
+	jml.l PlayoffScreenOpening4
 RefsMap:		;93G RefsMap: the ref window frames, 7 frames of 8 x 7 words (data/Refs.snesmap); PushRef copies frame d0 (+$70 each)
 	incbin "../data/Refs.snesmap"		; $83FAEC-$83FDFB
 RefsMapEnd:

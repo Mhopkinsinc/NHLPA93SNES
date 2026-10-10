@@ -301,7 +301,7 @@ asspuckc:		;asstab $10. 93G asspuckc (logic93_3): player X is the puck carrier: 
 DecodePW:		;92G DecodePW: translate the password in PassWord to game variables: PWtoBits, then ReadPassBits ($8B817A)
 	jsl.l PWtoBits
 	jml.l ReadPassBits		; bank $8B
-far8B8172:		;far trampoline: PlayoffScreen ($88F512), then on at $8B8172
+PlayoffScreenOpening4:		;SNES: PlayoffScreen, then on to Opening4 (92G: the playoff tree, then the next game)
 	jsl.l PlayoffScreen		; bank $88: 93G PlayoffScreen (font tile bases, the playoff tree)
 	jml.l Opening4		; bank $8B
 SuperDiv:		;92G SuperDiv: passbits (128 bits) / d0: quotient in passbits, remainder in d0. Shift-subtract over 128 bits with the divisor in mula+0..+16 and the remainder in

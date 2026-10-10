@@ -500,7 +500,7 @@ Readjoy12:		;SNES: Readjoy1 and Readjoy2, d1 = the new presses of both pads
 	sta.b d1
 	rtl
 DisplayStats:		;92G DisplayStats (penalty.asm): the STATS page of the pause menu: Shots, Power Play, Penalties, Body Checks (92G Fights Won), AttackZone for both teams
-	jsl.l printz8B
+	jsl.l printbigz
 	dw $000A		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$0B,$02,"STATS"
 	jsl.l printz
