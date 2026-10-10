@@ -311,7 +311,7 @@ StartPer:		;auto: CODE_8D8217 (from StartGame). 93G StartPer (hockey93_01): rese
 	stz.b vcount+2		; $8D82E4: 64 02
 	stz.w lastframevc		; $8D82E6: 9C DB 08
 	stz.w oldvcount		; $8D82E9: 9C 27 04
-	jml.l $8E8000		; $8D82EC: 5C 00 80 8E  the game loop (bank $8E), bank $8E: the game loop
+	jml.l Gameloop		; $8D82EC: 5C 00 80 8E  the game loop (bank $8E)
 GetLowestPen:		;auto: CODE_8D82F0 (from updatepwrplay). 93G GetLowestPen (penalty93_1): a2 = team on the power play, a3 = the other. d0 = power play time left from the penalty box times
 	stz.b d0		; $8D82F0: 64 53
 	stz.b d3		; $8D82F2: 64 5F
@@ -812,7 +812,7 @@ updatesound:		;auto: CODE_8D865A (from periodicevents). 93G updatesound: move th
 	rtl		; $8D86A7: 6B
 asstab:		;SNES: the assignment routines (29 long pointers) that updateplayers calls through jmlvector; numbers as 93G asstab
 	dd rtss		; $8D86A8 0
-	dd $8EFE73		; $8D86AC 1 assdefo (not named yet)
+	dd assdefo		; $8D86AC 1
 	dd assdefd		; $8D86B0 2
 	dd asswingd		; $8D86B4 3
 	dd asswingo		; $8D86B8 4
@@ -822,7 +822,7 @@ asstab:		;SNES: the assignment routines (29 long pointers) that updateplayers ca
 	dd $8FDA8F		; $8D86C8 8 assstanley (not named yet)
 	dd $8F833F		; $8D86CC 9 asseben (not named yet)
 	dd assepen		; $8D86D0 A
-	dd $8E826B		; $8D86D4 B assbench (not named yet)
+	dd assbench		; $8D86D4 B
 	dd asspenalty		; $8D86D8 C
 	dd $8F8C4B		; $8D86DC D assdopen (not named yet)
 	dd assgoalie		; $8D86E0 E
