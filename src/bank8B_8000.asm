@@ -168,7 +168,7 @@ FigureJoy:		;auto: CODE_8B807D. 92G FigureJoy: set cont1team/cont2team: in the p
 	dw 1,2
 Opening:		;auto: CODE_8B816A (from Start, $80C407). 92G Opening: TitleScreen, then Restart (93G Opening2: the setup screens)
 	jsl.l TitleScreen
-	jml.l $83FA87		; Restart
+	jml.l Restart
 Opening4:		;auto: CODE_8B8172 (from ContinuePlayoffs, far8B8172). 92G Opening4: ScoutingReport ($8FDC0D), then StartGame
 	jsl.l ScoutingReport		; bank $8F: 93G ScoutingReport
 	jml.l StartGame

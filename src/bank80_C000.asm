@@ -157,7 +157,7 @@ sfx:		;auto: CODE_80C28B. 93G sfx (middle93_1): play the sound number pushed bef
 	beq .ret
 	jsl.l QueueSound		; queue it (bank $82)
 .ret:		;return through jmlvector
-	jml.l $000178		; jmlvector
+	jml.l jmlvector
 .drop:
 	pla
 	bra .ret
@@ -177,16 +177,16 @@ updatereplay:		;auto: CODE_80C2B4. 93G updatereplay (hockey93_02): save this fra
 	bcc .wrap
 	inc.w ReplayBufferPtr+2
 .wrap:
-	cmp.w #$FF41
+	cmp.w #ReplayBufferEnd&$FFFF
 	bne .save
 	lda.w ReplayBufferPtr+2
-	cmp.w #$007E
+	cmp.w #ReplayBufferEnd>>16
 	bne .save
 	lda.w #sfwrap		; wrapped: sfwrap, back to the start
 	tsb.w sflags
-	lda.w #$8174
+	lda.w #ReplayBufferStart&$FFFF
 	sta.w ReplayBufferPtr
-	lda.w #$007E
+	lda.w #ReplayBufferStart>>16
 	sta.w ReplayBufferPtr+2
 .save:
 	lda.w ReplayBufferPtr

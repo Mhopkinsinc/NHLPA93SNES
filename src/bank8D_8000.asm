@@ -148,7 +148,7 @@ maketree:		;auto: CODE_8D8000. 93G maketree (hockey93_09): potree from playoffse
 	rtl
 InitPPU:		;auto: CODE_8D8120. SNES: all PPU and CPU I/O registers to their reset values (forced blank, mode 0, no layers, NMI off)
 	sep #$20
-	lda.b #$8F
+	lda.b #INIDISP_FBLANK|$0F
 	sta.w INIDISP
 	stz.w OBSEL
 	stz.w OAMADDL
@@ -177,7 +177,7 @@ InitPPU:		;auto: CODE_8D8120. SNES: all PPU and CPU I/O registers to their reset
 	stz.w BG4HOFS
 	stz.w BG4VOFS
 	stz.w BG4VOFS
-	lda.b #$80
+	lda.b #VMAIN_INCHI
 	sta.w VMAIN
 	stz.w VMADDL
 	stz.w VMADDH

@@ -174,7 +174,7 @@ EraseScoutName:		;auto: CODE_89FCC1. SNES: blank the 11 x 2 showcased player nam
 	sta.b d2
 	jml.l eraser		; bank $8D: 92G eraser
 GetPlayerRecord:		;auto: CODE_89FCD8. SNES: a0 = roster record of player d0 of team a2 (tmdata: the player data, then name length + 8 bytes per player; 93G does it inline)
-	lda.w #$0083
+	lda.w #TeamList>>16
 	sta.b a0+2
 	ldy.b a2
 	lda.w tmdata,y

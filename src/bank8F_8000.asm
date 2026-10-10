@@ -595,7 +595,7 @@ pplpen:		;auto: CODE_8F85FA. 93G pplpen: one penalty box line: player number and
 	lda.w tmpdst,y
 	and.w #$07FF
 	sta.b d2
-	lda.w #$0083
+	lda.w #TeamList>>16
 	sta.b a1+2
 	ldy.b a2
 	lda.w tmdata,y
@@ -983,7 +983,7 @@ TickerTeam:		;auto: CODE_8F8960. SNES: ticker line: team d0 name (TeamList recor
 	ldy.b d0
 	lda.b [a1],y
 	sta.b a1
-	lda.w #$0083
+	lda.w #TeamList>>16
 	sta.b a1+2
 	ldy.w #$0004
 	lda.b [a1],y

@@ -309,7 +309,7 @@ GoalieCount:		;auto: CODE_8FD76B. SNES: d0 = goalies of team a2 (nibbles of its 
 	and.w #$FFFD
 .l1:
 	bne .l1
-	lda.w #$0083
+	lda.w #TeamList>>16
 	sta.b tmp1
 	lda.w tmdata,y
 	sta.b tmp0
@@ -484,7 +484,7 @@ releasepl:		;auto: CODE_8FD9DF. 93G releasepl (penalty93_1): player d0 leaves th
 	tsb.w tmflags+2
 	lda.w #priolist
 	sta.b a0
-	lda.w #$008F
+	lda.w #priolist>>16
 	sta.b a0+2
 	lda.w tmgoalie,y
 	bpl .l4
@@ -526,9 +526,9 @@ InitScoutDisplay:		;auto: CODE_8FDA75. SNES: scouting report scroll state reset;
 	sta.w PlayerScrollCtr
 	stz.w SelectedPlayerIdx
 	stz.w ScoutingReportTimer
-	lda.w #$0000
+	lda.w #TestList&$FFFF
 	sta.b a0
-	lda.w #$007F
+	lda.w #TestList>>16
 	sta.b a0+2
 	rtl
 assstanley:		;auto: CODE_8FDA8F (asstab 8). 93G assstanley: skate to the side of the screen holding the Stanley Cup (SPAcup)
@@ -692,9 +692,9 @@ asscenterd:		;auto: CODE_8FDB1B (asstab 5). 93G asscenterd (logic93_2): centre o
 	ror a
 	sta.b d1
 .l11:
-	lda.w #$84E6
+	lda.w #rtss
 	sta.b a0
-	lda.w #$0080
+	lda.w #rtss>>16
 	sta.b a0+2
 	jml.l skateto
 box:		;auto: CODE_8FDBDB. SNES: erase the 19 x 9 box at x 11, y 2 (93G box role)
@@ -731,11 +731,11 @@ ScoutingReport:		;auto: CODE_8FDC0D (from Opening4). 93G ScoutingReport (hockey9
 	sep #$20
 	cli
 	lda.w RDNMI
-	lda.b #$81
+	lda.b #NMITIMEN_NMI|NMITIMEN_JOY
 	sta.w NMITIMEN
 	lda.b #$03
 	sta.w OBSEL
-	lda.b #$01
+	lda.b #BGMODE_1
 	sta.w BGMODE
 	lda.b #$00
 	sta.w BG1SC
@@ -743,7 +743,7 @@ ScoutingReport:		;auto: CODE_8FDC0D (from Opening4). 93G ScoutingReport (hockey9
 	sta.w BG2SC
 	lda.b #$11
 	sta.w BG12NBA
-	lda.b #$03
+	lda.b #TM_BG1|TM_BG2
 	sta.w TM
 	rep #$30
 	stz.w tmgoalie
@@ -933,7 +933,7 @@ ScoutingReport:		;auto: CODE_8FDC0D (from Opening4). 93G ScoutingReport (hockey9
 	db $FF,$19,$0F
 	lda.w tmdata
 	sta.b a0
-	lda.w #$0083
+	lda.w #TeamList>>16
 	sta.b a0+2
 	sta.b a2+2
 	lda.w tmdata+2
@@ -1008,7 +1008,7 @@ ScoutingReport:		;auto: CODE_8FDC0D (from Opening4). 93G ScoutingReport (hockey9
 	stz.w DMAList+dmavram
 	lda.w #$0007
 	sta.b DMAListend
-	lda.w #$8250
+	lda.w #VBlank_List
 	sta.b vbint
 .l15:
 	cmp.b vbint

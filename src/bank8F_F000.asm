@@ -30,7 +30,7 @@ setoptions:		;auto: CODE_8FEE83 (jsl from bank $83). 93G setoptions (hockey93_08
 	sep #$20
 	cli
 	lda.w RDNMI
-	lda.b #$81
+	lda.b #NMITIMEN_NMI|NMITIMEN_JOY
 	sta.w NMITIMEN
 	rep #$30
 	lda.b vcount
@@ -41,11 +41,11 @@ setoptions:		;auto: CODE_8FEE83 (jsl from bank $83). 93G setoptions (hockey93_08
 	sep #$20
 	cli
 	lda.w RDNMI
-	lda.b #$81
+	lda.b #NMITIMEN_NMI|NMITIMEN_JOY
 	sta.w NMITIMEN
 	lda.b #$03
 	sta.w OBSEL
-	lda.b #$01
+	lda.b #BGMODE_1
 	sta.w BGMODE
 	lda.b #$00
 	sta.w BG1SC
@@ -53,7 +53,7 @@ setoptions:		;auto: CODE_8FEE83 (jsl from bank $83). 93G setoptions (hockey93_08
 	sta.w BG2SC
 	lda.b #$11
 	sta.w BG12NBA
-	lda.b #$13
+	lda.b #TM_BG1|TM_BG2|TM_OBJ
 	sta.w TM
 	rep #$30
 	stz.w printfontset
@@ -115,9 +115,9 @@ setoptions:		;auto: CODE_8FEE83 (jsl from bank $83). 93G setoptions (hockey93_08
 	lda.w #SmallFontTiles>>16
 	sta.b tmp1
 	jsl.l DecompressGraphics
-	lda.w #$0000
+	lda.w #unpackbuf&$FFFF
 	sta.b a0
-	lda.w #$007F
+	lda.w #unpackbuf>>16
 	sta.b a0+2
 	lda.w #PixelRemapFont
 	sta.b a1

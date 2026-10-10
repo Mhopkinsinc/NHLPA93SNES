@@ -83,7 +83,7 @@ PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB
 	iny
 	lda.b [a0],y
 	sta.w jmlvector+2
-	jml.l $000178		; jmlvector
+	jml.l jmlvector
 .rm:		;92G .rm: Instant Replay (A = ReplayMode)
 	lda.b d1
 	bit.w #cbut
@@ -127,7 +127,7 @@ PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB
 	sta.w BG2SC
 	lda.b #$12
 	sta.w BG12NBA
-	lda.b #$13
+	lda.b #TM_BG1|TM_BG2|TM_OBJ
 	sta.w TM
 	stz.w CGADD
 	ldx.w #$0000
@@ -154,7 +154,7 @@ PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB
 	sta.b tmp1
 	jsl.l DecompressGraphics
 	stz.b a0
-	lda.w #$007F
+	lda.w #unpackbuf>>16
 	sta.b a0+2
 	lda.w #PixelRemap83
 	sta.b a1

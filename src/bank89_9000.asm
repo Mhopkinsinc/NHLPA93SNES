@@ -213,7 +213,7 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	beq .f0
 	jsl.l suba4		; bank $8F: 93G suba4 (one replay frame back)
 	jsl.l SprSort
-	lda.w #$812F
+	lda.w #VBlank_long
 .wait:
 	cmp.b vbint
 	beq .wait

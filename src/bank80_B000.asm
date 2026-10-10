@@ -224,7 +224,7 @@ setplayer:		;auto: CODE_80B15D. 93G setplayer (hockey93_05): bring roster player
 	ldy.b a0		; a0 = team data (bank $83)
 	lda.w tmdata,y
 	sta.b a0
-	lda.w #$0083
+	lda.w #TeamList>>16
 	sta.b a0+2
 	stx.b xsave
 	ldx.w #$0000
@@ -639,11 +639,11 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sep #$20
 	cli
 	lda.w RDNMI
-	lda.b #$81		; NMI on, auto joypad read
+	lda.b #NMITIMEN_NMI|NMITIMEN_JOY		; NMI on, auto joypad read
 	sta.w NMITIMEN
 	lda.b #$03		; OBSEL: 8x8/16x16 sprites at $6000
 	sta.w OBSEL
-	lda.b #$01		; BGMODE 1
+	lda.b #BGMODE_1		; BGMODE 1
 	sta.w BGMODE
 	lda.b #$00
 	sta.w BG1SC
@@ -651,12 +651,12 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sta.w BG2SC
 	lda.b #$12		; BG1 tiles $2000, BG2 tiles $1000
 	sta.w BG12NBA
-	lda.b #$13		; TM: BG1, BG2, sprites
+	lda.b #TM_BG1|TM_BG2|TM_OBJ		; TM: BG1, BG2, sprites
 	sta.w TM
 	rep #$30
 	ldx.w #$00FE
 .pal:		;rink palette (bank $83) to both halves of palbuffer
-	lda.l $83F72B,x
+	lda.l RinkPalette,x
 	sta.l palbuffer,x
 	sta.l palbuffer+$100,x
 	dex
@@ -677,7 +677,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sta.w VMADDL
 	ldx.w #$0000
 .up1:
-	lda.l $7F0000,x
+	lda.l unpackbuf,x
 	sta.w VMDATAL
 	inx
 	inx
@@ -690,20 +690,20 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	jsl.l DecompressGraphics
 	ldx.w #$0000
 .up2:
-	lda.l $7F0000,x
+	lda.l unpackbuf,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$06E0
 	bne .up2
-	lda.w #$F386		; bank $84 tiles
+	lda.w #RinkLogoTiles		; packed rink logo tiles (bank84_F000)
 	sta.b tmp0
-	lda.w #$0084
+	lda.w #RinkLogoTiles>>16
 	sta.b tmp1
 	jsl.l DecompressGraphics
 	ldx.w #$0000
 .up3:
-	lda.l $7F0000,x
+	lda.l unpackbuf,x
 	sta.w VMDATAL
 	inx
 	inx
@@ -716,7 +716,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	jsl.l DecompressGraphics
 	ldx.w #$0000
 .up4:
-	lda.l $7F0000,x
+	lda.l unpackbuf,x
 	sta.w VMDATAL
 	inx
 	inx
@@ -729,7 +729,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	jsl.l DecompressGraphics
 	ldx.w #$0000
 .up5:
-	lda.l $7F0000,x
+	lda.l unpackbuf,x
 	sta.w VMDATAL
 	inx
 	inx
@@ -746,7 +746,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sta.b tmp1
 	jsl.l DecompressGraphics
 	stz.b a0		; sprite frame list from the $7F0000 data
-	lda.w #$007F
+	lda.w #unpackbuf>>16
 	sta.b a0+2
 	lda.w #PixelRemap83
 	sta.b a1
@@ -772,7 +772,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sta.b tmp1
 	jsl.l DecompressGraphics
 	stz.b a0
-	lda.w #$007F
+	lda.w #unpackbuf>>16
 	sta.b a0+2
 	lda.w #PixelRemap8D
 	sta.b a1
@@ -825,7 +825,7 @@ setplayercolors:		;auto: CODE_80B6D5. 93G setplayercolors (hockey93_06): team co
 	stz.w colorflag1
 	stz.w colorflag2
 	jsl.l SetTeamColors
-	lda.w #$2200		; whole CGRAM from palbuffer
+	lda.w #DMA_CGRAM		; whole CGRAM from palbuffer
 	sta.w DMAP7
 	lda.w #palbuffer
 	sta.w A1T7L
@@ -835,7 +835,7 @@ setplayercolors:		;auto: CODE_80B6D5. 93G setplayercolors (hockey93_06): team co
 	stz.w CGADD
 	lda.b #palbuffer>>16
 	sta.w A1B7
-	lda.b #$80
+	lda.b #MDMAEN_CH7
 	sta.w MDMAEN
 	rep #$30
 	rtl
@@ -845,7 +845,7 @@ SetTeamColors:		;auto: CODE_80B706. 92 SetTeamColors role: convert both teams' G
 	ldx.w #$0000
 	lda.w tmdata		; home team colors: palbuffer+$40
 	sta.b tmp0
-	lda.w #$0083
+	lda.w #TeamList>>16
 	sta.b tmp1
 	stz.b tmp2+1
 	jsl.l SetTeamColors_team
@@ -1297,7 +1297,7 @@ updatepwrplay:		;auto: CODE_80B9F4. 93G updatepwrplay (penalty93_1): show the po
 	ldx.b a3
 	lda.w tmdata,x		; team name (bank $83)
 	sta.b a0
-	lda.w #$0083
+	lda.w #TeamList>>16
 	sta.b a0+2
 	lda.w #mesarea		; a3 = mesarea, length 2
 	sta.b a3
@@ -1336,7 +1336,7 @@ printteamname:		;auto: CODE_80BABC. print the team name of team d3 (0 home) at p
 	pha
 	lda.w tmdata		; tmdata of team d3
 	sta.b a1
-	lda.w #$0083
+	lda.w #TeamList>>16
 	sta.b a1+2
 	lda.b d3
 	beq .name
@@ -1608,7 +1608,7 @@ SetPlList:		;auto: CODE_80BCB0. 93G SetPlList (hockey93_05): make PlList, the pl
 .gin:
 	lda.w tmdata,y		; line sets: team data + word at +6, + tmline*8
 	sta.b a1
-	lda.w #$0083
+	lda.w #TeamList>>16
 	sta.b a1+2
 	ldy.w #$0006
 	lda.b [a1],y
@@ -1692,7 +1692,7 @@ SetPlList:		;auto: CODE_80BCB0. 93G SetPlList (hockey93_05): make PlList, the pl
 	ldy.b a2
 	lda.w tmdata,y
 	sta.b a1
-	lda.w #$0083
+	lda.w #TeamList>>16
 	sta.b a1+2
 	ldy.w #$0006
 	lda.b [a1],y

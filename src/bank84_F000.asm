@@ -2,9 +2,11 @@
 ; its tables, Readjoy12, DisplayStats (92G penalty.asm), GetNameandAttrib, attribjmp and its handlers (stats93), $FF fill.
 ; Starts at HotList (boundary moved from $84F00C).
 org $84EF3C
-HotList:		;93G HotList: hot spot (stick blade) x, y bytes for every sprite frame (763 pairs, data/HotList.bin), read by GetHot
-	incbin "../data/HotList.bin"		; $84EF3C-$84F531
-HotListEnd:
+HotList:		;93G HotList: hot spot (stick blade) x, y bytes for every sprite frame (549 pairs), read by GetHot
+	incbin "../data/HotList.bin":0..$44A		; $84EF3C-$84F385
+RinkLogoTiles:		;SNES: packed rink logo tiles (14 tiles, $1C0 bytes unpacked), sent to vram after FaceOffTiles by setupice. Kept in data/HotList.bin after the hot spots
+	incbin "../data/HotList.bin":$44A..$5F6		; $84F386-$84F531
+RinkLogoTilesEnd:
 UpdateScoutingDisplay:		;auto: CODE_84F532. 93G UpdateScoutingDisplay (hockey93_07): when ScoutingReportTimer runs out (at once with asv), print the next word of ScoutingReportText. ~ { } [ ] print
 		;   a team or goalie name
 	lda.w ScoutingReportTimer		; text finished ($7FFF)
@@ -740,7 +742,7 @@ GetNameandAttrib:		;auto: CODE_84FC44. 93G GetNameandAttrib (stats93): print pla
 	sta.w jmlvector+1
 	lda.b a0+1
 	sta.w jmlvector+2
-	jsl.l $000178		; jmlvector
+	jsl.l jmlvector
 	stx.b xsave
 	ldx.w #$0006
 .popa:

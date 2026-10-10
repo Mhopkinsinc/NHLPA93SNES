@@ -849,7 +849,7 @@ SetLCmode2:		;auto: CODE_80A748. 93G SetLCmode2 (logic93_1 IDA showfaceoff): a2 
 	adc.w #$0005
 	sta.w printx
 	ldy.b a2
-	lda.w #$0083		; team name: [tmdata] + its offsets (bank $83)
+	lda.w #TeamList>>16		; team name: [tmdata] + its offsets (bank $83)
 	sta.b a1+2
 	lda.w tmdata,y
 	sta.b a1
@@ -1229,10 +1229,10 @@ puckfaceoff2:		;auto: asstab $1C. 93G puckfaceoff2 (logic93_4): face off control
 	adc.w printx
 	adc.w #$000B
 	jsl.l marktexthi
-	lda.w #$E949		; FaceOffMap (bank $84); fobox nonzero
+	lda.w #FaceOffMap		; fobox nonzero
 	sta.b fobox
 	sta.b tmp0
-	lda.w #$0084
+	lda.w #FaceOffMap>>16
 	sta.b tmp1
 	lda.w printy
 	asl a

@@ -1,10 +1,10 @@
-; $84E949-$84EF3B  ROM $26949-$26F3B: ScoutPicMap, then the SNES scouting report extras: PutDigits2, the two showcased
+; $84E949-$84EF3B  ROM $26949-$26F3B: FaceOffMap, then the SNES scouting report extras: PutDigits2, the two showcased
 ; players who skate in with their number and name (ScoutPlayersRun: one per team, picked from the line sets in ScoutLineOrder,
 ; animated with the ScoutScripts chosen from their ratings), and the roster helpers. The team stat words are scratch during the
 ; scouting report: tmshots = team shown, tmPwrGoals = ScoutLineOrder index, tmPwrPlays = roster player, tmPenalties = line slot,
 ; tmPenmin = script, tmATOP = script step. Starts after ScoutingReportText (boundary moved), ends before HotList.
 org $84E949
-ScoutPicMap:		;a 12 x 10 tile picture map, sequential tiles with attribute $20 (no reference found; the size of the 93G RonBarrMap picture on the scouting report)
+FaceOffMap:		;93G FaceOffMap (92G FaceOffMap): the 12 x 10 faceoff box map (tiles from FaceOffTiles, attribute $20), copied into textmap by puckfaceoff2 ($80A3F4)
 	dw $2000,$2001,$2002,$2003,$2004,$2005,$2006,$2007,$2008,$2009,$200A,$200B
 	dw $200C,$200D,$200E,$200F,$2010,$2011,$2012,$2013,$2014,$2015,$2016,$2017
 	dw $2018,$2019,$201A,$2019,$2019,$2019,$201B,$201C,$2019,$2019,$2019,$201D

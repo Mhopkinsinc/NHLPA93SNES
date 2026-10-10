@@ -508,9 +508,9 @@ WeightedRandomSelect:		;auto: CODE_8FE3B0. 93G WeightedRandomSelect: d0 = random
 	rtl
 forceblack:		;auto: CODE_8FE404. 93G forceblack role: the default vblank/IRQ handlers, the sprite VRAM caches reset, wait a frame, empty DMAList
 	phx
-	lda.w #$80CE
+	lda.w #vb2_blank
 	sta.b vbint
-	lda.w #$83A3
+	lda.w #HBdefault
 	sta.b hbint
 	lda.b vcount
 	pha
@@ -1018,7 +1018,7 @@ TeamRoster:		;auto: CODE_8FE825 (pause menu). SNES Team Roster screen: the team 
 	sta.w BG2SC
 	lda.b #$44
 	sta.w BG12NBA
-	lda.b #$03
+	lda.b #TM_BG1|TM_BG2
 	sta.w TM
 	rep #$30
 	lda.w #$FD00
@@ -1039,7 +1039,7 @@ TeamRoster:		;auto: CODE_8FE825 (pause menu). SNES Team Roster screen: the team 
 	sta.b tmp1
 	jsl.l DecompressGraphics
 	stz.b a0
-	lda.w #$007F
+	lda.w #unpackbuf>>16
 	sta.b a0+2
 	lda.w #PixelRemap8F
 	sta.b a1
@@ -1195,7 +1195,7 @@ TeamRoster:		;auto: CODE_8FE825 (pause menu). SNES Team Roster screen: the team 
 	stz.w DMAList+dmavram
 	lda.w #$0007
 	sta.b DMAListend
-	lda.w #$8250
+	lda.w #VBlank_List
 	sta.b vbint
 .l12:
 	cmp.b vbint
@@ -1337,7 +1337,7 @@ TeamRoster:		;auto: CODE_8FE825 (pause menu). SNES Team Roster screen: the team 
 	asl a
 	sta.b d0
 	ldy.b a2
-	lda.w #$0083
+	lda.w #TeamList>>16
 	sta.b a3+2
 	lda.w tmdata,y
 	sta.b a3
@@ -1524,7 +1524,7 @@ Pmenu:		;auto: CODE_8FECAB (from Pausemode, StartHL2). 92G Pausemode .Pmenu: the
 	sta.b tmp0
 	lda.w tmdata,y
 	sta.b a4
-	lda.w #$0083
+	lda.w #TeamList>>16
 	sta.b a4+2
 	ldy.w #$0000
 	lda.b [a4],y

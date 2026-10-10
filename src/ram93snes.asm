@@ -385,6 +385,7 @@ palbuffer	= $7E6C74	; CGRAM shadow (256 colors, 512 bytes): VBlank_Cram sends it
 textmap		= $7E6E74	; text layer tile map buffer (32x32 words); textdirtylo/hi mark what to send
 backmap		= $7E7674	; second BG map buffer (32x32 words) after textmap: screen backgrounds (GameSetupMap, Title1Map, EASNMap)
 hlsavebuf	= $7E7E74	; StartHL2: the game state (gmode-1 .. ScoreSumbytes) while a highlight plays. 92G ReplayStart role
+unpackbuf	= $7F0000	; DecompressGraphics output buffer (64K, bank $7F): tiles are copied to vram from here
 TestList	= $7F0000	; scouting report paragraph numbers (-1 ends). 93G TestList
 textsave	= $7FF800	; copy of textmap while the pause screen is up
 

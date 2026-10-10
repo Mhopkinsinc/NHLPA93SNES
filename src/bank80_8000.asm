@@ -79,7 +79,7 @@ Start:		;auto: CODE_808000. 93G main93 Start + hockey93_01 Begin (RAM clear). Re
 	sep #$20
 	cli
 	lda.w RDNMI		; ack a pending NMI
-	lda.b #$81		; NMI on, auto joypad read
+	lda.b #NMITIMEN_NMI|NMITIMEN_JOY		; NMI on, auto joypad read
 	sta.w NMITIMEN
 	rep #$30
 	jsl.l SPCBootUpload
@@ -112,7 +112,7 @@ VBjsr:		;auto: CODE_8080B4. 93G VBjsr (hockey93_01, IDA VBLANK). NMI: ack RDNMI,
 	rts
 vb2_blank:		;auto: CODE_8080CE. vbint target: vb2 with the screen held in forced blank. Resets hbint to HBdefault
 	sep #$20
-	lda.b #$80
+	lda.b #INIDISP_FBLANK
 	sta.w INIDISP
 	rep #$30
 	lda.w #HBdefault
@@ -169,7 +169,7 @@ VBlank_long:		;auto: CODE_80812F. vbint target (set by bank $80E3B3): jml into V
 	jml.l VBlank
 VBlank:		;auto: CODE_808133. 93G VBlank / DumpSprites2+DoDMAList role: forced blank, run DMAList (ch7), BG2 scroll from Hscroll/vramrow/Vscroll, OAM dma from Satt; one shot: sets vbint back to vb2
 	sep #$20
-	lda.b #$80
+	lda.b #INIDISP_FBLANK
 	sta.w INIDISP
 	ldx.b DMAListend
 	bra .next
@@ -178,13 +178,13 @@ VBlank:		;auto: CODE_808133. 93G VBlank / DumpSprites2+DoDMAList role: forced bl
 	sty.w VMADDL
 	ldy.w DMAList+dmalen,x
 	sty.w DAS7L
-	ldy.w #$1801
+	ldy.w #DMA_VRAMWORD
 	sty.w DMAP7
 	ldy.w DMAList+dmasrc,x
 	sty.w A1T7L
 	lda.w DMAList+dmabank,x
 	sta.w A1B7
-	lda.b #$80
+	lda.b #MDMAEN_CH7
 	sta.w MDMAEN
 .next:		;step back one 7-byte entry; done when below 0
 	dex
@@ -219,7 +219,7 @@ VBlank:		;auto: CODE_808133. 93G VBlank / DumpSprites2+DoDMAList role: forced bl
 	sta.w BG2VOFS
 	pla
 	rep #$30
-	lda.w #$0400		; DMAP7=$00 (A->B, increment), BBAD7=$04 (OAMDATA)
+	lda.w #DMA_OAM		; DMAP7=$00 (A->B, increment), BBAD7=$04 (OAMDATA)
 	sta.w DMAP7
 	lda.w #Satt
 	sta.w A1T7L
@@ -229,7 +229,7 @@ VBlank:		;auto: CODE_808133. 93G VBlank / DumpSprites2+DoDMAList role: forced bl
 	sep #$20
 	lda.b #$00
 	sta.w A1B7
-	lda.b #$80
+	lda.b #MDMAEN_CH7
 	sta.w MDMAEN
 	rep #$30
 	lda.w #vb2		; one shot: back to vb2 next frame
@@ -237,7 +237,7 @@ VBlank:		;auto: CODE_808133. 93G VBlank / DumpSprites2+DoDMAList role: forced bl
 	jmp.w vb2
 VBlank_SprPal:		;auto: CODE_8081C5. vbint target (banks $88/$8F): VBlank, plus CGRAM colors $A0-$BF (sprite palettes 2-3) from palbuffer; one shot, then vb2
 	sep #$20
-	lda.b #$80
+	lda.b #INIDISP_FBLANK
 	sta.w INIDISP
 	ldx.b DMAListend
 	bra .next
@@ -246,13 +246,13 @@ VBlank_SprPal:		;auto: CODE_8081C5. vbint target (banks $88/$8F): VBlank, plus C
 	sty.w VMADDL
 	ldy.w DMAList+dmalen,x
 	sty.w DAS7L
-	ldy.w #$1801
+	ldy.w #DMA_VRAMWORD
 	sty.w DMAP7
 	ldy.w DMAList+dmasrc,x
 	sty.w A1T7L
 	lda.w DMAList+dmabank,x
 	sta.w A1B7
-	lda.b #$80
+	lda.b #MDMAEN_CH7
 	sta.w MDMAEN
 .next:
 	dex
@@ -265,7 +265,7 @@ VBlank_SprPal:		;auto: CODE_8081C5. vbint target (banks $88/$8F): VBlank, plus C
 	bpl .dmaloop
 	rep #$30
 	stz.b DMAListend
-	lda.w #$0400
+	lda.w #DMA_OAM
 	sta.w DMAP7
 	lda.w #$01FF
 	sta.w A1T7L
@@ -275,10 +275,10 @@ VBlank_SprPal:		;auto: CODE_8081C5. vbint target (banks $88/$8F): VBlank, plus C
 	sep #$20
 	lda.b #$00
 	sta.w A1B7
-	lda.b #$80
+	lda.b #MDMAEN_CH7
 	sta.w MDMAEN
 	rep #$30
-	lda.w #$2200		; DMAP7=$00, BBAD7=$22 (CGDATA)
+	lda.w #DMA_CGRAM		; DMAP7=$00, BBAD7=$22 (CGDATA)
 	sta.w DMAP7
 	lda.w #$6DB4		; palbuffer+$140 (color $A0)
 	sta.w A1T7L
@@ -287,9 +287,9 @@ VBlank_SprPal:		;auto: CODE_8081C5. vbint target (banks $88/$8F): VBlank, plus C
 	sep #$20
 	lda.b #$A0		; sprite palettes 2-3
 	sta.w CGADD
-	lda.b #$7E
+	lda.b #palbuffer>>16
 	sta.w A1B7
-	lda.b #$80
+	lda.b #MDMAEN_CH7
 	sta.w MDMAEN
 	rep #$30
 	lda.w #vb2
@@ -297,7 +297,7 @@ VBlank_SprPal:		;auto: CODE_8081C5. vbint target (banks $88/$8F): VBlank, plus C
 	jmp.w vb2
 VBlank_List:		;auto: CODE_808250. vbint target (bank $8F): forced blank and DMAList only; one shot, then vb2
 	sep #$20
-	lda.b #$80
+	lda.b #INIDISP_FBLANK
 	sta.w INIDISP
 	ldx.b DMAListend
 	bra .next
@@ -306,13 +306,13 @@ VBlank_List:		;auto: CODE_808250. vbint target (bank $8F): forced blank and DMAL
 	sty.w VMADDL
 	ldy.w DMAList+dmalen,x
 	sty.w DAS7L
-	ldy.w #$1801
+	ldy.w #DMA_VRAMWORD
 	sty.w DMAP7
 	ldy.w DMAList+dmasrc,x
 	sty.w A1T7L
 	lda.w DMAList+dmabank,x
 	sta.w A1B7
-	lda.b #$80
+	lda.b #MDMAEN_CH7
 	sta.w MDMAEN
 .next:
 	dex
@@ -330,7 +330,7 @@ VBlank_List:		;auto: CODE_808250. vbint target (bank $8F): forced blank and DMAL
 	jmp.w vb2
 VBlank_VScroll:		;auto: CODE_808293. vbint target (bank $88): BG1VOFS = d0, then DMAList; one shot, then vb2
 	sep #$20
-	lda.b #$80
+	lda.b #INIDISP_FBLANK
 	sta.w INIDISP
 	lda.b d0		; BG1VOFS = d0 (low, high)
 	sta.w BG1VOFS
@@ -343,13 +343,13 @@ VBlank_VScroll:		;auto: CODE_808293. vbint target (bank $88): BG1VOFS = d0, then
 	sty.w VMADDL
 	ldy.w DMAList+dmalen,x
 	sty.w DAS7L
-	ldy.w #$1801
+	ldy.w #DMA_VRAMWORD
 	sty.w DMAP7
 	ldy.w DMAList+dmasrc,x
 	sty.w A1T7L
 	lda.w DMAList+dmabank,x
 	sta.w A1B7
-	lda.b #$80
+	lda.b #MDMAEN_CH7
 	sta.w MDMAEN
 .next:
 	dex
@@ -367,7 +367,7 @@ VBlank_VScroll:		;auto: CODE_808293. vbint target (bank $88): BG1VOFS = d0, then
 	jmp.w vb2
 VBlank_Cram:		;auto: CODE_8082E0. vbint target (bank $88): DMAList, BG1 fine h-scroll Hscroll&7, BG1VOFS 0, CGRAM 0-127 from palbuffer; then VBlank_CramOnly every frame
 	sep #$20
-	lda.b #$80
+	lda.b #INIDISP_FBLANK
 	sta.w INIDISP
 	ldx.b DMAListend
 	bra .next
@@ -376,13 +376,13 @@ VBlank_Cram:		;auto: CODE_8082E0. vbint target (bank $88): DMAList, BG1 fine h-s
 	sty.w VMADDL
 	ldy.w DMAList+dmalen,x
 	sty.w DAS7L
-	ldy.w #$1801
+	ldy.w #DMA_VRAMWORD
 	sty.w DMAP7
 	ldy.w DMAList+dmasrc,x
 	sty.w A1T7L
 	lda.w DMAList+dmabank,x
 	sta.w A1B7
-	lda.b #$80
+	lda.b #MDMAEN_CH7
 	sta.w MDMAEN
 .next:
 	dex
@@ -403,7 +403,7 @@ VBlank_Cram:		;auto: CODE_8082E0. vbint target (bank $88): DMAList, BG1 fine h-s
 	stz.w BG1VOFS
 	stz.w BG1VOFS
 	rep #$30
-	lda.w #$2200
+	lda.w #DMA_CGRAM
 	sta.w DMAP7
 	lda.w #$6C74		; palbuffer, colors 0-127
 	sta.w A1T7L
@@ -411,9 +411,9 @@ VBlank_Cram:		;auto: CODE_8082E0. vbint target (bank $88): DMAList, BG1 fine h-s
 	sta.w DAS7L
 	sep #$20
 	stz.w CGADD
-	lda.b #$7E
+	lda.b #palbuffer>>16
 	sta.w A1B7
-	lda.b #$80
+	lda.b #MDMAEN_CH7
 	sta.w MDMAEN
 	rep #$30
 	lda.w #VBlank_CramOnly		; from now on: CGRAM every frame
@@ -425,10 +425,10 @@ VBlank_Cram:		;auto: CODE_8082E0. vbint target (bank $88): DMAList, BG1 fine h-s
 	jmp.w vb2
 VBlank_CramOnly:		;auto: CODE_808361. vbint target (stays installed): forced blank, CGRAM 0-127 from palbuffer each frame, then vb2_main
 	sep #$20
-	lda.b #$80
+	lda.b #INIDISP_FBLANK
 	sta.w INIDISP
 	rep #$30
-	lda.w #$2200
+	lda.w #DMA_CGRAM
 	sta.w DMAP7
 	lda.w #$6C74
 	sta.w A1T7L
@@ -436,9 +436,9 @@ VBlank_CramOnly:		;auto: CODE_808361. vbint target (stays installed): forced bla
 	sta.w DAS7L
 	sep #$20
 	stz.w CGADD
-	lda.b #$7E
+	lda.b #palbuffer>>16
 	sta.w A1B7
-	lda.b #$80
+	lda.b #MDMAEN_CH7
 	sta.w MDMAEN
 	rep #$30
 	jmp.w vb2
@@ -1499,9 +1499,9 @@ burst:		;auto: CODE_808BAD. 93G burst (logic93_1): check button: speed burst in 
 	asl a
 	asl a
 	tay
-	lda.w #$AE36		; dirtab (bank $80)
+	lda.w #dirtab
 	sta.b a0
-	lda.w #$0080
+	lda.w #dirtab>>16
 	sta.b a0+2
 	lda.b [a0],y
 	iny

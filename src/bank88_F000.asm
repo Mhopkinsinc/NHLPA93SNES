@@ -279,7 +279,7 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 .setup:		;Y: back to the setup screen (new playoffs)
 	lda.w #2
 	sta.w OptPlayMode
-	jml.l $83FA87		; bank $83: the setup screens
+	jml.l Restart		; bank $83: the setup screens
 PasswordText:		;92G GetPassWord .text: "Password" at 2, 14, "Press Start" at 10, 24, then print at 21, 14; then an empty string ends it
 	dw 30
 	db $FF,2,14,"Password",$FF,10,24,"Press Start",$FF,21,14
@@ -297,11 +297,11 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	sep #$20
 	cli
 	lda.w RDNMI
-	lda.b #$81
+	lda.b #NMITIMEN_NMI|NMITIMEN_JOY
 	sta.w NMITIMEN
 	lda.b #$03
 	sta.w OBSEL
-	lda.b #$01
+	lda.b #BGMODE_1
 	sta.w BGMODE
 	lda.b #$00
 	sta.w BG1SC
@@ -309,7 +309,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	sta.w BG2SC
 	lda.b #$11
 	sta.w BG12NBA
-	lda.b #$03
+	lda.b #TM_BG1|TM_BG2
 	sta.w TM
 	rep #$30
 	lda.w blankchar
@@ -376,9 +376,9 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	lda.w #SmallFontTiles>>16
 	sta.b tmp1
 	jsl.l DecompressGraphics
-	lda.w #$0000
+	lda.w #unpackbuf&$FFFF
 	sta.b a0
-	lda.w #$007F
+	lda.w #unpackbuf>>16
 	sta.b a0+2
 	lda.w #PixelRemap8F
 	sta.b a1
@@ -405,7 +405,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	stz.w DMAList+dmavram
 	lda.w #dmasize
 	sta.b DMAListend
-	lda.w #$8293		; title vblank handler $8293
+	lda.w #VBlank_VScroll		; title vblank handler
 	sta.b vbint
 	lda.w #$0001
 	sta.b fadein
@@ -489,7 +489,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	inc a
 	and.w #$00FF
 	sta.b d0
-	lda.w #$8293
+	lda.w #VBlank_VScroll
 	sta.b vbint
 .wait:
 	cmp.b vbint
@@ -537,7 +537,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	jmp.w .top2
 .exit:		;wait for the default vblank handler, return
 	lda.b vbint
-	cmp.w #$80DE		; the default vblank handler $80DE
+	cmp.w #vb2		; the default vblank handler
 	bne .exit
 	rtl
 CreditsBlank:		;print string of 32 blanks: TitleScreen erases the rows below the credits with it
@@ -562,13 +562,13 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 .po:
 	jsl.l forceblack		; bank $8F: 93G forceblack
 	sep #$20
-	lda.b #$01
+	lda.b #BGMODE_1
 	sta.w BGMODE
 	lda.b #$01
 	sta.w BG1SC
 	lda.b #$01
 	sta.w BG12NBA
-	lda.b #$01
+	lda.b #TM_BG1
 	sta.w TM
 	rep #$30
 	lda.w #$1000
@@ -599,9 +599,9 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	lda.w #SmallFontTiles>>16
 	sta.b tmp1
 	jsl.l DecompressGraphics
-	lda.w #$0000
+	lda.w #unpackbuf&$FFFF
 	sta.b a0
-	lda.w #$007F
+	lda.w #unpackbuf>>16
 	sta.b a0+2
 	lda.w #PixelRemap8F
 	sta.b a1
@@ -615,9 +615,9 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	lda.w #SmallFontTiles>>16
 	sta.b tmp1
 	jsl.l DecompressGraphics
-	lda.w #$0000
+	lda.w #unpackbuf&$FFFF
 	sta.b a0
-	lda.w #$007F
+	lda.w #unpackbuf>>16
 	sta.b a0+2
 	lda.w #PixelRemap83
 	sta.b a1
@@ -967,7 +967,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	cpy.w #32*2*dmasize		; 32 rows: 2 dma entries each
 	bne .dma
 	sty.b DMAListend
-	lda.w #$82E0		; playoff vblank handler $82E0
+	lda.w #VBlank_Cram		; playoff vblank handler
 	sta.b vbint
 .wait:
 	cmp.b vbint

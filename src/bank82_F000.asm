@@ -155,13 +155,13 @@ SPCBootUpload:		;auto: CODE_82FA31. SNES: wait for the queue and a vblank, then 
 	lda.w #$0002
 	sta.w sndbank
 	stz.w cursong
-	lda.w #$8000		; sndptr = $868000
+	lda.w #BootSoundUpload&$FFFF		; sndptr = BootSoundUpload
 	sta.b sndptr
-	lda.w #$8680
+	lda.w #(BootSoundUpload>>8)&$FFFF
 	sta.b sndptr+1
 	jsl.l SPCUpload
 	sep #$20
-	lda.b #$81		; NMI and auto joypad read back on
+	lda.b #NMITIMEN_NMI|NMITIMEN_JOY		; NMI and auto joypad read back on
 	sta.w NMITIMEN
 	rep #$30
 	lda.b vcount
@@ -198,7 +198,7 @@ SPCGameUpload:		;auto: CODE_82FA7A. SNES: wait for the queue and 6 frames, then 
 	sta.b sndptr+1
 	jsl.l SPCUpload
 	sep #$20
-	lda.b #$81
+	lda.b #NMITIMEN_NMI|NMITIMEN_JOY
 	sta.w NMITIMEN
 	rep #$30
 	lda.w #$000A
