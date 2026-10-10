@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank81_F000` ($81F000-$81FFFF). <- CURRENT
+`bank82_8000` ($828000-$828FFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -88,8 +88,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank81_C000 | matched | $81C000 | $81CFFF | data | 4096 bytes $81C000-$81CFFF. GameSamples continued: incbin data/gamesamples.brr $3FAC..$4FAC |
 | bank81_D000 | matched | $81D000 | $81DFFF | data | 4096 bytes $81D000-$81DFFF. GameSamples continued: incbin data/gamesamples.brr $4FAC..$5FAC |
 | bank81_E000 | matched | $81E000 | $81EFFF | data | 4096 bytes $81E000-$81EFFF. GameSamples continued: incbin data/gamesamples.brr $5FAC..$6FAC |
-| bank81_F000 | not matched <- CURRENT | $81F000 | $80FFFF | -0% |  |
-| bank82_8000 | not matched | $828000 | $828FFF | 0% |  |
+| bank81_F000 | matched | $81F000 | $81FFFF | data | 4096 bytes $81F000-$81FFFF. GameSamples continued: incbin data/gamesamples.brr $6FAC..$7FAC |
+| bank82_8000 | not matched <- CURRENT | $828000 | $828FFF | 0% |  |
 | bank82_9000 | not matched | $829000 | $829FFF | 0% |  |
 | bank82_A000 | not matched | $82A000 | $82AFFF | 0% |  |
 | bank82_B000 | not matched | $82B000 | $82BFFF | 0% |  |
@@ -222,3 +222,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank81_C000: matched $81C000-$81CFFF (4096 bytes): BRR samples of the in-game sample set, incbin data/gamesamples.brr $3FAC..$4FAC. MATCH.
 - bank81_D000: matched $81D000-$81DFFF (4096 bytes): BRR samples of the in-game sample set, incbin data/gamesamples.brr $4FAC..$5FAC. MATCH.
 - bank81_E000: matched $81E000-$81EFFF (4096 bytes): BRR samples of the in-game sample set, incbin data/gamesamples.brr $5FAC..$6FAC. MATCH.
+- bank81_F000: matched $81F000-$81FFFF (4096 bytes): BRR samples of the in-game sample set, incbin data/gamesamples.brr $6FAC..$7FAC. MATCH.
