@@ -36,17 +36,17 @@ printscores1:		;auto: CODE_89E95D. 93G printscores1 (penalty93_2): scoreboard. V
 	sta.b d0		; $89E993: 85 53
 	lda.w #5		; $89E995: A9 05 00
 	sta.b d1		; $89E998: 85 57
-	jsl.l $8FD69F		; $89E99A: 22 9F D6 8F  Framer 9 x 5, bank $8F: 93G Framer (d0 x d1)
+	jsl.l Framer		; $89E99A: 22 9F D6 8F  Framer 9 x 5, bank $8F: 93G Framer (d0 x d1)
 	jsl.l printz		; $89E99E: 22 0C B9 80
 	dw $0005		; $89E9A2  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$01,$18
 	lda.w gsp		; $89E9A7: AD F0 12
 	sta.b d0		; $89E9AA: 85 53
-	lda.w #$8236		; $89E9AC: A9 36 82  period name
+	lda.w #PerLabels		; $89E9AC: A9 36 82  period name
 	sta.b a1		; $89E9AF: 85 37
-	lda.w #$008F		; $89E9B1: A9 8F 00
+	lda.w #PerLabels>>16		; $89E9B1: A9 8F 00
 	sta.b a1+2		; $89E9B4: 85 39
-	jsl.l $8FD68C		; $89E9B6: 22 8C D6 8F  bank $8F: 93G PrintStringFromList
+	jsl.l PrintStringFromList		; $89E9B6: 22 8C D6 8F  bank $8F: 93G PrintStringFromList
 	jsl.l EASNLogo		; $89E9BA: 22 49 85 8D  EASNLogo, bank $8D: 93G EASNLogo
 	lda.w sflags3		; $89E9BE: AD 90 12  lower line change box is up
 	bit.w #sf3llcs		; $89E9C1: 89 01 00
@@ -58,7 +58,7 @@ printscores1:		;auto: CODE_89E95D. 93G printscores1 (penalty93_2): scoreboard. V
 	sta.b d0		; $89E9D2: 85 53
 	lda.w #5		; $89E9D4: A9 05 00
 	sta.b d1		; $89E9D7: 85 57
-	jsl.l $8FD69F		; $89E9D9: 22 9F D6 8F  bank $8F: 93G Framer (d0 x d1)
+	jsl.l Framer		; $89E9D9: 22 9F D6 8F  bank $8F: 93G Framer (d0 x d1)
 	jsl.l printz		; $89E9DD: 22 0C B9 80
 	dw $0005		; $89E9E1  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$1C,$18
@@ -125,14 +125,14 @@ printscores1:		;auto: CODE_89E95D. 93G printscores1 (penalty93_2): scoreboard. V
 	db $BF,$17,$04
 	lda.w tmscore		; $89EA6E: AD D6 13  home score in big font
 	sta.b d0		; $89EA71: 85 53
-	jsl.l $8F8682		; $89EA73: 22 82 86 8F  bank $8F: 93G pushnumber
+	jsl.l pushnumber		; $89EA73: 22 82 86 8F  bank $8F: 93G pushnumber
 	jsl.l printbig		; $89EA77: 22 CE FC 8B  bank $8B: 93G printbig
 	jsl.l printz		; $89EA7B: 22 0C B9 80
 	dw $0005		; $89EA7F  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$07,$04
 	lda.w tmscore+2		; $89EA84: AD D8 13  away score
 	sta.b d0		; $89EA87: 85 53
-	jsl.l $8F8682		; $89EA89: 22 82 86 8F  bank $8F: 93G pushnumber
+	jsl.l pushnumber		; $89EA89: 22 82 86 8F  bank $8F: 93G pushnumber
 	jsl.l printbig		; $89EA8D: 22 CE FC 8B  bank $8B: 93G printbig
 	jsl.l printz		; $89EA91: 22 0C B9 80
 	dw $0005		; $89EA95  printz inline string: length (counts itself), then control bytes / text
@@ -148,9 +148,9 @@ printscores1:		;auto: CODE_89E95D. 93G printscores1 (penalty93_2): scoreboard. V
 PrintPerLabel:		;auto: CODE_89EAB1. SNES: print the PerLabels ($8F8236) entry for gsp (93G AdvanceStringPtr + print)
 	lda.w gsp		; $89EAB1: AD F0 12
 	sta.b d0		; $89EAB4: 85 53
-	lda.w #$8236		; $89EAB6: A9 36 82
+	lda.w #PerLabels		; $89EAB6: A9 36 82
 	sta.b a0		; $89EAB9: 85 33
-	lda.w #$008F		; $89EABB: A9 8F 00
+	lda.w #PerLabels>>16		; $89EABB: A9 8F 00
 	sta.b a0+2		; $89EABE: 85 35
 .next:
 	lda.b a0		; $89EAC0: A5 33

@@ -20,12 +20,12 @@ Pausemode:		;auto: CODE_83F82B (called from $8E817B). 92G Pausemode: game is in 
 	pha		; $83F843: 48
 	lda.w sflags		; $83F844: AD 8C 12
 	pha		; $83F847: 48
-	jsl.l $8FE404		; $83F848: 22 04 E4 8F  bank $8F: 93G forceblack
+	jsl.l forceblack		; $83F848: 22 04 E4 8F  bank $8F: 93G forceblack
 	lda.w #999		; $83F84C: A9 E7 03  Oldrow = 999, SetHor, setvideo
 	sta.w Oldrow		; $83F84F: 8D 9B 04
-	jsl.l $8F84B5		; $83F852: 22 B5 84 8F  bank $8F: 93G SetHor
+	jsl.l SetHor		; $83F852: 22 B5 84 8F  bank $8F: 93G SetHor
 	jsl.l setvideo		; $83F856: 22 5E E3 80
-	jsl.l $8F87C0		; $83F85A: 22 C0 87 8F  bank $8F
+	jsl.l KillCrowd		; $83F85A: 22 C0 87 8F  bank $8F
 .top:		;92G .top: draw the pause screen
 	jsl.l printz8B		; $83F85E: 22 BF FD 82  big PAUSE title and the menu frame (22 x 7)
 	dw $000A		; $83F862  printz inline string: length (counts itself), then control bytes / text
@@ -37,16 +37,16 @@ Pausemode:		;auto: CODE_83F82B (called from $8E817B). 92G Pausemode: game is in 
 	sta.b d0		; $83F878: 85 53
 	lda.w #$0007		; $83F87A: A9 07 00
 	sta.b d1		; $83F87D: 85 57
-	jsl.l $8FD69F		; $83F87F: 22 9F D6 8F  bank $8F: 93G Framer (d0 x d1)
+	jsl.l Framer		; $83F87F: 22 9F D6 8F  bank $8F: 93G Framer (d0 x d1)
 	jsl.l printscores1		; $83F883: 22 5D E9 89  bank $89: 93G printscores1
 	jsl.l PauseMenu		; $83F887: 22 91 F8 83  nonzero: draw again
 	bne .top		; $83F88B: D0 D1
-	jml.l $8F8E0D		; $83F88D: 5C 0D 8E 8F  bank $8F: 92G PauseExit
+	jml.l PauseExit		; $83F88D: 5C 0D 8E 8F  bank $8F: 92G PauseExit
 PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB), read the pad (.rjoy); up/down move psitem (5 items), Start leaves, else the .jump handler of the item. Returns A =
 		;   0 to leave, 1 to redraw
 	stz.w psitem		; $83F891: 9C 85 04
 .gj:
-	jsl.l $8FECAB		; $83F894: 22 AB EC 8F  bank $8F: 92G Pausemode .Pmenu (menu text and goalie number)
+	jsl.l Pmenu		; $83F894: 22 AB EC 8F  bank $8F: 92G Pausemode .Pmenu (menu text and goalie number)
 	jsl.l PauseReadJoy		; $83F898: 22 32 FA 83
 	lda.b d1		; $83F89C: A5 57  Start: leave
 	bit.w #JOYSTART		; $83F89E: 89 00 10
@@ -88,7 +88,7 @@ PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB
 	lda.b d1		; $83F8EC: A5 57
 	bit.w #cbut		; $83F8EE: 89 80 00
 	beq .gj		; $83F8F1: F0 A1
-	jsl.l $8FE404		; $83F8F3: 22 04 E4 8F  ReplayMode with vcountmark+2 = vcount-2, bank $8F: 93G forceblack
+	jsl.l forceblack		; $83F8F3: 22 04 E4 8F  ReplayMode with vcountmark+2 = vcount-2, bank $8F: 93G forceblack
 	jsl.l sndqreset		; $83F8F7: 22 1A FA 82
 	lda.b d7		; $83F8FB: A5 6F
 	pha		; $83F8FD: 48
@@ -108,8 +108,8 @@ PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB
 	bne .sr1		; $83F915: D0 03
 	jmp.w .gj		; $83F917: 4C 94 F8
 .sr1:
-	jsl.l $8F8757		; $83F91A: 22 57 87 8F  stats report screen, then back, bank $8F
-	jsl.l $8FF58D		; $83F91E: 22 8D F5 8F  bank $8F: 92G StatsReport
+	jsl.l StatsScreen		; $83F91A: 22 57 87 8F  stats report screen, then back, bank $8F
+	jsl.l StatsReport		; $83F91E: 22 8D F5 8F  bank $8F: 92G StatsReport
 	bra .redraw		; $83F922: 80 E8
 .ros:		;SNES Team Roster: show the roster, then rebuild the game screen (bg registers, palette, small font tiles, SetHor)
 	lda.b d1		; $83F924: A5 57
@@ -117,9 +117,9 @@ PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB
 	bne .ros1		; $83F929: D0 03
 	jmp.w .gj		; $83F92B: 4C 94 F8
 .ros1:
-	jsl.l $8FE825		; $83F92E: 22 25 E8 8F  roster screen; then BG mode/maps, palbuffer to CGRAM, the big font, sprites, bank $8F: team roster screen
+	jsl.l TeamRoster		; $83F92E: 22 25 E8 8F  roster screen; then BG mode/maps, palbuffer to CGRAM, the big font, sprites, bank $8F: team roster screen
 	jsl.l sndqreset		; $83F932: 22 1A FA 82
-	jsl.l $8FE404		; $83F936: 22 04 E4 8F  bank $8F: 93G forceblack
+	jsl.l forceblack		; $83F936: 22 04 E4 8F  bank $8F: 93G forceblack
 	sep #$20		; $83F93A: E2 20
 	lda.b #$00		; $83F93C: A9 00
 	sta.w BG1SC		; $83F93E: 8D 07 21
@@ -162,7 +162,7 @@ PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB
 	sta.b a1+2		; $83F998: 85 39
 	lda.w #$0064		; $83F99A: A9 64 00
 	sta.b d0		; $83F99D: 85 53
-	jsl.l $8FE0E4		; $83F99F: 22 E4 E0 8F  bank $8F: remap the 4bpp pixels of the unpacked tiles ([a0] data, [a1] table, d0 tiles)
+	jsl.l RemapTiles		; $83F99F: 22 E4 E0 8F  bank $8F: remap the 4bpp pixels of the unpacked tiles ([a0] data, [a1] table, d0 tiles)
 	lda.w #FramerTiles		; $83F9A3: A9 2E 87
 	sta.b a0		; $83F9A6: 85 33
 	lda.w #FramerTiles>>16		; $83F9A8: A9 88 00
@@ -173,20 +173,20 @@ PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB
 	sta.b a1+2		; $83F9B5: 85 39
 	lda.w #$0004		; $83F9B7: A9 04 00
 	sta.b d0		; $83F9BA: 85 53
-	jsl.l $8FE0E4		; $83F9BC: 22 E4 E0 8F  bank $8F: remap the 4bpp pixels of the unpacked tiles ([a0] data, [a1] table, d0 tiles)
+	jsl.l RemapTiles		; $83F9BC: 22 E4 E0 8F  bank $8F: remap the 4bpp pixels of the unpacked tiles ([a0] data, [a1] table, d0 tiles)
 	lda.b sprclock		; $83F9C0: A5 A7
 	adc.w #$003C		; $83F9C2: 69 3C 00
 	sta.b sprclock		; $83F9C5: 85 A7
 	lda.w #$FFFF		; $83F9C7: A9 FF FF
 	sta.b textdirtylo		; $83F9CA: 85 D0
 	stz.b textdirtyhi		; $83F9CC: 64 D2
-	jsl.l $8F84B5		; $83F9CE: 22 B5 84 8F  bank $8F: 93G SetHor
+	jsl.l SetHor		; $83F9CE: 22 B5 84 8F  bank $8F: 93G SetHor
 	jsl.l setvideo		; $83F9D2: 22 5E E3 80
 	jmp.w .redraw		; $83F9D6: 4C 0C F9
 .go:		;92G .go: Goalie: left/right change tmgoalie (0, 1, none), then Setpersonel
-	jsl.l $8FEE4A		; $83F9D9: 22 4A EE 8F  bank $8F
-	jsl.l $8FD76B		; $83F9DD: 22 6B D7 8F  bank $8F
-	jsl.l $8FEE4A		; $83F9E1: 22 4A EE 8F  bank $8F
+	jsl.l GetPadTeam		; $83F9D9: 22 4A EE 8F  bank $8F
+	jsl.l GoalieCount		; $83F9DD: 22 6B D7 8F  bank $8F
+	jsl.l GetPadTeam		; $83F9E1: 22 4A EE 8F  bank $8F
 	ldy.b a2		; $83F9E5: A4 3B  A or right: next goalie; left: previous; d0 = number of goalies
 	lda.b d1		; $83F9E7: A5 57
 	bit.w #cbut|JOYRIGHT		; $83F9E9: 89 80 01
@@ -220,7 +220,7 @@ PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB
 .jump:		;92G .jump: Resume Game, Instant Replay, Stats Report, Goalie, Team Roster
 	dd PauseResume,.rm,.sr,.go,.ros		; $83FA1E
 PauseReadJoy:		;auto: CODE_83FA32. 92G Pausemode .rjoy: wait for a vblank and a new button (not L/R); in demo mode with no controller team the pause ends after pausetimer frames (sets Start)
-	jsl.l $8F877D		; $83FA32: 22 7D 87 8F  bank $8F
+	jsl.l IntermissionTick		; $83FA32: 22 7D 87 8F  bank $8F
 	bne .force		; $83FA36: D0 32
 	jsl.l setvideo		; $83FA38: 22 5E E3 80
 	lda.b vcount		; $83FA3C: A5 00
@@ -306,7 +306,7 @@ Restart:		;auto: CODE_83FA87. SNES: restart the game from scratch (93G Begin rol
 	sta.b vbint		; $83FADD: 85 14
 	lda.w #HBdefault		; $83FADF: A9 A3 83
 	sta.b hbint		; $83FAE2: 85 16
-	jsl.l $8FEE83		; $83FAE4: 22 83 EE 8F  bank $8F
+	jsl.l setoptions		; $83FAE4: 22 83 EE 8F  bank $8F
 	jml.l far8B8172		; $83FAE8: 5C F2 F5 80
 RefsMap:		;93G RefsMap: the ref window frames, 7 frames of 8 x 7 words (data/Refs.snesmap); PushRef copies frame d0 (+$70 each)
 	incbin "../data/Refs.snesmap"		; $83FAEC-$83FDFB

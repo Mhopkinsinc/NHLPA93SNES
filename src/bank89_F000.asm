@@ -54,7 +54,7 @@ StartSong1:		;auto: CODE_89FBB3. SNES: start music cue 1 (home goal) unless it p
 	jsl.l SPCGameUpload		; $89FBC7: 22 7A FA 82
 .cmd:
 	lda.w #$0004		; $89FBCB: A9 04 00
-	jsl.l $8FFE7B		; $89FBCE: 22 7B FE 8F  bank $8F: driver command A (music cue)
+	jsl.l MusicCue		; $89FBCE: 22 7B FE 8F  bank $8F: driver command A (music cue)
 	lda.w #$0001		; $89FBD2: A9 01 00
 	sta.w cursong		; $89FBD5: 8D 51 16
 	lda.w #$0240		; $89FBD8: A9 40 02
@@ -72,7 +72,7 @@ StartSong2:		;auto: CODE_89FBDF. SNES: start music cue 2 (period start) unless i
 	jsl.l SPCGameUpload		; $89FBF3: 22 7A FA 82
 .cmd:
 	lda.w #$0005		; $89FBF7: A9 05 00
-	jsl.l $8FFE7B		; $89FBFA: 22 7B FE 8F  bank $8F: driver command A (music cue)
+	jsl.l MusicCue		; $89FBFA: 22 7B FE 8F  bank $8F: driver command A (music cue)
 	lda.w #$0002		; $89FBFE: A9 02 00
 	sta.w cursong		; $89FC01: 8D 51 16
 	lda.w #$01CE		; $89FC04: A9 CE 01
@@ -90,7 +90,7 @@ StartSong3:		;auto: CODE_89FC0B. SNES: start music cue 3 (third period, Gameloop
 	jsl.l SPCGameUpload		; $89FC1F: 22 7A FA 82
 .cmd:
 	lda.w #$0006		; $89FC23: A9 06 00
-	jsl.l $8FFE7B		; $89FC26: 22 7B FE 8F  bank $8F: driver command A (music cue)
+	jsl.l MusicCue		; $89FC26: 22 7B FE 8F  bank $8F: driver command A (music cue)
 	lda.w #$0003		; $89FC2A: A9 03 00
 	sta.w cursong		; $89FC2D: 8D 51 16
 	lda.w #$0474		; $89FC30: A9 74 04
@@ -108,7 +108,7 @@ StartSong4:		;auto: CODE_89FC37. SNES: start music cue 4 (no caller found) unles
 	jsl.l SPCGameUpload		; $89FC4B: 22 7A FA 82
 .cmd:
 	lda.w #$0007		; $89FC4F: A9 07 00
-	jsl.l $8FFE7B		; $89FC52: 22 7B FE 8F  bank $8F: driver command A (music cue)
+	jsl.l MusicCue		; $89FC52: 22 7B FE 8F  bank $8F: driver command A (music cue)
 	lda.w #$0004		; $89FC56: A9 04 00
 	sta.w cursong		; $89FC59: 8D 51 16
 	lda.w #$022E		; $89FC5C: A9 2E 02
@@ -126,7 +126,7 @@ StartSong5:		;auto: CODE_89FC63. SNES: start music cue 5 (mid-period) unless it 
 	jsl.l SPCGameUpload		; $89FC77: 22 7A FA 82
 .cmd:
 	lda.w #$0008		; $89FC7B: A9 08 00
-	jsl.l $8FFE7B		; $89FC7E: 22 7B FE 8F  bank $8F: driver command A (music cue)
+	jsl.l MusicCue		; $89FC7E: 22 7B FE 8F  bank $8F: driver command A (music cue)
 	lda.w #$0005		; $89FC82: A9 05 00
 	sta.w cursong		; $89FC85: 8D 51 16
 	lda.w #$041A		; $89FC88: A9 1A 04
@@ -215,7 +215,7 @@ StartGame:		;auto: CODE_89FD0C (from $8B8176). 93G StartGame (hockey93_01): rese
 	stz.w gsp		; $89FD24: 9C F0 12
 	stz.w ChkCnt		; $89FD27: 9C F8 12
 	jsl.l restoreteams		; $89FD2A: 22 3A FD 89
-	jsl.l $8F902A		; $89FD2E: 22 2A 90 8F  bank $8F: 93G InitScores
+	jsl.l InitScores		; $89FD2E: 22 2A 90 8F  bank $8F: 93G InitScores
 	jsl.l UpdateScores		; $89FD32: 22 D1 F9 82
 	jml.l StartPer		; $89FD36: 5C 17 82 8D  bank $8D: on to the period start
 restoreteams:		;auto: CODE_89FD3A. 93G restoreteams (hockey93_01): both rosters to the bench: tmap 6, every tmpdst -2
@@ -302,7 +302,7 @@ asswingd:		;auto: CODE_89FDD6 (asstab 3). 93G asswingd (logic93_2): wing on defe
 .go:
 	lda.w gmclock		; $89FDDE: AD 8A 12
 	beq .gm		; $89FDE1: F0 04
-	jml.l $8FD75A		; $89FDE3: 5C 5A D7 8F  bank $8F: assnothing
+	jml.l assnothing		; $89FDE3: 5C 5A D7 8F  bank $8F: assnothing
 .gm:
 	jsl.l check4bench		; $89FDE7: 22 27 85 80
 	lda.w pflags,x		; $89FDEB: BD DF 0E

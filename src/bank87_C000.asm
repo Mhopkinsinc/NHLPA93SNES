@@ -219,7 +219,7 @@ DrawFrame:		;auto: CODE_87CE62 (from addframe). SNES: as DrawFrameHi (bank85_F00
 	lda.b sprslotlife		; $87CF93: A5 C1
 	cmp.w #$0005		; $87CF95: C9 05 00
 	bcs .shorten		; $87CF98: B0 04
-	jml.l $8FDAF3		; $87CF9A: 5C F3 DA 8F  bank $8F: VRAM sprite cache full
+	jml.l addframe_full		; $87CF9A: 5C F3 DA 8F  bank $8F: VRAM sprite cache full
 .shorten:
 	dec.b sprslotlife		; $87CF9E: C6 C1
 	lda.b sprslot		; $87CFA0: A5 B5
@@ -405,7 +405,7 @@ DrawFrame:		;auto: CODE_87CE62 (from addframe). SNES: as DrawFrameHi (bank85_F00
 	lda.b sprslotlife		; $87D0E3: A5 C1
 	cmp.w #$0005		; $87D0E5: C9 05 00
 	bcs .bshorten		; $87D0E8: B0 04
-	jml.l $8FDAF3		; $87D0EA: 5C F3 DA 8F  bank $8F: VRAM sprite cache full
+	jml.l addframe_full		; $87D0EA: 5C F3 DA 8F  bank $8F: VRAM sprite cache full
 .bshorten:
 	dec.b sprslotlife		; $87D0EE: C6 C1
 	lda.b sprbigslot		; $87D0F0: A5 B1

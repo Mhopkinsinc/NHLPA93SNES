@@ -24,7 +24,7 @@ fightinput:		;auto: CODE_8FD4F9 (from joyplayer). 93G fightinput: pad input in a
 	bne .l3		; $8FD519: D0 09
 	and.w #$0007		; $8FD51B: 29 07 00
 	sta.b d2		; $8FD51E: 85 5B
-	jsl.l $8FE164		; $8FD520: 22 64 E1 8F  bank8F_E000: 93G playeracc
+	jsl.l playeracc		; $8FD520: 22 64 E1 8F
 .l3:
 	lda.w xc1		; $8FD524: AD F5 08
 	clc		; $8FD527: 18
@@ -172,7 +172,7 @@ holdcheck:		;auto: CODE_8FD5BF (from checkcheck). 93G holdcheck: player X holds 
 	sta.b d1		; $8FD657: 85 57
 .l5:
 	jsl.l SetSPA		; $8FD659: 22 06 B0 80
-	jsl.l $8FE369		; $8FD65D: 22 69 E3 8F  bank8F_E000: 93G checkagr
+	jsl.l checkagr		; $8FD65D: 22 69 E3 8F
 	lda.b d0		; $8FD661: A5 53
 	cmp.w #$0007		; $8FD663: C9 07 00
 	bcs .l7		; $8FD666: B0 16
@@ -300,7 +300,7 @@ assnothing:		;auto: CODE_8FD75A. 93G assnothing: a computer player stands (dopla
 	bne .l1		; $8FD760: D0 08
 	lda.w #$0008		; $8FD762: A9 08 00
 	sta.b d0		; $8FD765: 85 53
-	jmp.w $FBDC		; $8FD767: 4C DC FB  bank8F_F000: 93G doplayeracc
+	jmp.w doplayeracc		; $8FD767: 4C DC FB
 .l1:
 	rtl		; $8FD76A: 6B
 GoalieCount:		;auto: CODE_8FD76B. SNES: d0 = goalies of team a2 (nibbles of its goalie weights word, team record +$A, until 0); hangs if a2 is not 0 or 2
@@ -482,7 +482,7 @@ releasepl:		;auto: CODE_8FD9DF. 93G releasepl (penalty93_1): player d0 leaves th
 	lda.w #$0001		; $8FDA1F: A9 01 00
 	tsb.w tmflags		; $8FDA22: 0C 0A 14
 	tsb.w tmflags+2		; $8FDA25: 0C 0C 14
-	lda.w #$F820		; $8FDA28: A9 20 F8
+	lda.w #priolist		; $8FDA28: A9 20 F8
 	sta.b a0		; $8FDA2B: 85 33
 	lda.w #$008F		; $8FDA2D: A9 8F 00
 	sta.b a0+2		; $8FDA30: 85 35
@@ -574,7 +574,7 @@ assstanley:		;auto: CODE_8FDA8F (asstab 8). 93G assstanley: skate to the side of
 	lda.b d0		; $8FDAE8: A5 53
 	sta.b d2		; $8FDAEA: 85 5B
 	sta.w facedir,x		; $8FDAEC: 9D BF 0D
-	jmp.w $E164		; $8FDAEF: 4C 64 E1  bank8F_E000: 93G playeracc
+	jmp.w playeracc		; $8FDAEF: 4C 64 E1
 .l5:
 	rtl		; $8FDAF2: 6B
 addframe_full:		;auto: CODE_8FDAF3. SNES: sprite VRAM cache full: sprnodraw, addframe_end
@@ -726,7 +726,7 @@ loadTeamStruct:		;auto: CODE_8FDBF9. 93G loadTeamStruct: a2 = team of player X, 
 ScoutingReport:		;auto: CODE_8FDC0D (from Opening4). 93G ScoutingReport (hockey93_07): the scouting report screen: EASN backdrop, both team blocks, ScoutLabels with both teams' ratings, Ron Barr and
 		;   the scrolling text until Start
 	jsl.l ClearTeamStats		; $8FDC0D: 22 6B FD 82
-	jsl.l $8FE404		; $8FDC11: 22 04 E4 8F  bank8F_E000: 93G forceblack
+	jsl.l forceblack		; $8FDC11: 22 04 E4 8F
 	jsl.l InitPPU		; $8FDC15: 22 20 81 8D
 	sep #$20		; $8FDC19: E2 20
 	cli		; $8FDC1B: 58
@@ -1097,7 +1097,7 @@ ScoutCompare:		;auto: CODE_8FDED2. SNES: print the scouting ratings of team [a0]
 .l5:
 	lda.w #$0002		; $8FDF4D: A9 02 00
 	sta.b d1		; $8FDF50: 85 57
-	jsl.l $8FF54E		; $8FDF52: 22 4E F5 8F  bank8F_F000: 93G PushNumberWidth
+	jsl.l PushNumberWidth		; $8FDF52: 22 4E F5 8F
 	lda.w printx		; $8FDF56: AD 7B 04
 	pha		; $8FDF59: 48
 	jsl.l print		; $8FDF5A: 22 2D B9 80

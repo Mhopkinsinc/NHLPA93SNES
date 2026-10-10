@@ -573,7 +573,7 @@ PenGoalStuff:		;auto: CODE_80D329. 93G PenGoalStuff (penalty93_1): after a goal.
 	cpx.w #$0004		; $80D344: E0 04 00
 	bne .pusha		; $80D347: D0 F6
 	ldx.b xsave		; $80D349: A6 0A
-	jsl.l $8FE2F9		; $80D34B: 22 F9 E2 8F  ClearPenaltyBuffer, bank $8F: 93G ClearPenaltyBuffer
+	jsl.l ClearPenaltyBuffer		; $80D34B: 22 F9 E2 8F  ClearPenaltyBuffer, bank $8F: 93G ClearPenaltyBuffer
 	ldy.b a2		; $80D34F: A4 3B
 	lda.w tmap,y		; $80D351: B9 EE 13  tmap(a2) - tmap(a1) > 0?
 	ldy.b a1		; $80D354: A4 37
@@ -611,7 +611,7 @@ PenGoalStuff:		;auto: CODE_80D329. 93G PenGoalStuff (penalty93_1): after a goal.
 	bne .loop		; $80D38F: D0 DC
 	lda.w #$0000		; $80D391: A9 00 00  out of the box, one more on the ice, power play goal
 	sta.w tmpdst,y		; $80D394: 99 E2 14
-	jsl.l $8FDAFC		; $80D397: 22 FC DA 8F  bank $8F: 93G RemovePlayerFromList
+	jsl.l RemovePlayerFromList		; $80D397: 22 FC DA 8F  bank $8F: 93G RemovePlayerFromList
 	ldy.b a1		; $80D39B: A4 37
 	lda.w tmap,y		; $80D39D: B9 EE 13
 	inc a		; $80D3A0: 1A
@@ -1546,7 +1546,7 @@ FallDown:		;auto: CODE_80D933. 93G FallDown (hockey93_03): player a2 falls, X is
 	ldy.b a3		; $80DACC: A4 3F
 	stx.b a3		; $80DACE: 86 3F
 	sty.b a2		; $80DAD0: 84 3B
-	jsl.l $8FF74A		; $80DAD2: 22 4A F7 8F  setInjuryType, bank $8F: 93G setInjuryType
+	jsl.l setInjuryType		; $80DAD2: 22 4A F7 8F  setInjuryType, bank $8F: 93G setInjuryType
 	lda.w #$0004		; $80DAD6: A9 04 00
 	sta.w InjCntDown		; $80DAD9: 8D E6 12
 	lda.w #PenInjury		; $80DADC: A9 14 00  PenInjury if the hitter is a goalie or penalties are off, else PenRough2 and Stop4Pen
@@ -1628,11 +1628,11 @@ checkcheck:		;auto: CODE_80DB12. 93G checkcheck (hockey93_03): players in contac
 	lda.w SPA,y		; $80DB65: B9 FF 0D
 	cmp.w #SPAHold		; $80DB68: C9 FC 0B
 	bne .h2		; $80DB6B: D0 04
-	jml.l $8FD5BF		; $80DB6D: 5C BF D5 8F  bank $8F: 93G holdcheck
+	jml.l holdcheck		; $80DB6D: 5C BF D5 8F  bank $8F: 93G holdcheck
 .h2:
 	cmp.w #SPAhook		; $80DB71: C9 54 13
 	bne .b		; $80DB74: D0 04
-	jml.l $8FD5BF		; $80DB76: 5C BF D5 8F  bank $8F: 93G holdcheck
+	jml.l holdcheck		; $80DB76: 5C BF D5 8F  bank $8F: 93G holdcheck
 .b:
 	cmp.w #SPAsweepchk		; $80DB7A: C9 90 0A
 	bne .burst		; $80DB7D: D0 04
@@ -1724,7 +1724,7 @@ checkcheck:		;auto: CODE_80DB12. 93G checkcheck (hockey93_03): players in contac
 .v2:
 	bvc .down		; $80DC35: 50 28
 .pen:
-	jsl.l $8FE369		; $80DC37: 22 69 E3 8F  checkagr <= 4 and no highlight: PenCharge or PenSlash, bank $8F: 93G checkagr (d0 = penalty roll)
+	jsl.l checkagr		; $80DC37: 22 69 E3 8F  checkagr <= 4 and no highlight: PenCharge or PenSlash, bank $8F: 93G checkagr (d0 = penalty roll)
 	lda.b d0		; $80DC3B: A5 53
 	cmp.w #$0005		; $80DC3D: C9 05 00
 	bcc .nohl		; $80DC40: 90 03
@@ -1742,7 +1742,7 @@ checkcheck:		;auto: CODE_80DB12. 93G checkcheck (hockey93_03): players in contac
 	sta.b d0		; $80DC5A: 85 53
 	jmp.w AddPenalty		; $80DC5C: 4C 8F C1
 .down:
-	jsl.l $8FE369		; $80DC5F: 22 69 E3 8F  checkagr <= 3 and no highlight: PenRough or PenCross, bank $8F: 93G checkagr (d0 = penalty roll)
+	jsl.l checkagr		; $80DC5F: 22 69 E3 8F  checkagr <= 3 and no highlight: PenRough or PenCross, bank $8F: 93G checkagr (d0 = penalty roll)
 	lda.b d0		; $80DC63: A5 53
 	cmp.w #$0004		; $80DC65: C9 04 00
 	bcs .dn2		; $80DC68: B0 18
@@ -2103,7 +2103,7 @@ doinput:		;auto: CODE_80DF3F. 93G doinput (logic93_1): controller input for play
 	beq .nostart		; $80DF48: F0 0C
 	lda.b d4		; $80DF4A: A5 63
 	bne .pause2		; $80DF4C: D0 04
-	jml.l $8F8E03		; $80DF4E: 5C 03 8E 8F  bank $8F: 93G startpause1
+	jml.l startpause1		; $80DF4E: 5C 03 8E 8F  bank $8F: 93G startpause1
 .pause2:
 	jml.l startpause2		; $80DF52: 5C B5 FD 82
 .nostart:
@@ -2137,7 +2137,7 @@ doinput:		;auto: CODE_80DF3F. 93G doinput (logic93_1): controller input for play
 .nolock:
 	lda.w pf2fight,x		; $80DF90: BD 5F 11
 	beq .nofight		; $80DF93: F0 04
-	jml.l $8FD4F9		; $80DF95: 5C F9 D4 8F  bank $8F: 93G fightinput
+	jml.l fightinput		; $80DF95: 5C F9 D4 8F  bank $8F: 93G fightinput
 .nofight:
 	lda.w puckc		; $80DF99: AD BB 0E  carrier?
 	sta.b d5		; $80DF9C: 85 67
@@ -2161,7 +2161,7 @@ doinput:		;auto: CODE_80DF3F. 93G doinput (logic93_1): controller input for play
 	beq .acc		; $80DFC0: F0 03
 	jmp.w burst		; $80DFC2: 4C AD 8B
 .acc:
-	jml.l $8FFBDC		; $80DFC5: 5C DC FB 8F  bank $8F: 93G doplayeracc
+	jml.l doplayeracc		; $80DFC5: 5C DC FB 8F  bank $8F: 93G doplayeracc
 .ispc:		;player is the puck carrier
 	jsl.l checkob		; $80DFC9: 22 98 85 80  goalie with pf2aip: exit
 	lda.w position,x		; $80DFCD: BD 9F 0B
@@ -2172,7 +2172,7 @@ doinput:		;auto: CODE_80DF3F. 93G doinput (logic93_1): controller input for play
 	lda.w sflags		; $80DFD7: AD 8C 12
 	bit.w #sfspdir		; $80DFDA: 89 04 00
 	beq .nopass		; $80DFDD: F0 04
-	jml.l $8FE43C		; $80DFDF: 5C 3C E4 8F  bank $8F: 93G passmode
+	jml.l passmode		; $80DFDF: 5C 3C E4 8F  bank $8F: 93G passmode
 .nopass:
 	bit.w #sfssdir		; $80DFE3: 89 08 00
 	beq .noshot		; $80DFE6: F0 03
@@ -2195,7 +2195,7 @@ doinput:		;auto: CODE_80DF3F. 93G doinput (logic93_1): controller input for play
 	beq .acc2		; $80E00B: F0 03
 	jmp.w SetShotMode		; $80E00D: 4C E9 8D
 .acc2:
-	jml.l $8FFBDC		; $80E010: 5C DC FB 8F  bank $8F: 93G doplayeracc
+	jml.l doplayeracc		; $80E010: 5C DC FB 8F  bank $8F: 93G doplayeracc
 .lc:
 	lda.w lcplayer		; $80E014: AD 83 01  lcplayer $FFFF -> $FFFE
 	cmp.w #$FFFF		; $80E017: C9 FF FF
@@ -2295,4 +2295,4 @@ holdplayer:		;auto: CODE_80E0C5. 93G holdplayer (logic93_1): Y pressed: hold. Wi
 	asl a		; $80E0D8: 0A
 	sta.b d0		; $80E0D9: 85 53
 	sta.b a0		; $80E0DB: 85 33
-	jml.l $8FFB5B		; $80E0DD: 5C 5B FB 8F  bank $8F: 93G Acheck
+	jml.l Acheck		; $80E0DD: 5C 5B FB 8F  bank $8F: 93G Acheck

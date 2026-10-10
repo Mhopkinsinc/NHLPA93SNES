@@ -7,7 +7,7 @@ asspassrec:		;auto: asstab $13. 93G asspassrec (logic93_4 IDA loc_BFC6): assignm
 	bne .rts		; $809112: D0 47  locked
 	lda.w gmclock		; $809114: AD 8A 12  clock stopped
 	beq .joy		; $809117: F0 04
-	jml.l $8FD75A		; $809119: 5C 5A D7 8F  bank $8F: 93G assnothing
+	jml.l assnothing		; $809119: 5C 5A D7 8F  bank $8F: 93G assnothing
 .joy:
 	lda.w pflags,x		; $80911D: BD DF 0E
 	bit.w #pfjoycon		; $809120: 89 08 00  joystick controlled
@@ -44,7 +44,7 @@ assfight:		;auto: asstab $14. 93G assfight (logic93_2): fighting logic for playe
 .go:
 	lda.w Pencntdwn		; $809164: AD E0 12  fight over
 	bpl .chkna		; $809167: 10 04
-	jml.l $8FD75A		; $809169: 5C 5A D7 8F  bank $8F: 93G assnothing
+	jml.l assnothing		; $809169: 5C 5A D7 8F  bank $8F: 93G assnothing
 .chkna:
 	lda.w pflags,x		; $80916D: BD DF 0E
 	bit.w #pfna		; $809170: 89 02 00
@@ -531,7 +531,7 @@ FightFall:		;auto: CODE_8094CB. 93G chkhit .fall (IDA FightFall): X lost the fig
 	sta.b d1		; $809547: 85 57
 	jsl.l SetSPA		; $809549: 22 06 B0 80
 	stx.b a2		; $80954D: 86 3B
-	jsl.l $8FF74A		; $80954F: 22 4A F7 8F  setInjuryType (bank $8F): d1 = roster offset, bank $8F: 93G setInjuryType
+	jsl.l setInjuryType		; $80954F: 22 4A F7 8F  setInjuryType (bank $8F): d1 = roster offset, bank $8F: 93G setInjuryType
 	lda.b a0		; $809553: A5 33
 	beq .team		; $809555: F0 03
 	lda.w #$0034		; $809557: A9 34 00

@@ -65,7 +65,7 @@ SetPA2:		;auto: CODE_82F93C. 93G SetPA2 (penalty93_1): next frame/delay pair of 
 	and.w #$00FF		; $82F9AA: 29 FF 00
 	sta.b d0		; $82F9AD: 85 53
 .pr:
-	jsl.l $8F83A7		; $82F9AF: 22 A7 83 8F  bank $8F: 93G PushRef
+	jsl.l PushRef		; $82F9AF: 22 A7 83 8F  bank $8F: 93G PushRef
 	stx.b xsave		; $82F9B3: 86 0A
 	ldx.w #$0006		; $82F9B5: A2 06 00
 .popa:
@@ -502,10 +502,10 @@ addframe_hi:		;auto: CODE_82FD17. SNES addframe path for sprframe >= $293: find 
 	ldx.w #$0000		; $82FD26: A2 00 00
 	ldy.w #$0002		; $82FD29: A0 02 00
 .find:
-	lda.l $8FE67D,x		; $82FD2C: BF 7D E6 8F  skip empty table entries
+	lda.l FrameSetTable,x		; $82FD2C: BF 7D E6 8F  skip empty table entries
 	beq .find		; $82FD30: F0 FA
 	sta.b farptr		; $82FD32: 85 0C
-	lda.l $8FE67E,x		; $82FD34: BF 7E E6 8F
+	lda.l FrameSetTable+1,x		; $82FD34: BF 7E E6 8F
 	sta.b farptr+1		; $82FD38: 85 0D
 	lda.b sprframe		; $82FD3A: A5 C3
 	sec		; $82FD3C: 38
@@ -530,7 +530,7 @@ revplayeracc:		;auto: CODE_82FD54. SNES: playeracc with the direction d2 turned 
 	eor.w #$0004		; $82FD5B: 49 04 00
 	sta.b d2		; $82FD5E: 85 5B
 .acc:
-	jml.l $8FE164		; $82FD60: 5C 64 E1 8F  bank $8F: 93G playeracc
+	jml.l playeracc		; $82FD60: 5C 64 E1 8F  bank $8F: 93G playeracc
 marktexthi:		;auto: CODE_82FD64. SNES: textdirtyhi = max(textdirtyhi, A)
 	cmp.b textdirtyhi		; $82FD64: C5 D2
 	bcc .rtl		; $82FD66: 90 02
@@ -587,7 +587,7 @@ appendz:		;auto: CODE_82FDD3. SNES: like printz8B, for appstring $8F87C9 (append
 	clc		; $82FDDE: 18
 	adc.b $01,s		; $82FDDF: 63 01
 	sta.b $01,s		; $82FDE1: 83 01
-	jml.l $8F87C9		; $82FDE3: 5C C9 87 8F  bank $8F: appstring
+	jml.l appstring		; $82FDE3: 5C C9 87 8F  bank $8F: appstring
 asscentero:		;auto: CODE_82FDE7 (asstab 6). 93G asscentero (logic93_3): player X is the center on offense. Every aidef frames: acenterd when the other team has the puck, else a random spot in the
 		;   zone of the puck (.dedata), skateto with EvadePC
 	lda.w pfalock,x		; $82FDE7: BD 7F 11  anim locked: nothing
@@ -596,7 +596,7 @@ asscentero:		;auto: CODE_82FDE7 (asstab 6). 93G asscentero (logic93_3): player X
 .clk:
 	lda.w gmclock		; $82FDEF: AD 8A 12  clock stopped: assnothing
 	beq .go		; $82FDF2: F0 04
-	jml.l $8FD75A		; $82FDF4: 5C 5A D7 8F  bank $8F: 93G assnothing
+	jml.l assnothing		; $82FDF4: 5C 5A D7 8F  bank $8F: 93G assnothing
 .go:
 	jsl.l check4bench		; $82FDF8: 22 27 85 80
 	lda.w pflags,x		; $82FDFC: BD DF 0E  joystick controlled: nothing

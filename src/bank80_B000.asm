@@ -610,7 +610,7 @@ assreplace:		;auto: CODE_80B4A7. 93G assreplace (logic93_5): replace the current
 	rep #$30		; $80B4BE: C2 30
 	rtl		; $80B4C0: 6B
 setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, send the rink and text graphics to vram, palettes, video mode, team colors
-	jsl.l $8FE404		; $80B4C1: 22 04 E4 8F  93G setvram role (bank $8F), bank $8F
+	jsl.l forceblack		; $80B4C1: 22 04 E4 8F  93G setvram role (bank $8F), bank $8F
 	lda.w #$0207		; $80B4C5: A9 07 02  vram tile bases of the text layer
 	sta.w faceoffvrcset		; $80B4C8: 8D D9 1B
 	clc		; $80B4CB: 18
@@ -754,7 +754,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sta.b a1+2		; $80B622: 85 39
 	lda.w #$0064		; $80B624: A9 64 00
 	sta.b d0		; $80B627: 85 53
-	jsl.l $8FE0E4		; $80B629: 22 E4 E0 8F  bank $8F: build a sprite frame list ([a0] data, [a1] table, d0 count)
+	jsl.l RemapTiles		; $80B629: 22 E4 E0 8F  bank $8F: build a sprite frame list ([a0] data, [a1] table, d0 count)
 	lda.w #FramerTiles		; $80B62D: A9 2E 87
 	sta.b a0		; $80B630: 85 33
 	lda.w #FramerTiles>>16		; $80B632: A9 88 00
@@ -765,7 +765,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sta.b a1+2		; $80B63F: 85 39
 	lda.w #$0004		; $80B641: A9 04 00
 	sta.b d0		; $80B644: 85 53
-	jsl.l $8FE0E4		; $80B646: 22 E4 E0 8F  bank $8F: build a sprite frame list ([a0] data, [a1] table, d0 count)
+	jsl.l RemapTiles		; $80B646: 22 E4 E0 8F  bank $8F: build a sprite frame list ([a0] data, [a1] table, d0 count)
 	lda.w #BigFontTiles		; $80B64A: A9 C8 EE  packed big font tiles (bank8D_E000)
 	sta.b tmp0		; $80B64D: 85 73
 	lda.w #BigFontTiles>>16		; $80B64F: A9 8D 00
@@ -780,7 +780,7 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sta.b a1+2		; $80B667: 85 39
 	lda.w #$0090		; $80B669: A9 90 00
 	sta.b d0		; $80B66C: 85 53
-	jsl.l $8FE0E4		; $80B66E: 22 E4 E0 8F  bank $8F: build a sprite frame list ([a0] data, [a1] table, d0 count)
+	jsl.l RemapTiles		; $80B66E: 22 E4 E0 8F  bank $8F: build a sprite frame list ([a0] data, [a1] table, d0 count)
 	lda.w #999		; $80B672: A9 E7 03  Oldrow = 999, no pause, Hpos = Vpos = 0
 	sta.w Oldrow		; $80B675: 8D 9B 04
 	lda.w #$0001		; $80B678: A9 01 00
@@ -986,7 +986,7 @@ periodicevents:		;auto: CODE_80B80D. 93G periodicevents (hockey93_01): every gam
 	jsl.l PenaltyManager		; $80B80D: 22 C7 E6 80  PenaltyManager
 	jsl.l updatecrowdf		; $80B811: 22 D1 BE 80  updatecrowdf
 	jsl.l updatesound		; $80B815: 22 5A 86 8D  updatesound, bank $8D: 93G updatesound
-	jsl.l $8F8B11		; $80B819: 22 11 8B 8F  clockcont, bank $8F: 93G clockcont
+	jsl.l clockcont		; $80B819: 22 11 8B 8F  clockcont, bank $8F: 93G clockcont
 	lda.w sfhormode		; $80B81D: AD 8E 12  horizontal: no screen updates
 	bne .rtl		; $80B820: D0 29
 	lda.w lldisp		; $80B822: AD 89 01
@@ -998,10 +998,10 @@ periodicevents:		;auto: CODE_80B80D. 93G periodicevents (hockey93_01): every gam
 	adc.w #$0018		; $80B82E: 69 18 00  +$18 frames
 	sta.w lldisp		; $80B831: 8D 89 01
 	jsl.l ChkGoalies		; $80B834: 22 F2 BA 80  ChkGoalies
-	jsl.l $8FDBF7		; $80B838: 22 F7 DB 8F  UpdateCwdExcite, bank $8F: 93G UpdateCwdExcite
-	jsl.l $8FDBF8		; $80B83C: 22 F8 DB 8F  CheckPeriodEnd, bank $8F: 93G CheckPeriodEnd
+	jsl.l UpdateCwdExcite		; $80B838: 22 F7 DB 8F  UpdateCwdExcite, bank $8F: 93G UpdateCwdExcite
+	jsl.l CheckPeriodEnd		; $80B83C: 22 F8 DB 8F  CheckPeriodEnd, bank $8F: 93G CheckPeriodEnd
 	jsl.l UpdateLineChange		; $80B840: 22 96 FB 86  UpdateLineChange
-	jsl.l $8FF741		; $80B844: 22 41 F7 8F  CheckInjury, bank $8F: 93G CheckInjury
+	jsl.l CheckInjury		; $80B844: 22 41 F7 8F  CheckInjury, bank $8F: 93G CheckInjury
 	jmp.w updatepwrplay		; $80B848: 4C F4 B9
 .rtl:
 	rtl		; $80B84B: 6B
@@ -1292,7 +1292,7 @@ updatepwrplay:		;auto: CODE_80B9F4. 93G updatepwrplay (penalty93_1): show the po
 	dw $0012		; $80BA4A  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$01,$19,"   ",$16,$17,$18,$19,$BF,$01,$1A,"   "
 	jsl.l GetLowestPen		; $80BA5C: 22 F0 82 8D  bank $8D: 93G GetLowestPen
-	jsl.l $8F87EA		; $80BA60: 22 EA 87 8F  bank $8F: 93G PushTime
+	jsl.l PushTime		; $80BA60: 22 EA 87 8F  bank $8F: 93G PushTime
 	jsl.l print		; $80BA64: 22 2D B9 80
 	ldx.b a3		; $80BA68: A6 3F
 	lda.w tmdata,x		; $80BA6A: BD CE 13  team name (bank $83)
@@ -1318,7 +1318,7 @@ updatepwrplay:		;auto: CODE_80B9F4. 93G updatepwrplay (penalty93_1): show the po
 	sta.b a1		; $80BA9A: 85 37
 	lda.b a0+2		; $80BA9C: A5 35
 	sta.b a1+2		; $80BA9E: 85 39
-	jsl.l $8F87C9		; $80BAA0: 22 C9 87 8F  appstring, bank $8F: 93G appstring
+	jsl.l appstring		; $80BAA0: 22 C9 87 8F  appstring, bank $8F: 93G appstring
 	lda.b a3		; $80BAA4: A5 3F
 	sta.b a1		; $80BAA6: 85 37
 	lda.b a3+2		; $80BAA8: A5 41
@@ -1597,9 +1597,9 @@ SetPlList:		;auto: CODE_80BCB0. 93G SetPlList (hockey93_05): make PlList, the pl
 	sta.b [a4],y		; $80BCC2: 97 43
 	ldy.w #$0004		; $80BCC4: A0 04 00
 	sta.b [a4],y		; $80BCC7: 97 43
-	lda.w #$F820		; $80BCC9: A9 20 F8  priolist (bank $8F)
+	lda.w #priolist		; $80BCC9: A9 20 F8  priolist (bank $8F)
 	sta.b a0		; $80BCCC: 85 33
-	lda.w #$008F		; $80BCCE: A9 8F 00
+	lda.w #priolist>>16		; $80BCCE: A9 8F 00
 	sta.b a0+2		; $80BCD1: 85 35
 	ldy.b a2		; $80BCD3: A4 3B
 	lda.w tmgoalie,y		; $80BCD5: B9 F2 13
@@ -1707,9 +1707,9 @@ SetPlList:		;auto: CODE_80BCB0. 93G SetPlList (hockey93_05): make PlList, the pl
 	and.w #$00FF		; $80BD95: 29 FF 00
 	asl a		; $80BD98: 0A
 	sta.b d0		; $80BD99: 85 53
-	lda.w #$F7B6		; $80BD9B: A9 B6 F7  sublist (bank $8F, word offsets)
+	lda.w #sublist		; $80BD9B: A9 B6 F7  sublist (bank $8F, word offsets)
 	sta.b a0		; $80BD9E: 85 33
-	lda.w #$008F		; $80BDA0: A9 8F 00
+	lda.w #sublist>>16		; $80BDA0: A9 8F 00
 	sta.b a0+2		; $80BDA3: 85 35
 	ldy.b d0		; $80BDA5: A4 53
 	lda.b [a0],y		; $80BDA7: B7 33
@@ -1736,7 +1736,7 @@ SetPlList:		;auto: CODE_80BCB0. 93G SetPlList (hockey93_05): make PlList, the pl
 .rtl:
 	rtl		; $80BDD2: 6B
 .all:		;try every roster player, last first
-	jsl.l $8FFAF3		; $80BDD3: 22 F3 FA 8F  GetPlayerCount, bank $8F: 93G GetPlayerCount
+	jsl.l GetPlayerCount		; $80BDD3: 22 F3 FA 8F  GetPlayerCount, bank $8F: 93G GetPlayerCount
 	lda.b d0		; $80BDD7: A5 53
 	sta.b d3		; $80BDD9: 85 5F
 .try:
@@ -1907,9 +1907,9 @@ updatecrowdf:		;auto: CODE_80BED1. 93G updatecrowdf (hockey93_01): every game lo
 	adc.b d0		; $80BF19: 65 53
 	sta.b d0		; $80BF1B: 85 53
 	tay		; $80BF1D: A8
-	lda.w #$FDFB		; $80BF1E: A9 FB FD  cd0 (bank $8F): frame high byte, time low byte
+	lda.w #cd0		; $80BF1E: A9 FB FD  cd0 (bank $8F): frame high byte, time low byte
 	sta.b a0		; $80BF21: 85 33
-	lda.w #$008F		; $80BF23: A9 8F 00
+	lda.w #cd0>>16		; $80BF23: A9 8F 00
 	sta.b a0+2		; $80BF26: 85 35
 	lda.b [a0],y		; $80BF28: B7 33
 	xba		; $80BF2A: EB

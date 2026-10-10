@@ -557,7 +557,7 @@ DisplayStats:		;auto: CODE_84FAE3. 92G DisplayStats (penalty.asm): the STATS pag
 	tay		; $84FBAC: A8
 	lda.w $0000,y		; $84FBAD: B9 00 00  stat word of team a2 (absolute address +$0000,y)
 	sta.b d0		; $84FBB0: 85 53
-	jsl.l $8F8682		; $84FBB2: 22 82 86 8F  bank $8F: 93G pushnumber
+	jsl.l pushnumber		; $84FBB2: 22 82 86 8F  bank $8F: 93G pushnumber
 	lda.b [a0]		; $84FBB6: A7 33
 	inc.b a0		; $84FBB8: E6 33
 	inc.b a0		; $84FBBA: E6 33
@@ -570,7 +570,7 @@ DisplayStats:		;auto: CODE_84FAE3. 92G DisplayStats (penalty.asm): the STATS pag
 	sta.b a3+2		; $84FBC9: 85 41
 	lda.w #$0002		; $84FBCB: A9 02 00
 	sta.b [a3]		; $84FBCE: 87 3F
-	jsl.l $8F87C9		; $84FBD0: 22 C9 87 8F  bank $8F: appstring
+	jsl.l appstring		; $84FBD0: 22 C9 87 8F  bank $8F: appstring
 	jsl.l appendz		; $84FBD4: 22 D3 FD 82
 	dw $0003		; $84FBD8  printz inline string: length (counts itself), then control bytes / text
 	db "/"
@@ -580,8 +580,8 @@ DisplayStats:		;auto: CODE_84FAE3. 92G DisplayStats (penalty.asm): the STATS pag
 	tay		; $84FBE0: A8
 	lda.w $0000,y		; $84FBE1: B9 00 00
 	sta.b d0		; $84FBE4: 85 53
-	jsl.l $8F8682		; $84FBE6: 22 82 86 8F  bank $8F: 93G pushnumber
-	jsl.l $8F87C9		; $84FBEA: 22 C9 87 8F  bank $8F: appstring
+	jsl.l pushnumber		; $84FBE6: 22 82 86 8F  bank $8F: 93G pushnumber
+	jsl.l appstring		; $84FBEA: 22 C9 87 8F  bank $8F: appstring
 	lda.b a3		; $84FBEE: A5 3F
 	sta.b a1		; $84FBF0: 85 37
 	lda.b a3+2		; $84FBF2: A5 41
@@ -604,7 +604,7 @@ DisplayStats:		;auto: CODE_84FAE3. 92G DisplayStats (penalty.asm): the STATS pag
 	ldy.b a2		; $84FC12: A4 3B
 	lda.w tmATOP,y		; $84FC14: B9 CA 13
 	sta.b d0		; $84FC17: 85 53
-	jsl.l $8F87EA		; $84FC19: 22 EA 87 8F  bank $8F: 93G PushTime (d0 = time)
+	jsl.l PushTime		; $84FC19: 22 EA 87 8F  bank $8F: 93G PushTime (d0 = time)
 	lda.b [a1]		; $84FC1D: A7 37
 	inc a		; $84FC1F: 1A
 	lsr a		; $84FC20: 4A
@@ -788,7 +788,7 @@ AttribStatus:		;auto: CODE_84FD55. 93G AttribStatus: tmpdst of player d0: Ice/Be
 	sta.b a1+2		; $84FD81: 85 39
 	lda.w #StatusTextTbl		; $84FD83: A9 C6 FD
 	sta.b a1		; $84FD86: 85 37
-	jml.l $8FD68C		; $84FD88: 5C 8C D6 8F  bank $8F: 93G PrintStringFromList (d0 = index, [a1] = list)
+	jml.l PrintStringFromList		; $84FD88: 5C 8C D6 8F  bank $8F: 93G PrintStringFromList (d0 = index, [a1] = list)
 .pen:
 	lda.b d0		; $84FD8C: A5 53
 	bit.w #TMPDINJ		; $84FD8E: 89 00 10
@@ -798,7 +798,7 @@ AttribStatus:		;auto: CODE_84FD55. 93G AttribStatus: tmpdst of player d0: Ice/Be
 	sta.b d1		; $84FD98: 85 57
 	and.w #$0FFF		; $84FD9A: 29 FF 0F
 	sta.b d0		; $84FD9D: 85 53
-	jsl.l $8F87EA		; $84FD9F: 22 EA 87 8F  bank $8F: 93G PushTime (d0 = time)
+	jsl.l PushTime		; $84FD9F: 22 EA 87 8F  bank $8F: 93G PushTime (d0 = time)
 	jsl.l print		; $84FDA3: 22 2D B9 80
 	lda.w #$0004		; $84FDA7: A9 04 00
 	sta.b d0		; $84FDAA: 85 53
@@ -812,7 +812,7 @@ AttribStatus:		;auto: CODE_84FD55. 93G AttribStatus: tmpdst of player d0: Ice/Be
 	sta.b a1+2		; $84FDBB: 85 39
 	lda.w #StatusTextTbl		; $84FDBD: A9 C6 FD
 	sta.b a1		; $84FDC0: 85 37
-	jml.l $8FD68C		; $84FDC2: 5C 8C D6 8F  bank $8F: 93G PrintStringFromList (d0 = index, [a1] = list)
+	jml.l PrintStringFromList		; $84FDC2: 5C 8C D6 8F  bank $8F: 93G PrintStringFromList (d0 = index, [a1] = list)
 StatusTextTbl:		;93G StatusTextTbl: AttribStatus strings
 	%String("Ice   ")		; $84FDC6
 	%String("Bench ")		; $84FDCE
@@ -857,7 +857,7 @@ AttribRating:		;auto: CODE_84FE1D. 93G AttribRating: sum d0 of d1/15 ratings as 
 AttribPrintPct:		;auto: CODE_84FE34. 93G AttribPrintPct: print d0 4 wide plus padding
 	lda.w #$0004		; $84FE34: A9 04 00
 	sta.b d1		; $84FE37: 85 57
-	jsl.l $8FF54E		; $84FE39: 22 4E F5 8F  bank $8F: 93G PushNumberWidth
+	jsl.l PushNumberWidth		; $84FE39: 22 4E F5 8F  bank $8F: 93G PushNumberWidth
 	jsl.l print		; $84FE3D: 22 2D B9 80
 	jsl.l printz		; $84FE41: 22 0C B9 80
 	dw $0004		; $84FE45  printz inline string: length (counts itself), then control bytes / text
@@ -871,7 +871,7 @@ AttribHanded:		;auto: CODE_84FE4A. 93G AttribHanded: bit 0 of the sum
 	sta.b a1+2		; $84FE54: 85 39
 	lda.w #HandedTextTbl		; $84FE56: A9 5F FE
 	sta.b a1		; $84FE59: 85 37
-	jml.l $8FD68C		; $84FE5B: 5C 8C D6 8F  bank $8F: 93G PrintStringFromList (d0 = index, [a1] = list)
+	jml.l PrintStringFromList		; $84FE5B: 5C 8C D6 8F  bank $8F: 93G PrintStringFromList (d0 = index, [a1] = list)
 HandedTextTbl:		;93G HandedTextTbl: AttribHanded strings (93G Righty, Lefty)
 	%String("Right ")		; $84FE5F
 	%String("Left  ")		; $84FE67
@@ -882,7 +882,7 @@ AttribWeight:		;auto: CODE_84FE6F. 93G AttribWeight: 140 + 8 * rating lb
 	asl a		; $84FE73: 0A
 	adc.w #140		; $84FE74: 69 8C 00
 	sta.b d0		; $84FE77: 85 53
-	jsl.l $8F8682		; $84FE79: 22 82 86 8F  bank $8F: 93G pushnumber
+	jsl.l pushnumber		; $84FE79: 22 82 86 8F  bank $8F: 93G pushnumber
 	jsl.l print		; $84FE7D: 22 2D B9 80
 	jsl.l printz		; $84FE81: 22 0C B9 80
 	dw $0005		; $84FE85  printz inline string: length (counts itself), then control bytes / text

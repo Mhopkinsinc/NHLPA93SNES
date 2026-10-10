@@ -445,7 +445,7 @@ Bcheck:		;auto: CODE_8D8389 (from checkcheck). 93G Bcheck (hockey93_03): a2 chec
 	stx.b a3		; $8D83EC: 86 3F
 	sty.b a2		; $8D83EE: 84 3B
 	jsl.l FallDown		; $8D83F0: 22 33 D9 80  a3 falls
-	jsl.l $8FE369		; $8D83F4: 22 69 E3 8F  93G checkagr, bank $8F: 93G checkagr
+	jsl.l checkagr		; $8D83F4: 22 69 E3 8F  93G checkagr
 	lda.b d0		; $8D83F8: A5 53
 	cmp.w #$0005		; $8D83FA: C9 05 00
 	bcs .swap		; $8D83FD: B0 09
@@ -654,7 +654,7 @@ EASNLogo:		;auto: CODE_8D8549. 93G EASNLogo (penalty93_2): the EASN logo (7 x 2 
 	sta.b tmp2+2		; $8D8566: 85 79
 .col:
 	ldx.b tmp0		; $8D8568: A6 73
-	lda.l $8F824D,x		; $8D856A: BF 4D 82 8F
+	lda.l EASNLogoMap,x		; $8D856A: BF 4D 82 8F
 	clc		; $8D856E: 18
 	adc.w unusedchars		; $8D856F: 6D D3 1B
 	adc.w charofs		; $8D8572: 6D CD 1B
@@ -685,7 +685,7 @@ EASNLogo:		;auto: CODE_8D8549. 93G EASNLogo (penalty93_2): the EASN logo (7 x 2 
 .rtl:
 	rtl		; $8D85A8: 6B
 PeriodOver:		;auto: CODE_8D85A9 (from clockcont). 93G PeriodOver (hockey93_06): next period (gmdir flips); overtime only for a tied playoff game; gsp 4 = game over (ContinuePlayoffs), else StartPer
-	jsl.l $8FE404		; $8D85A9: 22 04 E4 8F  bank $8F: 93G forceblack
+	jsl.l forceblack		; $8D85A9: 22 04 E4 8F
 	inc.w gsp		; $8D85AD: EE F0 12  next period
 	lda.w gmode		; $8D85B0: AD 88 12
 	eor.w #gmdir		; $8D85B3: 49 02 00
@@ -708,10 +708,10 @@ PeriodOver:		;auto: CODE_8D85A9 (from clockcont). 93G PeriodOver (hockey93_06): 
 	sta.w gsp		; $8D85DF: 8D F0 12
 .next:
 	jsl.l ResetClock		; $8D85E2: 22 97 FF 85
-	jsl.l $8F84B5		; $8D85E6: 22 B5 84 8F  bank $8F: 93G SetHor
+	jsl.l SetHor		; $8D85E6: 22 B5 84 8F
 	jsl.l setvideo		; $8D85EA: 22 5E E3 80
 	jsl.l UpdateScores		; $8D85EE: 22 D1 F9 82
-	jsl.l $8F86B6		; $8D85F2: 22 B6 86 8F  93G Intermission, bank $8F: 93G Intermission
+	jsl.l Intermission		; $8D85F2: 22 B6 86 8F  93G Intermission
 	lda.w gsp		; $8D85F6: AD F0 12
 	cmp.w #$0004		; $8D85F9: C9 04 00
 	bne .per		; $8D85FC: D0 04
@@ -807,7 +807,7 @@ updatesound:		;auto: CODE_8D865A (from periodicevents). 93G updatesound: move th
 	beq .rtl		; $8D869D: F0 08
 	sta.w crowdvol		; $8D869F: 8D 46 16
 	pha		; $8D86A2: 48
-	jsl.l $8FFE8E		; $8D86A3: 22 8E FE 8F  send it, bank $8F: send the crowd volume to the sound driver
+	jsl.l sfx8F		; $8D86A3: 22 8E FE 8F  send it
 .rtl:
 	rtl		; $8D86A7: 6B
 asstab:		;SNES: the assignment routines (29 long pointers) that updateplayers calls through jmlvector; numbers as 93G asstab
@@ -816,15 +816,15 @@ asstab:		;SNES: the assignment routines (29 long pointers) that updateplayers ca
 	dd assdefd		; $8D86B0 2
 	dd asswingd		; $8D86B4 3
 	dd asswingo		; $8D86B8 4
-	dd $8FDB1B		; $8D86BC 5 asscenterd (not named yet)
+	dd asscenterd		; $8D86BC 5
 	dd asscentero		; $8D86C0 6
 	dd assscore		; $8D86C4 7
-	dd $8FDA8F		; $8D86C8 8 assstanley (not named yet)
-	dd $8F833F		; $8D86CC 9 asseben (not named yet)
+	dd assstanley		; $8D86C8 8
+	dd asseben		; $8D86CC 9
 	dd assepen		; $8D86D0 A
 	dd assbench		; $8D86D4 B
 	dd asspenalty		; $8D86D8 C
-	dd $8F8C4B		; $8D86DC D assdopen (not named yet)
+	dd assdopen		; $8D86DC D
 	dd assgoalie		; $8D86E0 E
 	dd assgoalietopuck		; $8D86E4 F
 	dd asspuckc		; $8D86E8 10

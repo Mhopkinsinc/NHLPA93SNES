@@ -505,4 +505,4 @@ DrawScoutPlayer:		;auto: CODE_84EF02. SNES: addframe for object X at (Xpos + Old
 	lda.w #$8000		; $84EF33: A9 00 80
 	sta.b sprflag		; $84EF36: 85 AB
 .add:
-	jml.l $8FEC68		; $84EF38: 5C 68 EC 8F  bank $8F: 93G addframe
+	jml.l addframe		; $84EF38: 5C 68 EC 8F  bank $8F: 93G addframe

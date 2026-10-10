@@ -55,10 +55,10 @@ Start:		;auto: CODE_808000. 93G main93 Start + hockey93_01 Begin (RAM clear). Re
 	ldx.w #$0000		; $80805C: A2 00 00
 	ldy.w #$0002		; $80805F: A0 02 00  word at +2 of each pointer
 .sumloop:		;sum the word at [ptr]+2 for each long ptr in the table at $8FE67D (0-terminated, 4 bytes per entry)
-	lda.l $8FE67D,x		; $808062: BF 7D E6 8F
+	lda.l FrameSetTable,x		; $808062: BF 7D E6 8F
 	beq .validate		; $808066: F0 15
 	sta.b tmp1		; $808068: 85 75
-	lda.l $8FE67D+1,x		; $80806A: BF 7E E6 8F
+	lda.l FrameSetTable+1,x		; $80806A: BF 7E E6 8F
 	sta.b tmp1+1		; $80806E: 85 76
 	lda.b [tmp1],y		; $808070: B7 75
 	clc		; $808072: 18
@@ -85,8 +85,8 @@ Start:		;auto: CODE_808000. 93G main93 Start + hockey93_01 Begin (RAM clear). Re
 	jsl.l SPCBootUpload		; $80809A: 22 31 FA 82
 	stz.b sndlock		; $80809E: 64 21
 	stz.b vbactive		; $8080A0: 64 12  vblank handlers may run
-	jsl.l $8F9073		; $8080A2: 22 73 90 8F  bank $8F: $1610-$161F = $1E
-	jsl.l $8FE32B		; $8080A6: 22 2B E3 8F  bank $8F: 93G DefaultMenus (initial menu choices at $1600)
+	jsl.l ResetPassWord		; $8080A2: 22 73 90 8F  bank $8F: $1610-$161F = $1E
+	jsl.l DefaultMenus		; $8080A6: 22 2B E3 8F  bank $8F: 93G DefaultMenus (initial menu choices at $1600)
 	jsl.l Readjoy12		; $8080AA: 22 D2 FA 84
 	jml.l Opening		; $8080AE: 5C 6A 81 8B  bank $8B: on to the title screen (93G Opening)
 BRKHalt:		;auto: CODE_8080B2. BRK vector: hang. No 92G/93G counterpart (68k traps go to IRQ7 rte)
@@ -115,7 +115,7 @@ vb2_blank:		;auto: CODE_8080CE. vbint target: vb2 with the screen held in forced
 	lda.b #$80		; $8080D0: A9 80
 	sta.w INIDISP		; $8080D2: 8D 00 21
 	rep #$30		; $8080D5: C2 30
-	lda.w #$83A3		; $8080D7: A9 A3 83
+	lda.w #HBdefault		; $8080D7: A9 A3 83
 	sta.b hbint		; $8080DA: 85 16
 	bra vb2_main		; $8080DC: 80 07
 vb2:		;auto: CODE_8080DE. 93G vb2 (video93_1): vblank for fades only, no dma. INIDISP from brightness, then vb2_main
@@ -503,7 +503,7 @@ goalieacc:		;auto: CODE_8083AB. 93G goalieacc (logic93_5): goalie gets acc. in d
 	jsl.l SetSPA		; $8083F7: 22 06 B0 80
 	lda.w facedir,x		; $8083FB: BD BF 0D
 	sta.b d2		; $8083FE: 85 5B
-	jml.l $8FE164		; $808400: 5C 64 E1 8F  d2 = facedir, bank $8F: 93G playeracc (d2 = direction)
+	jml.l playeracc		; $808400: 5C 64 E1 8F  d2 = facedir, bank $8F: 93G playeracc (d2 = direction)
 dostop:		;auto: CODE_808404. 93G dostop (logic93_5 IDA loc_D538): player X stops. Stop animation (and sound for the puck carrier) if fast, then StopNA
 	lda.w Xvel,x		; $808404: BD DF 0A
 	bit.w #$8000		; $808407: 89 00 80
@@ -796,7 +796,7 @@ checkob:		;auto: CODE_808598. 93G checkob (logic93_4): bring up the little warni
 .dref:
 	lda.w RefCnt		; $808649: AD EA 12  ref idle? then bring him up
 	bpl .ex		; $80864C: 10 D1
-	jsl.l $8F83A7		; $80864E: 22 A7 83 8F  bank $8F: 93G PushRef
+	jsl.l PushRef		; $80864E: 22 A7 83 8F  bank $8F: 93G PushRef
 	bra .ex		; $808652: 80 CB
 .top:
 	lda.b d1		; $808654: A5 57
@@ -865,7 +865,7 @@ chk4lc:		;auto: CODE_808681. 93G chk4lc (logic93_3): should the computer call a 
 	lda.b d0		; $8086CC: A5 53
 	cmp.w #$0C01		; $8086CE: C9 01 0C  average energy of the line still above $C00: no change
 	bcs .rts		; $8086D1: B0 0F
-	jsl.l $8FE6BD		; $8086D3: 22 BD E6 8F  bank $8F: 93G CompLine
+	jsl.l CompLine		; $8086D3: 22 BD E6 8F  bank $8F: 93G CompLine
 	jsl.l setpersonel		; $8086D7: 22 5A BB 80
 	jsl.l printscores1		; $8086DB: 22 5D E9 89  bank $89: 93G printscores1
 	jmp.w CompShoot		; $8086DF: 4C F7 87
@@ -1300,7 +1300,7 @@ assnearest:		;auto: CODE_808834 (asstab $11). 93G assnearest (logic93_4): assign
 .clk:
 	lda.w gmclock		; $808A48: AD 8A 12
 	beq .joy		; $808A4B: F0 04
-	jml.l $8FD75A		; $808A4D: 5C 5A D7 8F  bank $8F: 93G assnothing
+	jml.l assnothing		; $808A4D: 5C 5A D7 8F  bank $8F: 93G assnothing
 .joy:
 	lda.w pflags,x		; $808A51: BD DF 0E
 	bit.w #pfjoycon		; $808A54: 89 08 00
@@ -1469,7 +1469,7 @@ check4check:		;auto: CODE_808B15. 93G check4check (logic93_4): look for a good c
 	and.w #$0003		; $808B99: 29 03 00
 	sta.b d0		; $808B9C: 85 53
 	bne burst		; $808B9E: D0 0D
-	jml.l $8FFB5B		; $808BA0: 5C 5B FB 8F  bank $8F: 93G Acheck
+	jml.l Acheck		; $808BA0: 5C 5B FB 8F  bank $8F: 93G Acheck
 .next:
 	inc.b a0		; $808BA4: E6 33
 	inc.b a0		; $808BA6: E6 33
@@ -1485,7 +1485,7 @@ burst:		;auto: CODE_808BAD. 93G burst (logic93_1): check button: speed burst in 
 	sec		; $808BB8: 38
 	sbc.w #$00CC		; $808BB9: E9 CC 00  $1000/20
 	sta.b d0		; $808BBC: 85 53
-	jsl.l $8FEE6B		; $808BBE: 22 6B EE 8F  bank $8F: 93G setpde
+	jsl.l setpde		; $808BBE: 22 6B EE 8F  bank $8F: 93G setpde
 .spd:		;speed = energy*$233/$10000 (93G energy/128)
 	lda.b d0		; $808BC2: A5 53
 	sta.b mula		; $808BC4: 85 7D
@@ -1698,7 +1698,7 @@ skatetopuck:		;auto: CODE_808C2D. 93G skatetopuck (logic93_5): player X skates t
 	ror a		; $808D82: 6A
 	sta.w Yvel,x		; $808D83: 9D FF 0A
 .acc:
-	jml.l $8FFBDC		; $808D86: 5C DC FB 8F  bank $8F: 93G doplayeracc (d0 = direction)
+	jml.l doplayeracc		; $808D86: 5C DC FB 8F  bank $8F: 93G doplayeracc (d0 = direction)
 Sweepcheck:		;auto: CODE_808D8A. 93G Sweepcheck (logic93_1): start a sweep check on player X
 	lda.w #SPAsweepchk		; $808D8A: A9 90 0A  93G SPAsweepchk $B44, pfalock
 	sta.b d1		; $808D8D: 85 57
@@ -1771,7 +1771,7 @@ SetShotMode:		;auto: CODE_808DE9. 93G SetShotMode (logic93_1): start a shot by p
 	sta.w passspeed		; $808E1D: 8D 3D 04
 	lda.w #SPAshotf		; $808E20: A9 A8 07  93G SPAshotf $81C
 	sta.b d1		; $808E23: 85 57
-	jsl.l $8FF603		; $808E25: 22 03 F6 8F  bank $8F: 93G Findhittype (Z = forehand)
+	jsl.l Findhittype		; $808E25: 22 03 F6 8F  bank $8F: 93G Findhittype (Z = forehand)
 	beq .ck1		; $808E29: F0 05
 	lda.w #SPAshotb		; $808E2B: A9 BA 08  93G SPAshotb $94E
 	sta.b d1		; $808E2E: 85 57
@@ -2002,7 +2002,7 @@ doshot:		;auto: CODE_808E78. 93G doshot (logic93_1): stick is at the puck, launc
 	bpl .am		; $809004: 10 02
 	lsr.b d0		; $809006: 46 53
 .am:
-	jsl.l $8FE316		; $809008: 22 16 E3 8F  bank $8F: 93G randomd0s on d0
+	jsl.l randomd0sd0		; $809008: 22 16 E3 8F  bank $8F: 93G randomd0s on d0
 	lda.b $05,s		; $80900C: A3 05
 	adc.b d0		; $80900E: 65 53
 	sta.b $05,s		; $809010: 83 05

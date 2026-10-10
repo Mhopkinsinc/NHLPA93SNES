@@ -153,17 +153,17 @@ lineinput:		;auto: CODE_8AFD0C (from $80DF7C). 93G lineinput (logic93_1): line c
 	stz.b d2		; $8AFD35: 64 5B
 	bit.w #abut		; $8AFD37: 89 00 40  Y: choice 0
 	beq .b		; $8AFD3A: F0 04
-	jml.l $8F8DC7		; $8AFD3C: 5C C7 8D 8F  bank $8F: 93G lcfound (d2 = choice)
+	jml.l lcfound		; $8AFD3C: 5C C7 8D 8F  bank $8F: 93G lcfound (d2 = choice)
 .b:
 	inc.b d2		; $8AFD40: E6 5B
 	bit.w #bbut		; $8AFD42: 89 00 80  B: choice 1
 	beq .a		; $8AFD45: F0 04
-	jml.l $8F8DC7		; $8AFD47: 5C C7 8D 8F  bank $8F: 93G lcfound (d2 = choice)
+	jml.l lcfound		; $8AFD47: 5C C7 8D 8F  bank $8F: 93G lcfound (d2 = choice)
 .a:
 	inc.b d2		; $8AFD4B: E6 5B
 	bit.w #JOYA		; $8AFD4D: 89 80 00  A: choice 2
 	beq .dpad		; $8AFD50: F0 04
-	jml.l $8F8DC7		; $8AFD52: 5C C7 8D 8F  bank $8F: 93G lcfound (d2 = choice)
+	jml.l lcfound		; $8AFD52: 5C C7 8D 8F  bank $8F: 93G lcfound (d2 = choice)
 .dpad:
 	lda.w pflags,x		; $8AFD56: BD DF 0E  joystick controlled, not locked or fighting: skate
 	bit.w #pfjoycon		; $8AFD59: 89 08 00
@@ -172,7 +172,7 @@ lineinput:		;auto: CODE_8AFD0C (from $80DF7C). 93G lineinput (logic93_1): line c
 	bne .x		; $8AFD61: D0 09
 	lda.w pf2fight,x		; $8AFD63: BD 5F 11
 	bne .x		; $8AFD66: D0 04
-	jml.l $8FFBDC		; $8AFD68: 5C DC FB 8F  bank $8F: doplayeracc
+	jml.l doplayeracc		; $8AFD68: 5C DC FB 8F  bank $8F: doplayeracc
 .x:
 	rtl		; $8AFD6C: 6B
 getlchoice:		;auto: CODE_8AFD6D. 93G getlchoice (logic93_1): d0 = choice 0-2 of team a2 -> d0 = line 0-6 by the man advantage and tmline (.tab), -1 = none
@@ -407,7 +407,7 @@ SetScore:		;auto: CODE_8AFE21 (from UpdateScores $82F9F4, $8F9062). 93G SetScore
 	sta.w nibblebuffer+6		; $8AFF77: 8D 25 04
 	lda.w #4		; $8AFF7A: A9 04 00  4 weights
 	sta.b d0		; $8AFF7D: 85 53
-	jml.l $8FE3B0		; $8AFF7F: 5C B0 E3 8F  bank $8F: 93G WeightedRandomSelect (d0 weights in nibblebuffer)
+	jml.l WeightedRandomSelect		; $8AFF7F: 5C B0 E3 8F  bank $8F: 93G WeightedRandomSelect (d0 weights in nibblebuffer)
 .sctab:		;93G .sctab: weights for 0, 1, 2, 3 goals by ScoreOdds row
 	dw $2B,$1E,$17,$04		; $8AFF83
 	dw $27,$20,$18,$05		; $8AFF8B

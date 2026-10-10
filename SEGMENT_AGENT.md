@@ -193,7 +193,7 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank8E_D000 | matched | $8ED00B | $8EE00A | data | SpriteSet3 end, SpriteSet14 header and first pieces (6-byte pieces) |
 | bank8E_E000 | matched | $8EE00B | $8EF00A | data | SpriteSet14 pieces end, tiles |
 | bank8E_F000 | matched | $8EF00B | $8EFFFF | 100% | SpriteSet14 end, assdefo, zero fill |
-| bank8F_8000 | matched | $8F8000 | $8F9084 | 100% | BigFontMap, unusedEnergyBar, unusedStatLabels, PerLabels, EASNLogoMap, BigFontIndex, showclock, asseben, PushRef, SetHor, USBoard, pplpen, pushnumber, Intermission, the ticker code, GameLabels, showzam, waitxsr, clockcont, DoHiLights, assdopen, updatepentime, linebar, lcfound, PauseExit, suba4/adda4, the DMA queuers, jdtab8F, InitScores, ResetPassWord |
+| bank8F_8000 | matched | $8F8000 | $8F9084 | 100% | BigFontMap, unusedEnergyBar, linelist, PerLabels, EASNLogoMap, BigFontIndex, showclock, asseben, PushRef, SetHor, USBoard, pplpen, pushnumber, Intermission, the ticker code, GameLabels, showzam, waitxsr, clockcont, DoHiLights, assdopen, updatepentime, linebar, lcfound, PauseExit, suba4/adda4, the DMA queuers, jdtab8F, InitScores, ResetPassWord |
 | bank8F_9000 | matched | $8F9085 | $8FA004 | data | SpriteSet1 (frame set 1) header, pieces, tiles |
 | bank8F_A000 | matched | $8FA005 | $8FB004 | data | SpriteSet1 tiles |
 | bank8F_B000 | matched | $8FB005 | $8FC004 | data | SpriteSet1 tiles |

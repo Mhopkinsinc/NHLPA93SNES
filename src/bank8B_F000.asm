@@ -55,7 +55,7 @@ printbig:		;auto: CODE_8BFCCE. 93G printbig (middle93_2): print string [a1] in t
 	stz.b d2		; $8BFD21: 64 5B
 	inc.b d2		; $8BFD23: E6 5B
 	tax		; $8BFD25: AA
-	lda.l $8F8269,x		; $8BFD26: BF 69 82 8F  character width/tile table ($8F8269): negative = 1 column
+	lda.l BigFontIndex,x		; $8BFD26: BF 69 82 8F  character width/tile table ($8F8269): negative = 1 column
 	and.w #$00FF		; $8BFD2A: 29 FF 00
 	bit.w #$0080		; $8BFD2D: 89 80 00
 	beq .w0		; $8BFD30: F0 03
@@ -70,7 +70,7 @@ printbig:		;auto: CODE_8BFCCE. 93G printbig (middle93_2): print string [a1] in t
 	asl a		; $8BFD40: 0A
 	sta.b d0		; $8BFD41: 85 53
 	tax		; $8BFD43: AA
-	lda.l $8F8000,x		; $8BFD44: BF 00 80 8F  big font map ($8F8000): top left
+	lda.l BigFontMap,x		; $8BFD44: BF 00 80 8F  big font map ($8F8000): top left
 	clc		; $8BFD48: 18
 	adc.w BigFontChars		; $8BFD49: 6D D1 1B
 	adc.w printfontset		; $8BFD4C: 6D CB 1B
@@ -90,7 +90,7 @@ printbig:		;auto: CODE_8BFCCE. 93G printbig (middle93_2): print string [a1] in t
 	sta.b textdirtyhi		; $8BFD68: 85 D2
 .bot:
 	ldx.b d0		; $8BFD6A: A6 53
-	lda.l $8F8098,x		; $8BFD6C: BF 98 80 8F  bottom left (+$98)
+	lda.l BigFontMap+$98,x		; $8BFD6C: BF 98 80 8F  bottom left (+$98)
 	clc		; $8BFD70: 18
 	adc.w BigFontChars		; $8BFD71: 6D D1 1B
 	adc.w printfontset		; $8BFD74: 6D CB 1B
@@ -100,7 +100,7 @@ printbig:		;auto: CODE_8BFCCE. 93G printbig (middle93_2): print string [a1] in t
 	lda.b d2		; $8BFD80: A5 5B
 	beq .next		; $8BFD82: F0 2F
 	ldx.b d0		; $8BFD84: A6 53
-	lda.l $8F8002,x		; $8BFD86: BF 02 80 8F  top right
+	lda.l BigFontMap+2,x		; $8BFD86: BF 02 80 8F  top right
 	clc		; $8BFD8A: 18
 	adc.w BigFontChars		; $8BFD8B: 6D D1 1B
 	adc.w printfontset		; $8BFD8E: 6D CB 1B
@@ -108,7 +108,7 @@ printbig:		;auto: CODE_8BFCCE. 93G printbig (middle93_2): print string [a1] in t
 	ldx.b d1		; $8BFD94: A6 57
 	sta.l textmap+2,x		; $8BFD96: 9F 76 6E 7E
 	ldx.b d0		; $8BFD9A: A6 53
-	lda.l $8F809A,x		; $8BFD9C: BF 9A 80 8F  bottom right
+	lda.l BigFontMap+$9A,x		; $8BFD9C: BF 9A 80 8F  bottom right
 	clc		; $8BFDA0: 18
 	adc.w BigFontChars		; $8BFDA1: 6D D1 1B
 	adc.w printfontset		; $8BFDA4: 6D CB 1B
@@ -122,7 +122,7 @@ printbig:		;auto: CODE_8BFCCE. 93G printbig (middle93_2): print string [a1] in t
 	iny		; $8BFDB6: C8
 	jmp.w .top		; $8BFDB7: 4C E3 FC
 .blank:
-	lda.l $8F802C		; $8BFDBA: AF 2C 80 8F  blank: big font entry $2C on both rows
+	lda.l BigFontMap+$2C		; $8BFDBA: AF 2C 80 8F  blank: big font entry $2C on both rows
 	clc		; $8BFDBE: 18
 	adc.w BigFontChars		; $8BFDBF: 6D D1 1B
 	adc.w printfontset		; $8BFDC2: 6D CB 1B
@@ -209,7 +209,7 @@ asswingo:		;auto: CODE_8BFE47 (asstab 4). 93G asswingo (logic93_3): wing on offe
 .go:
 	lda.w gmclock		; $8BFE4F: AD 8A 12
 	beq .gm		; $8BFE52: F0 04
-	jml.l $8FD75A		; $8BFE54: 5C 5A D7 8F  bank $8F: assnothing
+	jml.l assnothing		; $8BFE54: 5C 5A D7 8F  bank $8F: assnothing
 .gm:
 	jsl.l check4bench		; $8BFE58: 22 27 85 80
 	lda.w pflags,x		; $8BFE5C: BD DF 0E

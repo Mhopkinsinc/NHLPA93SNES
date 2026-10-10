@@ -170,7 +170,7 @@ Opening:		;auto: CODE_8B816A (from Start, $80C407). 92G Opening: TitleScreen, th
 	jsl.l TitleScreen		; $8B816A: 22 B0 F2 88
 	jml.l $83FA87		; $8B816E: 5C 87 FA 83  Restart
 Opening4:		;auto: CODE_8B8172 (from ContinuePlayoffs, far8B8172). 92G Opening4: ScoutingReport ($8FDC0D), then StartGame
-	jsl.l $8FDC0D		; $8B8172: 22 0D DC 8F  bank $8F: 93G ScoutingReport
+	jsl.l ScoutingReport		; $8B8172: 22 0D DC 8F  bank $8F: 93G ScoutingReport
 	jml.l StartGame		; $8B8176: 5C 0C FD 89
 ReadPassBits:		;auto: CODE_8B817A. 92G ReadPassBits: passbits back into the playoff state (SuperDiv by each range, the reverse of WritePassBits); a bad 9-bit checksum sets postarts -1
 	lda.w #512		; $8B817A: A9 00 02  checksum first (range 512)

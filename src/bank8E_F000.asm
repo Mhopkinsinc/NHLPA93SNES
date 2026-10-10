@@ -10,7 +10,7 @@ assdefo:		;auto: CODE_8EFE73 (asstab 1). 93G assdefo (logic93_2): defenceman on 
 .go:
 	lda.w gmclock		; $8EFE7B: AD 8A 12
 	beq .gm		; $8EFE7E: F0 04
-	jml.l $8FD75A		; $8EFE80: 5C 5A D7 8F  bank $8F: assnothing
+	jml.l assnothing		; $8EFE80: 5C 5A D7 8F  bank $8F: assnothing
 .gm:
 	jsl.l check4bench		; $8EFE84: 22 27 85 80
 	lda.w pflags,x		; $8EFE88: BD DF 0E

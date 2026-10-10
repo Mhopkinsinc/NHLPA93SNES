@@ -170,7 +170,7 @@ DrawFrameHi:		;auto: CODE_85FBB9 (from addframe_hi). SNES: draw frame sprframe (
 	sta.b sprslot		; $85FCC4: 85 B5
 	cmp.b sprslotend		; $85FCC6: C5 B7
 	bne .chk		; $85FCC8: D0 04
-	jml.l $8FDAF3		; $85FCCA: 5C F3 DA 8F  bank $8F: VRAM sprite cache full
+	jml.l addframe_full		; $85FCCA: 5C F3 DA 8F  bank $8F: VRAM sprite cache full
 .chk:
 	asl a		; $85FCCE: 0A
 	tax		; $85FCCF: AA
@@ -337,7 +337,7 @@ DrawFrameHi:		;auto: CODE_85FBB9 (from addframe_hi). SNES: draw frame sprframe (
 	sta.b sprbigslot		; $85FDF3: 85 B1
 	cmp.b sprbigslotend		; $85FDF5: C5 B3
 	bne .bchk		; $85FDF7: D0 04
-	jml.l $8FDAF3		; $85FDF9: 5C F3 DA 8F  bank $8F: VRAM sprite cache full
+	jml.l addframe_full		; $85FDF9: 5C F3 DA 8F  bank $8F: VRAM sprite cache full
 .bchk:
 	and.w #$000F		; $85FDFD: 29 0F 00
 	cmp.w #$000F		; $85FE00: C9 0F 00

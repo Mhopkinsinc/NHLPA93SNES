@@ -371,7 +371,7 @@ setvideo:		;auto: CODE_80E35E. 93G setvideo (video93_1): once per game frame, if
 	stz.b brightness		; $80E36E: 64 04
 	inc.b fadein		; $80E370: E6 08
 .go:		;clear the sprite table
-	jsl.l $8FE04C		; $80E372: 22 4C E0 8F  bank $8F: clear the sprite table (all sprites off screen)
+	jsl.l ClearSprites		; $80E372: 22 4C E0 8F  bank $8F: clear the sprite table (all sprites off screen)
 	stx.b xsave		; $80E376: 86 0A
 	ldx.w #$0000		; $80E378: A2 00 00
 .push:
@@ -387,12 +387,12 @@ setvideo:		;auto: CODE_80E35E. 93G setvideo (video93_1): once per game frame, if
 	jsl.l checksso		; $80E38F: 22 1A FC 8C  bank $8C: 93G checksso
 	jsl.l setsortcords		; $80E393: 22 39 E4 80
 	jsl.l setffo		; $80E397: 22 01 E5 80
-	jsl.l $8F82A4		; $80E39B: 22 A4 82 8F  bank $8F: 93G showclock
-	jsl.l $8F8ABC		; $80E39F: 22 BC 8A 8F  bank $8F: 93G showzam (elapsed time from vcountmark)
+	jsl.l showclock		; $80E39B: 22 A4 82 8F  bank $8F: 93G showclock
+	jsl.l showzam		; $80E39F: 22 BC 8A 8F  bank $8F: 93G showzam (elapsed time from vcountmark)
 	jsl.l showcrowd		; $80E3A3: 22 AE 87 88  bank $88: 93G showcrowd
 	jsl.l showref		; $80E3A7: 22 CC FF 8B  bank $8B: 93G showref (clears sf2refref)
-	jsl.l $8F8F4A		; $80E3AB: 22 4A 8F 8F  bank $8F: queue the rink map rows for Vscroll (93G show_rink rows)
-	jsl.l $8F8EF7		; $80E3AF: 22 F7 8E 8F  bank $8F: queue the changed textmap words (textdirtylo/hi)
+	jsl.l ShowRinkRows		; $80E3AB: 22 4A 8F 8F  bank $8F: queue the rink map rows for Vscroll (93G show_rink rows)
+	jsl.l QueueTextDMA		; $80E3AF: 22 F7 8E 8F  bank $8F: queue the changed textmap words (textdirtylo/hi)
 	lda.w #VBlank_long		; $80E3B3: A9 2F 81  VBlank sends it all next vblank
 	sta.b vbint		; $80E3B6: 85 14
 	stx.b xsave		; $80E3B8: 86 0A
@@ -450,7 +450,7 @@ checkfo:		;auto: CODE_80E3E7. 93G checkfo/checkfo2 (video93_1): face off sprites
 	sta.b sprflag		; $80E422: 85 AB
 .add:
 	phx		; $80E424: DA
-	jsl.l $8FEC68		; $80E425: 22 68 EC 8F  bank $8F: 93G addframe (sprframe at sprx/spry)
+	jsl.l addframe		; $80E425: 22 68 EC 8F  bank $8F: 93G addframe (sprframe at sprx/spry)
 	plx		; $80E429: FA
 	inx		; $80E42A: E8
 	inx		; $80E42B: E8
@@ -497,7 +497,7 @@ setsortcords:		;auto: CODE_80E439. 93G setsortcords (video93_2): addframe for th
 	lda.w #$8000		; $80E482: A9 00 80
 	sta.b sprflag		; $80E485: 85 AB
 .add:
-	jsl.l $8FEC68		; $80E487: 22 68 EC 8F  bank $8F: 93G addframe (sprframe at sprx/spry)
+	jsl.l addframe		; $80E487: 22 68 EC 8F  bank $8F: 93G addframe (sprframe at sprx/spry)
 .next:
 	inc.b a4		; $80E48B: E6 43
 	lda.b a4		; $80E48D: A5 43
@@ -601,7 +601,7 @@ setffo:		;auto: CODE_80E501. 93G setffo (video93_2): uppads, then draw the 5 obj
 	and.w #$1000		; $80E544: 29 00 10
 	sta.b sprvflip		; $80E547: 85 CD
 	phx		; $80E549: DA
-	jsl.l $8FEC68		; $80E54A: 22 68 EC 8F  bank $8F: 93G addframe (sprframe at sprx/spry)
+	jsl.l addframe		; $80E54A: 22 68 EC 8F  bank $8F: 93G addframe (sprframe at sprx/spry)
 	plx		; $80E54E: FA
 	cpx.w #$0006		; $80E54F: E0 06 00  gloves: no label
 	bcc .label		; $80E552: 90 03
@@ -673,7 +673,7 @@ setffo:		;auto: CODE_80E501. 93G setffo (video93_2): uppads, then draw the 5 obj
 	adc.w #$000A		; $80E5DB: 69 0A 00
 	sta.b spry		; $80E5DE: 85 CB
 	phx		; $80E5E0: DA
-	jsl.l $8FEC68		; $80E5E1: 22 68 EC 8F  bank $8F: 93G addframe (sprframe at sprx/spry)
+	jsl.l addframe		; $80E5E1: 22 68 EC 8F  bank $8F: 93G addframe (sprframe at sprx/spry)
 	plx		; $80E5E5: FA
 	inc.b d0		; $80E5E6: E6 53
 	inc.b d0		; $80E5E8: E6 53
@@ -786,7 +786,7 @@ uppads:		;auto: CODE_80E60B. 93G uppads (video93_2): gloves object from glovecor
 	bpl .top		; $80E6C4: 10 97
 	rtl		; $80E6C6: 6B
 PenaltyManager:		;auto: CODE_80E6C7. 93G PenaltyManager (penalty93_1): called periodically, d7 = elapsed time: updatepentime, checkfornewpen, chkprogress, UpdatePA
-	jsl.l $8F8C72		; $80E6C7: 22 72 8C 8F  updatepentime, checkfornewpen, chkprogress, then UpdatePA, bank $8F: 93G updatepentime
+	jsl.l updatepentime		; $80E6C7: 22 72 8C 8F  updatepentime, checkfornewpen, chkprogress, then UpdatePA, bank $8F: 93G updatepentime
 	jsl.l checkfornewpen		; $80E6CB: 22 15 E7 80
 	jsl.l chkprogress		; $80E6CF: 22 9F E9 80
 	jmp.w UpdatePA		; $80E6D3: 4C C7 EC
@@ -1215,8 +1215,8 @@ chkprogress:		;auto: CODE_80E99F. 93G chkprogress (penalty93_1): when the stop d
 	beq .find		; $80E9FA: F0 D1
 	lda.w #sf2drec		; $80E9FC: A9 00 04  sf2drec, SetHor, load the horizontal ref; the puck does nothing for 120 s
 	tsb.w sflags		; $80E9FF: 0C 8C 12
-	jsl.l $8F84B5		; $80EA02: 22 B5 84 8F  bank $8F: 93G SetHor
-	jsl.l $8F8858		; $80EA06: 22 58 88 8F  bank $8F: 93G NewTicker (horizontal ref)
+	jsl.l SetHor		; $80EA02: 22 B5 84 8F  bank $8F: 93G SetHor
+	jsl.l NewTicker		; $80EA06: 22 58 88 8F  bank $8F: 93G NewTicker (horizontal ref)
 	lda.w #$FF00		; $80EA0A: A9 00 FF
 	tsb.w puckc		; $80EA0D: 0C BB 0E
 	ldx.w #puckobj		; $80EA10: A2 1C 00
@@ -1234,7 +1234,7 @@ chkprogress:		;auto: CODE_80E99F. 93G chkprogress (penalty93_1): when the stop d
 	lda.w #$0032		; $80EA33: A9 32 00
 	sta.w RefCnt		; $80EA36: 8D EA 12
 	stz.b d0		; $80EA39: 64 53
-	jsl.l $8F83A7		; $80EA3B: 22 A7 83 8F  bank $8F: 93G PushRef
+	jsl.l PushRef		; $80EA3B: 22 A7 83 8F  bank $8F: 93G PushRef
 .rtl:
 	rtl		; $80EA3F: 6B
 InProgress:		;auto: CODE_80EA40. 93G InProgress (penalty93_1): ref in progress. Takes the last PenBuf entry: the first pass logs a penalty with minutes and sends the player to the box, later passes
@@ -1491,7 +1491,7 @@ InProgress:		;auto: CODE_80EA40. 93G InProgress (penalty93_1): ref in progress. 
 	ldx.b xsave		; $80EC26: A6 0A
 	ldx.b a3		; $80EC28: A6 3F  SetPA, USBoard
 	jsl.l SetPA		; $80EC2A: 22 0C ED 80
-	jsl.l $8F852E		; $80EC2E: 22 2E 85 8F  bank $8F: 93G USBoard
+	jsl.l USBoard		; $80EC2E: 22 2E 85 8F  bank $8F: 93G USBoard
 	bra .ex		; $80EC32: 80 36
 .sa2:
 	lda.w #$0000		; $80EC34: A9 00 00  no minutes: clear it, SetPA
@@ -1605,11 +1605,11 @@ SetPA:		;auto: CODE_80ED0C. 93G SetPA (penalty93_1): start the ref animation for
 	lda.b d0		; $80ED0C: A5 53  RefPen = d0, RefStep = 0, prefmes
 	sta.w RefPen		; $80ED0E: 8D EE 12
 	stz.w RefStep		; $80ED11: 9C EC 12
-	jsl.l $8FF63D		; $80ED14: 22 3D F6 8F  bank $8F: 93G prefmes
+	jsl.l prefmes		; $80ED14: 22 3D F6 8F  bank $8F: 93G prefmes
 	lda.b d0		; $80ED18: A5 53
-	cmp.w #PenGoal		; $80ED1A: C9 0E 00  goal: DisplayPlayerAttributeMenu
+	cmp.w #PenGoal		; $80ED1A: C9 0E 00  goal: the goal box
 	bne .zero		; $80ED1D: D0 04
-	jsl.l $8FFEB4		; $80ED1F: 22 B4 FE 8F  bank $8F: 93G DisplayPlayerAttributeMenu
+	jsl.l DisplayPlayerAttributeMenu		; $80ED1F: 22 B4 FE 8F  the goal box (93G DisplayPlayerAttributeMenu)
 .zero:		;93G .0
 	lda.w #$7FFF		; $80ED23: A9 FF 7F
 	sta.w penmsgtimer		; $80ED26: 8D E8 12

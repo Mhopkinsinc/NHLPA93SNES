@@ -555,7 +555,7 @@ puckfaceoff:		;auto: asstab $1B. 93G puckfaceoff (logic93_4): this is where the 
 	lda.w tmscore		; $80A57E: AD D6 13
 	cmp.w tmscore+2		; $80A581: CD D8 13
 	beq .npo		; $80A584: F0 04
-	jml.l $8F8B21		; $80A586: 5C 21 8B 8F  bank $8F: 93G clockcont_0
+	jml.l clockcont_0		; $80A586: 5C 21 8B 8F  bank $8F: 93G clockcont_0
 .npo:
 	lda.w gmode		; $80A58A: AD 88 12
 	bit.w #gmpendel		; $80A58D: 89 08 00  gmpendel: Stop4Pen
@@ -614,7 +614,7 @@ puckfaceoff:		;auto: asstab $1B. 93G puckfaceoff (logic93_4): this is where the 
 	beq .rtl		; $80A609: F0 63
 	cmp.w cont2team		; $80A60B: CD 98 12
 	beq .rtl		; $80A60E: F0 5E
-	jsl.l $8FE6BD		; $80A610: 22 BD E6 8F  bank $8F: 93G CompLine
+	jsl.l CompLine		; $80A610: 22 BD E6 8F  bank $8F: 93G CompLine
 	jsl.l setpersonel		; $80A614: 22 5A BB 80
 	jml.l printscores1		; $80A618: 5C 5D E9 89  bank $89: 93G printscores1
 .slc:		;controlled player d0 gets the line change box
@@ -730,7 +730,7 @@ puckfaceoff:		;auto: asstab $1B. 93G puckfaceoff (logic93_4): this is where the 
 	bit.w #pf2lcm		; $80A6FC: 89 00 20  still in lc mode: lcfound with choice 0
 	beq .pop		; $80A6FF: F0 0A
 	stz.b d2		; $80A701: 64 5B
-	jsl.l $8F8DC7		; $80A703: 22 C7 8D 8F  bank $8F: 93G lcfound
+	jsl.l lcfound		; $80A703: 22 C7 8D 8F  bank $8F: 93G lcfound
 	jsl.l SetLCmode2		; $80A707: 22 48 A7 80
 .pop:
 	plx		; $80A70B: FA
@@ -739,7 +739,7 @@ puckfaceoff:		;auto: asstab $1B. 93G puckfaceoff (logic93_4): this is where the 
 SetLCmode:		;auto: CODE_80A70F. 93G SetLCmode (logic93_1): open the line change box for player X (abut of the puck carrier)
 	lda.w OptLine		; $80A70F: AD 0C 16
 	bne .rtl		; $80A712: D0 33
-	jsl.l $8FDBF9		; $80A714: 22 F9 DB 8F  loadTeamStruct: a2 = team of X, bank $8F: 93G loadTeamStruct
+	jsl.l loadTeamStruct		; $80A714: 22 F9 DB 8F  loadTeamStruct: a2 = team of X, bank $8F: 93G loadTeamStruct
 	ldy.b a2		; $80A718: A4 3B
 	lda.w tmflags,y		; $80A71A: B9 0A 14
 	bit.w #tmflc		; $80A71D: 89 08 00  tmflc: team already in lc mode
@@ -785,10 +785,10 @@ SetLCmode2:		;auto: CODE_80A748. 93G SetLCmode2 (logic93_1 IDA showfaceoff): a2 
 	tsb.w sflags3		; $80A773: 0C 90 12
 	bra .frame		; $80A776: 80 08
 .box:
-	jsl.l $8FDBDB		; $80A778: 22 DB DB 8F  bank $8F: 93G box
+	jsl.l box		; $80A778: 22 DB DB 8F  bank $8F: 93G box
 	jsl.l setlccords		; $80A77C: 22 91 F3 80
 .frame:
-	jsl.l $8FD69F		; $80A780: 22 9F D6 8F  bank $8F: 93G Framer (d0/d1 size)
+	jsl.l Framer		; $80A780: 22 9F D6 8F  bank $8F: 93G Framer (d0/d1 size)
 	dec.w printy		; $80A784: CE 7D 04  printy -= 2, printx += 1
 	dec.w printy		; $80A787: CE 7D 04
 	inc.w printx		; $80A78A: EE 7B 04
@@ -831,14 +831,14 @@ SetLCmode2:		;auto: CODE_80A748. 93G SetLCmode2 (logic93_1 IDA showfaceoff): a2 
 	jsl.l print		; $80A7DF: 22 2D B9 80
 	lda.b d0		; $80A7E3: A5 53
 	pha		; $80A7E5: 48
-	lda.w #$8213		; $80A7E6: A9 13 82  linelist (bank $8F)
+	lda.w #linelist		; $80A7E6: A9 13 82  linelist (bank $8F)
 	sta.b a1		; $80A7E9: 85 37
-	lda.w #$008F		; $80A7EB: A9 8F 00
+	lda.w #linelist>>16		; $80A7EB: A9 8F 00
 	sta.b a1+2		; $80A7EE: 85 39
-	jsl.l $8FD68C		; $80A7F0: 22 8C D6 8F  bank $8F: 93G PrintStringFromList
+	jsl.l PrintStringFromList		; $80A7F0: 22 8C D6 8F  bank $8F: 93G PrintStringFromList
 	pla		; $80A7F4: 68
 	sta.b d0		; $80A7F5: 85 53
-	jsl.l $8F8D68		; $80A7F7: 22 68 8D 8F  bank $8F: 93G linebar
+	jsl.l linebar		; $80A7F7: 22 68 8D 8F  bank $8F: 93G linebar
 .up:
 	dec.w printy		; $80A7FB: CE 7D 04
 .next:
@@ -1187,7 +1187,7 @@ puckfaceoff2:		;auto: asstab $1C. 93G puckfaceoff2 (logic93_4): face off control
 	pla		; $80AAE8: 68
 	sta.b a3+2		; $80AAE9: 85 41
 	ldx.b a3		; $80AAEB: A6 3F
-	jsl.l $8FFDD8		; $80AAED: 22 D8 FD 8F  bank $8F: 93G ResetAndSelectPlayers
+	jsl.l ResetAndSelectPlayers		; $80AAED: 22 D8 FD 8F  bank $8F: 93G ResetAndSelectPlayers
 	jsl.l printz		; $80AAF1: 22 0C B9 80
 	dw $0005		; $80AAF5  printz inline string: length (counts itself), then control bytes / text
 	db $BF,$00,$00
@@ -1279,7 +1279,7 @@ puckfaceoff2:		;auto: asstab $1C. 93G puckfaceoff2 (logic93_4): face off control
 	sta.b d0		; $80ABA3: 85 53
 	lda.w #$0003		; $80ABA5: A9 03 00
 	sta.b d1		; $80ABA8: 85 57
-	jsl.l $8FD69F		; $80ABAA: 22 9F D6 8F  bank $8F: 93G Framer (d0/d1 size)
+	jsl.l Framer		; $80ABAA: 22 9F D6 8F  bank $8F: 93G Framer (d0/d1 size)
 	lda.w tmline		; $80ABAE: AD DE 13
 	sta.b d0		; $80ABB1: 85 53
 	lda.w tmline+2		; $80ABB3: AD E0 13
@@ -1295,22 +1295,22 @@ puckfaceoff2:		;auto: asstab $1C. 93G puckfaceoff2 (logic93_4): face off control
 	inc.w printx		; $80ABCA: EE 7B 04
 	dec.w printy		; $80ABCD: CE 7D 04
 	dec.w printy		; $80ABD0: CE 7D 04
-	lda.w #$8213		; $80ABD3: A9 13 82  linelist (bank $8F)
+	lda.w #linelist		; $80ABD3: A9 13 82  linelist (bank $8F)
 	sta.b a1		; $80ABD6: 85 37
-	lda.w #$008F		; $80ABD8: A9 8F 00
+	lda.w #linelist>>16		; $80ABD8: A9 8F 00
 	sta.b a1+2		; $80ABDB: 85 39
-	jsl.l $8FD68C		; $80ABDD: 22 8C D6 8F  bank $8F: 93G PrintStringFromList
+	jsl.l PrintStringFromList		; $80ABDD: 22 8C D6 8F  bank $8F: 93G PrintStringFromList
 	inc.w printx		; $80ABE1: EE 7B 04
 	inc.w printx		; $80ABE4: EE 7B 04
 	inc.w printx		; $80ABE7: EE 7B 04
 	inc.w printx		; $80ABEA: EE 7B 04
 	lda.b d1		; $80ABED: A5 57
 	sta.b d0		; $80ABEF: 85 53
-	lda.w #$8213		; $80ABF1: A9 13 82
+	lda.w #linelist		; $80ABF1: A9 13 82
 	sta.b a1		; $80ABF4: 85 37
-	lda.w #$008F		; $80ABF6: A9 8F 00
+	lda.w #linelist>>16		; $80ABF6: A9 8F 00
 	sta.b a1+2		; $80ABF9: 85 39
-	jsl.l $8FD68C		; $80ABFB: 22 8C D6 8F  bank $8F: 93G PrintStringFromList
+	jsl.l PrintStringFromList		; $80ABFB: 22 8C D6 8F  bank $8F: 93G PrintStringFromList
 .nol:		;time for the puck drop: 180-299 frames
 	lda.w #$0078		; $80ABFF: A9 78 00
 	jsl.l randoma		; $80AC02: 22 8B AE 80

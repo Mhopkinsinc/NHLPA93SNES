@@ -73,7 +73,7 @@ PlayerNumName:		;auto: CODE_83CC0C. SNES: mesarea = "<uniform number> <name>" of
 	dex		; $83CC8B: CA
 	bpl .pop1		; $83CC8C: 10 F9
 	ldx.b xsave		; $83CC8E: A6 0A
-	jsl.l $8F87C9		; $83CC90: 22 C9 87 8F  bank $8F: appstring
+	jsl.l appstring		; $83CC90: 22 C9 87 8F  bank $8F: appstring
 	lda.w #mesarea		; $83CC94: A9 91 01
 	sta.b a1		; $83CC97: 85 37
 	lda.w #$0000		; $83CC99: A9 00 00

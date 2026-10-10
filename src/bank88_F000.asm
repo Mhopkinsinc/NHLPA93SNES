@@ -10,7 +10,7 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	jsl.l DrawGameSetupBack		; $88EFA6: 22 C3 88 88
 	jsl.l ReadPads		; $88EFAA: 22 E8 F3 80
 	jsl.l Readjoy12		; $88EFAE: 22 D2 FA 84
-	jsl.l $8FE04C		; $88EFB2: 22 4C E0 8F  bank $8F: clear the sprite table
+	jsl.l ClearSprites		; $88EFB2: 22 4C E0 8F  bank $8F: clear the sprite table
 	jsl.l printz		; $88EFB6: 22 0C B9 80
 	dw $0005		; $88EFBA  printz inline string: length (counts itself), then control bytes / text
 	db $FE,$01,$12
@@ -18,7 +18,7 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	sta.b d0		; $88EFC2: 85 53
 	lda.w #5		; $88EFC4: A9 05 00
 	sta.b d1		; $88EFC7: 85 57
-	jsl.l $8FD69F		; $88EFC9: 22 9F D6 8F  Framer 17 x 5, bank $8F: 93G Framer (d0 x d1)
+	jsl.l Framer		; $88EFC9: 22 9F D6 8F  Framer 17 x 5, bank $8F: 93G Framer (d0 x d1)
 	lda.w #PasswordText		; $88EFCD: A9 8F F2
 	sta.b a1		; $88EFD0: 85 37
 	lda.w #PasswordText>>16		; $88EFD2: A9 88 00
@@ -75,7 +75,7 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	stz.b d5		; $88F049: 64 67
 	jsl.l .setd4		; $88F04B: 22 9F F1 88  cursor at character 0, frame around grid character 0
 	jsl.l .setd5		; $88F04F: 22 BB F1 88
-	jsl.l $8FD69F		; $88F053: 22 9F D6 8F  bank $8F: 93G Framer (d0 x d1)
+	jsl.l Framer		; $88F053: 22 9F D6 8F  bank $8F: 93G Framer (d0 x d1)
 .topx:
 	jsl.l printz		; $88F057: 22 0C B9 80
 	dw $0013		; $88F05B  printz inline string: length (counts itself), then control bytes / text
@@ -91,13 +91,13 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	dw $0005		; $88F09C  printz inline string: length (counts itself), then control bytes / text
 	db $FF,$02,$10
 	jsl.l PWprint		; $88F0A1: 22 F7 85 88
-	lda.w #$81C5		; $88F0A5: A9 C5 81
+	lda.w #VBlank_SprPal		; $88F0A5: A9 C5 81
 .wait:		;wait for the next vblank
 	cmp.b vbint		; $88F0A8: C5 14
 	beq .wait		; $88F0AA: F0 FC
-	jsl.l $8F8EF7		; $88F0AC: 22 F7 8E 8F  bank $8F: queue the changed textmap words
-	jsl.l $8F8F28		; $88F0B0: 22 28 8F 8F  bank $8F
-	lda.w #$81C5		; $88F0B4: A9 C5 81
+	jsl.l QueueTextDMA		; $88F0AC: 22 F7 8E 8F  bank $8F: queue the changed textmap words
+	jsl.l QueueBackmapDMA		; $88F0B0: 22 28 8F 8F  bank $8F
+	lda.w #VBlank_SprPal		; $88F0B4: A9 C5 81
 	sta.b vbint		; $88F0B7: 85 14
 .pad:
 	jsl.l ReadPads		; $88F0B9: 22 E8 F3 80
@@ -188,7 +188,7 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	pla		; $88F17D: 68
 	sta.b d5		; $88F17E: 85 67
 	jsl.l .setd5		; $88F180: 22 BB F1 88
-	jsl.l $8FD69F		; $88F184: 22 9F D6 8F  bank $8F: 93G Framer (d0 x d1)
+	jsl.l Framer		; $88F184: 22 9F D6 8F  bank $8F: 93G Framer (d0 x d1)
 	lda.w #PassWord		; $88F188: A9 10 16
 	sta.b a0		; $88F18B: 85 33
 	lda.w #$0000		; $88F18D: A9 00 00
@@ -247,13 +247,13 @@ GetPassWord:		;auto: CODE_88EF9C (from $8FF0F4). 92G GetPassWord: the password s
 	jsl.l printz		; $88F222: 22 0C B9 80
 	dw $0014		; $88F226  printz inline string: length (counts itself), then control bytes / text
 	db $FF,$02,$15,"Y - Exit Screen"
-	lda.w #$81C5		; $88F23A: A9 C5 81
+	lda.w #VBlank_SprPal		; $88F23A: A9 C5 81
 .wait2:
 	cmp.b vbint		; $88F23D: C5 14
 	beq .wait2		; $88F23F: F0 FC
-	jsl.l $8F8EF7		; $88F241: 22 F7 8E 8F  bank $8F: queue the changed textmap words
-	jsl.l $8F8F28		; $88F245: 22 28 8F 8F  bank $8F
-	lda.w #$81C5		; $88F249: A9 C5 81
+	jsl.l QueueTextDMA		; $88F241: 22 F7 8E 8F  bank $8F: queue the changed textmap words
+	jsl.l QueueBackmapDMA		; $88F245: 22 28 8F 8F  bank $8F
+	lda.w #VBlank_SprPal		; $88F249: A9 C5 81
 	sta.b vbint		; $88F24C: 85 14
 .notok:
 	jsl.l ReadPads		; $88F24E: 22 E8 F3 80
@@ -292,7 +292,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	sta.w smallfontchars		; $88F2B7: 8D D7 1B
 	stz.w charofs		; $88F2BA: 9C CD 1B
 	stz.w charofs2		; $88F2BD: 9C CF 1B
-	jsl.l $8FE404		; $88F2C0: 22 04 E4 8F  bank $8F: 93G forceblack
+	jsl.l forceblack		; $88F2C0: 22 04 E4 8F  bank $8F: 93G forceblack
 	jsl.l InitPPU		; $88F2C4: 22 20 81 8D  bank $8D: PPU registers off/clear
 	sep #$20		; $88F2C8: E2 20
 	cli		; $88F2CA: 58
@@ -380,13 +380,13 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	sta.b a0		; $88F387: 85 33
 	lda.w #$007F		; $88F389: A9 7F 00
 	sta.b a0+2		; $88F38C: 85 35
-	lda.w #$E154		; $88F38E: A9 54 E1
+	lda.w #PixelRemap8F		; $88F38E: A9 54 E1
 	sta.b a1		; $88F391: 85 37
-	lda.w #$008F		; $88F393: A9 8F 00
+	lda.w #PixelRemap8F>>16		; $88F393: A9 8F 00
 	sta.b a1+2		; $88F396: 85 39
 	lda.w #$0064		; $88F398: A9 64 00
 	sta.b d0		; $88F39B: 85 53
-	jsl.l $8FE0E4		; $88F39D: 22 E4 E0 8F  bank $8F: remap the 4bpp pixels ([a0] data, [a1] table, d0 tiles)
+	jsl.l RemapTiles		; $88F39D: 22 E4 E0 8F  bank $8F: remap the 4bpp pixels ([a0] data, [a1] table, d0 tiles)
 	jsl.l StartSong6		; $88F3A1: 22 E1 FB 86
 	jsl.l printz		; $88F3A5: 22 0C B9 80
 	dw $0005		; $88F3A9  printz inline string: length (counts itself), then control bytes / text
@@ -483,7 +483,7 @@ TitleScreen:		;auto: CODE_88F2B0 (from $8B816A). 93G TitleScreen (hockey93_07): 
 	asl a		; $88F471: 0A
 	asl a		; $88F472: 0A
 	sta.b d1		; $88F473: 85 57
-	jsl.l $8F8EF7		; $88F475: 22 F7 8E 8F  bank $8F: queue the changed textmap words
+	jsl.l QueueTextDMA		; $88F475: 22 F7 8E 8F  bank $8F: queue the changed textmap words
 .top5:		;scroll 6*8 lines
 	lda.b d0		; $88F479: A5 53
 	inc a		; $88F47B: 1A
@@ -560,7 +560,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	bne .po		; $88F534: D0 03
 	jmp.w .rtl		; $88F536: 4C 04 F7
 .po:
-	jsl.l $8FE404		; $88F539: 22 04 E4 8F  bank $8F: 93G forceblack
+	jsl.l forceblack		; $88F539: 22 04 E4 8F  bank $8F: 93G forceblack
 	sep #$20		; $88F53D: E2 20
 	lda.b #$01		; $88F53F: A9 01
 	sta.w BGMODE		; $88F541: 8D 05 21
@@ -603,13 +603,13 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	sta.b a0		; $88F59D: 85 33
 	lda.w #$007F		; $88F59F: A9 7F 00
 	sta.b a0+2		; $88F5A2: 85 35
-	lda.w #$E154		; $88F5A4: A9 54 E1
+	lda.w #PixelRemap8F		; $88F5A4: A9 54 E1
 	sta.b a1		; $88F5A7: 85 37
-	lda.w #$008F		; $88F5A9: A9 8F 00
+	lda.w #PixelRemap8F>>16		; $88F5A9: A9 8F 00
 	sta.b a1+2		; $88F5AC: 85 39
 	lda.w #$0064		; $88F5AE: A9 64 00
 	sta.b d0		; $88F5B1: 85 53
-	jsl.l $8FE0E4		; $88F5B3: 22 E4 E0 8F  bank $8F: remap the 4bpp pixels ([a0] data, [a1] table, d0 tiles)
+	jsl.l RemapTiles		; $88F5B3: 22 E4 E0 8F  bank $8F: remap the 4bpp pixels ([a0] data, [a1] table, d0 tiles)
 	lda.w #SmallFontTiles		; $88F5B7: A9 D8 C6
 	sta.b tmp0		; $88F5BA: 85 73
 	lda.w #SmallFontTiles>>16		; $88F5BC: A9 83 00
@@ -625,7 +625,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	sta.b a1+2		; $88F5D7: 85 39
 	lda.w #$0064		; $88F5D9: A9 64 00
 	sta.b d0		; $88F5DC: 85 53
-	jsl.l $8FE0E4		; $88F5DE: 22 E4 E0 8F  bank $8F: remap the 4bpp pixels ([a0] data, [a1] table, d0 tiles)
+	jsl.l RemapTiles		; $88F5DE: 22 E4 E0 8F  bank $8F: remap the 4bpp pixels ([a0] data, [a1] table, d0 tiles)
 	lda.w #TeamBlocksTiles		; $88F5E2: A9 73 9B  TeamBlocksTiles
 	sta.b tmp0		; $88F5E5: 85 73
 	lda.w #TeamBlocksTiles>>16		; $88F5E7: A9 88 00
@@ -892,7 +892,7 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	lda.b tmp1		; $88F800: A5 75
 	cmp.w #10		; $88F802: C9 0A 00
 	bne .lr		; $88F805: D0 BE
-	jsl.l $8FE04C		; $88F807: 22 4C E0 8F  bank $8F: clear the sprite table
+	jsl.l ClearSprites		; $88F807: 22 4C E0 8F  bank $8F: clear the sprite table
 	jsl.l printz		; $88F80B: 22 0C B9 80
 	dw $0005		; $88F80F  printz inline string: length (counts itself), then control bytes / text
 	db $EF,"8d"
@@ -1163,7 +1163,7 @@ assdefd:		;auto: CODE_88FBA6 (asstab 2). 93G assdefd (logic93_2): defenceman on 
 .go:
 	lda.w gmclock		; $88FBAE: AD 8A 12
 	beq .gm		; $88FBB1: F0 04
-	jml.l $8FD75A		; $88FBB3: 5C 5A D7 8F  bank $8F: assnothing
+	jml.l assnothing		; $88FBB3: 5C 5A D7 8F  bank $8F: assnothing
 .gm:
 	jsl.l check4bench		; $88FBB7: 22 27 85 80
 	lda.w pflags,x		; $88FBBB: BD DF 0E
@@ -1636,7 +1636,7 @@ skateto:		;auto: CODE_88FDD0. 93G skateto (logic93_5): a0 = collision avoidance 
 .ex:
 	lda.w temp2b,x		; $88FF5D: BD FF 0C
 	sta.b d0		; $88FF60: 85 53
-	jml.l $8FFBDC		; $88FF62: 5C DC FB 8F  bank $8F: doplayeracc
+	jml.l doplayeracc		; $88FF62: 5C DC FB 8F  bank $8F: doplayeracc
 unusedFF88:		;unused, $FF fill to the end of the bank
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $88FF66
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF		; $88FF76

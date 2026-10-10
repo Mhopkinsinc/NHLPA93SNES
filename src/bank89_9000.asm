@@ -92,7 +92,7 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	lda.w #$0000		; $8991AF: A9 00 00
 	pha		; $8991B2: 48
 .rwd:		;rewind to the first frame, counting the frames
-	jsl.l $8F8E54		; $8991B3: 22 54 8E 8F  bank $8F: 93G suba4 (one replay frame back)
+	jsl.l suba4		; $8991B3: 22 54 8E 8F  bank $8F: 93G suba4 (one replay frame back)
 	pla		; $8991B7: 68
 	inc a		; $8991B8: 1A
 	pha		; $8991B9: 48
@@ -104,7 +104,7 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 .fwd:		;then forward to the middle
 	lda.b $01,s		; $8991C1: A3 01
 	beq .go		; $8991C3: F0 09
-	jsl.l $8F8EAF		; $8991C5: 22 AF 8E 8F  bank $8F: 93G adda4 (one replay frame on)
+	jsl.l adda4		; $8991C5: 22 AF 8E 8F  bank $8F: 93G adda4 (one replay frame on)
 	pla		; $8991C9: 68
 	dec a		; $8991CA: 3A
 	pha		; $8991CB: 48
@@ -211,7 +211,7 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	lda.b d3		; $8992BA: A5 5F  Y held: rewind (one frame per vblank)
 	bit.w #abut		; $8992BC: 89 00 40
 	beq .f0		; $8992BF: F0 28
-	jsl.l $8F8E54		; $8992C1: 22 54 8E 8F  bank $8F: 93G suba4 (one replay frame back)
+	jsl.l suba4		; $8992C1: 22 54 8E 8F  bank $8F: 93G suba4 (one replay frame back)
 	jsl.l SprSort		; $8992C5: 22 6C B7 80
 	lda.w #$812F		; $8992C9: A9 2F 81
 .wait:
@@ -219,7 +219,7 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	beq .wait		; $8992CE: F0 FC
 	bra .vid		; $8992D0: 80 08
 .r1:		;L: one frame back
-	jsl.l $8F8E54		; $8992D2: 22 54 8E 8F  bank $8F: 93G suba4 (one replay frame back)
+	jsl.l suba4		; $8992D2: 22 54 8E 8F  bank $8F: 93G suba4 (one replay frame back)
 .show:
 	jsl.l SprSort		; $8992D6: 22 6C B7 80
 .vid:
@@ -238,10 +238,10 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	trb.w sflags		; $8992F8: 1C 8C 12
 	jmp.w .top		; $8992FB: 4C E2 91
 .f2:		;R: one frame on
-	jsl.l $8F8EAF		; $8992FE: 22 AF 8E 8F  bank $8F: 93G adda4 (one replay frame on)
+	jsl.l adda4		; $8992FE: 22 AF 8E 8F  bank $8F: 93G adda4 (one replay frame on)
 	bra .show		; $899302: 80 D2
 .f1:
-	jsl.l $8F8EAF		; $899304: 22 AF 8E 8F  bank $8F: 93G adda4 (one replay frame on)
+	jsl.l adda4		; $899304: 22 AF 8E 8F  bank $8F: 93G adda4 (one replay frame on)
 	jsl.l SprSort		; $899308: 22 6C B7 80
 	jsl.l setvideo		; $89930C: 22 5E E3 80
 	asl.b d7		; $899310: 06 6F
@@ -252,7 +252,7 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	bit.w #sf3rmplay		; $89931B: 89 02 00
 	beq .noplay		; $89931E: F0 19
 	stz.w lastsfx		; $899320: 9C 7F 01  lastsfx = 0: play the frame's sound
-	jsl.l $8F8EAF		; $899323: 22 AF 8E 8F  bank $8F: 93G adda4 (one replay frame on)
+	jsl.l adda4		; $899323: 22 AF 8E 8F  bank $8F: 93G adda4 (one replay frame on)
 	lda.w lastsfx		; $899327: AD 7F 01
 	beq .nosfx		; $89932A: F0 05
 	pha		; $89932C: 48
@@ -266,7 +266,7 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	bne .exit		; $89933E: D0 03
 	jmp.w .top		; $899340: 4C E2 91
 .exit:
-	jsl.l $8FE404		; $899343: 22 04 E4 8F  bank $8F: 93G forceblack
+	jsl.l forceblack		; $899343: 22 04 E4 8F  bank $8F: 93G forceblack
 	lda.w #$F000		; $899347: A9 00 F0
 	tsb.w PadControlBits		; $89934A: 0C 31 04
 	lda.w #sfscrl		; $89934D: A9 20 00
@@ -283,7 +283,7 @@ ReplayMode:		;auto: CODE_8990F0 (from the pause menu, $83F905). 93G ReplayMode (
 	sta.w Vpos		; $89936A: 8D DF 08
 	lda.w #sf2replay		; $89936D: A9 00 08
 	trb.w sflags		; $899370: 1C 8C 12
-	jsl.l $8F84B5		; $899373: 22 B5 84 8F  bank $8F: 93G SetHor
+	jsl.l SetHor		; $899373: 22 B5 84 8F  bank $8F: 93G SetHor
 	jsl.l setvideo		; $899377: 22 5E E3 80
 	stz.b textdirtylo		; $89937B: 64 D0
 	lda.w #$03FF		; $89937D: A9 FF 03

@@ -138,7 +138,7 @@ unusedEnergyBar:		;auto: CODE_8F8130. SNES: no caller found: a 4-character energ
 	bpl .l9		; $8F820E: 10 F9
 	ldx.b xsave		; $8F8210: A6 0A
 	rtl		; $8F8212: 6B
-unusedStatLabels:		;SNES: no reader found: short stat labels Sc1, Sc2, Chk, Pw1, Pw2, PK1, PK2
+linelist:		;93G linelist (hockey93_11): the line choice names (PrintStringFromList in bank $80): Sc1, Sc2, Chk, Pw1, Pw2, PK1, PK2
 	dw 5		; $8F8213
 	db "Sc1"
 	dw 5		; $8F8218
@@ -390,7 +390,7 @@ PushRef:		;auto: CODE_8F83A7. 93G PushRef: ref window frame d0 (RefsMap or RefsM
 	tsb.w sflags		; $8F848B: 0C 8C 12
 	lda.w #$FFFF		; $8F848E: A9 FF FF
 	sta.b d0		; $8F8491: 85 53
-	jsl.l $8FF63D		; $8F8493: 22 3D F6 8F  bank8F_F000: 93G prefmes
+	jsl.l prefmes		; $8F8493: 22 3D F6 8F
 .l11:
 	stx.b xsave		; $8F8497: 86 0A
 	ldx.w #$0006		; $8F8499: A2 06 00
@@ -445,7 +445,7 @@ SetHor:		;auto: CODE_8F84B5. 93G SetHor: switch to the horizontal rink (scoreboa
 	pla		; $8F84E6: 68
 	ror a		; $8F84E7: 6A
 	sta.w puckvy		; $8F84E8: 8D 1B 0B
-	jsl.l $8FE404		; $8F84EB: 22 04 E4 8F  bank8F_E000: 93G forceblack
+	jsl.l forceblack		; $8F84EB: 22 04 E4 8F
 	lda.w #$0001		; $8F84EF: A9 01 00
 	sta.w sfhormode		; $8F84F2: 8D 8E 12
 	stz.w Hscroll		; $8F84F5: 9C 56 01
@@ -455,7 +455,7 @@ SetHor:		;auto: CODE_8F84B5. 93G SetHor: switch to the horizontal rink (scoreboa
 	sta.w Oldrow		; $8F8501: 8D 9B 04
 	stz.w vramrow		; $8F8504: 9C 9D 04
 	jsl.l SprSort		; $8F8507: 22 6C B7 80
-	jsl.l $8FF58D		; $8F850B: 22 8D F5 8F  bank8F_F000: 92G StatsReport
+	jsl.l StatsReport		; $8F850B: 22 8D F5 8F
 	stx.b xsave		; $8F850F: 86 0A
 	ldx.w #$001A		; $8F8511: A2 1A 00
 .l3:
@@ -670,7 +670,7 @@ pushnumber:		;auto: CODE_8F8682. 93G pushnumber: mesarea string of the decimal n
 	rtl		; $8F86B5: 6B
 Intermission:		;auto: CODE_8F86B6 (from PeriodOver). 93G Intermission (SNES form): the pause menu screen with the ticker scores of the other games (IntermissionTick), then the highlights
 	jsl.l sndqreset		; $8F86B6: 22 1A FA 82
-	jsl.l $8FE00A		; $8F86BA: 22 0A E0 8F  bank8F_D000: 93G SetupTeamForIntermission
+	jsl.l SetupTeamForIntermission		; $8F86BA: 22 0A E0 8F
 	lda.w #$0000		; $8F86BE: A9 00 00
 	ldy.w #$001E		; $8F86C1: A0 1E 00
 .l1:
@@ -718,7 +718,7 @@ Intermission:		;auto: CODE_8F86B6 (from PeriodOver). 93G Intermission (SNES form
 	sta.b d0		; $8F8720: 85 53
 	lda.w #$0007		; $8F8722: A9 07 00
 	sta.b d1		; $8F8725: 85 57
-	jsl.l $8FD69F		; $8F8727: 22 9F D6 8F  bank8F_D000: 93G Framer
+	jsl.l Framer		; $8F8727: 22 9F D6 8F
 	jsl.l printscores1		; $8F872B: 22 5D E9 89
 	lda.w #$0002		; $8F872F: A9 02 00
 	trb.w sflags		; $8F8732: 1C 8C 12
@@ -793,7 +793,7 @@ TickerNext:		;auto: CODE_8F87A8. SNES: next ticker game (restart at the last gam
 KillCrowd:		;auto: CODE_8F87C0. 93G KillCrowd: crowd volume $88 (silence) to the sound driver
 	lda.w #$0088		; $8F87C0: A9 88 00
 	pha		; $8F87C3: 48
-	jsl.l $8FFE8E		; $8F87C4: 22 8E FE 8F  bank8F_F000: crowd volume to the sound driver
+	jsl.l sfx8F		; $8F87C4: 22 8E FE 8F
 	rtl		; $8F87C8: 6B
 appstring:		;auto: CODE_8F87C9. 93G appstring: append string [a1] to the string [a3]
 	lda.w #$0002		; $8F87C9: A9 02 00
@@ -914,7 +914,7 @@ NewTicker3:		;auto: CODE_8F887A. 93G NewTicker3: the ticker box for game d3: Gam
 	sta.b d0		; $8F88B4: 85 53
 	lda.w #$0005		; $8F88B6: A9 05 00
 	sta.b d1		; $8F88B9: 85 57
-	jsl.l $8FD69F		; $8F88BB: 22 9F D6 8F  bank8F_D000: 93G Framer
+	jsl.l Framer		; $8F88BB: 22 9F D6 8F
 	lda.b vcount		; $8F88BF: A5 00
 	sta.w tickervc		; $8F88C1: 8D D9 08
 	inc.w printx		; $8F88C4: EE 7B 04
@@ -940,7 +940,7 @@ NewTicker3:		;auto: CODE_8F887A. 93G NewTicker3: the ticker box for game d3: Gam
 	sta.b a1		; $8F890E: 85 37
 	lda.w #GameLabels>>16		; $8F8910: A9 8F 00
 	sta.b a1+2		; $8F8913: 85 39
-	jsl.l $8FD68C		; $8F8915: 22 8C D6 8F  bank8F_D000: 93G PrintStringFromList
+	jsl.l PrintStringFromList		; $8F8915: 22 8C D6 8F
 	lda.b $01,s		; $8F8919: A3 01
 	clc		; $8F891B: 18
 	adc.w #$0015		; $8F891C: 69 15 00
@@ -953,7 +953,7 @@ NewTicker3:		;auto: CODE_8F887A. 93G NewTicker3: the ticker box for game d3: Gam
 	sta.b a1		; $8F892D: 85 37
 	lda.w #PerLabels>>16		; $8F892F: A9 8F 00
 	sta.b a1+2		; $8F8932: 85 39
-	jsl.l $8FD68C		; $8F8934: 22 8C D6 8F  bank8F_D000: 93G PrintStringFromList
+	jsl.l PrintStringFromList		; $8F8934: 22 8C D6 8F
 	lda.w #$2000		; $8F8938: A9 00 20
 	sta.w printa		; $8F893B: 8D 77 04
 	ldy.b a0		; $8F893E: A4 33
@@ -1051,7 +1051,7 @@ showzam:		;auto: CODE_8F8ABC (from setvideo). 93G showzam role: on the horizonta
 	sta.b spry		; $8F8ADD: 85 CB
 	lda.w #$022D		; $8F8ADF: A9 2D 02
 	sta.b sprframe		; $8F8AE2: 85 C3
-	jsl.l $8FEC68		; $8F8AE4: 22 68 EC 8F  bank8F_E000: 93G addframe
+	jsl.l addframe		; $8F8AE4: 22 68 EC 8F
 .l1:
 	rtl		; $8F8AE8: 6B
 waitxsr:		;auto: CODE_8F8AE9. 92G waitxsr: wait d0 frames or until a pad button (d1)
@@ -1168,7 +1168,7 @@ clockcont_0:		;auto: CODE_8F8B21 (also from puckfaceoff). 93G clockcont_0: end o
 	dec.b d2		; $8F8BCA: C6 5B
 	bpl .l7		; $8F8BCC: 10 EA
 .l9:
-	jsl.l $8FE2F9		; $8F8BCE: 22 F9 E2 8F  bank8F_E000: 93G ClearPenaltyBuffer
+	jsl.l ClearPenaltyBuffer		; $8F8BCE: 22 F9 E2 8F
 	lda.b crowdlevel		; $8F8BD2: A5 DE
 	clc		; $8F8BD4: 18
 	adc.w #$03E8		; $8F8BD5: 69 E8 03
@@ -1303,7 +1303,7 @@ updatepentime:		;auto: CODE_8F8C72. 93G updatepentime: once a second count down 
 	dec a		; $8F8CF0: 3A
 	sta.w tmpdst,y		; $8F8CF1: 99 E2 14
 	bne .l4		; $8F8CF4: D0 04
-	jsl.l $8FDAFC		; $8F8CF6: 22 FC DA 8F  bank8F_D000: 93G RemovePlayerFromList
+	jsl.l RemovePlayerFromList		; $8F8CF6: 22 FC DA 8F
 .l4:
 	bra .l2		; $8F8CFA: 80 C1
 .l5:
@@ -1345,7 +1345,7 @@ updatepentime:		;auto: CODE_8F8C72. 93G updatepentime: once a second count down 
 .l11:
 	lda.w tmpdst,y		; $8F8D3B: B9 E2 14
 	bne .l12		; $8F8D3E: D0 04
-	jsl.l $8FD9DF		; $8F8D40: 22 DF D9 8F  bank8F_D000: release player d0
+	jsl.l releasepl		; $8F8D40: 22 DF D9 8F
 .l12:
 	rtl		; $8F8D44: 6B
 .l13:
@@ -1359,11 +1359,11 @@ updatepentime:		;auto: CODE_8F8C72. 93G updatepentime: once a second count down 
 	bne .l15		; $8F8D54: D0 09
 	lda.w #$1000		; $8F8D56: A9 00 10
 	sta.w tmpdst,y		; $8F8D59: 99 E2 14
-	jmp.w $DAFC		; $8F8D5C: 4C FC DA  bank8F_D000: 93G RemovePlayerFromList
+	jmp.w RemovePlayerFromList		; $8F8D5C: 4C FC DA
 .l15:
 	lda.w #$0000		; $8F8D5F: A9 00 00
 	sta.w tmpdst,y		; $8F8D62: 99 E2 14
-	jmp.w $DAFC		; $8F8D65: 4C FC DA  bank8F_D000: 93G RemovePlayerFromList
+	jmp.w RemovePlayerFromList		; $8F8D65: 4C FC DA
 linebar:		;auto: CODE_8F8D68 (line change box). 93G linebar: energy bar of line d0 (getlinee) as 5 small font characters
 	jsl.l getlinee		; $8F8D68: 22 05 84 88
 	lda.w printa		; $8F8D6C: AD 77 04
@@ -1417,7 +1417,7 @@ lcfound:		;auto: CODE_8F8DC7. 93G lcfound (logic93_1): d2 = line choice 0-2: get
 	and.w #$DFFF		; $8F8DDD: 29 FF DF
 	ora.w #$0008		; $8F8DE0: 09 08 00
 	sta.w pflags,x		; $8F8DE3: 9D DF 0E
-	jsl.l $8FDBF9		; $8F8DE6: 22 F9 DB 8F  bank8F_D000: 93G loadTeamStruct
+	jsl.l loadTeamStruct		; $8F8DE6: 22 F9 DB 8F
 	ldy.b a2		; $8F8DEA: A4 3B
 	lda.w tmflags,y		; $8F8DEC: B9 0A 14
 	and.w #$FFF7		; $8F8DEF: 29 F7 FF
@@ -1435,7 +1435,7 @@ startpause1:		;auto: CODE_8F8E03. 93G startpause1: pause started by controller 1
 PauseExit:		;auto: CODE_8F8E0D. 92G PauseExit: restore textmap (textsave), sflags and the rink, printscores1, setvideo
 	stz.w cuetimer		; $8F8E0D: 9C A9 04
 	stz.w crowdvol		; $8F8E10: 9C 46 16
-	jsl.l $8FE404		; $8F8E13: 22 04 E4 8F  bank8F_E000: 93G forceblack
+	jsl.l forceblack		; $8F8E13: 22 04 E4 8F
 	phx		; $8F8E17: DA
 	ldx.w #$07FE		; $8F8E18: A2 FE 07
 .l1:

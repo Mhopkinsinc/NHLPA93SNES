@@ -14,7 +14,7 @@ StartHL2:		;auto: CODE_8DF888 (from $82FCB9 with d0-d7/a0-a6 saved). 92G StartHL
 	jsl.l .sv		; $8DF893: 22 5B FC 8D  save the game state
 	lda.b d1		; $8DF897: A5 57
 	sta.b d3		; $8DF899: 85 5F
-	jsl.l $8F887A		; $8DF89B: 22 7A 88 8F  93G NewTicker3: the score of the highlight game, bank $8F: 93G NewTicker3
+	jsl.l NewTicker3		; $8DF89B: 22 7A 88 8F  93G NewTicker3: the score of the highlight game, bank $8F: 93G NewTicker3
 	lda.w sflags3		; $8DF89F: AD 90 12
 	bit.w #sf3sbut		; $8DF8A2: 89 08 00
 	beq .show		; $8DF8A5: F0 03
@@ -30,7 +30,7 @@ StartHL2:		;auto: CODE_8DF888 (from $82FCB9 with d0-d7/a0-a6 saved). 92G StartHL
 	sta.b d0		; $8DF8BD: 85 53
 	lda.w #3		; $8DF8BF: A9 03 00
 	sta.b d1		; $8DF8C2: 85 57
-	jsl.l $8FD69F		; $8DF8C4: 22 9F D6 8F  bank $8F: 93G Framer (d0 x d1)
+	jsl.l Framer		; $8DF8C4: 22 9F D6 8F  bank $8F: 93G Framer (d0 x d1)
 	inc.w printx		; $8DF8C8: EE 7B 04
 	dec.w printy		; $8DF8CB: CE 7D 04
 	dec.w printy		; $8DF8CE: CE 7D 04
@@ -39,13 +39,13 @@ StartHL2:		;auto: CODE_8DF888 (from $82FCB9 with d0-d7/a0-a6 saved). 92G StartHL
 	db "Highlight from game:"
 	lda.w #180		; $8DF8EB: A9 B4 00  180 frames, Start skips
 	sta.b d0		; $8DF8EE: 85 53
-	jsl.l $8F8AE9		; $8DF8F0: 22 E9 8A 8F  bank $8F: wait d0 frames or a button (92G waitxsr)
+	jsl.l waitxsr		; $8DF8F0: 22 E9 8A 8F  bank $8F: wait d0 frames or a button (92G waitxsr)
 	lda.b d1		; $8DF8F4: A5 57
 	bit.w #JOYSTART		; $8DF8F6: 89 00 10
 	beq .play		; $8DF8F9: F0 03
 	jmp.w .nhl1		; $8DF8FB: 4C 04 FC
 .play:
-	jsl.l $8FE404		; $8DF8FE: 22 04 E4 8F  bank $8F: 93G forceblack
+	jsl.l forceblack		; $8DF8FE: 22 04 E4 8F  bank $8F: 93G forceblack
 	jsl.l sndqreset		; $8DF902: 22 1A FA 82
 	lda.w sndbank		; $8DF906: AD 4F 16
 	cmp.w #$0001		; $8DF909: C9 01 00
@@ -282,7 +282,7 @@ StartHL2:		;auto: CODE_8DF888 (from $82FCB9 with d0-d7/a0-a6 saved). 92G StartHL
 	cpx.w #$0004		; $8DFAF8: E0 04 00
 	bne .pusha4		; $8DFAFB: D0 F6
 	ldx.b xsave		; $8DFAFD: A6 0A
-	jsl.l $8F87C0		; $8DFAFF: 22 C0 87 8F  $8F87C0, bank $8F
+	jsl.l KillCrowd		; $8DFAFF: 22 C0 87 8F  $8F87C0, bank $8F
 	jsl.l sndqreset		; $8DFB03: 22 1A FA 82
 	stx.b xsave		; $8DFB07: 86 0A
 	ldx.w #$0002		; $8DFB09: A2 02 00
@@ -312,10 +312,10 @@ StartHL2:		;auto: CODE_8DF888 (from $82FCB9 with d0-d7/a0-a6 saved). 92G StartHL
 	beq .stats		; $8DFB36: F0 03
 	jmp.w .nhl1		; $8DFB38: 4C 04 FC
 .stats:
-	jsl.l $8FE404		; $8DFB3B: 22 04 E4 8F  bank $8F: 93G forceblack
+	jsl.l forceblack		; $8DFB3B: 22 04 E4 8F  bank $8F: 93G forceblack
 	jsl.l .lo		; $8DFB3F: 22 7C FC 8D  restore the game state
 	jsl.l setplayercolors		; $8DFB43: 22 D5 B6 80
-	jsl.l $8F84B5		; $8DFB47: 22 B5 84 8F  bank $8F: 93G SetHor
+	jsl.l SetHor		; $8DFB47: 22 B5 84 8F  bank $8F: 93G SetHor
 	jsl.l setvideo		; $8DFB4B: 22 5E E3 80
 	jsl.l printz		; $8DFB4F: 22 0C B9 80  DisplayStats box
 	dw $0005		; $8DFB53  printz inline string: length (counts itself), then control bytes / text
@@ -324,9 +324,9 @@ StartHL2:		;auto: CODE_8DF888 (from $82FCB9 with d0-d7/a0-a6 saved). 92G StartHL
 	sta.b d0		; $8DFB5B: 85 53
 	lda.w #7		; $8DFB5D: A9 07 00
 	sta.b d1		; $8DFB60: 85 57
-	jsl.l $8FD69F		; $8DFB62: 22 9F D6 8F  bank $8F: 93G Framer (d0 x d1)
+	jsl.l Framer		; $8DFB62: 22 9F D6 8F  bank $8F: 93G Framer (d0 x d1)
 	jsl.l printscores1		; $8DFB66: 22 5D E9 89
-	jsl.l $8FECAB		; $8DFB6A: 22 AB EC 8F  bank $8F: 93G DisplayStats
+	jsl.l Pmenu		; $8DFB6A: 22 AB EC 8F  bank $8F: 93G DisplayStats
 	stx.b xsave		; $8DFB6E: 86 0A
 	ldx.w #$001A		; $8DFB70: A2 1A 00
 .popa5:
@@ -378,10 +378,10 @@ StartHL2:		;auto: CODE_8DF888 (from $82FCB9 with d0-d7/a0-a6 saved). 92G StartHL
 	sta.w gsper,y		; $8DFBC4: 99 BF 15
 	lda.b d1		; $8DFBC7: A5 57
 	sta.b d3		; $8DFBC9: 85 5F
-	jsl.l $8F887A		; $8DFBCB: 22 7A 88 8F  bank $8F: 93G NewTicker3
+	jsl.l NewTicker3		; $8DFBCB: 22 7A 88 8F  bank $8F: 93G NewTicker3
 	lda.w #180		; $8DFBCF: A9 B4 00
 	sta.b d0		; $8DFBD2: 85 53
-	jsl.l $8F8AE9		; $8DFBD4: 22 E9 8A 8F  bank $8F: wait d0 frames or a button (92G waitxsr)
+	jsl.l waitxsr		; $8DFBD4: 22 E9 8A 8F  bank $8F: wait d0 frames or a button (92G waitxsr)
 	lda.b d1		; $8DFBD8: A5 57
 	bit.w #JOYSTART		; $8DFBDA: 89 00 10
 	beq .exit		; $8DFBDD: F0 06

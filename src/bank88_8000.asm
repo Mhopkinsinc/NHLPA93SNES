@@ -172,9 +172,9 @@ getlinee:		;auto: CODE_888405. 93G getlinee (penalty93_2): d0 = line number, a2 
 	sta.b a1		; $888444: 85 37
 	stz.b mulb		; $888446: 64 83
 	stz.b mula		; $888448: 64 7D
-	lda.w #$F820		; $88844A: A9 20 F8  a0 = priolist ($8FF820)
+	lda.w #priolist		; $88844A: A9 20 F8  a0 = priolist ($8FF820)
 	sta.b a0		; $88844D: 85 33
-	lda.w #$008F		; $88844F: A9 8F 00
+	lda.w #priolist>>16		; $88844F: A9 8F 00
 	sta.b a0+2		; $888452: 85 35
 	ldy.b a2		; $888454: A4 3B  tmap: positions - 1
 	lda.w tmap,y		; $888456: B9 EE 13
@@ -491,7 +491,7 @@ EncodePW:		;auto: CODE_88868D. 92G EncodePW (Rev A): after a playoff game, Resol
 .tree:
 	jml.l maketree		; $8886FA: 5C 00 80 8D  bank $8D: maketree
 .userwon:
-	jsl.l $8F9073		; $8886FE: 22 73 90 8F  bank $8F: 92G ResetPassWord
+	jsl.l ResetPassWord		; $8886FE: 22 73 90 8F  bank $8F: 92G ResetPassWord
 .userfailed:
 	lda.w #$0080		; $888702: A9 80 00  PassWord bit 7: no password
 	tsb.w PassWord		; $888705: 0C 10 16

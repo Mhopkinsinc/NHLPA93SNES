@@ -124,7 +124,7 @@ asspuckc:		;auto: CODE_80F45B (asstab $10). 93G asspuckc (logic93_3): player X i
 .clk:
 	lda.w gmclock		; $80F46D: AD 8A 12  clock stopped: assnothing
 	beq .go		; $80F470: F0 04
-	jml.l $8FD75A		; $80F472: 5C 5A D7 8F  bank $8F: 93G assnothing
+	jml.l assnothing		; $80F472: 5C 5A D7 8F  bank $8F: 93G assnothing
 .go:
 	lda.w pflags,x		; $80F476: BD DF 0E  joystick controlled: assexit
 	bit.w #pfjoycon		; $80F479: 89 08 00
@@ -162,9 +162,9 @@ asspuckc:		;auto: CODE_80F45B (asstab $10). 93G asspuckc (logic93_3): player X i
 	clc		; $80F4CA: 18
 	adc.w temp3,x		; $80F4CB: 7D 9F 0C
 	sta.b d0		; $80F4CE: 85 53
-	lda.w #$DFE2		; $80F4D0: A9 E2 DF
+	lda.w #PuckcSpots		; $80F4D0: A9 E2 DF
 	sta.b a0		; $80F4D3: 85 33
-	lda.w #$008F		; $80F4D5: A9 8F 00
+	lda.w #PuckcSpots>>16		; $80F4D5: A9 8F 00
 	sta.b a0+2		; $80F4D8: 85 35
 	lda.w sflags		; $80F4DA: AD 8C 12  sf2offsig: spot by position
 	bit.w #sf2offsig		; $80F4DD: 89 00 80
@@ -1067,7 +1067,7 @@ assgoalie:		;auto: CODE_80F6AD (asstab $E). 93G assgoalie (logic93_3): goalie X.
 	bmi .v8		; $80FC08: 30 06
 	bvc .stop		; $80FC0A: 50 06
 .acc:
-	jml.l $8FE164		; $80FC0C: 5C 64 E1 8F  bank $8F: 93G playeracc
+	jml.l playeracc		; $80FC0C: 5C 64 E1 8F  bank $8F: 93G playeracc
 .v8:
 	bvc .acc		; $80FC10: 50 FA
 .stop:

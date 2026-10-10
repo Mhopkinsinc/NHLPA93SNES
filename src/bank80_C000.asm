@@ -307,7 +307,7 @@ demoread:		;auto: CODE_80C3D4. 93G demoread (hockey93_01): in demo mode (no cont
 	lda.b d1		; $80C3E0: A5 57
 	bit.w #JOYSTART		; $80C3E2: 89 00 10  Start on pad 1: startpause1
 	beq .any1		; $80C3E5: F0 04
-	jml.l $8F8E03		; $80C3E7: 5C 03 8E 8F  bank $8F: 93G startpause1
+	jml.l startpause1		; $80C3E7: 5C 03 8E 8F  bank $8F: 93G startpause1
 .any1:
 	lda.b d1		; $80C3EB: A5 57
 	bne .exit		; $80C3ED: D0 14
@@ -449,7 +449,7 @@ updateplayers:		;auto: CODE_80C46D. 93G updateplayers (hockey93_02): animation, 
 	cmp.w #$0000		; $80C516: C9 00 00
 	bmi .vel		; $80C519: 30 06
 	asl.b d0		; $80C51B: 06 53
-	jsl.l $8FDBF9		; $80C51D: 22 F9 DB 8F  bank $8F: 93G loadTeamStruct
+	jsl.l loadTeamStruct		; $80C51D: 22 F9 DB 8F  bank $8F: 93G loadTeamStruct
 .vel:
 	lda.w SPA,x		; $80C521: BD FF 0D
 	cmp.w #SPAinjury1		; $80C524: C9 02 15  SPAinjury1: no movement
@@ -636,7 +636,7 @@ updateplayers:		;auto: CODE_80C46D. 93G updateplayers (hockey93_02): animation, 
 	lda.l asstab+1,x		; $80C6BD: BF A9 86 8D
 	sta.w jmlvector+2		; $80C6C1: 8D 7A 01
 	ldx.b a3		; $80C6C4: A6 3F
-	jsl.l $8FDBF9		; $80C6C6: 22 F9 DB 8F  loadTeamStruct, then the assignment, bank $8F: 93G loadTeamStruct
+	jsl.l loadTeamStruct		; $80C6C6: 22 F9 DB 8F  loadTeamStruct, then the assignment, bank $8F: 93G loadTeamStruct
 	jsl.l jmlvector		; $80C6CA: 22 78 01 00
 .cc:
 	lda.w Ypos,x		; $80C6CE: BD 5F 09

@@ -708,7 +708,7 @@ dopass:		;auto: CODE_8FE458. 93G dopass: pass the puck: the team mate nearest th
 .l10:
 	lda.b d4+2		; $8FE58D: A5 65
 	bmi .l11		; $8FE58F: 30 07
-	jsl.l $8FF8C4		; $8FE591: 22 C4 F8 8F  bank8F_F000: pass to the team mate a0
+	jsl.l passtoa0		; $8FE591: 22 C4 F8 8F
 	jmp.w .l12		; $8FE595: 4C 11 E6
 .l11:
 	lda.w passdir		; $8FE598: AD 3B 04
@@ -788,7 +788,7 @@ dopass:		;auto: CODE_8FE458. 93G dopass: pass the puck: the team mate nearest th
 	beq .l16		; $8FE644: F0 10
 	lda.w #$06C4		; $8FE646: A9 C4 06
 	sta.b d1		; $8FE649: 85 57
-	jsl.l $8FF603		; $8FE64B: 22 03 F6 8F  bank8F_F000: 93G Findhittype
+	jsl.l Findhittype		; $8FE64B: 22 03 F6 8F
 	beq .l16		; $8FE64F: F0 05
 	lda.w #$0736		; $8FE651: A9 36 07
 	sta.b d1		; $8FE654: 85 57

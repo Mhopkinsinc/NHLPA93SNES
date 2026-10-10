@@ -106,7 +106,7 @@ checksso:		;auto: CODE_8CFC1A (from setvideo). 93G checksso (video93_2): arrows 
 	bne .off		; $8CFCCD: D0 03
 	jmp.w .rtl		; $8CFCCF: 4C 3B FC
 .off:
-	lda.l $8F901A,x		; $8CFCD2: BF 1A 90 8F  jdtab ($8F901A): direction 0-7
+	lda.l jdtab8F,x		; $8CFCD2: BF 1A 90 8F  jdtab ($8F901A): direction 0-7
 	and.w #$00FF		; $8CFCD6: 29 FF 00
 	asl a		; $8CFCD9: 0A
 	asl a		; $8CFCDA: 0A
@@ -154,7 +154,7 @@ checksso:		;auto: CODE_8CFC1A (from setvideo). 93G checksso (video93_2): arrows 
 	lda.w ssoattr,x		; $8CFD37: BD AB 08
 	and.w #$1000		; $8CFD3A: 29 00 10
 	sta.b sprvflip		; $8CFD3D: 85 CD
-	jml.l $8FEC68		; $8CFD3F: 5C 68 EC 8F  addframe2, bank $8F: 93G addframe2
+	jml.l addframe		; $8CFD3F: 5C 68 EC 8F  addframe2, bank $8F: 93G addframe2
 .tab:		;93G checksso .tab: x spot, y spot, frame add, flip bits per direction (.xspot 116, .yspot 100)
 	dw 0,100,0,$0000		; $8CFD43
 	dw 116,100,1,$0000		; $8CFD4B
@@ -351,7 +351,7 @@ chk4pass:		;auto: CODE_8CFD83. 93G chk4pass (logic93_3): computer player X looks
 	inc.b a1		; $8CFEFC: E6 37
 	dec.b d3		; $8CFEFE: C6 5F
 	bpl .co0		; $8CFF00: 10 AF
-	jsl.l $8FE458		; $8CFF02: 22 58 E4 8F  93G dopass, bank $8F: 93G dopass
+	jsl.l dopass		; $8CFF02: 22 58 E4 8F  93G dopass, bank $8F: 93G dopass
 	lda.w position,x		; $8CFF06: BD 9F 0B
 	beq .rtl		; $8CFF09: F0 0A
 	pla		; $8CFF0B: 68  drop the return address (3 bytes): assexit returns for the caller
