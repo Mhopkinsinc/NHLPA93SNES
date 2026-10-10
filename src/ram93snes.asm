@@ -131,6 +131,7 @@ gamelevel	= $014A	; 0-3: depth into the playoff tree (4 = finished). 93G gamelev
 gamenum		= $014C	; index of the user game in the playoff game arrays (-1 = none). 93G gamenum
 mesarea		= $0191	; temp area for print strings (length word, then characters). 93G mesarea
 lastplayer	= $017D	; SCnum of the last player who touched the puck (doshot). 93G lastplayer
+PushWidthBuf	= $01F5	; PushNumberWidth string: length word (digits + 2), then the digits right aligned, spaces before (8 chars to $01FE). 93G PushWidthBuf
 Satt		= $01FF	; sprite attribute table (OAM shadow, $220 bytes), sent by VBlank. 93G Satt
 SattHi		= $03FF	; OAM high table shadow (x bit 8 and size, 2 bits per sprite)
 printx		= $047B	; x cordinate for printing (text map column). 93G printx
@@ -238,6 +239,7 @@ Wallcos		= $0D5F	; cos of the angle of the last wall collision. 93G Wallcos
 Wallsin		= $0D7F	; 93G Wallsin
 SCnum		= $0D9F	; index number of this object (X/2). 93G SCnum
 facedir		= $0DBF	; direction of facing 0-7. 93G facedir
+facefrac	= $0DDF	; turn fraction of facedir: doplayeracc adds the turn rate here and carries into facedir. 93G facedir.l low word
 SPA		= $0DFF	; current animation (offset into the animation data). 93G SPA
 SPAnum		= $0E1F	; index into animation (4 per frame). 93G SPAnum
 SPAcnt		= $0E3F	; count down to the next animation frame (-1 = restart). 93G SPAcnt

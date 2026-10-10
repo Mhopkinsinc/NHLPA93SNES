@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank8F_F000` ($8FEE83-$8FFFFF). <- CURRENT
+Bank $8F done (bank8F_8000..bank8F_F000 all MATCH). Every bank segment ($80-$8F) is matched; no segment is left in the queue. <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -200,7 +200,7 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank8F_C000 | matched | $8FC005 | $8FD004 | data | SpriteSet1 tiles |
 | bank8F_D000 | matched | $8FD005 | $8FE009 | 100% | SpriteSet1 end, fightinput, holdcheck, PrintStringFromList, Framer, assnothing, GoalieCount, AdvanceStringPtr, AttribMenuSkater/Goalie, PositionNames, releasepl, InitScoutDisplay, assstanley, addframe_full, RemovePlayerFromList, asscenterd, box, loadTeamStruct, ScoutingReport, ScoutCompare, ScoutLabels, PuckcSpots |
 | bank8F_E000 | matched | $8FE00A | $8FEE82 | 100% | SetupTeamForIntermission, ClearSprites, RemapTiles, PixelRemap8F, playeracc, dirtab8F, ClearPenaltyBuffer, randomd0sd0, DefaultMenus, checkagr, WeightedRandomSelect, forceblack, passmode, dopass, FrameSetTable, CompLine, TeamRoster, addframe, Pmenu (.mlist), GetPadTeam, setpde |
-| bank8F_F000 | not matched <- CURRENT | $8FEE83 | $8FFFFF | -5% | setoptions cpo $F395 (92G $E878, 93G $13D49); GOAL/HAT TRICK $FFE1 (93G $14E59) |
+| bank8F_F000 | matched | $8FEE83 | $8FFFFF | 100% | setoptions (.pslim, .pl, .text), PixelRemapFramer/PixelRemapFont, UnpackNibbles, PushNumberWidth, StatsReport, Findhittype, prefmes, CheckInjury, setInjuryType, sublist, priolist, ShowInjuryBox, passtoa0, GetPlayerCount, GetPlayerNameWithAttrib, Acheck, divs16, doplayeracc, ResetAndSelectPlayers, cd0, MusicCue, sfx8F, DisplayPlayerAttributeMenu (goal box), attrText |
 
 ## History
 
@@ -336,3 +336,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank8F_C000: matched $8FC005-$8FD004 (4096 bytes): SpriteSet1 tiles. MATCH.
 - bank8F_D000: matched $8FD005-$8FE009 (4101 bytes; bank8F_E000 now starts at SetupTeamForIntermission $8FE00A): fight and hold input, Framer, the scouting report screen and its labels, the attribute menu tables, asscenterd/assstanley (93G); $8FDFE2 is the asspuckc spot table (PuckcSpots). UpdateCwdExcite and CheckPeriodEnd are empty on the SNES. RAM: ronbarrchars. MATCH.
 - bank8F_E000: matched $8FE00A-$8FEE82 (3705 bytes; bank8F_F000 now starts at setoptions $8FEE83): the player physics/pass routines (93G playeracc, dopass, CompLine), the frame set table (FrameSetTable, by SpriteSetN label), the Team Roster screen with its line names, the pause menu lists. MATCH.
+- bank8F_F000: matched $8FEE83-$8FFFFF (4477 bytes, the end of the ROM): the options screen setoptions (93G hockey93_08 locals and tables; Players is fixed to One and 30 Seconds is unreachable), the injury box, passtoa0, doplayeracc (SNES turn rate $17 * d7), sublist/priolist (priolist has no pad byte), cd0, and the goal box that 93G calls DisplayPlayerAttributeMenu. Acheck: with pfgoal clear the SNES bmi tests the pfgoal load (always SPAHold). RAM: PushWidthBuf, facefrac. MATCH.
