@@ -1,9 +1,115 @@
-; $83F72B-$83FFFF  ROM $1F72B-$1FFFF: RinkPalette, Pausemode and its menu (92G hockey.asm Pausemode: .top, .gj, .jump, .rjoy;
-; the SNES menu has a fifth item, Team Roster), Restart, RefsMap (the ref window frames), assgoalietopuck (logic93_3), $FF fill.
-; Starts at the rink palette (boundary moved from $83F000).
-org $83F72B
-RinkPalette:		;the game palette: 128 colours (data/Pals/Rink.snespal), copied to both halves of palbuffer by setupice
-	incbin "../data/Pals/Rink.snespal"		; $83F72B-$83F82A
+; hockey_b83: 93G hockey93_01..hockey93_11: the game, screens, menus, password, playoffs.
+; Bank $83. Each block keeps its ROM address with org; blocks of other modules sit between them.
+
+org $83CC0C
+PlayerNumName:		;SNES: mesarea = "<uniform number> <name>" of the roster player d0 (team a2), like the 92G Pausemode .gnum digits. Returns X = mesarea
+	stx.b xsave
+	ldx.w #$0000
+.pushd:
+	lda.b d0,x
+	pha
+	inx
+	inx
+	cpx.w #$0010
+	bne .pushd
+	ldx.b xsave
+	stx.b xsave
+	ldx.w #$0000
+.pushb:
+	lda.b a2,x
+	pha
+	inx
+	inx
+	cpx.w #$0008
+	bne .pushb
+	ldx.b xsave
+	stx.b xsave
+	ldx.w #$0000
+.pusha:
+	lda.b a0,x
+	pha
+	inx
+	inx
+	cpx.w #$0004
+	bne .pusha
+	ldx.b xsave
+	jsl.l GetPlayerRecord		; a0 = the player entry, bank $89: a0 = roster entry of player d0
+	stx.b xsave
+	ldx.w #$0000
+.push2:
+	lda.b a0,x
+	pha
+	inx
+	inx
+	cpx.w #$0004
+	bne .push2
+	ldx.b xsave
+	lda.w #mesarea		; a3 = mesarea (length 4), a1 = mesarea+2
+	sta.b a3
+	inc a
+	inc a
+	sta.b a1
+	lda.w #$0000
+	sta.b a3+2
+	sta.b a1+2
+	lda.w #$0004
+	sta.b [a3]
+	lda.b a0		; skip the name: the uniform number byte
+	clc
+	adc.b [a0]
+	sta.b a0
+	lda.b [a0]
+	and.w #$00FF
+	sta.b d0
+	jsl.l PutDigits2		; two digits, then a blank and the name
+	jsl.l appendz
+	dw $0003		; printz inline string: length (counts itself), then control bytes / text
+	db " "
+	stx.b xsave
+	ldx.w #$0002
+.pop1:
+	pla
+	sta.b a1,x
+	dex
+	dex
+	bpl .pop1
+	ldx.b xsave
+	jsl.l appstring		; bank $8F: appstring
+	lda.w #mesarea
+	sta.b a1
+	lda.w #$0000
+	sta.b a1+2
+	stx.b xsave
+	ldx.w #$0002
+.pop2:
+	pla
+	sta.b a0,x
+	dex
+	dex
+	bpl .pop2
+	ldx.b xsave
+	stx.b xsave
+	ldx.w #$0006
+.pop3:
+	pla
+	sta.b a2,x
+	dex
+	dex
+	bpl .pop3
+	ldx.b xsave
+	stx.b xsave
+	ldx.w #$000E
+.popd:
+	pla
+	sta.b d0,x
+	dex
+	dex
+	bpl .popd
+	ldx.b xsave
+	ldx.b a3
+	rtl
+
+org $83F82B
 Pausemode:		;92G Pausemode: game is in pause mode now. Save textmap, stop the sound, horizontal screen, PAUSE title and frame, PauseMenu until it returns 0,
 		;   then PauseExit ($8F8E0D)
 	phx
@@ -308,105 +414,3 @@ Restart:		;SNES: restart the game from scratch (93G Begin role): native mode, st
 	sta.b hbint
 	jsl.l setoptions		; bank $8F
 	jml.l PlayoffScreenOpening4
-RefsMap:		;93G RefsMap: the ref window frames, 7 frames of 8 x 7 words (data/Refs.snesmap); PushRef copies frame d0 (+$70 each)
-	incbin "../data/Refs.snesmap"		; $83FAEC-$83FDFB
-RefsMapEnd:
-	assert RefsMapEnd-RefsMap == 7*$70
-assgoalietopuck:		;asstab $F. 93 only: goalie skates out to a loose puck (inserted by (93G logic93_3)
-		;   SNES: goalie skates out to a loose puck (inserted by assgoalie) while the puck moves toward him and the tmnear stats
-		;   allow it, else assexit
-	lda.w pflags,x		; joystick controlled or clock stopped: assexit
-	and.w #pfjoycon
-	ora.w gmclock
-	beq .chk
-	jml.l assexit
-.chk:
-	jsl.l check4bench
-	lda.w pflags,x
-	bit.w #pfna
-	beq .nna
-	and.w #~pfna&$FFFF
-	sta.w pflags,x
-	stz.w temp1,x
-.nna:
-	lda.w temp1,x
-	sec
-	sbc.b d7
-	sta.w temp1,x
-	bpl .go
-	lda.w aidef,x
-	lsr a
-	lsr a
-	clc
-	adc.w temp1,x
-	bpl .st
-	lda.w #$0000
-.st:
-	sta.w temp1,x
-	lda.w puckc		; carried puck: assexit
-	bmi .pc
-	jml.l assexit
-.pc:
-	lda.w puckvy		; puck moving away from my goal: assexit
-	sta.b tmp0
-	lda.w pfgoal,x
-	beq .dir
-	lda.b tmp0
-	eor.w #$FFFF
-	inc a
-	sta.b tmp0
-.dir:
-	lda.b tmp0
-	bpl .tm
-	jml.l assexit
-.tm:
-	stz.b a1		; tmnear of my team >= $E10 and of the other >= $640
-	lda.w #$0002
-	sta.b a2
-	lda.w pfteam,x
-	beq .t0
-	stz.b a2
-	lda.w #$0002
-	sta.b a1
-.t0:
-	ldy.b a1
-	lda.w tmnear,y
-	cmp.w #$0E10
-	lda.w tmnear+4,y
-	sbc.w #$0000
-	bcs .t1
-	jml.l assexit
-.t1:
-	ldy.b a2
-	lda.w tmnear,y
-	cmp.w #$0640
-	lda.w tmnear+4,y
-	sbc.w #$0000
-	bcs .go
-	jml.l assexit
-.go:		;skatetopuck
-	jml.l skatetopuck
-unusedFF83:		;unused, $FF fill to the end of the bank
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF
