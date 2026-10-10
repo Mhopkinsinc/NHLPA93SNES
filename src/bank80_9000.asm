@@ -527,7 +527,7 @@ FightFall:		;auto: CODE_8094CB. 93G chkhit .fall (IDA FightFall): X lost the fig
 	lda.w pflags,x		; $80953B: BD DF 0E
 	ora.w #pf2inj		; $80953E: 09 04 00
 	sta.w pflags,x		; $809541: 9D DF 0E
-	lda.w #SPAffall		; $809544: A9 56 11
+	lda.w #SPAfinjury		; $809544: A9 56 11
 	sta.b d1		; $809547: 85 57
 	jsl.l SetSPA		; $809549: 22 06 B0 80
 	stx.b a2		; $80954D: 86 3B
@@ -546,7 +546,7 @@ FightFall:		;auto: CODE_8094CB. 93G chkhit .fall (IDA FightFall): X lost the fig
 	stz.w Xvel,x		; $80956A: 9E DF 0A
 	jmp.w chkhit_ex		; $80956D: 4C B8 93
 .noinj:
-	lda.w #SPAbfall		; $809570: A9 F8 0F
+	lda.w #SPAffall		; $809570: A9 F8 0F
 	sta.b d1		; $809573: 85 57
 	jsl.l SetSPA		; $809575: 22 06 B0 80
 	stz.b a2		; $809579: 64 3B
@@ -2003,7 +2003,7 @@ puckglue:		;auto: CODE_80A07D. 93G puckglue (hockey93_05 IDA loc_10F8A): player 
 	lda.w #$008C		; $80A105: A9 8C 00  temp5 = 140, count down for the faceoff
 	sta.w temp5,y		; $80A108: 99 DF 0C
 	lda.w SPA,y		; $80A10B: B9 FF 0D
-	cmp.w #SPAg314		; $80A10E: C9 90 14
+	cmp.w #SPAgdive		; $80A10E: C9 90 14
 	beq .g314		; $80A111: F0 04
 	jml.l $8D87FB		; $80A113: 5C FB 87 8D  bank $8D: 93G setd0player
 .g314:

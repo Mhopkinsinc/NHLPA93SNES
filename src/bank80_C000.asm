@@ -451,7 +451,7 @@ updateplayers:		;auto: CODE_80C46D. 93G updateplayers (hockey93_02): animation, 
 	jsl.l $8FDBF9		; $80C51D: 22 F9 DB 8F  bank $8F: 93G loadTeamStruct
 .vel:
 	lda.w SPA,x		; $80C521: BD FF 0D
-	cmp.w #SPAnomove		; $80C524: C9 02 15  SPAnomove: no movement
+	cmp.w #SPAinjury1		; $80C524: C9 02 15  SPAinjury1: no movement
 	bne .slow		; $80C527: D0 03
 	jmp.w .done		; $80C529: 4C 47 C6
 .slow:
@@ -1432,7 +1432,7 @@ wallcollb:		;auto: CODE_80CC1E. 93G wallcollb (hockey93_04): object X hits a wal
 	inx		; $80CC8C: E8
 	inx		; $80CC8D: E8
 	stx.b a3		; $80CC8E: 86 3F
-	lda.w #SPAglass		; $80CC90: A9 6A 14  object 15 (shadow): SPAglass
+	lda.w #SPAbglass		; $80CC90: A9 6A 14  object 15 (shadow): SPAbglass
 	sta.b d1		; $80CC93: 85 57
 	jsl.l SetSPA		; $80CC95: 22 06 B0 80
 	plx		; $80CC99: FA

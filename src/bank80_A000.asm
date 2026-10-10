@@ -130,7 +130,7 @@ makepde:		;auto: CODE_80A1B4. 93G makepde (hockey93_05): d0 = rating A (on entry
 	sta.b d0		; $80A216: 85 53
 	clc		; $80A218: 18
 	rtl		; $80A219: 6B
-puckbody:		;auto: CODE_80A21A. 93G puckbody (hockey93_05): puck (X) hits player a2. d0 = distance^2. A fast high puck knocks a2 down (FallDown), a slower one plays SPAslowhit
+puckbody:		;auto: CODE_80A21A. 93G puckbody (hockey93_05): puck (X) hits player a2. d0 = distance^2. A fast high puck knocks a2 down (FallDown), a slower one plays SPAcatch
 	lda.w Zpos,x		; $80A21A: BD 9F 09  puck above 8: always a hit
 	sec		; $80A21D: 38
 	sbc.w #$0008		; $80A21E: E9 08 00
@@ -226,7 +226,7 @@ puckbody:		;auto: CODE_80A21A. 93G puckbody (hockey93_05): puck (X) hits player 
 	bne .rtl		; $80A2DA: D0 F8
 	inc a		; $80A2DC: 1A
 	sta.w pfalock,y		; $80A2DD: 99 7F 11
-	lda.w #SPAslowhit		; $80A2E0: A9 18 14
+	lda.w #SPAcatch		; $80A2E0: A9 18 14
 	sta.b d1		; $80A2E3: 85 57
 	ldx.b a2		; $80A2E5: A6 3B  exg a2,a3 around SetSPA
 	ldy.b a3		; $80A2E7: A4 3F
@@ -345,7 +345,7 @@ puckgoalie:		;auto: CODE_80A2FA. 93G puckgoalie (hockey93_05): puck (X) hits goa
 .frame:		;goalie in the down frames and the puck on the ice: no save
 	lda.w frame,y		; $80A3D1: B9 3F 09
 	sec		; $80A3D4: 38
-	sbc.w #SPFgoalie		; $80A3D5: E9 83 02  goalie frames SPFgoalie..+15
+	sbc.w #SPFgdive		; $80A3D5: E9 83 02  goalie dive frames SPFgdive..+15
 	cmp.w #$0010		; $80A3D8: C9 10 00
 	bcs .save		; $80A3DB: B0 10
 	lda.w Zpos+puckobj		; $80A3DD: AD BB 09
@@ -453,7 +453,7 @@ puckgoalie:		;auto: CODE_80A2FA. 93G puckgoalie (hockey93_05): puck (X) hits goa
 .nopc:		;loose puck: the goalie holds it if it is slow enough
 	ldy.b a2		; $80A4B4: A4 3B
 	lda.w SPA,y		; $80A4B6: B9 FF 0D
-	cmp.w #SPAg314		; $80A4B9: C9 90 14  SPAg314: always bounce
+	cmp.w #SPAgdive		; $80A4B9: C9 90 14  SPAgdive: always bounce
 	beq .bounce		; $80A4BC: F0 93
 	lda.w #$0002		; $80A4BE: A9 02 00  catch speed limit = random((2+shotspd)*512) + $C00
 	clc		; $80A4C1: 18

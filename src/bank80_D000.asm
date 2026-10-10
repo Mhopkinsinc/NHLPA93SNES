@@ -1358,7 +1358,7 @@ FallDown:		;auto: CODE_80D933. 93G FallDown (hockey93_03): player a2 falls, X is
 	jmp.w .rtl		; $80D942: 4C 11 DB
 .spa:		;already in one of the fall anims?
 	lda.w SPA,y		; $80D945: B9 FF 0D
-	cmp.w #SPAnomove		; $80D948: C9 02 15
+	cmp.w #SPAinjury1		; $80D948: C9 02 15
 	bne .s2		; $80D94B: D0 03
 	jmp.w .rtl		; $80D94D: 4C 11 DB
 .s2:
@@ -1374,7 +1374,7 @@ FallDown:		;auto: CODE_80D933. 93G FallDown (hockey93_03): player a2 falls, X is
 	bne .s5		; $80D963: D0 03
 	jmp.w .rtl		; $80D965: 4C 11 DB
 .s5:
-	cmp.w #SPAfall3		; $80D968: C9 B0 11
+	cmp.w #SPAflip		; $80D968: C9 B0 11
 	bne .s6		; $80D96B: D0 03
 	jmp.w .rtl		; $80D96D: 4C 11 DB
 .s6:		;stumble when stickhand (93G byte $71) >= $C, nopuckb is 0 and impact < $10-$1F
@@ -1472,7 +1472,7 @@ FallDown:		;auto: CODE_80D933. 93G FallDown (hockey93_03): player a2 falls, X is
 .f3:
 	cpx.w #$0018		; $80DA38: E0 18 00
 	bcs .set		; $80DA3B: B0 05
-	lda.w #SPAfall3		; $80DA3D: A9 B0 11
+	lda.w #SPAflip		; $80DA3D: A9 B0 11
 	sta.b d1		; $80DA40: 85 57
 .set:		;SetSPA d1 for a2
 	ldx.b a2		; $80DA42: A6 3B
@@ -1533,7 +1533,7 @@ FallDown:		;auto: CODE_80D933. 93G FallDown (hockey93_03): player a2 falls, X is
 	ldy.b a3		; $80DABB: A4 3F
 	stx.b a3		; $80DABD: 86 3F
 	sty.b a2		; $80DABF: 84 3B
-	lda.w #SPAnomove		; $80DAC1: A9 02 15
+	lda.w #SPAinjury1		; $80DAC1: A9 02 15
 	sta.b d1		; $80DAC4: 85 57
 	jsl.l SetSPA		; $80DAC6: 22 06 B0 80
 	ldx.b a2		; $80DACA: A6 3B
@@ -1620,11 +1620,11 @@ checkcheck:		;auto: CODE_80DB12. 93G checkcheck (hockey93_03): players in contac
 .cc:		;IDA CC: X is checking a2
 	ldy.b a2		; $80DB63: A4 3B  a2 holding: holdcheck
 	lda.w SPA,y		; $80DB65: B9 FF 0D
-	cmp.w #SPAhold		; $80DB68: C9 FC 0B
+	cmp.w #SPAHold		; $80DB68: C9 FC 0B
 	bne .h2		; $80DB6B: D0 04
 	jml.l $8FD5BF		; $80DB6D: 5C BF D5 8F  bank $8F: 93G holdcheck
 .h2:
-	cmp.w #SPAhold2		; $80DB71: C9 54 13
+	cmp.w #SPAhook		; $80DB71: C9 54 13
 	bne .b		; $80DB74: D0 04
 	jml.l $8FD5BF		; $80DB76: 5C BF D5 8F  bank $8F: 93G holdcheck
 .b:
@@ -2276,7 +2276,7 @@ faceoffinput:		;auto: CODE_80E073. 93G faceoffinput (logic93_1): faceoff player 
 .rtl:
 	rtl		; $80E0C4: 6B
 holdplayer:		;auto: CODE_80E0C5. 93G holdplayer (logic93_1): Y pressed: hold. With impact, hold the last player who hit X (Acheck)
-	lda.w #SPAhold2		; $80E0C5: A9 54 13  pfalock
+	lda.w #SPAhook		; $80E0C5: A9 54 13  pfalock
 	sta.b d1		; $80E0C8: 85 57
 	sta.w pfalock,x		; $80E0CA: 9D 7F 11
 	lda.w impact,x		; $80E0CD: BD 7F 0B

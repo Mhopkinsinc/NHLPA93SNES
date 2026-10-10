@@ -734,7 +734,7 @@ assgoalie:		;auto: CODE_80F6AD (asstab $E). 93G assgoalie (logic93_3): goalie X.
 	sta.w facedir,x		; $80F8B3: 9D BF 0D  facedir to the puck, nopuck 8, cover anim, pf2aip, crowd +150
 	lda.w #$0008		; $80F8B6: A9 08 00
 	sta.w nopuck,x		; $80F8B9: 9D 5F 0E
-	lda.w #SPAg314		; $80F8BC: A9 90 14
+	lda.w #SPAgdive		; $80F8BC: A9 90 14
 	sta.b d1		; $80F8BF: 85 57
 	jsl.l SetSPA		; $80F8C1: 22 06 B0 80
 	lda.w #$0096		; $80F8C5: A9 96 00
@@ -1351,7 +1351,7 @@ AdjustFacingDirection:		;auto: CODE_80FD05. 93G AdjustFacingDirection (logic93_3
 	sta.w facedir,x		; $80FD6C: 9D BF 0D
 	rtl		; $80FD6F: 6B
 GoalieSaveList:		;93G GoalieSaveList (logic93_3): save anims by index: glove 0/1, stack 2/3, stick 4/5
-	dw SPAgglovel,SPAgglover,SPAgstackl,SPAgstackr,SPAgstickl,SPAgstickr		; $80FD70
+	dw SPAgglover,SPAgglovel,SPAgstackr,SPAgstackl,SPAgstickr,SPAgstickl		; $80FD70
 checkgoalp_CalcGoalShotDir:		;auto: CODE_80FD7C. 93G checkgoalp_CalcGoalShotDir (logic93_1): if the opposing goalie covers the middle of the net, passdir 2 or 6 to shoot at the open side, else 0. Skipped for joystick players
 	lda.w pflags,x		; $80FD7C: BD DF 0E  joystick player: skip
 	bit.w #pfjoycon		; $80FD7F: 89 08 00
