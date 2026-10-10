@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank83_E000` ($83E000-$83EFFF). <- CURRENT
+`bank83_F000` ($83F72B-$83FFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -103,8 +103,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank83_B000 | matched | $83AD02 | $83BCA7 | data | 4006 bytes $83AD02-$83BCA7 (boundaries moved to the team records). Team records Pittsburgh .. Toronto in 93G teamdata93.asm form |
 | bank83_C000 | matched | $83BCA8 | $83CC0B | data | 3940 bytes $83BCA8-$83CC0B (boundaries moved to the team record and the end of the packed tiles). Team records Vancouver, Winnipeg, Washington; playoffseats (34 trees, = 93G); BigFontTiles incbin data/BigFont.pak (packed, $86FA3E) |
 | bank83_D000 | matched | $83CC0C | $83DFFF | 100% | 4084 bytes $83CC0C-$83DFFF (start moved by bank83_C000). SNES PlayerNumName; IceRinkMap (48x85 words, incbin data/IceRink.map 0..$1335) |
-| bank83_E000 | not matched <- CURRENT | $83E000 | $83EFFF | 0% |  |
-| bank83_F000 | not matched | $83F000 | $82FFFF | -0% |  |
+| bank83_E000 | matched | $83E000 | $83F72A | data | 5931 bytes $83E000-$83F72A (end moved before the rink palette). IceRinkMap end (incbin $1335..$1FE0, size asserted), HorRinkMap 48x28 (incbin data/IceRinkHor.map, size asserted) |
+| bank83_F000 | not matched <- CURRENT | $83F72B | $83FFFF | -0% |  |
 | bank84_8000 | not matched | $848000 | $848FFF | 0% |  |
 | bank84_9000 | not matched | $849000 | $849FFF | 0% |  |
 | bank84_A000 | not matched | $84A000 | $84AFFF | 0% |  |
@@ -237,3 +237,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank83_B000: matched $83AD02-$83BCA7 (4006 bytes): team records Pittsburgh .. Toronto, same values as 93G. MATCH.
 - bank83_C000: matched $83BCA8-$83CC0B (3940 bytes; bank83_D000 now starts at the code $83CC0C): the last team records, playoffseats (same bytes as 93G teamdata93.asm), and the packed big font tiles (100 tiles, 93G BigFont.map.jim chars) extracted to data/BigFont.pak, loaded by setupice by label. TeamList now uses labels for all 26 teams. MATCH.
 - bank83_D000: matched $83CC0C-$83DFFF (4084 bytes). PlayerNumName (uniform number and name of a roster player into mesarea), then the vertical rink tile map IceRinkMap (48 x 85 words; the bank $89 loader reads it with a $60 row stride) extracted to data/IceRink.map. The row note about scouting report text at $83D630 was wrong: that is rink map data. New RAM: psitem, pausetimer, demoflag, textsave; JOY dpad/shoulder masks. MATCH.
+- bank83_E000: matched $83E000-$83F72A (5931 bytes; bank83_F000 now starts at the rink palette $83F72B): the rest of the vertical rink map and the horizontal rink map (48 x 28 words, data/IceRinkHor.map), which the bank $8F SetHor code sends 32 columns at a time. MATCH.
