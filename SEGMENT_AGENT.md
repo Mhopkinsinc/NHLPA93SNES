@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank8F_C000` ($8FC005-$8FCFFF). <- CURRENT
+`bank8F_D000` ($8FD005-$8FDFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -197,8 +197,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank8F_9000 | matched | $8F9085 | $8FA004 | data | SpriteSet1 (frame set 1) header, pieces, tiles |
 | bank8F_A000 | matched | $8FA005 | $8FB004 | data | SpriteSet1 tiles |
 | bank8F_B000 | matched | $8FB005 | $8FC004 | data | SpriteSet1 tiles |
-| bank8F_C000 | not matched <- CURRENT | $8FC005 | $8FCFFF | 0% |  |
-| bank8F_D000 | not matched | $8FD005 | $8FDFFF | 31% | "Status ]" $D7A3 (93G $156AF); Scouting labels $DF68 (93G $13050, 92G $E00E) |
+| bank8F_C000 | matched | $8FC005 | $8FD004 | data | SpriteSet1 tiles |
+| bank8F_D000 | not matched <- CURRENT | $8FD005 | $8FDFFF | 31% | "Status ]" $D7A3 (93G $156AF); Scouting labels $DF68 (93G $13050, 92G $E00E) |
 | bank8F_E000 | not matched | $8FE00E | $8FEFFF | 49% | PauseMode .mlist $EDC8 (92G $4D60, 93G $15937); checksum pointer table $E67D (read by Start) |
 | bank8F_F000 | not matched | $8FF003 | $8EFFFF | -5% | setoptions cpo $F395 (92G $E878, 93G $13D49); GOAL/HAT TRICK $FFE1 (93G $14E59) |
 
@@ -333,3 +333,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank8F_9000: matched $8F9085-$8FA004 (3968 bytes): SpriteSet1 = frame set 1, frames 97-144 (SPFswing). MATCH.
 - bank8F_A000: matched $8FA005-$8FB004 (4096 bytes): SpriteSet1 tiles. MATCH.
 - bank8F_B000: matched $8FB005-$8FC004 (4096 bytes): SpriteSet1 tiles. MATCH.
+- bank8F_C000: matched $8FC005-$8FD004 (4096 bytes): SpriteSet1 tiles. MATCH.
