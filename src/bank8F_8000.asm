@@ -25,23 +25,23 @@ BigFontMap:		;93G bigfont.map: big font tiles of each character: 76 top-row word
 unusedEnergyBar:		;SNES: no caller found: a 4-character energy bar of d0 (8 levels per character) printed at printx-11, palette by d1
 	stx.b xsave
 	ldx.w #$0000
-.l1:
+.pushd:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .l1
+	bne .pushd
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.l2:
+.loop:
 	lda.b a1,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .l2
+	bne .loop
 	ldx.b xsave
 	lda.w #$2000
 	sta.w printa
@@ -54,33 +54,33 @@ unusedEnergyBar:		;SNES: no caller found: a 4-character energy bar of d0 (8 leve
 	lsr a
 	lsr a
 	cmp.w #$0020
-	bcc .l3
+	bcc .lt
 	lda.w #$001F
-.l3:
+.lt:
 	sta.b d0
 	ldy.w #$0002
 	lda.w #$0006
 	sta.w mesarea
 	lda.w #$0003
 	sta.b d3
-.l4:
+.loop2:
 	lda.w #$FFFF
 	sta.b d2
 	lda.b d0
-	bmi .l5
+	bmi .d0neg
 	sta.b d2
 	cmp.w #$0008
-	bcc .l5
+	bcc .d0neg
 	lda.w #$0007
 	sta.b d2
-.l5:
+.d0neg:
 	lda.b d2
 	sec
 	adc.b d1
 	and.w #$00FF
-	bne .l6
+	bne .nonzero
 	lda.w #$0020
-.l6:
+.nonzero:
 	sta.w mesarea,y
 	iny
 	lda.b d0
@@ -88,12 +88,12 @@ unusedEnergyBar:		;SNES: no caller found: a 4-character energy bar of d0 (8 leve
 	sbc.w #$0008
 	sta.b d0
 	dec.b d3
-	bpl .l4
+	bpl .loop2
 	lda.b d1
-	beq .l7
+	beq .nod1
 	lda.w #$0C00
 	tsb.w printa
-.l7:
+.nod1:
 	lda.w #mesarea
 	sta.b a1
 	lda.w #mesarea>>16
@@ -121,21 +121,21 @@ unusedEnergyBar:		;SNES: no caller found: a 4-character energy bar of d0 (8 leve
 	trb.w printa
 	stx.b xsave
 	ldx.w #$0002
-.l8:
+.loop3:
 	pla
 	sta.b a1,x
 	dex
 	dex
-	bpl .l8
+	bpl .loop3
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000E
-.l9:
+.popd:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .l9
+	bpl .popd
 	ldx.b xsave
 	rtl
 linelist:		;93G linelist (hockey93_11): the line choice names (PrintStringFromList in bank $80): Sc1, Sc2, Chk, Pw1, Pw2, PK1, PK2
@@ -175,9 +175,9 @@ BigFontIndex:		;SNES: big font index of each character $20-$5A (*2 into BigFontM
 showclock:		;93G showclock (video93_2): the game clock m:ss at x 3, y $18 (horizontal rink: x $D, y 4; not when gsp = 4); not in replay
 	lda.w sflags
 	bit.w #sf2replay
-	beq .l1
-	jmp.w .l4
-.l1:
+	beq .nosf2replay
+	jmp.w .rtl
+.nosf2replay:
 	lda.w #$0007
 	sta.w mesarea
 	lda.w #$0020
@@ -187,10 +187,10 @@ showclock:		;93G showclock (video93_2): the game clock m:ss at x 3, y $18 (horiz
 	lda.w #600
 	sta.b mula
 	jsl.l divu16
-	beq .l2
+	beq .zero
 	adc.w #$0030
 	sta.w mesarea+2
-.l2:
+.zero:
 	lda.w #60
 	sta.b mula
 	lda.b mulres+2
@@ -217,28 +217,28 @@ showclock:		;93G showclock (video93_2): the game clock m:ss at x 3, y $18 (horiz
 	lda.w #$0018
 	sta.w printy
 	lda.w sfhormode
-	beq .l3
+	beq .nosfhormode
 	lda.w #$000D
 	sta.w printx
 	lda.w #$0004
 	sta.w printy
 	lda.w gsp
 	cmp.w #$0004
-	beq .l4
-.l3:
+	beq .rtl
+.nosfhormode:
 	lda.w #mesarea
 	sta.b a1
 	lda.w #mesarea>>16
 	sta.b a1+2
 	jml.l print
-.l4:
+.rtl:
 	rtl
 asseben:		;asstab 9. 93G asseben (logic93_2): player X comes onto the ice from the bench door (SPAwallright), then assexit
 	lda.w pfalock,x
-	bne .l2
+	bne .rtl
 	lda.w pflags,x
 	bit.w #$0002
-	beq .l3
+	beq .nopflags
 	and.w #$FFFD
 	sta.w pflags,x
 	stz.w Xvel,x
@@ -247,9 +247,9 @@ asseben:		;asstab 9. 93G asseben (logic93_2): player X comes onto the ice from t
 	lsr a
 	sec
 	sbc.w #$0006
-	bmi .l1
+	bmi .neg
 	inc a
-.l1:
+.neg:
 	sta.b mulb
 	lda.w #$000E
 	sta.b mula
@@ -263,9 +263,9 @@ asseben:		;asstab 9. 93G asseben (logic93_2): player X comes onto the ice from t
 	lda.w #$101A
 	sta.b d1
 	jml.l SetSPA
-.l2:
+.rtl:
 	rtl
-.l3:
+.nopflags:
 	lda.w #$0004
 	sta.w facedir,x
 	lda.w pflags,x
@@ -280,29 +280,29 @@ PushRef:		;93G PushRef: ref window frame d0 (RefsMap or RefsMapHor, 8 x 7 words)
 	phx
 	stx.b xsave
 	ldx.w #$0000
-.l1:
+.pushd:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .l1
+	bne .pushd
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.l2:
+.pusha:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .l2
+	bne .pusha
 	ldx.b xsave
 	lda.b d0
 	cmp.w #$40
-	bne .l3
-	jmp.w .l9
-.l3:
+	bne .d0ne
+	jmp.w .join
+.d0ne:
 	sta.b mulb
 	lda.w #$70
 	sta.b mula
@@ -317,7 +317,7 @@ PushRef:		;93G PushRef: ref window frame d0 (RefsMap or RefsMapHor, 8 x 7 words)
 	lda.w refchars
 	sta.b tmp0
 	lda.w sfhormode
-	beq .l4
+	beq .nosfhormode
 	lda.w refcharshor
 	sta.b tmp0
 	lda.w #(15*32+13)*2		; horizontal rink: row 15, column 13
@@ -326,16 +326,16 @@ PushRef:		;93G PushRef: ref window frame d0 (RefsMap or RefsMapHor, 8 x 7 words)
 	sta.b a0
 	lda.w #RefsMapHor>>16
 	sta.b a0+2
-.l4:
+.nosfhormode:
 	lda.b a0
 	clc
 	adc.b d0
 	sta.b a0
 	lda.w #$0008
 	sta.b tmp2
-.l5:
+.loop:
 	ldy.w #$0007
-.l6:
+.loop2:
 	lda.b [a0]
 	clc
 	adc.b tmp0
@@ -346,29 +346,29 @@ PushRef:		;93G PushRef: ref window frame d0 (RefsMap or RefsMapHor, 8 x 7 words)
 	txa
 	lsr a
 	cmp.b textdirtylo
-	bcs .l7
+	bcs .ge
 	sta.b textdirtylo
-.l7:
+.ge:
 	cmp.b textdirtyhi
-	bcc .l8
+	bcc .lt
 	sta.b textdirtyhi
-.l8:
+.lt:
 	inc.b a0
 	inc.b a0
 	inc.b tmp1
 	inc.b tmp1
 	dey
-	bne .l6
+	bne .loop2
 	lda.b tmp1
 	clc
 	adc.w #$0032
 	sta.b tmp1
 	dec.b tmp2
-	bne .l5
+	bne .loop
 	lda.w #sf2refref
 	tsb.w sflags
-	bra .l11
-.l9:
+	bra .join2
+.join:
 	lda.w #$0007
 	sta.b d0
 	lda.w #$0008
@@ -379,59 +379,59 @@ PushRef:		;93G PushRef: ref window frame d0 (RefsMap or RefsMapHor, 8 x 7 words)
 	sta.w printx
 	sta.w printy
 	lda.w sfhormode
-	beq .l10
+	beq .nosfhormode2
 	lda.w #$000D
 	sta.w printx
 	lda.w #$000F
 	sta.w printy
-.l10:
+.nosfhormode2:
 	jsl.l eraser
 	lda.w #sf2refref
 	tsb.w sflags
 	lda.w #$FFFF
 	sta.b d0
 	jsl.l prefmes
-.l11:
+.join2:
 	stx.b xsave
 	ldx.w #$0006
-.l12:
+.popa:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .l12
+	bpl .popa
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000A
-.l13:
+.popd:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .l13
+	bpl .popd
 	ldx.b xsave
 	plx
 	rtl
 SetHor:		;93G SetHor: switch to the horizontal rink (scoreboard screen): half puck speed, forceblack, sfhormode, StatsReport
 	stx.b xsave
 	ldx.w #$0000
-.l1:
+.pushd:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$001C
-	bne .l1
+	bne .pushd
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.l2:
+.pusha:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$001C
-	bne .l2
+	bne .pusha
 	ldx.b xsave
 	lda.w puckvx
 	pha
@@ -458,44 +458,44 @@ SetHor:		;93G SetHor: switch to the horizontal rink (scoreboard screen): half pu
 	jsl.l StatsReport
 	stx.b xsave
 	ldx.w #$001A
-.l3:
+.popa:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .l3
+	bpl .popa
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$001A
-.l4:
+.popd:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .l4
+	bpl .popd
 	ldx.b xsave
 	ldx.b a3
 	rtl
 USBoard:		;93G USBoard (penalty93_2): printscores1, then each team's penalty box players and their time (.dispen)
 	stx.b xsave
 	ldx.w #$0000
-.l1:
+.pushd:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0020
-	bne .l1
+	bne .pushd
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.l2:
+.pusha:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .l2
+	bne .pusha
 	ldx.b xsave
 	jsl.l printscores1
 	jsl.l printz
@@ -511,85 +511,85 @@ USBoard:		;93G USBoard (penalty93_2): printscores1, then each team's penalty box
 	jsl.l .dispen
 	stx.b xsave
 	ldx.w #$000E
-.l3:
+.popa:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .l3
+	bpl .popa
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$001E
-.l4:
+.popd:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .l4
+	bpl .popd
 	ldx.b xsave
 	ldx.b a3
-.l5:
+.rtl:
 	rtl
 .dispen:		;93G .dispen: penalty box list of team a2: timed players first
 	lda.b a2
-	beq .l6
+	beq .noa2
 	lda.w #$001A
-.l6:
+.noa2:
 	sta.b a0
-.l7:
+.loop:
 	ldy.b a0
 	lda.w tmboxlist,y
 	inc.b a0
 	and.w #$00FF
 	sta.b d0
 	bit.w #$0080
-	bne .l9
+	bne .nonzero
 	lda.b a2
-	beq .l8
+	beq .noa22
 	lda.w #$0034
-.l8:
+.noa22:
 	clc
 	adc.b d0
 	tay
 	lda.w tmpdst,y
 	bit.w #$4000
-	bne .l7
+	bne .loop
 	jsl.l pplpen
-	bra .l7
-.l9:
+	bra .loop
+.nonzero:
 	lda.b a2
-	beq .l10
+	beq .noa23
 	lda.w #$001A
-.l10:
+.noa23:
 	sta.b a0
-.l11:
+.loop2:
 	ldy.b a0
 	lda.w tmboxlist,y
 	inc.b a0
 	and.w #$00FF
 	sta.b d0
 	bit.w #$0080
-	bne .l5
+	bne .rtl
 	lda.b a2
-	beq .l12
+	beq .noa24
 	lda.w #$0034
-.l12:
+.noa24:
 	clc
 	adc.b d0
 	tay
 	lda.w tmpdst,y
 	bit.w #$4000
-	beq .l11
+	beq .loop2
 	jsl.l pplpen
-	bra .l11
+	bra .loop2
 pplpen:		;93G pplpen: one penalty box line: player number and time left (rows up to y $A)
 	lda.w printy
 	cmp.w #$000B
-	bcs USBoard_l5
+	bcs USBoard_rtl
 	lda.b a2
-	beq .l1
+	beq .noa2
 	lda.w #$0034
-.l1:
+.noa2:
 	adc.b d0
 	tay
 	lda.w tmpdst,y
@@ -604,14 +604,14 @@ pplpen:		;93G pplpen: one penalty box line: player number and time left (rows up
 	adc.b [a1],y
 	sta.b a1
 	lsr.b d0
-.l2:
+.loop:
 	lda.b [a1]
 	clc
 	adc.b a1
 	adc.w #$0008
 	sta.b a1
 	dec.b d0
-	bpl .l2
+	bpl .loop
 	lda.b a1
 	sec
 	sbc.w #$0008
@@ -648,7 +648,7 @@ pushnumber:		;93G pushnumber: mesarea string of the decimal number d0 (built bac
 	lda.w #mesarea>>16
 	sta.b a1+2
 	lda.b d0
-.l1:
+.loop:
 	sta.b mulb
 	lda.w #$000A
 	sta.b mula
@@ -660,7 +660,7 @@ pushnumber:		;93G pushnumber: mesarea string of the decimal number d0 (built bac
 	sta.b [a1]
 	rep #$30
 	lda.b mulres
-	bne .l1
+	bne .loop
 	dec.b a1
 	dec.b a1
 	lda.w #$01AF
@@ -673,25 +673,25 @@ Intermission:		;93G Intermission (SNES form): the pause menu screen with the tic
 	jsl.l SetupTeamForIntermission
 	lda.w #$0000
 	ldy.w #$001E
-.l1:
+.loop:
 	sta.w Xpos,y
 	dey
 	dey
-	bpl .l1
-.l2:
+	bpl .loop
+.loop2:
 	lda.b vcount
 	ldy.b vcount+2
 	cmp.b vcount
-	bne .l2
+	bne .loop2
 	sta.w vcountmark
 	sty.w vcountmark+2
 	lda.w #$0001
 	trb.w sflags
 	lda.w gsp
 	cmp.w #$0004
-	beq .l3
-	bra .l3
-.l3:
+	beq .gspeq
+	bra .gspeq
+.gspeq:
 	lda.w #$0708
 	sta.b pausetimer
 	lda.w #$0001
@@ -703,14 +703,14 @@ Intermission:		;93G Intermission (SNES form): the pause menu screen with the tic
 	jsl.l InitTicker
 	lda.w TickerNum
 	sta.w tickerstart
-.l4:
+.loop3:
 	lda.w #$0000
 	ldy.w #$001E
-.l5:
+.loop4:
 	sta.w Xpos,y
 	dey
 	dey
-	bpl .l5
+	bpl .loop4
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$05,$0C
@@ -723,49 +723,49 @@ Intermission:		;93G Intermission (SNES form): the pause menu screen with the tic
 	lda.w #$0002
 	trb.w sflags
 	jsl.l PauseMenu
-	bne .l4
+	bne .loop3
 	stz.w demoflag
-.l6:
+.rtl:
 	rtl
 InitTicker:		;SNES: start the ticker at the last game of the round (GetShifter) unless one is running, then NewTicker2
 	lda.w TickerNum
-	bmi .l1
+	bmi .TickerNumneg
 	ora.w gamenum
-	bne .l2
-.l1:
+	bne .goNewTicker2
+.TickerNumneg:
 	jsl.l GetShifter
 	lda.b d1
 	sta.w TickerNum
-	bmi Intermission_l6
-.l2:
+	bmi Intermission_rtl
+.goNewTicker2:
 	jmp.w NewTicker2
 StatsScreen:		;SNES: DisplayStats, then wait for A or 60 seconds
 	jsl.l DisplayStats
 	lda.b vcount
 	pha
-.l1:
+.loop:
 	jsl.l setvideo
 	jsl.l ReadPads
 	jsl.l getpzjoy
 	lda.b d1
 	bit.w #$0080
-	bne .l2
+	bne .exit
 	lda.b vcount
 	sec
 	sbc.b $01,s
 	cmp.w #$0E10
-	bcc .l1
-.l2:
+	bcc .loop
+.exit:
 	pla
 	rtl
 IntermissionTick:		;SNES: during the intermission show the next ticker score every $150 frames; after the last one the highlights (DoHiLights). A = 0: go on
 	lda.w demoflag
-	beq .l1
+	beq .rtl
 	lda.b vcount
 	sec
 	sbc.w tickervc
 	cmp.w #$0150
-	bcc .l2
+	bcc .lt
 	jsl.l TickerNext
 	lda.w tickerstart
 	cmp.w TickerNum
@@ -773,22 +773,22 @@ IntermissionTick:		;SNES: during the intermission show the next ticker score eve
 	jsl.l DoHiLights
 	lda.w #$0008
 	trb.w sflags3
-.l1:
+.rtl:
 	rtl
-.l2:
+.lt:
 	lda.w #$0000
 	rtl
 TickerNext:		;SNES: next ticker game (restart at the last game of the round), NewTicker2
 	lda.w TickerNum
-	bmi .l1
+	bmi .TickerNumneg
 	ora.w gamenum
-	bne .l2
-.l1:
+	bne .goNewTicker2
+.TickerNumneg:
 	jsl.l GetShifter
 	lda.b d1
 	sta.w TickerNum
-	bmi IntermissionTick_l1
-.l2:
+	bmi IntermissionTick_rtl
+.goNewTicker2:
 	jmp.w NewTicker2
 KillCrowd:		;93G KillCrowd: crowd volume $88 (silence) to the sound driver
 	lda.w #$0088
@@ -800,18 +800,18 @@ appstring:		;93G appstring: append string [a1] to the string [a3]
 	sta.b tmp0
 	lda.b [a3]
 	sta.b tmp1
-.l1:
+.loop:
 	lda.b tmp0
 	cmp.b [a1]
-	beq .l2
+	beq .tmp0eq
 	tay
 	lda.b [a1],y
 	ldy.b tmp1
 	sta.b [a3],y
 	inc.b tmp0
 	inc.b tmp1
-	bra .l1
-.l2:
+	bra .loop
+.tmp0eq:
 	lda.b tmp1
 	sta.b [a3]
 	rtl
@@ -853,13 +853,13 @@ PushTime:		;93G PushTime: mesarea string m:ss of the time d0 (seconds)
 	sta.b [a1]
 	rep #$30
 	lda.b mulres
-	beq .l1
+	beq .nomulres
 	dec.b a1
 	sep #$20
 	adc.b #$30
 	sta.b [a1]
 	rep #$30
-.l1:
+.nomulres:
 	dec.b a1
 	dec.b a1
 	lda.w #$01AF
@@ -874,16 +874,16 @@ NewTicker:		;93G NewTicker: once the clock is at 8:00 or less, the next ticker s
 	rtl
 NewTicker2:		;93G NewTicker2/CheckGameTickerStatus: d3 = next ticker game (not the user game, no highlight coming, series not over)
 	lda.w OptPlayMode
-	beq .l1
+	beq .rtl
 	lda.w TickerNum
 	sta.b d3
-	bmi .l1
+	bmi .rtl
 	dec.w TickerNum
 	lda.b d3
 	cmp.w gamenum
 	beq NewTicker2
 	bra NewTicker3
-.l1:
+.rtl:
 	rtl
 NewTicker3:		;93G NewTicker3: the ticker box for game d3: GameLabels round name, period, both teams with scores (TickerTeam)
 	lda.b d3
@@ -898,18 +898,18 @@ NewTicker3:		;93G NewTicker3: the ticker box for game d3: GameLabels round name,
 	db $BF,$02,$17
 	lda.w sflags
 	bit.w #$0001
-	bne .l1
+	bne .sflags
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$02,$17
-.l1:
+.sflags:
 	lda.w sfhormode
-	bne .l2
+	bne .sfhormode
 	lda.w printy
 	sec
 	sbc.w #$0005
 	sta.w printy
-.l2:
+.sfhormode:
 	lda.w #$001C
 	sta.b d0
 	lda.w #$0005
@@ -1040,9 +1040,9 @@ showzam:		;93G showzam role: on the horizontal rink the zamboni sprite ($22D) mo
 	sta.b tmp0
 	tya
 	sbc.w vcountmark+2
-	bne .l1
+	bne .rtl
 	lda.w sfhormode
-	beq .l1
+	beq .rtl
 	lda.b tmp0
 	lsr a
 	lsr a
@@ -1052,38 +1052,38 @@ showzam:		;93G showzam role: on the horizontal rink the zamboni sprite ($22D) mo
 	lda.w #$022D
 	sta.b sprframe
 	jsl.l addframe
-.l1:
+.rtl:
 	rtl
 waitxsr:		;92G waitxsr: wait d0 frames or until a pad button (d1)
 	lda.b d0
 	pha
-.l1:
+.loop:
 	jsl.l Readjoy1
 	lda.b d1
-	bne .l3
+	bne .exit
 	jsl.l Readjoy2
 	lda.b d1
-	bne .l3
+	bne .exit
 	jsl.l setvideo
 	lda.b vcount
-.l2:
+.loop2:
 	cmp.b vcount
-	beq .l2
+	beq .loop2
 	jsl.l ReadPads
 	pla
 	dec a
 	pha
-	bpl .l1
-.l3:
+	bpl .loop
+.exit:
 	pla
 	rtl
 clockcont:		;93G clockcont (hockey93_01): clock at 0: freezewindow, then clockcont_0
 	lda.w gmclock
 	ora.w gameclock
-	bne .l1
+	bne .rtl
 	jsl.l freezewindow
 	jmp.w clockcont_0
-.l1:
+.rtl:
 	rtl
 clockcont_0:		;93G clockcont_0: end of period: puck pucknorm; third period winners celebrate (assscore, the Stanley Cup in the final), the game clock stops
 	ldx.w #$001C
@@ -1093,19 +1093,19 @@ clockcont_0:		;93G clockcont_0: end of period: puck pucknorm; third period winne
 	jsl.l assinsert
 	lda.w gsp
 	cmp.w #$0002
-	bcs .l1
-	jmp.w .l11
-.l1:
+	bcs .gspge
+	jmp.w .join
+.gspge:
 	lda.w #$0007
 	sta.b d0
 	ldx.w #$0000
 	stx.b a3
 	lda.w gamelevel
 	cmp.w #$0003
-	bne .l6
+	bne .gamelevelne
 	lda.b bosgames
 	cmp.w #$0007
-	beq .l4
+	beq .bosgameseq
 	lda.w gamenum
 	asl a
 	sta.b a0
@@ -1113,61 +1113,61 @@ clockcont_0:		;93G clockcont_0: end of period: puck pucknorm; third period winne
 	stz.b d3
 	lda.w gsflags,y
 	bit.w #$0001
-	beq .l2
+	beq .nogsflags
 	lda.w #$0010
 	sta.b d3
-.l2:
+.nogsflags:
 	lda.w tmscore
 	cmp.w tmscore+2
-	bpl .l3
+	bpl .tmscorepos
 	lda.b d3
 	eor.w #$0010
 	sta.b d3
-.l3:
+.tmscorepos:
 	lda.b a0
 	clc
 	adc.b d3
 	tay
 	lda.w gspotwins,y
 	cmp.w #$0003
-	bne .l6
-.l4:
+	bne .gamelevelne
+.bosgameseq:
 	lda.w #$0008
 	sta.b d0
 	lda.w #$000B
 	sta.b d2
-.l5:
+.loop:
 	lda.w pflags,x
 	and.w #$FFF7
 	sta.w pflags,x
 	inx
 	inx
 	dec.b d2
-	bpl .l5
+	bpl .loop
 	ldx.w #$0000
 	stx.b a3
-.l6:
+.gamelevelne:
 	lda.w #$0005
 	sta.b d2
 	lda.w tmscore
 	cmp.w tmscore+2
-	beq .l11
-	bpl .l7
+	beq .join
+	bpl .loop2
 	ldx.w #$000C
 	stx.b a3
-.l7:
+.loop2:
 	lda.w position,x
-	beq .l8
+	beq .noposition
 	jsl.l assinsert
 	lda.w #$0007
 	sta.b d0
-.l8:
+.noposition:
 	inx
 	inx
 	stx.b a3
 	dec.b d2
-	bpl .l7
-.l9:
+	bpl .loop2
+.loop3:
 	jsl.l ClearPenaltyBuffer
 	lda.b crowdlevel
 	clc
@@ -1178,7 +1178,7 @@ clockcont_0:		;93G clockcont_0: end of period: puck pucknorm; third period winne
 	tsb.w gmode
 	lda.w tmscore
 	cmp.w tmscore+2
-	bmi .l10
+	bmi .tmscoreneg
 	stz.b crowdlevel
 	lda.w #$0003
 	sta.w cheercnt
@@ -1186,54 +1186,54 @@ clockcont_0:		;93G clockcont_0: end of period: puck pucknorm; third period winne
 	sec
 	sbc.w #$0096
 	sta.w cheervc
-.l10:
+.tmscoreneg:
 	lda.w #$0004
 	sta.b d0
 	jml.l AddPenalty2
-.l11:
+.join:
 	lda.w gsp
 	cmp.w #$0003
-	bne .l12
+	bne .gspne
 	lda.w OptPlayMode
-	beq .l9
-.l12:
+	beq .loop3
+.gspne:
 	lda.w #$0002
 	sta.b d0
 	jml.l AddPenalty2
 DoHiLights:		;92G DoHiLights: in the playoffs play the highlight of each game of the round that asks for one (gsfhl, StartHL2)
 	lda.w OptPlayMode
-	beq .l3
+	beq .rtl
 	jsl.l GetShifter
 	lda.b d1
 	asl a
 	sta.b a0
-.l1:
+.loop:
 	ldy.b a0
 	lda.w gsflags,y
 	bit.w #$0004
-	bne .l2
+	bne .gsflags
 	bit.w #$0002
-	beq .l2
+	beq .gsflags
 	and.w #$FFFD
 	sta.w gsflags,y
 	jsl.l far8DF888
-.l2:
+.gsflags:
 	dec.b a0
 	dec.b a0
 	dec.b d1
-	bpl .l1
-.l3:
+	bpl .loop
+.rtl:
 	rtl
 assdopen:		;asstab $D. 93G assdopen (logic93_2): add player X to the penalty box (PBnum), position -1, frame 0
 	lda.w pfalock,x
-	bne .l2
+	bne .rtl
 	lda.w #$0010
 	sta.b d0
 	lda.w pfteam,x
-	beq .l1
+	beq .nopfteam
 	lda.w #$0001
 	sta.b d0
-.l1:
+.nopfteam:
 	lda.w PBnum
 	clc
 	adc.b d0
@@ -1241,18 +1241,18 @@ assdopen:		;asstab $D. 93G assdopen (logic93_2): add player X to the penalty box
 	lda.w #$FFFF
 	sta.w position,x
 	stz.w frame,x
-.l2:
+.rtl:
 	rtl
 updatepentime:		;93G updatepentime: once a second count down the penalty box times of both teams; release players whose time is up
 	lda.w #$0020
 	trb.w sflags3
 	lda.w gmclock
-	bne .l5
+	bne .rtl
 	lda.w pentimer
 	sec
 	sbc.b d7
 	sta.w pentimer
-	bpl .l5
+	bpl .rtl
 	adc.w #$0018
 	sta.w pentimer
 	lda.w #$0020
@@ -1264,9 +1264,9 @@ updatepentime:		;93G updatepentime: once a second count down the penalty box tim
 	sta.b a2
 .team:		;team a2
 	lda.b a2
-	beq .l1
+	beq .noa2
 	lda.w #$001A
-.l1:
+.noa2:
 	sta.b a0
 	lda.w #mesarea
 	sta.b a1
@@ -1275,26 +1275,26 @@ updatepentime:		;93G updatepentime: once a second count down the penalty box tim
 	lda.w #$0002
 	sta.b d1
 	sta.b d3
-.l2:
+.loop:
 	ldy.b a0
 	lda.w tmboxlist,y
 	inc.b a0
 	and.w #$00FF
 	sta.b d0
 	bit.w #$0080
-	bne .l6
+	bne .nonzero
 	lda.b a2
-	beq .l3
+	beq .noa22
 	lda.w #$0034
-.l3:
+.noa22:
 	clc
 	adc.b d0
 	tay
 	lda.w tmpdst,y
 	bit.w #$4000
-	bne .l13
+	bne .tmpdst2
 	dec.b d1
-	bmi .l2
+	bmi .loop
 	lda.b d0
 	sta.b [a1]
 	inc.b a1
@@ -1302,65 +1302,65 @@ updatepentime:		;93G updatepentime: once a second count down the penalty box tim
 	lda.w tmpdst,y
 	dec a
 	sta.w tmpdst,y
-	bne .l4
+	bne .tmpdst
 	jsl.l RemovePlayerFromList
-.l4:
-	bra .l2
-.l5:
+.tmpdst:
+	bra .loop
+.rtl:
 	rtl
-.l6:
+.nonzero:
 	lda.w mesarea
 	sta.b d0
 	lda.b d1
 	cmp.w #$0001
 	beq .rel
 	lda.b d1
-	bne .l7
+	bne .d1
 	jsl.l .rel
-	bra .l8
-.l7:
+	bra .join
+.d1:
 	lda.b d1
 	cmp.w #$FFFF
-	bne .l5
-.l8:
+	bne .rtl
+.join:
 	lda.w mesarea+2
 	sta.b d0
 .rel:		;release player d0 when his time is <= 5 (RemovePlayerFromList)
 	lda.b a2
-	beq .l9
+	beq .noa23
 	lda.w #$0034
-.l9:
+.noa23:
 	clc
 	adc.b d0
 	tay
 	lda.w tmpdst,y
 	sec
 	sbc.w #$0005
-	beq .l11
-	bmi .l10
-	bvs .l11
-	bra .l5
-.l10:
-	bvs .l5
-.l11:
+	beq .notmpdst
+	bmi .neg
+	bvs .notmpdst
+	bra .rtl
+.neg:
+	bvs .rtl
+.notmpdst:
 	lda.w tmpdst,y
-	bne .l12
+	bne .rtl2
 	jsl.l releasepl
-.l12:
+.rtl2:
 	rtl
-.l13:
+.tmpdst2:
 	dec a
 	sta.w tmpdst,y
 	bit.w #$0800
-	bne .l14
-	jmp.w .l2
-.l14:
+	bne .nonzero2
+	jmp.w .loop
+.nonzero2:
 	bit.w #$1000
-	bne .l15
+	bne .nonzero3
 	lda.w #$1000
 	sta.w tmpdst,y
 	jmp.w RemovePlayerFromList
-.l15:
+.nonzero3:
 	lda.w #$0000
 	sta.w tmpdst,y
 	jmp.w RemovePlayerFromList
@@ -1372,9 +1372,9 @@ linebar:		;93G linebar: energy bar of line d0 (getlinee) as 5 small font charact
 	sta.w printa
 	lda.b d0
 	cmp.w #$1000
-	bcc .l1
+	bcc .d0lt
 	lda.w #$1000
-.l1:
+.d0lt:
 	sta.b d0
 	sta.b mula
 	lda.w #$002F
@@ -1412,7 +1412,7 @@ lcfound:		;93G lcfound (logic93_1): d2 = line choice 0-2: getlchoice; loadTeamSt
 	sta.w tmlcchoice,y
 	jsl.l getlchoice
 	lda.b d0
-	bmi .l1
+	bmi .rtl
 	lda.w pflags,x
 	and.w #$DFFF
 	ora.w #$0008
@@ -1426,7 +1426,7 @@ lcfound:		;93G lcfound (logic93_1): d2 = line choice 0-2: getlchoice; loadTeamSt
 	sta.w tmline,y
 	jsl.l setpersonel
 	jml.l lcfound2
-.l1:
+.rtl:
 	rtl
 startpause1:		;93G startpause1: pause started by controller 1 (sfpj off), startpause
 	lda.w #$0002
@@ -1438,12 +1438,12 @@ PauseExit:		;92G PauseExit: restore textmap (textsave), sflags and the rink, pri
 	jsl.l forceblack
 	phx
 	ldx.w #$07FE
-.l1:
+.loop:
 	lda.l textsave,x
 	sta.l textmap,x
 	dex
 	dex
-	bpl .l1
+	bpl .loop
 	plx
 	stz.b textdirtylo
 	lda.w #$03FF
@@ -1452,9 +1452,9 @@ PauseExit:		;92G PauseExit: restore textmap (textsave), sflags and the rink, pri
 	sta.w sflags
 	pla
 	sta.w sfhormode
-	bne .l2
+	bne .nonzero
 	jsl.l ClrHor
-.l2:
+.nonzero:
 	lda.w #$0001
 	trb.w sflags
 	jsl.l printscores1
@@ -1466,18 +1466,18 @@ PauseExit:		;92G PauseExit: restore textmap (textsave), sflags and the rink, pri
 suba4:		;93G suba4: replay a4 one frame back (wrap at ReplayBufferStart unless sfwrap), RestoreReplayFrame; d7 = 0 at the end
 	lda.b a4
 	cmp.w #ReplayBufferStart
-	bne .l1
+	bne .a4ne
 	lda.b a4+2
 	cmp.w #ReplayBufferStart>>16
-	bne .l1
+	bne .a4ne
 	lda.w sflags
 	bit.w #sfwrap
-	beq .l4
+	beq .nosfwrap
 	lda.w #ReplayBufferEnd
 	sta.b a4
 	lda.w #ReplayBufferEnd>>16
 	sta.b a4+2
-.l1:
+.a4ne:
 	lda.b a4
 	sec
 	sbc.w #replaysize
@@ -1487,14 +1487,14 @@ suba4:		;93G suba4: replay a4 one frame back (wrap at ReplayBufferStart unless s
 	sta.b a4+2
 	lda.b a4
 	cmp.w ReplayBufferPtr
-	beq .l2
+	beq .a4eq
 	jml.l RestoreReplayFrame
-.l2:
+.a4eq:
 	lda.b a4+2
 	cmp.w ReplayBufferPtr+2
-	beq .l3
+	beq .a4eq2
 	jml.l RestoreReplayFrame
-.l3:
+.a4eq2:
 	lda.b a4
 	clc
 	adc.w #replaysize
@@ -1502,7 +1502,7 @@ suba4:		;93G suba4: replay a4 one frame back (wrap at ReplayBufferStart unless s
 	lda.b a4+2
 	adc.w #$0000
 	sta.b a4+2
-.l4:
+.nosfwrap:
 	jsl.l RestoreReplayFrame
 	stz.b d7
 	rtl
@@ -1510,7 +1510,7 @@ adda4:		;93G adda4: replay a4 one frame on unless it reaches ReplayBufferPtr; d7
 	stz.b d7
 	lda.w sflags
 	bit.w #sf2drec
-	beq .l1
+	beq .nosf2drec
 	lda.b a4+2
 	pha
 	lda.b a4
@@ -1526,25 +1526,25 @@ adda4:		;93G adda4: replay a4 one frame on unless it reaches ReplayBufferPtr; d7
 	sta.b a4+2
 	lda.b tmp0
 	cmp.w ReplayBufferPtr
-	bne .l1
+	bne .nosf2drec
 	lda.b tmp1
 	cmp.w ReplayBufferPtr+2
-	bne .l1
+	bne .nosf2drec
 	rtl
-.l1:
+.nosf2drec:
 	lda.b a4
 	cmp.w ReplayBufferPtr
-	bne .l2
+	bne .a4ne
 	lda.b a4+2
 	cmp.w ReplayBufferPtr+2
-	bne .l2
+	bne .a4ne
 	rtl
-.l2:
+.a4ne:
 	jsl.l RestoreReplayFrame
 	jml.l adda43
 QueueTextDMA:		;SNES: DMAList entry for the changed textmap words (textdirtylo..textdirtyhi) to vram
 	lda.b textdirtylo
-	bmi .l1
+	bmi .rtl
 	ldy.b DMAListend
 	sta.w DMAList+dmavram,y
 	asl a
@@ -1553,7 +1553,7 @@ QueueTextDMA:		;SNES: DMAList entry for the changed textmap words (textdirtylo..
 	lda.w #textmap>>16
 	sta.w DMAList+dmabank,y
 	lda.b textdirtyhi
-	beq .l1
+	beq .rtl
 	sec
 	sbc.b textdirtylo
 	inc a
@@ -1566,7 +1566,7 @@ QueueTextDMA:		;SNES: DMAList entry for the changed textmap words (textdirtylo..
 	clc
 	adc.w #dmasize
 	sta.b DMAListend
-.l1:
+.rtl:
 	rtl
 QueueBackmapDMA:		;SNES: DMAList entry for backmap ($800 bytes) to vram $400
 	ldy.b DMAListend
@@ -1594,15 +1594,15 @@ ShowRinkRows:		;93G show_rink role: DMAList entries for the IceRinkMap rows that
 	tax
 	sec
 	sbc.w Oldrow
-	bne .l1
-	jmp.w .l7
-.l1:
-	bpl .l3
+	bne .nonzero
+	jmp.w .join2
+.nonzero:
+	bpl .pos
 	stx.w Oldrow
 	eor.w #$FFFF
 	inc a
 	cmp.w #$0019
-	bcs .l2
+	bcs .loop
 	sta.b tmp1
 	lda.w vramrow
 	sec
@@ -1610,17 +1610,17 @@ ShowRinkRows:		;93G show_rink role: DMAList entries for the IceRinkMap rows that
 	and.w #$001F
 	sta.w vramrow
 	sta.b tmp2
-	bra .l4
-.l2:
+	bra .join
+.loop:
 	lda.w #$001D
 	sta.b tmp1
 	stz.w vramrow
 	stz.b tmp2
-	bra .l4
-.l3:
+	bra .join
+.pos:
 	stx.w Oldrow
 	cmp.w #$0019
-	bcs .l2
+	bcs .loop
 	sta.b tmp1
 	adc.w vramrow
 	and.w #$001F
@@ -1636,7 +1636,7 @@ ShowRinkRows:		;93G show_rink role: DMAList entries for the IceRinkMap rows that
 	sec
 	sbc.b tmp1
 	tax
-.l4:
+.join:
 	txa
 	asl a
 	asl a
@@ -1657,7 +1657,7 @@ ShowRinkRows:		;93G show_rink role: DMAList entries for the IceRinkMap rows that
 	adc.w #$0400
 	sta.b tmp2
 	ldx.b tmp1
-.l5:
+.loop2:
 	lda.w #IceRinkMap>>16
 	sta.w DMAList+dmabank,y
 	sta.w DMAList+dmasize+dmabank,y
@@ -1669,9 +1669,9 @@ ShowRinkRows:		;93G show_rink role: DMAList entries for the IceRinkMap rows that
 	sec
 	sbc.w #$03E0
 	cmp.w #$0800
-	bne .l6
+	bne .ne
 	lda.w #$0400
-.l6:
+.ne:
 	sta.b tmp2
 	lda.b tmp0
 	sta.w DMAList,y
@@ -1688,56 +1688,56 @@ ShowRinkRows:		;93G show_rink role: DMAList entries for the IceRinkMap rows that
 	adc.w #$000E
 	tay
 	dex
-	bne .l5
-.l7:
+	bne .loop2
+.join2:
 	sty.b DMAListend
 	rtl
 jdtab8F:		;93G jdtab: buttons r,l,d,u -> direction 0-7, 8 = none (checksso)
 	db 8,0,4,8,6,7,5,8,2,1,3,8,8,8,8,8
 InitScores:		;93G InitScores: playoff rounds 0-1: random scores so far for the other games of the round (SetScore 1-3 times)
 	lda.w OptPlayMode
-	beq .l5
+	beq .rtl
 	lda.w gamelevel
 	cmp.w #$0002
-	bcs .l5
+	bcs .rtl
 	jsl.l GetShifter
 	lda.b d1
 	asl a
 	sta.b a0
-.l1:
+.loop:
 	lda.b d1
 	cmp.w gamenum
-	beq .l4
+	beq .d1eq
 	ldy.b a0
 	lda.w gsflags,y
 	bit.w #$0004
-	bne .l4
+	bne .d1eq
 	lda.w #$0000
 	sta.w gsper,y
 	lda.w #$0003
 	sta.b d0
 	jsl.l randomd0
-	bra .l3
-.l2:
+	bra .join
+.loop2:
 	jsl.l SetScore
-.l3:
+.join:
 	dec.b d0
-	bpl .l2
-.l4:
+	bpl .loop2
+.d1eq:
 	dec.b a0
 	dec.b a0
 	dec.b d1
-	bpl .l1
-.l5:
+	bpl .loop
+.rtl:
 	rtl
 ResetPassWord:		;92G ResetPassWord: PassWord = 16 blanks ($1E) with bit 7 clear
 	sep #$30
 	stz.w PassWord
 	ldy.b #$0F
 	lda.b #$1E
-.l1:
+.loop:
 	sta.w PassWord,y
 	dey
-	bne .l1
+	bne .loop
 	rep #$30
 	rtl

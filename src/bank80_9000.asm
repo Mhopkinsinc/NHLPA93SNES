@@ -317,13 +317,13 @@ chkhit:		;93G chkhit (logic93_2): part of the fight, is player X hit by opponent
 	jmp.w .hithigh
 .h2:
 	cmp.w #SPFfight+6+5
-	bne .l1
+	bne .ne
 	jmp.w .hithigh
-.l1:
+.ne:
 	cmp.w #SPFfight+7		; low punch frames
-	bne .l2
+	bne .ne2
 	jmp.w .hitlow
-.l2:
+.ne2:
 	cmp.w #SPFfight+7+5
 	bne .g1
 	jmp.w .hitlow
@@ -1380,7 +1380,7 @@ ChkOffsides:		;93G ChkOffsides (logic93_5): flag a team offsides when the puck c
 	ldy.b a2
 	lda.w tmsort,y
 	sta.b a0
-.l0:
+.loop:
 	ldy.b a0
 	lda.w position,y
 	bmi .n0
@@ -1403,7 +1403,7 @@ ChkOffsides:		;93G ChkOffsides (logic93_5): flag a team offsides when the puck c
 	inc.b a0
 	inc.b a0
 	dec.b d2
-	bpl .l0
+	bpl .loop
 	rtl
 .neg:		;bottom line
 	lda.b d0
@@ -1444,7 +1444,7 @@ ChkOffsides:		;93G ChkOffsides (logic93_5): flag a team offsides when the puck c
 	ldy.b a2
 	lda.w tmsort,y
 	sta.b a0
-.l2:
+.loop2:
 	ldy.b a0
 	lda.w position,y
 	bmi .n2
@@ -1467,7 +1467,7 @@ ChkOffsides:		;93G ChkOffsides (logic93_5): flag a team offsides when the puck c
 	inc.b a0
 	inc.b a0
 	dec.b d2
-	bpl .l2
+	bpl .loop2
 	rtl
 ClearOffsidesIfAllPlayers:		;93G ClearOffsidesIfAllPlayers (logic93_5): a2 = team; clear tmfoffside once no skater is past the blue line
 	ldy.b a2

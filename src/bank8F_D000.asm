@@ -8,36 +8,36 @@ SpriteSet1End:
 fightinput:		;93G fightinput: pad input in a fight: dpad moves (playeracc), stay near the fight spot (xc1), B/A/Y punch (SPA $F82/$F50/$F0C)
 	lda.w temp3,x
 	ora.w Pencntdwn
-	bpl .l1
-	jmp.w .l10
-.l1:
+	bpl .Pencntdwnpos
+	jmp.w .rtl
+.Pencntdwnpos:
 	lda.w SPA,x
 	cmp.w #$0EDA
-	bne .l2
-	jmp.w .l10
-.l2:
+	bne .SPAne
+	jmp.w .rtl
+.SPAne:
 	lda.b d1
 	pha
 	lda.b d0
 	sta.b d2
 	bit.w #$0008
-	bne .l3
+	bne .nonzero
 	and.w #$0007
 	sta.b d2
 	jsl.l playeracc
-.l3:
+.nonzero:
 	lda.w xc1
 	clc
 	adc.w #$000C
 	sta.b d0
 	lda.w facedir,x
 	cmp.w #$0002
-	bne .l4
+	bne .facedirne
 	lda.b d0
 	sec
 	sbc.w #$0018
 	sta.b d0
-.l4:
+.facedirne:
 	lda.b d0
 	sec
 	sbc.w Xpos,x
@@ -45,13 +45,13 @@ fightinput:		;93G fightinput: pad input in a fight: dpad moves (playeracc), stay
 	lda.w Xvel,x
 	eor.b d0
 	sta.b d1
-	bpl .l6
+	bpl .Xvelpos
 	lda.b d0
 	bit.w #$8000
-	beq .l5
+	beq .nod0
 	eor.w #$FFFF
 	inc a
-.l5:
+.nod0:
 	sta.b d0
 	lda.w Xvel,x
 	sta.b mula
@@ -66,11 +66,11 @@ fightinput:		;93G fightinput: pad input in a fight: dpad moves (playeracc), stay
 	sec
 	sbc.b d0
 	sta.w Xvel,x
-.l6:
+.Xvelpos:
 	pla
 	sta.b d1
 	lda.w pf2aip,x
-	bne .l10
+	bne .rtl
 	lda.b d1
 	sta.b d2
 	lda.w #$0F50
@@ -78,36 +78,36 @@ fightinput:		;93G fightinput: pad input in a fight: dpad moves (playeracc), stay
 	sta.w pf2aip,x
 	lda.b d2
 	bit.w #$0080
-	beq .l7
+	beq .nod2
 	jml.l SetSPA
-.l7:
+.nod2:
 	lda.w #$0F82
 	sta.b d1
 	lda.b d2
 	bit.w #$8000
-	beq .l8
+	beq .nod22
 	jml.l SetSPA
-.l8:
+.nod22:
 	lda.w #$0F0C
 	sta.b d1
 	lda.b d2
 	bit.w #$4000
-	beq .l9
+	beq .nod23
 	jml.l SetSPA
-.l9:
+.nod23:
 	stz.w pf2aip,x
-.l10:
+.rtl:
 	rtl
 holdcheck:		;93G holdcheck: player X holds a2 (SPAHold/SPAhook), both slow to the average speed; checkagr may call a holding/hooking penalty
 	lda.w pfalock,x
 	ora.w pf2fight,x
-	beq .l1
-	jmp.w .l8
-.l1:
+	beq .nopf2fight
+	jmp.w .rtl
+.nopf2fight:
 	lda.w position,x
-	bne .l2
-	jmp.w .l8
-.l2:
+	bne .position
+	jmp.w .rtl
+.position:
 	ldy.b a2
 	lda.w Xpos,x
 	sec
@@ -125,16 +125,16 @@ holdcheck:		;93G holdcheck: player X holds a2 (SPAHold/SPAhook), both slow to th
 	inc a
 	and.w #$0007
 	cmp.w #$0003
-	bcc .l3
-	jmp.w .l8
-.l3:
+	bcc .lt
+	jmp.w .rtl
+.lt:
 	lda.w puckc
 	asl a
 	cmp.b a3
-	bne .l4
+	bne .puckcne
 	lda.w #$0008
 	trb.w sflags
-.l4:
+.puckcne:
 	ldy.b a2
 	lda.w Xvel,x
 	clc
@@ -167,38 +167,38 @@ holdcheck:		;93G holdcheck: player X holds a2 (SPAHold/SPAhook), both slow to th
 	sta.w pfalock,x
 	lda.w SPA,x
 	cmp.w #$0BFC
-	beq .l5
+	beq .SPAeq
 	lda.w #$1386
 	sta.b d1
-.l5:
+.SPAeq:
 	jsl.l SetSPA
 	jsl.l checkagr
 	lda.b d0
 	cmp.w #$0007
-	bcs .l7
+	bcs .d0ge
 	lda.w #$0024
 	sta.b d0
 	lda.w SPA,x
 	cmp.w #$0C2E
-	beq .l6
+	beq .SPAeq2
 	lda.w #$001E
 	sta.b d0
-.l6:
+.SPAeq2:
 	jsl.l AddPenalty
-.l7:
+.d0ge:
 	ldx.b a2
 	ldy.b a3
 	stx.b a3
 	sty.b a2
 	lda.w #$FFFF
 	sta.b collflag
-.l8:
+.rtl:
 	rtl
 PrintStringFromList:		;93G PrintStringFromList: print string d0 of the list [a1]
 	lda.b d0
-	bne .l1
+	bne .d0
 	jml.l print
-.l1:
+.d0:
 	lda.b [a1]
 	clc
 	adc.b a1
@@ -215,16 +215,16 @@ Framer:		;93G Framer: a d0 x d1 box of FramerMap pieces at printx/printy
 	jsl.l .piece
 	dec.b tmp2
 	dec.b tmp2
-.l1:
+.loop:
 	ldx.w #$0002
 	jsl.l .piece
 	dec.b tmp2
-	bne .l1
+	bne .loop
 	ldx.w #$0004
 	jsl.l .piece
 	dec.b d1
 	dec.b d1
-.l2:
+.loop2:
 	lda.b tmp0
 	sta.w printx
 	inc.w printy
@@ -234,15 +234,15 @@ Framer:		;93G Framer: a d0 x d1 box of FramerMap pieces at printx/printy
 	sta.b tmp2
 	ldx.w #$0006
 	jsl.l .piece
-.l3:
+.loop3:
 	ldx.w #$0008
 	jsl.l .piece
 	dec.b tmp2
-	bne .l3
+	bne .loop3
 	ldx.w #$000A
 	jsl.l .piece
 	dec.b d1
-	bne .l2
+	bne .loop2
 	lda.b tmp0
 	sta.w printx
 	inc.w printy
@@ -250,11 +250,11 @@ Framer:		;93G Framer: a d0 x d1 box of FramerMap pieces at printx/printy
 	dec.b d0
 	ldx.w #$000C
 	jsl.l .piece
-.l4:
+.loop4:
 	ldx.w #$000E
 	jsl.l .piece
 	dec.b d0
-	bne .l4
+	bne .loop4
 	ldx.w #$0010
 	jsl.l .piece
 	lda.b tmp0
@@ -286,29 +286,29 @@ Framer:		;93G Framer: a d0 x d1 box of FramerMap pieces at printx/printy
 	txa
 	lsr a
 	cmp.b textdirtylo
-	bcs .l5
+	bcs .ge
 	sta.b textdirtylo
-.l5:
+.ge:
 	cmp.b textdirtyhi
-	bcc .l6
+	bcc .rtl
 	sta.b textdirtyhi
-.l6:
+.rtl:
 	rtl
 assnothing:		;93G assnothing: a computer player stands (doplayeracc 8)
 	lda.w pflags,x
 	bit.w #$0008
-	bne .l1
+	bne .rtl
 	lda.w #$0008
 	sta.b d0
 	jmp.w doplayeracc
-.l1:
+.rtl:
 	rtl
 GoalieCount:		;SNES: d0 = goalies of team a2 (nibbles of its goalie weights word, team record +$A, until 0); hangs if a2 is not 0 or 2
 	lda.b a2
 	tay
 	and.w #$FFFD
-.l1:
-	bne .l1
+.loop:
+	bne .loop
 	lda.w #TeamList>>16
 	sta.b tmp1
 	lda.w tmdata,y
@@ -320,24 +320,24 @@ GoalieCount:		;SNES: d0 = goalies of team a2 (nibbles of its goalie weights word
 	stz.b d0
 	lda.b [tmp0]
 	xba
-.l2:
+.loop2:
 	inc.b d0
 	asl a
 	asl a
 	asl a
 	asl a
-	bne .l2
+	bne .loop2
 	rtl
 AdvanceStringPtr:		;93G AdvanceStringPtr: a1 = string d0 of the list [a1]
-	bra .l2
-.l1:
+	bra .join
+.loop:
 	lda.b a1
 	clc
 	adc.b [a1]
 	sta.b a1
-.l2:
+.join:
 	dec.b d0
-	bpl .l1
+	bpl .loop
 	rtl
 AttribMenuSkater:		;SNES: player attribute menu (DisplayPlayerAttributeMenu): 15-byte item strings, the rating bit mask and column, $FFFF ends
 	dw 15
@@ -444,33 +444,33 @@ PositionNames:		;SNES: position names LD, RD, LW, C, RW
 releasepl:		;93G releasepl (penalty93_1): player d0 leaves the penalty box: the next free object of team a2 comes on (tmap+1, priolist position), setplayer
 	stx.b xsave
 	ldx.w #$0000
-.l1:
+.pushd:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .l1
+	bne .pushd
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.l2:
+.pusha:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .l2
+	bne .pusha
 	ldx.b xsave
 	ldy.b a2
 	ldx.w tmsort,y
 	dex
 	dex
-.l3:
+.loop:
 	inx
 	inx
 	lda.w position,x
-	bpl .l3
+	bpl .loop
 	lda.b d0
 	lsr a
 	sta.b d3
@@ -487,9 +487,9 @@ releasepl:		;93G releasepl (penalty93_1): player d0 leaves the penalty box: the 
 	lda.w #priolist>>16
 	sta.b a0+2
 	lda.w tmgoalie,y
-	bpl .l4
+	bpl .tmgoaliepos
 	inc.b a0
-.l4:
+.tmgoaliepos:
 	ldy.b d1
 	lda.b [a0],y
 	and.w #$00FF
@@ -502,21 +502,21 @@ releasepl:		;93G releasepl (penalty93_1): player d0 leaves the penalty box: the 
 	sta.w pflags,x
 	stx.b xsave
 	ldx.w #$000E
-.l5:
+.popa:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .l5
+	bpl .popa
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000E
-.l6:
+.popd:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .l6
+	bpl .popd
 	ldx.b xsave
 	ldx.b a3
 	rtl
@@ -533,25 +533,25 @@ InitScoutDisplay:		;SNES: scouting report scroll state reset; a0 = $7F0000 (the 
 	rtl
 assstanley:		;asstab 8. 93G assstanley: skate to the side of the screen holding the Stanley Cup (SPAcup)
 	lda.w pfalock,x
-	bne .l5
+	bne .rtl
 	lda.w pflags,x
 	bit.w #$0002
-	beq .l2
+	beq .nopflags
 	and.w #$FFFD
 	sta.w pflags,x
 	lda.w #$005A
 	sta.w temp3,x
 	lda.w Hpos
-	bpl .l1
+	bpl .Hpospos
 	lda.w #$FFA6
 	sta.w temp3,x
-.l1:
+.Hpospos:
 	lda.w Vpos
 	sta.w temp4,x
 	lda.w #$1124
 	sta.b d1
 	jsl.l SetSPA
-.l2:
+.nopflags:
 	lda.w temp3,x
 	sec
 	sbc.w Xpos,x
@@ -564,18 +564,18 @@ assstanley:		;asstab 8. 93G assstanley: skate to the side of the screen holding 
 	lda.b d0
 	sec
 	sbc.w #$0007
-	beq .l4
-	bmi .l3
-	bvs .l4
-	bra .l5
-.l3:
-	bvs .l5
-.l4:
+	beq .nod0
+	bmi .neg
+	bvs .nod0
+	bra .rtl
+.neg:
+	bvs .rtl
+.nod0:
 	lda.b d0
 	sta.b d2
 	sta.w facedir,x
 	jmp.w playeracc
-.l5:
+.rtl:
 	rtl
 addframe_full:		;SNES: sprite VRAM cache full: sprnodraw, addframe_end
 	lda.w #$0001
@@ -584,7 +584,7 @@ addframe_full:		;SNES: sprite VRAM cache full: sprnodraw, addframe_end
 RemovePlayerFromList:		;93G RemovePlayerFromList: remove entry a0 from the penalty box list (tmboxlist) by shifting the rest down
 	lda.w #$FFFF
 	sta.b d2
-.l1:
+.loop:
 	inc.b d2
 	lda.b a0
 	clc
@@ -595,38 +595,38 @@ RemovePlayerFromList:		;93G RemovePlayerFromList: remove entry a0 from the penal
 	sta.w tmboxlist-1,y
 	rep #$30
 	bit.w #$0080
-	beq .l1
+	beq .loop
 	dec.b a0
 	rtl
 asscenterd:		;asstab 5. 93G asscenterd (logic93_2): centre on defence: halfway between the puck and his goal; acentero when the team gets the puck
 	lda.w gmclock
-	beq .l1
+	beq .nogmclock
 	jml.l assnothing
-.l1:
+.nogmclock:
 	jsl.l check4bench
 	lda.w pflags,x
 	bit.w #$0008
-	beq .l2
-	jmp.w .l7
-.l2:
+	beq .nopflags
+	jmp.w .rtl
+.nopflags:
 	bit.w #$0002
-	beq .l3
+	beq .zero
 	and.w #$FFFD
 	sta.w pflags,x
 	stz.w temp1,x
 	stz.w temp2,x
 	lda.w #$0008
 	sta.w temp2b,x
-.l3:
+.zero:
 	lda.w temp1,x
 	sec
 	sbc.b d7
 	sta.w temp1,x
-	bpl .l4
+	bpl .pos
 	lda.w aidef,x
 	sta.w temp1,x
 	lda.w puckc
-	bmi .l4
+	bmi .pos
 	sec
 	sbc.w #$0006
 	sta.b d1
@@ -637,9 +637,9 @@ asscenterd:		;asstab 5. 93G asscenterd (logic93_2): centre on defence: halfway b
 	sec
 	sbc.w #$0006
 	eor.b d1
-	bmi .l4
+	bmi .pos
 	jml.l assreplace
-.l4:
+.pos:
 	lda.w puckx
 	pha
 	asl a
@@ -649,19 +649,19 @@ asscenterd:		;asstab 5. 93G asscenterd (logic93_2): centre on defence: halfway b
 	lda.w #$0080
 	sta.b d1
 	lda.w pfgoal,x
-	beq .l8
+	beq .nopfgoal
 	lda.w #$FF80
 	sta.b d1
 	lda.w #$FFA8
 	sec
 	sbc.w pucky
-	beq .l6
-	bmi .l5
-	bvs .l6
-	bra .l11
-.l5:
-	bvs .l11
-.l6:
+	beq .zero2
+	bmi .neg
+	bvs .zero2
+	bra .join
+.neg:
+	bvs .join
+.zero2:
 	lda.w #$FF80
 	clc
 	adc.w pucky
@@ -670,19 +670,19 @@ asscenterd:		;asstab 5. 93G asscenterd (logic93_2): centre on defence: halfway b
 	pla
 	ror a
 	sta.b d1
-	bra .l11
-.l7:
+	bra .join
+.rtl:
 	rtl
-.l8:
+.nopfgoal:
 	lda.w #$0058
 	sec
 	sbc.w pucky
-	bmi .l9
-	bvc .l10
-	bra .l11
-.l9:
-	bvc .l11
-.l10:
+	bmi .neg2
+	bvc .vc
+	bra .join
+.neg2:
+	bvc .join
+.vc:
 	lda.b d1
 	clc
 	adc.w pucky
@@ -691,7 +691,7 @@ asscenterd:		;asstab 5. 93G asscenterd (logic93_2): centre on defence: halfway b
 	pla
 	ror a
 	sta.b d1
-.l11:
+.join:
 	lda.w #rtss
 	sta.b a0
 	lda.w #rtss>>16
@@ -717,11 +717,11 @@ loadTeamStruct:		;93G loadTeamStruct: a2 = team of player X, a1 = the other team
 	lda.w #$0002
 	sta.b a1
 	lda.w pfteam,x
-	beq .l1
+	beq .rtl
 	stz.b a1
 	lda.w #$0002
 	sta.b a2
-.l1:
+.rtl:
 	rtl
 ScoutingReport:		;93G ScoutingReport (hockey93_07): the scouting report screen: EASN backdrop, both team blocks, ScoutLabels with both teams' ratings, Ron Barr and
 		;   the scrolling text until Start
@@ -763,73 +763,73 @@ ScoutingReport:		;93G ScoutingReport (hockey93_07): the scouting report screen: 
 	stz.w charofs2
 	lda.w blankchar
 	ldx.w #$07FE
-.l1:
+.loop:
 	sta.l textmap,x
 	dex
 	dex
-	bpl .l1
+	bpl .loop
 	lda.w #EASNMap
 	sta.b tmp0
 	lda.w #EASNMap>>16
 	sta.b tmp1
 	jsl.l DecompressGraphics
 	ldx.w #$03FE
-.l2:
+.loop2:
 	lda.l TestList,x
 	sta.l backmap,x
 	sta.l backmap+$400,x
 	dex
 	dex
-	bpl .l2
+	bpl .loop2
 	lda.w #$1000
 	sta.w VMADDL
 	ldx.w #$0000
-.l3:
+.loop3:
 	lda.l TestList+$400,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$04A0
-	bne .l3
+	bne .loop3
 	ldx.w #$0010
-.l4:
+.loop4:
 	stz.w VMDATAL
 	dex
-	bne .l4
+	bne .loop4
 	lda.w #TeamBlocksTiles
 	sta.b tmp0
 	lda.w #TeamBlocksTiles>>16
 	sta.b tmp1
 	jsl.l DecompressGraphics
 	ldx.w #$0000
-.l5:
+.loop5:
 	lda.l TestList,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$32A0
-	bne .l5
+	bne .loop5
 	lda.w #SmallFontTiles
 	sta.b tmp0
 	lda.w #SmallFontTiles>>16
 	sta.b tmp1
 	jsl.l DecompressGraphics
 	ldx.w #$0000
-.l6:
+.loop6:
 	lda.l TestList,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$0C80
-	bne .l6
+	bne .loop6
 	ldx.w #$0000
-.l7:
+.loop7:
 	lda.l FramerTiles,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$0080
-	bne .l7
+	bne .loop7
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $FE,$06,$03
@@ -846,25 +846,25 @@ ScoutingReport:		;93G ScoutingReport (hockey93_07): the scouting report screen: 
 	sep #$20
 	stz.w CGADD
 	ldx.w #$0000
-.l8:
+.loop8:
 	lda.l TestList+$90,x
 	sta.w CGDATA
 	inx
 	cpx.w #$0080
-	bne .l8
+	bne .loop8
 	rep #$30
 	ldx.w #$0000
-.l9:
+.loop9:
 	lda.l TestList+$190,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$07A0
-	bne .l9
+	bne .loop9
 	stz.b tmp1
-.l10:
+.loop10:
 	stz.b tmp0
-.l11:
+.loop11:
 	lda.b tmp1
 	sta.b mula
 	lda.w #$0008
@@ -890,11 +890,11 @@ ScoutingReport:		;93G ScoutingReport (hockey93_07): the scouting report screen: 
 	inc.b tmp0
 	lda.b tmp0
 	cmp.w #$0008
-	bne .l11
+	bne .loop11
 	inc.b tmp1
 	lda.b tmp1
 	cmp.w #$0009
-	bne .l10
+	bne .loop10
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $FF,$02,$0D
@@ -914,7 +914,7 @@ ScoutingReport:		;93G ScoutingReport (hockey93_07): the scouting report screen: 
 	sta.b a1
 	lda.w #ScoutLabels>>16
 	sta.b a1+2
-.l12:
+.loop12:
 	lda.b [a1]
 	lsr a
 	eor.w #$FFFF
@@ -927,7 +927,7 @@ ScoutingReport:		;93G ScoutingReport (hockey93_07): the scouting report screen: 
 	ldy.w #$0002
 	lda.b [a1],y
 	bit.w #$0080
-	beq .l12
+	beq .loop12
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $FF,$19,$0F
@@ -980,11 +980,11 @@ ScoutingReport:		;93G ScoutingReport (hockey93_07): the scouting report screen: 
 	inc.b a0
 	lda.w VisTeam
 	cmp.b d0
-	beq .l13
+	beq .VisTeameq
 	sta.b [a0]
 	inc.b a0
 	inc.b a0
-.l13:
+.VisTeameq:
 	lda.w #$001D
 	sta.b [a0]
 	inc.b a0
@@ -998,7 +998,7 @@ ScoutingReport:		;93G ScoutingReport (hockey93_07): the scouting report screen: 
 	stz.w asv
 	lda.w #$7FFF
 	sta.w screentimer
-.l14:
+.loop13:
 	lda.w #textmap
 	sta.w DMAList
 	lda.w #textmap>>16
@@ -1010,23 +1010,23 @@ ScoutingReport:		;93G ScoutingReport (hockey93_07): the scouting report screen: 
 	sta.b DMAListend
 	lda.w #VBlank_List
 	sta.b vbint
-.l15:
+.loop14:
 	cmp.b vbint
-	beq .l15
+	beq .loop14
 	jsl.l ReadPads
 	lda.w padnew1
 	ora.w padnew1+2
 	bit.w #$1000
-	bne .l17
+	bne .rtl
 	bit.w #$0400
-	beq .l16
+	beq .zero
 	lda.w #$FFFF
 	sta.w asv
-.l16:
+.zero:
 	jsl.l UpdateScoutingDisplay
 	dec.w screentimer
-	bpl .l14
-.l17:
+	bpl .loop13
+.rtl:
 	rtl
 ScoutCompare:		;SNES: print the scouting ratings of team [a0] (nibbles of .sr, against [a2] for the advantages) down the screen
 	ldy.w #$0004
@@ -1040,29 +1040,29 @@ ScoutCompare:		;SNES: print the scouting ratings of team [a0] (nibbles of .sr, a
 	sta.b d5
 	lda.w #$0007
 	sta.b d6
-.l1:
+.loop:
 	ldy.w #$0004
-.l2:
+.loop2:
 	asl.b d5
 	rol.b d5+2
 	lda.b d5
 	adc.w #$0000
 	sta.b d5
 	dey
-	bne .l2
+	bne .loop2
 	lda.b d5
 	and.w #$000F
 	sta.b d0
-	jsl.l .l5
+	jsl.l .skip2
 	lda.b d6
 	cmp.w #$0001
-	bne .l3
-	jsl.l .l4
-.l3:
+	bne .d6ne
+	jsl.l .skip
+.d6ne:
 	dec.b d6
-	bpl .l1
+	bpl .loop
 	rtl
-.l4:
+.skip:
 	lda.b [a0]
 	xba
 	and.w #$000F
@@ -1077,10 +1077,10 @@ ScoutCompare:		;SNES: print the scouting ratings of team [a0] (nibbles of .sr, a
 	clc
 	adc.b d0
 	sta.b d0
-	jsl.l .l5
+	jsl.l .skip2
 	lda.w printx
 	cmp.w #$0010
-	bcc .l6
+	bcc .printxlt
 	ldy.w #$0002
 	lda.b [a0],y
 	lsr a
@@ -1094,7 +1094,7 @@ ScoutCompare:		;SNES: print the scouting ratings of team [a0] (nibbles of .sr, a
 	clc
 	adc.b d0
 	sta.b d0
-.l5:
+.skip2:
 	lda.w #$0002
 	sta.b d1
 	jsl.l PushNumberWidth
@@ -1103,7 +1103,7 @@ ScoutCompare:		;SNES: print the scouting ratings of team [a0] (nibbles of .sr, a
 	jsl.l print
 	pla
 	sta.w printx
-.l6:
+.printxlt:
 	inc.w printy
 	rtl
 ScoutLabels:		;93G scouting labels: the rating names of the scouting report; a $FF string ends the list

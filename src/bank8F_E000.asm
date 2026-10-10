@@ -17,25 +17,25 @@ SetupTeamForIntermission:		;93G SetupTeamForIntermission: ResetBench; both teams
 	ldy.b a2
 	stz.w tmline,x
 	lda.w OptLine
-	bne .l1
+	bne .rtl
 	lda.w tmap,x
 	sec
 	sbc.w tmap,y
 	sta.b d0
-	beq .l1
+	beq .rtl
 	lda.w #$0003
 	sta.w tmline,x
 	lda.b d0
-	bpl .l1
+	bpl .rtl
 	lda.w #$0005
 	sta.w tmline,x
-.l1:
+.rtl:
 	rtl
 ClearSprites:		;SNES: all 128 OAM entries off screen (y $E0), the high table clear; new sprite frame (sprclock), VRAM slot rotors restart
 	clc
 	ldx.w #$0000
 	ldy.w #$0008
-.l1:
+.loop:
 	lda.w #$E0E0
 	sta.w Satt,x
 	stz.w Satt+2,x
@@ -73,23 +73,23 @@ ClearSprites:		;SNES: all 128 OAM entries off screen (y $E0), the high table cle
 	adc.w #$0040
 	tax
 	dey
-	bne .l1
-.l2:
+	bne .loop
+.loop2:
 	stz.w Satt,x
 	inx
 	inx
 	cpx.w #$0220
-	bne .l2
+	bne .loop2
 	stz.b sprcount
 	inc.b sprclock
 	lda.b sprnodraw
-	beq .l3
+	beq .nosprnodraw
 	stz.b sprnodraw
 	lda.b sprslotlife
 	cmp.w #$0003
-	bcc .l3
+	bcc .nosprnodraw
 	dec.b sprslotlife
-.l3:
+.nosprnodraw:
 	lda.b sprbigslot
 	sta.b sprbigslotend
 	lda.b sprslot
@@ -98,7 +98,7 @@ ClearSprites:		;SNES: all 128 OAM entries off screen (y $E0), the high table cle
 RemapTiles:		;SNES: d0 4bpp tiles at [a0] to vram with each pixel value remapped through the 16-byte table [a1]
 	lda.w #$000E
 	sta.b tmp2+1
-.l1:
+.loop:
 	rep #$30
 	ldy.b tmp2+1
 	lda.b [a0],y
@@ -113,28 +113,28 @@ RemapTiles:		;SNES: d0 4bpp tiles at [a0] to vram with each pixel value remapped
 	ldx.b tmp2+1
 	lda.b #$07
 	sta.b tmp2
-.l2:
+.loop2:
 	ldy.b #$00
 	asl.b tmp1+1
-	bcc .l3
+	bcc .lt
 	ldy.b #$08
-.l3:
+.lt:
 	asl.b tmp1
-	bcc .l4
+	bcc .lt2
 	iny
 	iny
 	iny
 	iny
-.l4:
+.lt2:
 	asl.b tmp0+1
-	bcc .l5
+	bcc .lt3
 	iny
 	iny
-.l5:
+.lt3:
 	asl.b tmp0
-	bcc .l6
+	bcc .lt4
 	iny
-.l6:
+.lt4:
 	lda.b [a1],y
 	lsr a
 	rol.b mula,x
@@ -145,19 +145,19 @@ RemapTiles:		;SNES: d0 4bpp tiles at [a0] to vram with each pixel value remapped
 	lsr a
 	rol.b mula+17,x
 	dec.b tmp2
-	bpl .l2
+	bpl .loop2
 	dec.b tmp2+1
 	dec.b tmp2+1
-	bpl .l1
+	bpl .loop
 	rep #$30
 	ldx.w #$0000
-.l7:
+.loop3:
 	lda.b mula,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$0020
-	bne .l7
+	bne .loop3
 	lda.b a0
 	clc
 	adc.w #$0020
@@ -179,9 +179,9 @@ playeracc:		;93G playeracc (logic93_5): accelerate player X in direction d2 (dir
 	lsr a
 	lsr a
 	bit.w #$2000
-	beq .l1
+	beq .zero
 	ora.w #$C000
-.l1:
+.zero:
 	sta.b d1
 	lda.l dirtab8F,x
 	sta.b mula
@@ -191,23 +191,23 @@ playeracc:		;93G playeracc (logic93_5): accelerate player X in direction d2 (dir
 	lsr a
 	lsr a
 	bit.w #$2000
-	beq .l2
+	beq .zero2
 	ora.w #$C000
-.l2:
+.zero2:
 	sta.b d0
 	ldx.b a3
 	lda.w Wallsin,x
-	beq .l3
+	beq .noWallsin
 	eor.b d0
-	bpl .l3
+	bpl .noWallsin
 	stz.b d0
-.l3:
+.noWallsin:
 	lda.w Wallcos,x
-	beq .l4
+	beq .noWallcos
 	eor.b d1
-	bmi .l4
+	bmi .noWallcos
 	stz.b d1
-.l4:
+.noWallcos:
 	lda.w weight,x
 	lsr a
 	lsr a
@@ -221,14 +221,14 @@ playeracc:		;93G playeracc (logic93_5): accelerate player X in direction d2 (dir
 	adc.w legstr,x
 	sta.b d2
 	lda.w position,x
-	bne .l5
+	bne .position
 	lda.b d2
 	clc
 	adc.w legstr,x
 	clc
 	adc.w #$0008
 	sta.b d2
-.l5:
+.position:
 	lda.b d2
 	pha
 	sta.b mula
@@ -324,17 +324,17 @@ playeracc:		;93G playeracc (logic93_5): accelerate player X in direction d2 (dir
 	cmp.b d3
 	lda.b d2+2
 	sbc.b d3+2
-	bcc .l6
+	bcc .d2lt
 	lda.b d0
 	sta.w Xvel,x
 	lda.b d1
 	sta.w Yvel,x
-.l6:
+.d2lt:
 	lda.w OptLine
-	bne .l10
+	bne .rtl
 	lda.w seed
 	and.w #$003F
-	bne .l10
+	bne .rtl
 	jsl.l getpde
 	lda.b d0
 	sec
@@ -342,20 +342,20 @@ playeracc:		;93G playeracc (logic93_5): accelerate player X in direction d2 (dir
 	sta.b d0
 	sec
 	sbc.w #$0C00
-	bmi .l8
-	bvc .l9
-.l7:
+	bmi .neg
+	bvc .vc
+.loop:
 	jmp.w setpde
-.l8:
-	bvc .l7
-.l9:
+.neg:
+	bvc .loop
+.vc:
 	lda.w endurance,x
 	sta.b d2
 	clc
 	adc.b d0
 	sta.b d0
 	jmp.w setpde
-.l10:
+.rtl:
 	rtl
 dirtab8F:		;93G dirtab: x, y acceleration per direction 0-7 (playeracc)
 	dw 0,800
@@ -373,13 +373,13 @@ ClearPenaltyBuffer:		;93G ClearPenaltyBuffer: clear the 32 words of the penalty 
 	sta.b a0
 	lda.w #$0000
 	sta.b a0+2
-.l1:
+.loop:
 	lda.w #$0000
 	sta.b [a0]
 	inc.b a0
 	inc.b a0
 	dec.b d0
-	bpl .l1
+	bpl .loop
 	rtl
 randomd0sd0:		;93G randomd0s with the range in d0: d0 = random -d0..+d0 (randomd0s in bank $80 takes A)
 	lda.b d0
@@ -407,7 +407,7 @@ DefaultMenus:		;93G DefaultMenus: the 7 options at $1600 from .tab; notdemo set
 	sta.b a1+2
 	lda.w #$0006
 	sta.b d0
-.l1:
+.loop:
 	lda.b [a1]
 	inc.b a1
 	inc.b a1
@@ -415,7 +415,7 @@ DefaultMenus:		;93G DefaultMenus: the 7 options at $1600 from .tab; notdemo set
 	inc.b a0
 	inc.b a0
 	dec.b d0
-	bpl .l1
+	bpl .loop
 	rtl
 .tab:		;93G DefaultMenus .tab: OptPlayMode, OptPlayers, OptTeam1, OptTeam2, OptPerlen, OptPen, OptLine
 	dw $0000,$0001,$000F,$0003,$0001,$0000,$0001
@@ -430,31 +430,31 @@ checkagr:		;93G checkagr: d0 = random value by the GGSleft rating of player X (x
 	sta.b d0
 	lda.w pflags,x
 	bit.w #$0008
-	beq .l1
+	beq .nopflags
 	asl.b d0
-.l1:
+.nopflags:
 	lda.w Xpos,x
 	sec
 	sbc.w puckx
 	bit.w #$8000
-	beq .l2
+	beq .zero
 	eor.w #$FFFF
 	inc a
-.l2:
+.zero:
 	cmp.w #$0029
-	bcs .l4
+	bcs .gorandomd0
 	lda.w Ypos,x
 	sec
 	sbc.w pucky
 	bit.w #$8000
-	beq .l3
+	beq .zero2
 	eor.w #$FFFF
 	inc a
-.l3:
+.zero2:
 	cmp.w #$0029
-	bcs .l4
+	bcs .gorandomd0
 	lsr.b d0
-.l4:
+.gorandomd0:
 	jml.l randomd0
 WeightedRandomSelect:		;93G WeightedRandomSelect: d0 = random index 0..d0-1 weighted by the words in nibblebuffer
 	lda.b d1+2
@@ -470,28 +470,28 @@ WeightedRandomSelect:		;93G WeightedRandomSelect: d0 = random index 0..d0-1 weig
 	lda.w #$0000
 	sta.b a1+2
 	stz.b d1
-	bra .l2
-.l1:
+	bra .join
+.loop:
 	lda.b d1
 	clc
 	adc.b [a1]
 	sta.b d1
 	inc.b a1
 	inc.b a1
-.l2:
+.join:
 	dec.b d0
-	bpl .l1
+	bpl .loop
 	lda.b d1
 	sta.b d0
 	jsl.l randomd0
-.l3:
+.loop2:
 	dec.b a1
 	dec.b a1
 	lda.b d0
 	sec
 	sbc.b [a1]
 	sta.b d0
-	bpl .l3
+	bpl .loop2
 	lda.b a1
 	sec
 	sbc.w #nibblebuffer
@@ -518,23 +518,23 @@ forceblack:		;93G forceblack role: the default vblank/IRQ handlers, the sprite V
 	sec
 	sbc.w #$003C
 	ldx.w #$0000
-.l1:
+.loop:
 	sta.l sprframetime,x
 	inx
 	inx
 	cpx.w #$4C74
-	bne .l1
+	bne .loop
 	ldx.w #$0000
-.l2:
+.loop2:
 	sta.w sprslottime,x
 	inx
 	inx
 	cpx.w #$0400
-	bne .l2
+	bne .loop2
 	pla
-.l3:
+.loop3:
 	cmp.b vcount
-	beq .l3
+	beq .loop3
 	stz.b DMAListend
 	plx
 	rtl
@@ -544,34 +544,34 @@ passmode:		;93G passmode: B held: a dpad direction sets passdir (d0 | 8) before 
 	bne dopass
 	lda.b d0
 	bit.w #$0008
-	bne .l1
+	bne .rtl
 	and.w #$0007
 	sta.w passdir
 	ora.w #$0008
 	sta.b d0
 	bra dopass
-.l1:
+.rtl:
 	rtl
 dopass:		;93G dopass: pass the puck: the team mate nearest the passdir lane (or passdir), puck velocity, SPA, pfalock
 	stx.b xsave
 	ldx.w #$0000
-.l1:
+.pushd:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0018
-	bne .l1
+	bne .pushd
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.l2:
+.pusha:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .l2
+	bne .pusha
 	ldx.b xsave
 	lda.w seed+2
 	and.w #$0003
@@ -591,10 +591,10 @@ dopass:		;93G dopass: pass the puck: the team mate nearest the passdir lane (or 
 	lda.w #$0007
 	sta.b d0
 	lda.w position,x
-	beq .l3
+	beq .noposition
 	lda.w passacc,x
 	sta.b d0
-.l3:
+.noposition:
 	lda.b d0
 	asl a
 	asl a
@@ -606,24 +606,24 @@ dopass:		;93G dopass: pass the puck: the team mate nearest the passdir lane (or 
 	sta.b d3
 	stz.b a1
 	cpx.w #$000C
-	bcc .l4
+	bcc .loop
 	lda.w #$000C
 	sta.b a1
-.l4:
+.loop:
 	cpx.b a1
-	bne .l5
-	jmp.w .l9
-.l5:
+	bne .ne
+	jmp.w .join
+.ne:
 	ldy.b a1
 	lda.w position,y
-	bne .l6
-	jmp.w .l9
-.l6:
+	bne .position
+	jmp.w .join
+.position:
 	lda.w pflags,y
 	bit.w #$1000
-	beq .l7
-	jmp.w .l9
-.l7:
+	beq .nopflags
+	jmp.w .join
+.nopflags:
 	lda.w Ypos,y
 	sec
 	sbc.w pucky
@@ -650,9 +650,9 @@ dopass:		;93G dopass: pass the puck: the team mate nearest the passdir lane (or 
 	asl a
 	and.w #$00FF
 	bit.w #$0080
-	beq .l8
+	beq .zero
 	ora.w #$FF00
-.l8:
+.zero:
 	asl a
 	asl a
 	asl a
@@ -664,7 +664,7 @@ dopass:		;93G dopass: pass the puck: the team mate nearest the passdir lane (or 
 	lda.b mulres+2
 	sta.b d0+2
 	sbc.w #$0001
-	bcs .l9
+	bcs .join
 	lda.b d1
 	sta.b mula
 	sta.b mulb
@@ -692,25 +692,25 @@ dopass:		;93G dopass: pass the puck: the team mate nearest the passdir lane (or 
 	cmp.b d2
 	lda.b d4+2
 	sbc.b d2+2
-	bcc .l9
+	bcc .join
 	lda.b d2
 	sta.b d4
 	lda.b d2+2
 	sta.b d4+2
 	lda.b a1
 	sta.b a0
-.l9:
+.join:
 	inc.b a1
 	inc.b a1
 	dec.b d3
-	bmi .l10
-	jmp.w .l4
-.l10:
+	bmi .d3neg
+	jmp.w .loop
+.d3neg:
 	lda.b d4+2
-	bmi .l11
+	bmi .d4neg
 	jsl.l passtoa0
-	jmp.w .l12
-.l11:
+	jmp.w .join2
+.d4neg:
 	lda.w passdir
 	asl a
 	asl a
@@ -761,22 +761,22 @@ dopass:		;93G dopass: pass the puck: the team mate nearest the passdir lane (or 
 	lda.w #$1000
 	jsl.l randoma
 	sta.w puckvz
-.l12:
+.join2:
 	lda.w position,x
-	bne .l15
+	bne .position2
 	lda.w pfgoal,x
-	beq .l13
+	beq .nopfgoal
 	lda.w puckvy
-	bmi .l14
-	bra .l15
-.l13:
+	bmi .puckvyneg
+	bra .position2
+.nopfgoal:
 	lda.w puckvy
-	bmi .l15
-.l14:
+	bmi .position2
+.puckvyneg:
 	eor.w #$FFFF
 	inc a
 	sta.w puckvy
-.l15:
+.position2:
 	lda.w puckvx
 	sta.b d0
 	lda.w puckvy
@@ -785,34 +785,34 @@ dopass:		;93G dopass: pass the puck: the team mate nearest the passdir lane (or 
 	lda.w #$02D2
 	sta.b d1
 	lda.w position,x
-	beq .l16
+	beq .noposition2
 	lda.w #$06C4
 	sta.b d1
 	jsl.l Findhittype
-	beq .l16
+	beq .noposition2
 	lda.w #$0736
 	sta.b d1
-.l16:
+.noposition2:
 	jsl.l SetSPA
 	lda.w #$0001
 	sta.w pfalock,x
 	stx.b xsave
 	ldx.w #$0006
-.l17:
+.popa:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .l17
+	bpl .popa
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0016
-.l18:
+.popd:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .l18
+	bpl .popd
 	ldx.b xsave
 	rtl
 FrameSetTable:		;SNES: long pointers to the 15 sprite frame sets (addframe), then a 0 entry
@@ -835,23 +835,23 @@ FrameSetTable:		;SNES: long pointers to the 15 sprite frame sets (addframe), the
 CompLine:		;93G CompLine: the computer team picks a line by the man advantage, the score late in the game and the line energies (getlinee)
 	stx.b xsave
 	ldx.w #$0000
-.l1:
+.pushd:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .l1
+	bne .pushd
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.l2:
+.pusha:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .l2
+	bne .pusha
 	ldx.b xsave
 	lda.w #$0003
 	sta.b d0
@@ -859,11 +859,11 @@ CompLine:		;93G CompLine: the computer team picks a line by the man advantage, t
 	lda.w tmap,y
 	ldy.b a1
 	cmp.w tmap,y
-	beq .l10
-	bpl .l3
+	beq .a1eq
+	bpl .a1pos
 	inc.b d0
 	inc.b d0
-.l3:
+.a1pos:
 	lda.b d0
 	pha
 	jsl.l getlinee
@@ -876,42 +876,42 @@ CompLine:		;93G CompLine: the computer team picks a line by the man advantage, t
 	lda.b d1
 	sec
 	sbc.b d0
-	bmi .l4
-	bvs .l5
-	bra .l6
-.l4:
-	bvs .l6
-.l5:
+	bmi .d1neg
+	bvs .vs
+	bra .join
+.d1neg:
+	bvs .join
+.vs:
 	pla
 	inc a
 	pha
-.l6:
+.join:
 	pla
 	ldy.b a2
 	sta.w tmline,y
-.l7:
+.loop:
 	stx.b xsave
 	ldx.w #$0002
-.l8:
+.popa:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .l8
+	bpl .popa
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000A
-.l9:
+.popd:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .l9
+	bpl .popd
 	ldx.b xsave
 	rtl
-.l10:
+.a1eq:
 	ldy.b a2
-	bne .l12
+	bne .a2
 	lda.w #$0002
 	sta.b d1
 	lda.w #.tie
@@ -920,19 +920,19 @@ CompLine:		;93G CompLine: the computer team picks a line by the man advantage, t
 	sta.b a0+2
 	lda.w gsp
 	cmp.w #$0002
-	bne .l11
+	bne .gspne
 	lda.w tmscore,y
 	ldy.b a1
 	cmp.w tmscore,y
-	beq .l11
+	beq .gspne
 	php
 	lda.w #.ahead
 	sta.b a0
 	plp
-	bpl .l11
+	bpl .gspne
 	lda.w #.behind
 	sta.b a0
-.l11:
+.gspne:
 	ldy.b a1
 	lda.w tmline,y
 	asl a
@@ -943,19 +943,19 @@ CompLine:		;93G CompLine: the computer team picks a line by the man advantage, t
 	jsl.l getlinee
 	lda.b d0
 	cmp.w #$0C01
-	bcc .l12
+	bcc .a2
 	ldy.b d1
 	lda.b [a0],y
 	ldy.b a2
 	sta.w tmline,y
-	bra .l7
+	bra .loop
 .tie:		;93G CompLine tables: next line by tmline, score tied (7 words)
 	dw 0,1,2,0,1,0,1
 .ahead:		;ahead in the third period
 	dw 2,0,1,2,0,2,0
 .behind:		;behind in the third period
 	dw 0,1,0,0,1,0,1
-.l12:
+.a2:
 	lda.w #$0002
 	sta.b d1
 	lda.w #.tie2
@@ -964,20 +964,20 @@ CompLine:		;93G CompLine: the computer team picks a line by the man advantage, t
 	sta.b a0+2
 	lda.w gsp
 	cmp.w #$0002
-	bne .l13
+	bne .loop2
 	ldy.b a2
 	lda.w tmscore,y
 	ldy.b a1
 	cmp.w tmscore,y
-	beq .l13
+	beq .loop2
 	php
 	lda.w #.ahead2
 	sta.b a0
 	plp
-	bpl .l13
+	bpl .loop2
 	lda.w #.behind2
 	sta.b a0
-.l13:
+.loop2:
 	lda.b [a0]
 	inc.b a0
 	inc.b a0
@@ -985,16 +985,16 @@ CompLine:		;93G CompLine: the computer team picks a line by the man advantage, t
 	jsl.l getlinee
 	lda.b d0
 	cmp.w #$0F34
-	bcs .l14
+	bcs .d0ge
 	dec.b d1
-	bpl .l13
-.l14:
+	bpl .loop2
+.d0ge:
 	dec.b a0
 	dec.b a0
 	ldy.b a2
 	lda.b [a0]
 	sta.w tmline,y
-	jmp.w .l7
+	jmp.w .loop
 .tie2:		;the lines tried on a power play / penalty kill (3 words each)
 	dw 0,1,2
 .ahead2:
@@ -1049,13 +1049,13 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	sta.b d0
 	jsl.l RemapTiles
 	ldx.w #$0000
-.l1:
+.loop:
 	lda.l FramerTiles,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$0080
-	bne .l1
+	bne .loop
 	lda.w scorechars
 	asl a
 	asl a
@@ -1069,28 +1069,28 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	sta.b tmp1
 	jsl.l DecompressGraphics
 	ldx.w #$0000
-.l2:
+.loop2:
 	lda.l TestList,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$32A0
-	bne .l2
+	bne .loop2
 	lda.w #EASNMap
 	sta.b tmp0
 	lda.w #EASNMap>>16
 	sta.b tmp1
 	jsl.l DecompressGraphics
 	ldx.w #$0000
-.l3:
+.loop3:
 	lda.l TestList+$400,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$04A0
-	bne .l3
+	bne .loop3
 	ldx.w #$03FE
-.l4:
+.loop4:
 	lda.l TestList,x
 	clc
 	adc.w ExtraChars
@@ -1100,7 +1100,7 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	sta.l backmap+$400,x
 	dex
 	dex
-	bpl .l4
+	bpl .loop4
 	lda.w #RonBarrMap
 	sta.b tmp0
 	lda.w #RonBarrMap>>16
@@ -1109,35 +1109,35 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	sep #$20
 	stz.w CGADD
 	ldx.w #$0000
-.l5:
+.loop5:
 	lda.l TestList+$90,x
 	sta.w CGDATA
 	inx
 	cpx.w #$0080
-	bne .l5
+	bne .loop5
 	rep #$30
 	stz.b a2
 	lda.w cont1team
 	sta.b tmp0
 	lda.w sflags
 	bit.w #$0002
-	beq .l6
+	beq .nosflags
 	lda.w cont2team
 	sta.b tmp0
-.l6:
+.nosflags:
 	lda.b tmp0
 	cmp.w #$0002
-	bne .l7
+	bne .tmp0ne
 	lda.w #$0002
 	sta.b a2
-.l7:
+.tmp0ne:
 	ldy.b a2
 	lda.w tmline,y
 	inc a
 	sta.b d0
 	sta.w SelectedPlayerIdx
 	stz.w DispAttribCtr
-.l8:
+.loop6:
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $FE,$03,$01
@@ -1150,22 +1150,22 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	clc
 	adc.w charofs
 	ldx.w #$07FE
-.l9:
+.loop7:
 	sta.l textmap,x
 	dex
 	dex
-	bpl .l9
+	bpl .loop7
 	jsl.l printz8B
 	dw $0014		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$05,$04,"Team  Roster",$BF,$0B,$01
 	lda.w HomeTeam
 	sta.b d1
 	lda.b a2
-	beq .l10
+	beq .noa2
 	lda.w VisTeam
 	sta.b d1
 	lda.w #$0030
-.l10:
+.noa2:
 	sta.b d0
 	jsl.l DrawTeamBlocks
 	jsl.l printz
@@ -1185,7 +1185,7 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	sta.b d1
 	jsl.l Framer
 	jsl.l .show
-.l11:
+.loop8:
 	lda.w #textmap
 	sta.w DMAList
 	lda.w #textmap>>16
@@ -1197,59 +1197,59 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	sta.b DMAListend
 	lda.w #VBlank_List
 	sta.b vbint
-.l12:
+.loop9:
 	cmp.b vbint
-	beq .l12
+	beq .loop9
 	jsl.l ReadPads
 	jsl.l getpzjoy
 	jsl.l ProcessInputWithRepeat
 	lda.b d1
 	bit.w #$1000
-	beq .l13
-	jmp.w .l26
-.l13:
+	beq .nod1
+	jmp.w .rtl
+.nod1:
 	bit.w #$4000
-	bne .l17
+	bne .nonzero3
 	stz.b d0
 	inc.b d0
 	bit.w #$0100
-	bne .l16
+	bne .nonzero2
 	dec.b d0
 	dec.b d0
 	bit.w #$0200
-	bne .l16
+	bne .nonzero2
 	bit.w #$0800
-	bne .l14
+	bne .nonzero
 	inc.b d0
 	inc.b d0
 	bit.w #$0400
-	beq .l15
-.l14:
+	beq .loop10
+.nonzero:
 	lda.b d0
 	clc
 	adc.w SelectedPlayerIdx
 	sta.b d0
-	bmi .l15
+	bmi .loop10
 	cmp.w #$0008
-	bcs .l15
+	bcs .loop10
 	sta.w SelectedPlayerIdx
 	jsl.l .show
-.l15:
-	jmp.w .l11
-.l16:
+.loop10:
+	jmp.w .loop8
+.nonzero2:
 	lda.b d0
 	clc
 	adc.w DispAttribCtr
 	sta.b d0
-	bmi .l15
+	bmi .loop10
 	sta.w DispAttribCtr
 	jsl.l .show
-	bra .l15
-.l17:
+	bra .loop10
+.nonzero3:
 	lda.b a2
 	eor.w #$0002
 	sta.b a2
-	jmp.w .l8
+	jmp.w .loop6
 .show:		;print the selected line and attribute column
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
@@ -1266,7 +1266,7 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	sta.w printx
 	lda.w #$0009
 	sta.w printy
-.l18:
+.loop11:
 	lda.w #AttribMenuSkater
 	sta.b a1
 	lda.w #AttribMenuSkater>>16
@@ -1274,29 +1274,29 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	lda.w DispAttribCtr
 	sta.b d0
 	lda.w SelectedPlayerIdx
-	bne .l20
+	bne .SelectedPlayerIdx
 	lda.w #AttribMenuGoalie
 	sta.b a1
 	lda.w #AttribMenuGoalie>>16
 	sta.b a1+2
-	bra .l20
-.l19:
+	bra .SelectedPlayerIdx
+.loop12:
 	lda.b a1
 	clc
 	adc.b [a1]
 	adc.w #$0004
 	sta.b a1
-.l20:
+.SelectedPlayerIdx:
 	lda.b [a1]
-	bmi .l21
+	bmi .neg
 	dec.b d0
-	bpl .l19
-.l21:
+	bpl .loop12
+.neg:
 	lda.b [a1]
-	bpl .l22
+	bpl .pos
 	dec.w DispAttribCtr
-	bra .l18
-.l22:
+	bra .loop11
+.pos:
 	jsl.l print
 	lda.b [a1]
 	sta.b d4+2
@@ -1331,7 +1331,7 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	lda.w SelectedPlayerIdx
 	dec a
 	sta.b d0
-	bmi .l25
+	bmi .loop13
 	asl a
 	asl a
 	asl a
@@ -1356,15 +1356,15 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	lda.w SelectedPlayerIdx
 	sec
 	sbc.w #$0005
-	beq .l25
-	bmi .l23
-	bvc .l24
-	bra .l25
-.l23:
-	bvc .l25
-.l24:
+	beq .loop13
+	bmi .neg2
+	bvc .vc
+	bra .loop13
+.neg2:
+	bvc .loop13
+.vc:
 	dec.b d1
-.l25:
+.loop13:
 	lda.w #$0002
 	sta.w printx
 	lda.b a4+4
@@ -1387,8 +1387,8 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	inc.w printy
 	inc.w printy
 	dec.b d1
-	bpl .l25
-.l26:
+	bpl .loop13
+.rtl:
 	rtl
 RosterGoalies:		;SNES: the goalie row numbers of the Team Roster screen
 	db 1,2,3,4
@@ -1421,28 +1421,28 @@ RosterLineNames:		;SNES: the Team Roster line names (15-byte strings)
 addframe:		;93G addframe: sprite frame sprframe at sprx/spry: find its frame set in FrameSetTable (sprsetofs), then DrawFrame; frames $293 and up are drawn by addframe_hi
 	lda.b sprframe
 	cmp.w #$0293
-	bcc .l1
+	bcc .sprframelt
 	jml.l addframe_end
-.l1:
+.sprframelt:
 	dec.b sprframe
-	bpl .l2
+	bpl .sprframepos
 	jml.l addframe_end
-.l2:
+.sprframepos:
 	stz.b sprsetofs
 	ldx.w #$0000
 	ldy.w #$0002
-.l3:
+.loop:
 	lda.l FrameSetTable,x
-	beq .l3
+	beq .loop
 	sta.b farptr
 	lda.l FrameSetTable+1,x
 	sta.b farptr+1
 	lda.b sprframe
 	sec
 	sbc.b [farptr]
-	bcs .l4
+	bcs .sprframege
 	jml.l DrawFrame
-.l4:
+.sprframege:
 	sta.b sprframe
 	lda.b sprsetofs
 	clc
@@ -1452,7 +1452,7 @@ addframe:		;93G addframe: sprite frame sprframe at sprx/spry: find its frame set
 	inx
 	inx
 	inx
-	bra .l3
+	bra .loop
 Pmenu:		;92G Pausemode .Pmenu: the 5 pause menu items (.mlist, game-over list when gsp = 4), item psitem highlighted
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
@@ -1464,18 +1464,18 @@ Pmenu:		;92G Pausemode .Pmenu: the 5 pause menu items (.mlist, game-over list wh
 	sta.b a0+2
 	lda.w gsp
 	cmp.w #$0004
-	bne .l1
+	bne .loop
 	lda.w #.mlist2
 	sta.b a0
-.l1:
+.loop:
 	lda.w #$2400
 	sta.w printa
 	lda.b d0
 	cmp.w psitem
-	bne .l2
+	bne .d0ne
 	lda.w #$2000
 	sta.w printa
-.l2:
+.d0ne:
 	lda.w #$0006
 	sta.w printx
 	jsl.l printz
@@ -1486,12 +1486,12 @@ Pmenu:		;92G Pausemode .Pmenu: the 5 pause menu items (.mlist, game-over list wh
 	lda.w #mesarea>>16
 	sta.b a1+2
 	ldy.w #$001E
-.l3:
+.loop2:
 	lda.b [a0],y
 	sta.b [a1],y
 	dey
 	dey
-	bpl .l3
+	bpl .loop2
 	jsl.l .goalie
 	lda.b [a1]
 	lsr a
@@ -1509,18 +1509,18 @@ Pmenu:		;92G Pausemode .Pmenu: the 5 pause menu items (.mlist, game-over list wh
 	inc.b d0
 	lda.b d0
 	cmp.w #$0005
-	bne .l1
+	bne .loop
 	rtl
 .goalie:		;item 3: append the name of the goalie on the ice (or NONE)
 	lda.b d0
 	cmp.w #$0003
-	beq .l4
-	jmp.w .l9
-.l4:
+	beq .d0eq
+	jmp.w .rtl
+.d0eq:
 	jsl.l GetPadTeam
 	ldy.b a2
 	lda.w tmgoalie,y
-	bmi .l10
+	bmi .tmgoalieneg
 	sta.b tmp0
 	lda.w tmdata,y
 	sta.b a4
@@ -1531,38 +1531,38 @@ Pmenu:		;92G Pausemode .Pmenu: the 5 pause menu items (.mlist, game-over list wh
 	clc
 	adc.b a4
 	sta.b a4
-.l5:
+.loop3:
 	dec.b tmp0
-	bmi .l6
+	bmi .tmp0neg
 	lda.b [a4]
 	clc
 	adc.b a4
 	adc.w #$0008
 	sta.b a4
-	bra .l5
-.l6:
+	bra .loop3
+.tmp0neg:
 	ldy.w #$0001
-.l7:
+.loop4:
 	iny
 	lda.b [a4],y
 	and.w #$00FF
 	cmp.w #$0020
-	bne .l7
-.l8:
+	bne .loop4
+.loop5:
 	iny
 	tya
 	cmp.b [a4]
-	beq .l9
+	beq .rtl
 	lda.b [a4],y
 	phy
 	ldy.w mesarea
 	sta.w mesarea,y
 	inc.w mesarea
 	ply
-	bra .l8
-.l9:
+	bra .loop5
+.rtl:
 	rtl
-.l10:
+.tmgoalieneg:
 	ldy.w mesarea
 	lda.w #$004E
 	sta.w mesarea,y
@@ -1602,33 +1602,33 @@ Pmenu:		;92G Pausemode .Pmenu: the 5 pause menu items (.mlist, game-over list wh
 GetPadTeam:		;SNES: a2 = team of the controller that paused (cont1team/cont2team by sfpj)
 	stz.b a2
 	lda.w cont1team
-	beq .l3
+	beq .rtl
 	lda.w sflags
 	bit.w #$0002
-	beq .l1
+	beq .nosflags
 	lda.w cont2team
-	bra .l2
-.l1:
+	bra .join
+.nosflags:
 	lda.w cont1team
-.l2:
+.join:
 	cmp.w #$0001
-	beq .l3
+	beq .rtl
 	inc.b a2
 	inc.b a2
-.l3:
+.rtl:
 	rtl
 setpde:		;93G setpde: tmpde of player d1 (team a2) = d0 (not below 0)
 	lda.b a2
-	beq .l1
+	beq .noa2
 	lda.w #$0034
-.l1:
+.noa2:
 	clc
 	adc.b d1
 	tay
 	lda.b d0
-	bpl .l2
+	bpl .d0pos
 	lda.w #$0000
 	sta.b d0
-.l2:
+.d0pos:
 	sta.w tmpde,y
 	rtl

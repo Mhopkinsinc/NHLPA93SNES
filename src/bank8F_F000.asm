@@ -13,19 +13,19 @@ setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap bac
 	sec
 	sbc.w #$003C
 	ldx.w #$0000
-.l1:
+.loop:
 	sta.l sprframetime,x
 	inx
 	inx
 	cpx.w #$4C74
-	bne .l1
+	bne .loop
 	ldx.w #$0000
-.l2:
+.loop2:
 	sta.w sprslottime,x
 	inx
 	inx
 	cpx.w #$0400
-	bne .l2
+	bne .loop2
 	stz.b DMAListend
 	sep #$20
 	cli
@@ -34,9 +34,9 @@ setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap bac
 	sta.w NMITIMEN
 	rep #$30
 	lda.b vcount
-.l3:
+.loop3:
 	cmp.b vcount
-	beq .l3
+	beq .loop3
 	jsl.l InitPPU
 	sep #$20
 	cli
@@ -79,37 +79,37 @@ setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap bac
 	sep #$20
 	stz.w CGADD
 	ldx.w #$0000
-.l4:
+.loop4:
 	lda.l TestList+$800,x
 	sta.l palbuffer,x
 	sta.w CGDATA
 	inx
 	cpx.w #$0100
-	bne .l4
+	bne .loop4
 	ldx.w #$0000
-.l5:
+.loop5:
 	lda.l RinkPalette,x
 	sta.l palbuffer+$100,x
 	sta.w CGDATA
 	inx
 	cpx.w #$0100
-	bne .l5
+	bne .loop5
 	rep #$30
 	lda.w #$1000
 	sta.w VMADDL
 	ldx.w #$0000
-.l6:
+.loop6:
 	lda.l TestList+$900,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$0240
-	bne .l6
+	bne .loop6
 	ldx.w #$0010
-.l7:
+.loop7:
 	stz.w VMDATAL
 	dex
-	bne .l7
+	bne .loop7
 	lda.w #SmallFontTiles
 	sta.b tmp0
 	lda.w #SmallFontTiles>>16
@@ -143,26 +143,26 @@ setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap bac
 	sta.b tmp1
 	jsl.l DecompressGraphics
 	ldx.w #$0000
-.l8:
+.loop8:
 	lda.l TestList+$1A0,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$06A0
-	bne .l8
+	bne .loop8
 	lda.w #TeamBlocksTiles
 	sta.b tmp0
 	lda.w #TeamBlocksTiles>>16
 	sta.b tmp1
 	jsl.l DecompressGraphics
 	ldx.w #$0000
-.l9:
+.loop9:
 	lda.l TestList,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$32A0
-	bne .l9
+	bne .loop9
 	jsl.l ReadPads
 	jsl.l Readjoy12
 	lda.w #$0000
@@ -188,9 +188,9 @@ setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap bac
 	sta.w notdemo
 	lda.w OptPlayMode
 	cmp.w #$0002
-	bcc .l10
+	bcc .OptPlayModelt
 	jsl.l NewPO
-.l10:
+.OptPlayModelt:
 	stz.b d7
 	stz.b d0
 	jsl.l .nms
@@ -204,9 +204,9 @@ setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap bac
 	sta.b d6
 .frame:		;one frame: seed counts up while waiting for VBlank_SprPal to run
 	inc.w seed
-	bne .l11
+	bne .seed
 	inc.w seed+2
-.l11:
+.seed:
 	lda.b vbint
 	cmp.w #VBlank_SprPal		; VBlank_SprPal not run yet?
 	beq .frame
@@ -226,9 +226,9 @@ setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap bac
 	bne .input
 	jsl.l QueueTextDMA
 	lda.b DMAListend
-	bne .l12
+	bne .DMAListend
 	jsl.l QueueBackmapDMA
-.l12:
+.DMAListend:
 	lda.w #VBlank_SprPal
 	sta.b vbint
 	dec.b d6
@@ -237,11 +237,11 @@ setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap bac
 	jsl.l randoma
 	sta.w OptTeam1
 	sta.w HomeTeam
-.l13:
+.loop10:
 	lda.w #$001A
 	jsl.l randoma
 	cmp.w OptTeam1
-	beq .l13
+	beq .loop10
 	sta.w OptTeam2
 	sta.w VisTeam
 	stz.w notdemo
@@ -254,9 +254,9 @@ setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap bac
 	sta.w pojoy
 	lda.w OptPlayMode
 	cmp.w #$0001
-	bne .l14
+	bne .OptPlayModene
 	jsl.l GetPassWord
-.l14:
+.OptPlayModene:
 	lda.w #$0080
 	tsb.w PassWord
 	jml.l maketree
@@ -265,32 +265,32 @@ setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap bac
 	bit.w #$1000
 	bne .start
 	bit.w #$0400
-	beq .l15
+	beq .zero
 	lda.w #$0002
 	sta.b d0
 	jsl.l .nms
 	jsl.l .ps
 	jmp.w .idle
-.l15:
+.zero:
 	bit.w #$0800
-	beq .l17
+	beq .zero2
 	lda.w #$FFFE
 	sta.b d0
 	jsl.l .nms
 	jsl.l .ps
-.l16:
+.loop11:
 	jmp.w .idle
-.l17:
+.zero2:
 	lda.w #$0001
 	sta.b d2
 	lda.b d1
 	bit.w #$0100
-	bne .l18
+	bne .d1
 	bit.w #$0200
-	beq .l16
+	beq .loop11
 	lda.w #$FFFF
 	sta.b d2
-.l18:
+.d1:
 	jsl.l .IncItem
 	jsl.l .ps
 	jmp.w .idle
@@ -312,22 +312,22 @@ setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap bac
 	sta.b d3
 	lda.w OptPlayMode
 	cmp.w #$0002
-	bcc .l19
+	bcc .OptPlayModelt2
 	cpy.w #$0004
-	bne .l19
+	bne .OptPlayModelt2
 	lda.w #$0018
 	sta.b d4
-.l19:
+.OptPlayModelt2:
 	cpy.w #$0002
-	bne .l20
+	bne .ne
 	lda.w #$0005
 	sta.b d5
 	lda.w OptPlayMode
-	bne .l20
+	bne .ne
 	stz.b d5
 	lda.w #$0005
 	sta.b d4
-.l20:
+.ne:
 	jsl.l .iilimit		; d3 = the new value
 	lda.b d3
 	sta.b [a2],y
@@ -337,9 +337,9 @@ setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap bac
 	cmp.w #$0002
 	bcc .rts
 	tya
-	bne .l21
+	bne .nonzero
 	jml.l NewPO
-.l21:
+.nonzero:
 	cpy.w #$0004
 	bne .rts
 	jml.l NewPO
@@ -352,25 +352,25 @@ setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap bac
 	sta.b d3
 	sec
 	sbc.b d5
-	bmi .l22
-	bvs .l23
-	bra .l24
-.l22:
-	bvs .l24
-.l23:
+	bmi .neg
+	bvs .vs
+	bra .join
+.neg:
+	bvs .join
+.vs:
 	lda.b d4
 	dec a
 	sta.b d3
-.l24:
+.join:
 	lda.b d3
 	sec
 	sbc.b d4
-	bmi .l25
-	bvc .l26
+	bmi .d3neg
+	bvc .vc
 	bra .rts
-.l25:
+.d3neg:
 	bvc .rts
-.l26:
+.vc:
 	lda.b d5
 	sta.b d3
 	rtl
@@ -461,12 +461,12 @@ setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap bac
 	sta.b a1
 	lda.w OptPlayMode
 	cmp.w #$0001
-	bne .l27
+	bne .goprint
 	lda.w #.playoffs
 	sta.b a1
 	lda.w #.playoffs>>16
 	sta.b a1+2
-.l27:
+.goprint:
 	jml.l print
 .playoffs:		;the Team 1 / Team 2 choice in Cont. Playoffs
 	dw 10
@@ -492,21 +492,21 @@ setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap bac
 .nms2:
 	lda.w OptPlayMode
 	cmp.w #$0002
-	bcc .l28
+	bcc .OptPlayModelt3
 	cmp.w #$0004
-	bcs .l28
+	bcs .OptPlayModelt3
 	lda.b d7
 	cmp.w #$0002
 	beq .nms0
-.l28:
+.OptPlayModelt3:
 	lda.w OptPlayMode
 	cmp.w #$0001
-	bne .l29
+	bne .OptPlayModene2
 	lda.b d7
-	beq .l29
+	beq .OptPlayModene2
 	cmp.w #$0007
 	bcc .nms0
-.l29:
+.OptPlayModene2:
 	lda.w OptPlayMode
 	cmp.w #$0002
 	bcc .nms4
@@ -536,14 +536,14 @@ setoptions:		;93G setoptions (hockey93_08): the options screen: GameSetupMap bac
 	sta.b d1
 	lda.w OptPlayMode
 	cmp.w #$0002
-	bcs .l30
+	bcs .OptPlayModege
 	jmp.w .rts
-.l30:
+.OptPlayModege:
 	lda.b d3
 	cmp.w #$0004
-	beq .l31
+	beq .d3eq
 	jmp.w .rts
-.l31:
+.d3eq:
 	lda.w #$0005
 	sta.b d1
 	rtl
@@ -627,31 +627,31 @@ PixelRemapFont:		;SNES: RemapTiles table for the small font (setoptions)
 UnpackNibbles:		;93G UnpackNibbles (logic93_5): d0 nibbles at [a0], high nibble first, to words at nibblebuffer; saves d0-d2, a0-a1
 	stx.b xsave
 	ldx.w #$0000
-.l1:
+.pushd:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .l1
+	bne .pushd
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.l2:
+.pusha:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .l2
+	bne .pusha
 	ldx.b xsave
 	lda.w #nibblebuffer
 	sta.b a1
 	lda.w #$0000
 	sta.b a1+2
 	stz.b d2
-	bra .l5
-.l3:
+	bra .join
+.loop:
 	lda.b [a0]
 	inc.b a0
 	and.w #$00FF
@@ -659,7 +659,7 @@ UnpackNibbles:		;93G UnpackNibbles (logic93_5): d0 nibbles at [a0], high nibble 
 	inc.b d2
 	lda.b d2
 	lsr a
-	bcc .l4
+	bcc .d2lt
 	dec.b a0
 	lda.b d1
 	lsr a
@@ -667,32 +667,32 @@ UnpackNibbles:		;93G UnpackNibbles (logic93_5): d0 nibbles at [a0], high nibble 
 	lsr a
 	lsr a
 	sta.b d1
-.l4:
+.d2lt:
 	lda.b d1
 	and.w #$000F
 	sta.b [a1]
 	inc.b a1
 	inc.b a1
-.l5:
+.join:
 	dec.b d0
-	bpl .l3
+	bpl .loop
 	stx.b xsave
 	ldx.w #$0006
-.l6:
+.popa:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .l6
+	bpl .popa
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000A
-.l7:
+.popd:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .l7
+	bpl .popd
 	ldx.b xsave
 	rtl
 PushNumberWidth:		;93G PushNumberWidth (middle93_2): a1 = PushWidthBuf: d0 as a d1 digit decimal string, right aligned with leading spaces (the last digit always shown)
@@ -711,7 +711,7 @@ PushNumberWidth:		;93G PushNumberWidth (middle93_2): a1 = PushWidthBuf: d0 as a 
 	sta.w PushWidthBuf+6
 	sta.w PushWidthBuf+8
 	lda.b d0
-.l1:
+.loop:
 	sta.b mulb
 	lda.w #$000A
 	sta.b mula
@@ -723,7 +723,7 @@ PushNumberWidth:		;93G PushNumberWidth (middle93_2): a1 = PushWidthBuf: d0 as a 
 	sta.w PushWidthBuf,y
 	rep #$20
 	lda.b mulres
-	bne .l1
+	bne .loop
 	rtl
 StatsReport:		;92G StatsReport role: clear the text screen, send 28 rows of HorRinkMap (32 columns each) to vram $0418 and, 8 columns
 		;   in, to $0800, then USBoard
@@ -745,41 +745,41 @@ StatsReport:		;92G StatsReport role: clear the text screen, send 28 rows of HorR
 	lda.w #$001C
 	sta.b tmp0
 	ldx.w #$0000
-.l1:
+.loop:
 	ldy.w #$0020
-.l2:
+.loop2:
 	lda.l HorRinkMap,x
 	sta.w VMDATAL
 	inx
 	inx
 	dey
-	bne .l2
+	bne .loop2
 	txa
 	clc
 	adc.w #$0020
 	tax
 	dec.b tmp0
-	bne .l1
+	bne .loop
 	lda.w #$0800
 	sta.w VMADDL
 	lda.w #$001C
 	sta.b tmp0
 	ldx.w #$0000
-.l3:
+.loop3:
 	ldy.w #$0020
-.l4:
+.loop4:
 	lda.l HorRinkMap+$10,x
 	sta.w VMDATAL
 	inx
 	inx
 	dey
-	bne .l4
+	bne .loop4
 	txa
 	clc
 	adc.w #$0020
 	tax
 	dec.b tmp0
-	bne .l3
+	bne .loop3
 	jmp.w USBoard
 Findhittype:		;93G Findhittype (logic93_1): swing type of player X for launch direction d0: A = 0 forehand (Z set), 1 backhand; .xflip when attribute bit $800 (x
 		;   flip)
@@ -792,14 +792,14 @@ Findhittype:		;93G Findhittype (logic93_1): swing type of player X for launch di
 	sta.b d0
 	lda.w attribute,x
 	bit.w #$0800
-	beq .l1
+	beq .noattribute
 	phx
 	ldx.b d0
 	lda.l .xflip,x		; x flip: backhand for d0 4-7
 	plx
 	and.w #$00FF
 	rtl
-.l1:
+.noattribute:
 	phx
 	ldx.b d0
 	lda.l .noflip,x		; backhand for d0 1-4
@@ -814,30 +814,30 @@ prefmes:		;93G prefmes (penalty93_1): print the message of penalty d0 (negative 
 		;   PrintPenaltyMessagesString, one centred line at x $11, y $B. Saves d0-d2, a1
 	stx.b xsave
 	ldx.w #$0000
-.l1:
+.pushd:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .l1
+	bne .pushd
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.l2:
+.loop:
 	lda.b a1,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .l2
+	bne .loop
 	ldx.b xsave
 	lda.w sfhormode
-	beq .l3
-	jmp.w .l8
-.l3:
+	beq .nosfhormode
+	jmp.w .join
+.nosfhormode:
 	lda.b d0
-	bpl .l4
+	bpl .d0pos
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$00,$0A
@@ -848,8 +848,8 @@ prefmes:		;93G prefmes (penalty93_1): print the message of penalty d0 (negative 
 	lda.w blankchar
 	sta.b d2
 	jsl.l eraser
-	jmp.w .l10
-.l4:
+	jmp.w .join2
+.d0pos:
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$05,$0A
@@ -857,7 +857,7 @@ prefmes:		;93G prefmes (penalty93_1): print the message of penalty d0 (negative 
 	lda.w #PenaltyList
 	sta.b a1
 	lda.w #PenaltyList>>16
-.l5:
+.skip:
 	sta.b a1+2
 	lda.b [a1],y
 	clc
@@ -869,7 +869,7 @@ prefmes:		;93G prefmes (penalty93_1): print the message of penalty d0 (negative 
 	dec a
 	dec a
 	sta.b d0
-	beq .l10
+	beq .join2
 	inc a
 	lsr a
 	sta.b d0
@@ -877,9 +877,9 @@ prefmes:		;93G prefmes (penalty93_1): print the message of penalty d0 (negative 
 	sec
 	sbc.b d0
 	sta.w printx
-	bpl .l6
+	bpl .pos
 	stz.w printx
-.l6:
+.pos:
 	lda.b [a1]
 	sta.b d0
 	tay
@@ -887,9 +887,9 @@ prefmes:		;93G prefmes (penalty93_1): print the message of penalty d0 (negative 
 	lda.b [a1],y
 	inc.b a1
 	and.w #$00FF
-	bne .l7
+	bne .nonzero
 	dec.b d0
-.l7:
+.nonzero:
 	lda.w #$0003
 	sta.b d1
 	jsl.l Framer
@@ -897,18 +897,18 @@ prefmes:		;93G prefmes (penalty93_1): print the message of penalty d0 (negative 
 	dec.w printy
 	inc.w printx
 	jsl.l print
-	bra .l10
-.l8:
+	bra .join2
+.join:
 	jsl.l PrintPenaltyMessagesString
 	lda.b d0
-	bmi .l10
+	bmi .join2
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$11,$0B
 	lda.w #PenaltyList
 	sta.b a1
 	lda.w #PenaltyList>>16
-.l9:
+.skip2:
 	sta.b a1+2
 	ldy.b d0
 	lda.b [a1],y
@@ -925,31 +925,31 @@ prefmes:		;93G prefmes (penalty93_1): print the message of penalty d0 (negative 
 	sbc.b d0
 	sta.w printx
 	jsl.l print
-.l10:
+.join2:
 	stx.b xsave
 	ldx.w #$0002
-.l11:
+.loop2:
 	pla
 	sta.b a1,x
 	dex
 	dex
-	bpl .l11
+	bpl .loop2
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000A
-.l12:
+.popd:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .l12
+	bpl .popd
 	ldx.b xsave
 	rtl
 CheckInjury:		;93G CheckInjury (hockey93_01): once a second: count InjCntDown down; at zero ShowInjuryBox
 	dec.w InjCntDown
-	bne .l1
+	bne .rtl
 	jmp.w ShowInjuryBox
-.l1:
+.rtl:
 	rtl
 setInjuryType:		;93G setInjuryType (hockey93_03): player a2 is injured: pflags bit $1000, crowdlevel + $12C, sfx $8C, the scroll locked on him (xc1/yc1, sflags $40), TempPlOffset
 		;   = pnum (| $8000 for the visitors), his tmpdst = $FFFD (out for the period)
@@ -974,27 +974,27 @@ setInjuryType:		;93G setInjuryType (hockey93_03): player a2 is injured: pflags b
 	stz.b d1
 	stz.b a0
 	lda.w pfteam,y
-	beq .l1
+	beq .nopfteam
 	lda.w #$8000
 	sta.b d1
 	lda.w #$0002
 	sta.b a0
-.l1:
+.nopfteam:
 	lda.w pnum,y
 	and.w #$00FF
 	ora.b d1
 	sta.w TempPlOffset
 	and.w #$00FF
 	bit.w #$0080
-	beq .l2
+	beq .zero
 	ora.w #$FF00
-.l2:
+.zero:
 	asl a
 	sta.b d1
 	lda.b a0
-	beq .l3
+	beq .noa0
 	lda.w #$0034
-.l3:
+.noa0:
 	adc.b d1
 	tay
 	lda.w #$FFFD
@@ -1028,23 +1028,23 @@ ShowInjuryBox:		;93G ShowInjuryBox (hockey93_10): "Injury to:" the player TempPl
 		;   Jumped to by CheckInjury; saves d0-d2, a0-a4, ends with X = a3
 	stx.b xsave
 	ldx.w #$0000
-.l1:
+.pushd:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .l1
+	bne .pushd
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.l2:
+.pusha:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0014
-	bne .l2
+	bne .pusha
 	ldx.b xsave
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
@@ -1060,28 +1060,28 @@ ShowInjuryBox:		;93G ShowInjuryBox (hockey93_10): "Injury to:" the player TempPl
 	jsl.l GetPlayerNameWithAttrib
 	jsl.l print
 	lda.w pf2fight+puckobj
-	beq .l3
+	beq .nopf2fight
 	jsl.l printz
 	dw $000D		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$14,$06,"the game"
-.l3:
+.nopf2fight:
 	stx.b xsave
 	ldx.w #$0012
-.l4:
+.popa:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .l4
+	bpl .popa
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000A
-.l5:
+.popd:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .l5
+	bpl .popd
 	ldx.b xsave
 	ldx.b a3
 	rtl
@@ -1095,15 +1095,15 @@ passtoa0:		;93G passtoa0 (logic93_1): pass the puck from player a3 to player a0 
 	lsr a
 	lsr a
 	bit.w #$2000
-	beq .l1
+	beq .zero
 	ora.w #$C000
-.l1:
+.zero:
 	sta.b d5
 	ldx.b a0
 	ldy.b a3
 	stx.b a3
 	sty.b a0
-.l2:
+.skip:
 	lda.w #$0013
 	sta.b d0
 	jsl.l assinsert
@@ -1124,9 +1124,9 @@ passtoa0:		;93G passtoa0 (logic93_1): pass the puck from player a3 to player a0 
 	lsr a
 	lsr a
 	bit.w #$2000
-	beq .l3
+	beq .zero2
 	ora.w #$C000
-.l3:
+.zero2:
 	sta.b d3
 	lda.b d0
 	clc
@@ -1138,9 +1138,9 @@ passtoa0:		;93G passtoa0 (logic93_1): pass the puck from player a3 to player a0 
 	lsr a
 	lsr a
 	bit.w #$2000
-	beq .l4
+	beq .zero3
 	ora.w #$C000
-.l4:
+.zero3:
 	sta.b d2
 	lda.w Yvel,y
 	sta.b mulb
@@ -1229,15 +1229,15 @@ passtoa0:		;93G passtoa0 (logic93_1): pass the puck from player a3 to player a0 
 	lsr a
 	lsr a
 	bit.w #$2000
-	beq .l5
+	beq .zero4
 	ora.w #$C000
-.l5:
+.zero4:
 	sta.b d5
 	lda.b d5
-	bne .l6
+	bne .loop
 	lda.w #$0001
 	sta.b d5
-.l6:
+.loop:
 	lda.b d0
 	sta.b d2
 	eor.w #$FFFF
@@ -1251,30 +1251,30 @@ passtoa0:		;93G passtoa0 (logic93_1): pass the puck from player a3 to player a0 
 	sta.b mula
 	jsl.l divs16
 	sta.b d2
-	bpl .l7
+	bpl .pos
 	dec.b d3
-	bpl .l6
-.l7:
-	bne .l8
+	bpl .loop
+.pos:
+	bne .nonzero
 	inc.b d2
-.l8:
+.nonzero:
 	lda.b d2
 	cmp.w #$0019
-	bcc .l9
+	bcc .d2lt
 	lda.w #$0018
 	sta.b d2
-.l9:
+.d2lt:
 	lda.b d2
 	sep #$20
 	sta.w puckvz+1
 	rep #$30
 	cmp.w #$000C
-	bcc .l10
+	bcc .lt
 	sep #$20
 	lda.b #$0C
 	sta.w puckvz+1
 	rep #$30
-.l10:
+.lt:
 	ldy.b a0
 	lda.b d2
 	asl a
@@ -1377,7 +1377,7 @@ GetPlayerCount:		;93G GetPlayerCount: d0 = roster players of team a2 (its bank $
 	adc.b a0
 	sta.b a0
 	stz.b d0
-.l1:
+.loop:
 	inc.b d0
 	lda.b [a0]
 	clc
@@ -1386,7 +1386,7 @@ GetPlayerCount:		;93G GetPlayerCount: d0 = roster players of team a2 (its bank $
 	sta.b a0
 	lda.b [a0]
 	cmp.w #$0002
-	bne .l1
+	bne .loop
 	pla
 	sta.b a0
 	pla
@@ -1404,12 +1404,12 @@ GetPlayerNameWithAttrib:		;93G GetPlayerNameWithAttrib: a1 = the name of player 
 	stz.b a2
 	lda.w TempPlOffset
 	sta.b d0
-	bpl .l1
+	bpl .TempPlOffsetpos
 	and.w #$00FF
 	sta.b d0
 	lda.w #$0002
 	sta.b a2
-.l1:
+.TempPlOffsetpos:
 	jsl.l PlayerShortName
 	pla
 	sta.b a2
@@ -1427,42 +1427,42 @@ Acheck:		;93G Acheck (logic93_1): player X holds a0: pfalock, SPAhook, or SPAHol
 	sta.b d1
 	sta.w pfalock,x
 	lda.w impact,x
-	beq .l2
+	beq .goSetSPA
 	lda.w Ypos,x
 	sec
 	sbc.w Ypos,y
 	sta.b d0
 	lda.w pfgoal,x
-	beq .l1
+	beq .nopfgoal
 	lda.b d0
 	eor.w #$FFFF
 	inc a
 	sta.b d0
-.l1:
-	bmi .l2
+.nopfgoal:
+	bmi .goSetSPA
 	lda.w #SPAHold
 	sta.b d1
-.l2:
+.goSetSPA:
 	jml.l SetSPA
 divs16:		;SNES: signed 16 / 16 divide: A = mulres = mulb / mula (toward zero; also left in mula and mulb); uses mulsign, mulcnt
 	stz.b mulsign
 	lda.b mula
-	bpl .l1
+	bpl .mulapos
 	eor.w #$FFFF
 	inc a
 	inc.b mulsign
-.l1:
+.mulapos:
 	sta.b mula+2
 	stz.b mula
 	lda.w #$0010
 	sta.b mulcnt
 	lda.b mulb
-	bpl .l2
+	bpl .loop
 	eor.w #$FFFF
 	inc a
 	sta.b mulb
 	inc.b mulsign
-.l2:
+.loop:
 	lsr.b mula+2
 	ror.b mula
 	asl.b mulres
@@ -1470,20 +1470,20 @@ divs16:		;SNES: signed 16 / 16 divide: A = mulres = mulb / mula (toward zero; al
 	cmp.b mula
 	lda.w #$0000
 	sbc.b mula+2
-	bcc .l3
+	bcc .lt
 	lda.b mulb
 	sbc.b mula
 	sta.b mulb
 	inc.b mulres
-.l3:
+.lt:
 	dec.b mulcnt
-	bne .l2
+	bne .loop
 	lsr.b mulsign
-	bcc .l4
+	bcc .lt2
 	lda.w #$0000
 	sbc.b mulres
 	sta.b mulres
-.l4:
+.lt2:
 	lda.b mulres
 	sta.b mula
 	sta.b mulb
@@ -1492,9 +1492,9 @@ divs16:		;SNES: signed 16 / 16 divide: A = mulres = mulb / mula (toward zero; al
 doplayeracc:		;93G doplayeracc (logic93_5): player X skates in direction d0 (0-7; 8 glides, 9 stops when moving); goalies use goalieacc. Sets pfrev to skate backwards in his own
 		;   zone, turns facedir/facefrac toward d0 (.ftab * d7, slower when fast), SPAturnl/SPAturnr or SPAglide/SPAglideback; revplayeracc when moving
 	lda.w position,x
-	bne .l1
+	bne .position
 	jml.l goalieacc
-.l1:
+.position:
 	lda.w #SPAglide
 	sta.b d1
 	lda.w pfrev,x
@@ -1515,9 +1515,9 @@ doplayeracc:		;93G doplayeracc (logic93_5): player X skates in direction d0 (0-7
 	jml.l dostop
 .cgl:		;93G .cgl: no turn animation playing (pf2aip): SetSPA
 	lda.w pf2aip,x
-	bne .l2
+	bne .rtl
 	jml.l SetSPA
-.l2:
+.rtl:
 	rtl
 .d1:		;93G .d1: a direction: pfrev, then the turn
 	lda.b d1
@@ -1528,9 +1528,9 @@ doplayeracc:		;93G doplayeracc (logic93_5): player X skates in direction d0 (0-7
 	txa
 	lsr a
 	cmp.w puckc
-	bne .l3
+	bne .ne
 	jmp.w .clrrev
-.l3:
+.ne:
 	lda.w puckx
 	sec
 	sbc.w Xpos,x
@@ -1546,9 +1546,9 @@ doplayeracc:		;93G doplayeracc (logic93_5): player X skates in direction d0 (0-7
 	lsr a
 	lsr a
 	bit.w #$0100
-	beq .l4
+	beq .zero
 	ora.w #$FE00
-.l4:
+.zero:
 	clc
 	adc.w pucky
 	sec
@@ -1642,9 +1642,9 @@ doplayeracc:		;93G doplayeracc (logic93_5): player X skates in direction d0 (0-7
 	jsl.l muls16
 	sta.b tmp0
 	lda.b tmp0
-	bne .l5
+	bne .tmp0
 	jml.l noturn0
-.l5:
+.tmp0:
 	lda.w Xvel,x
 	sta.b mula
 	sta.b mulb
@@ -1666,12 +1666,12 @@ doplayeracc:		;93G doplayeracc (logic93_5): player X skates in direction d0 (0-7
 	sta.b d4
 	sec
 	sbc.w #$0180
-	bmi .l6
-	bvs .l7
+	bmi .neg
+	bvs .vs
 	bra .iok
-.l6:
+.neg:
 	bvs .iok
-.l7:
+.vs:
 	lda.w #$0180
 	sta.b d4
 .iok:		;93G .iok
@@ -1727,9 +1727,9 @@ doplayeracc:		;93G doplayeracc (logic93_5): player X skates in direction d0 (0-7
 	jsl.l SetSPA
 	lda.b d3
 	cmp.w #$0003
-	bcc .l8
+	bcc .rtl2
 	jml.l revplayeracc
-.l8:
+.rtl2:
 	rtl
 .ftab:		;93G .ftab: turn rate by the direction difference (93G $10)
 	dw 0,23,23,23,0,-23,-23,-23
@@ -1738,16 +1738,16 @@ ResetAndSelectPlayers:		;93G ResetAndSelectPlayers (logic93_4): c1playernum/c2pl
 	sta.w c1playernum
 	sta.w c2playernum
 	lda.w cont1team
-	beq .l1
+	beq .nocont1team
 	stz.b d4
 	jsl.l changeplayer
-.l1:
+.nocont1team:
 	lda.w cont2team
-	beq .l2
+	beq .rtl
 	lda.w #$0002
 	sta.b d4
 	jsl.l changeplayer
-.l2:
+.rtl:
 	rtl
 cd0:		;93G cd0 (hockey93_11): $fftt = frame/time for the levels of crowd excitement (updatecrowdf: crowd level, crowdstep); 4 levels of 16
 	dw $010C,$020C,$030C,$040C,$050C,$0A0C,$090C,$080C
@@ -1782,36 +1782,36 @@ sfx8F:		;SNES: bank $8F copy of sfx: queue the sound pushed before the jsl (0 = 
 	sec
 	sbc.w sfxmutetime
 	cmp.w #$00B4
-	bcc .l2
+	bcc .lt
 	pla		; the sound (0 = none)
-	beq .l1
+	beq .loop
 	jsl.l QueueSound
-.l1:
+.loop:
 	jml.l jmlvector
-.l2:
+.lt:
 	pla
-	bra .l1
+	bra .loop
 DisplayPlayerAttributeMenu:		;93G DisplayPlayerAttributeMenu (hockey93_10), really the goal box: close both line change boxes (lcfound2), Framer at x $B, y 2 (5-8 tall by the
 		;   assists), printbig "GOAL!" or "HAT TRICK!" (the scorer's third goal, tmgoals), the scorer and "Assist by:" names from the last ScoreSum entry; saves d0-d2, a0-a4, ends with X = a3
 	stx.b xsave
 	ldx.w #$0000
-.l1:
+.pushd:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .l1
+	bne .pushd
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.l2:
+.pusha:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0014
-	bne .l2
+	bne .pusha
 	ldx.b xsave
 	stz.b a2
 	jsl.l lcfound2
@@ -1834,22 +1834,22 @@ DisplayPlayerAttributeMenu:		;93G DisplayPlayerAttributeMenu (hockey93_10), real
 	ldy.w #$0004
 	lda.b [a4],y
 	bit.w #$0080
-	bne .l3
+	bne .nonzero
 	inc.b d1
 	inc.b d1
 	lda.b [a4],y
-	bmi .l3
+	bmi .nonzero
 	inc.b d1
-.l3:
+.nonzero:
 	jsl.l Framer
 	stz.b a2
 	ldy.w #$0002
 	lda.b [a4],y
 	bit.w #$0080
-	beq .l4
+	beq .zero
 	inc.b a2
 	inc.b a2
-.l4:
+.zero:
 	lda.w #attrText
 	sta.b a1
 	lda.w #attrText>>16
@@ -1858,20 +1858,20 @@ DisplayPlayerAttributeMenu:		;93G DisplayPlayerAttributeMenu (hockey93_10), real
 	lda.b [a4],y
 	and.w #$00FF
 	ldy.b a2
-	beq .l5
+	beq .noa2
 	clc
 	adc.w #$001A
-.l5:
+.noa2:
 	tay
 	lda.w tmgoals,y		; goals of the scorer
 	and.w #$00FF
 	cmp.w #$0003
-	bne .l6
+	bne .tmgoalsne
 	lda.b a1
 	clc
 	adc.b [a1]
 	sta.b a1
-.l6:
+.tmgoalsne:
 	jsl.l printbig
 	ldy.w #$0003
 	lda.b [a4],y
@@ -1904,21 +1904,21 @@ DisplayPlayerAttributeMenu:		;93G DisplayPlayerAttributeMenu (hockey93_10), real
 .ex:		;93G .ex
 	stx.b xsave
 	ldx.w #$0012
-.l7:
+.popa:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .l7
+	bpl .popa
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000A
-.l8:
+.popd:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .l8
+	bpl .popd
 	ldx.b xsave
 	ldx.b a3
 	rtl

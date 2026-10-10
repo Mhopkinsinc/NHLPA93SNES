@@ -320,7 +320,7 @@ GetLowestPen:		;93G GetLowestPen (penalty93_1): a2 = team on the power play, a3 
 	lda.w #$001A
 .a:
 	sta.b a0
-.l0:
+.loop:
 	ldy.b a0		; penalty box list of the power play team ($80 ends)
 	inc.b a0
 	lda.w tmboxlist,y
@@ -338,7 +338,7 @@ GetLowestPen:		;93G GetLowestPen (penalty93_1): a2 = team on the power play, a3 
 	lda.w tmpdst,y
 	sta.b d2
 	bit.w #$4000		; tmpdst bit 14: not timed
-	bne .l0
+	bne .loop
 	lda.b d2
 	sec
 	sbc.b d3
@@ -348,7 +348,7 @@ GetLowestPen:		;93G GetLowestPen (penalty93_1): a2 = team on the power play, a3 
 	sta.b d0
 	lda.b d2
 	sta.b d3
-	bra .l0
+	bra .loop
 .other:
 	ldy.b a3		; shorthanded team
 	lda.w tmap,y
@@ -363,7 +363,7 @@ GetLowestPen:		;93G GetLowestPen (penalty93_1): a2 = team on the power play, a3 
 	lda.w #$001A
 .b:
 	sta.b a0
-.l1:
+.loop2:
 	ldy.b a0
 	lda.w tmboxlist,y
 	inc.b a0
@@ -380,7 +380,7 @@ GetLowestPen:		;93G GetLowestPen (penalty93_1): a2 = team on the power play, a3 
 	tay
 	lda.w tmpdst,y
 	bit.w #$4000
-	bne .l1
+	bne .loop2
 	lda.b d0
 	sec
 	sbc.w tmpdst,y

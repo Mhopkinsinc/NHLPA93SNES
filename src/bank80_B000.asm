@@ -1033,7 +1033,7 @@ AvgCline:		;93G AvgCline (penalty93_2): d0 = average energy of the current line 
 	ldy.b a2
 	lda.w tmsort,y
 	sta.b a0
-.l0:
+.loop:
 	ldy.b a0
 	lda.w position,y
 	beq .next
@@ -1056,7 +1056,7 @@ AvgCline:		;93G AvgCline (penalty93_2): d0 = average energy of the current line 
 	inc.b a0
 	inc.b a0
 	dec.b d2
-	bpl .l0
+	bpl .loop
 	lda.b d1		; players counted
 	beq .ex
 	sta.b mula
@@ -1432,7 +1432,7 @@ setpersonel:		;93G setpersonel (hockey93_05): set the personel of team a2 from S
 	stx.b a3
 	lda.w #$0005
 	sta.b d4
-.l0:
+.loop:
 	lda.w #$FFFF		; newpos = newpnum = -1 for the 6 objects
 	sta.w newpos,x
 	sta.w newpnum,x
@@ -1440,7 +1440,7 @@ setpersonel:		;93G setpersonel (hockey93_05): set the personel of team a2 from S
 	inx
 	stx.b a3
 	dec.b d4
-	bpl .l0
+	bpl .loop
 	jsl.l SetPlList
 	lda.w #$0005
 	sta.b d4
@@ -1448,7 +1448,7 @@ setpersonel:		;93G setpersonel (hockey93_05): set the personel of team a2 from S
 	sta.b a4
 	lda.w #PlList>>16
 	sta.b a4+2
-.l1:		;wanted players already on the ice keep their object
+.loop2:		;wanted players already on the ice keep their object
 	ldy.b d4
 	lda.b [a4],y
 	and.w #$00FF
@@ -1461,7 +1461,7 @@ setpersonel:		;93G setpersonel (hockey93_05): set the personel of team a2 from S
 	ldx.w tmsort,y
 	dex
 	dex
-.l2:
+.loop3:
 	inx
 	inx
 	stx.b a3
@@ -1473,7 +1473,7 @@ setpersonel:		;93G setpersonel (hockey93_05): set the personel of team a2 from S
 	cmp.b tmp0
 	beq .found
 	dec.b d3
-	bpl .l2
+	bpl .loop3
 	bra .next
 .found:
 	lda.b d4
@@ -1501,14 +1501,14 @@ setpersonel:		;93G setpersonel (hockey93_05): set the personel of team a2 from S
 	rep #$20
 .next:
 	dec.b d4
-	bpl .l1
+	bpl .loop2
 	lda.w #$0005
 	sta.b d4
 	lda.w #PlList
 	sta.b a4
 	lda.w #PlList>>16
 	sta.b a4+2
-.l3:		;the rest go to objects with no requested player
+.loop4:		;the rest go to objects with no requested player
 	ldy.b d4
 	lda.b [a4],y
 	and.w #$00FF
@@ -1521,7 +1521,7 @@ setpersonel:		;93G setpersonel (hockey93_05): set the personel of team a2 from S
 	ldx.w tmsort,y
 	dex
 	dex
-.l4:
+.loop5:
 	inx
 	inx
 	stx.b a3
@@ -1529,7 +1529,7 @@ setpersonel:		;93G setpersonel (hockey93_05): set the personel of team a2 from S
 	bit.w #$0080
 	bne .free
 	dec.b d3
-	bpl .l4
+	bpl .loop5
 	bra .chkpos
 .free:
 	stx.b a0
@@ -1537,7 +1537,7 @@ setpersonel:		;93G setpersonel (hockey93_05): set the personel of team a2 from S
 	lda.w position,x
 	bpl .put
 	dec.b d3
-	bpl .l4
+	bpl .loop5
 .put:
 	lda.b d4
 	clc
@@ -1565,7 +1565,7 @@ setpersonel:		;93G setpersonel (hockey93_05): set the personel of team a2 from S
 	rep #$20
 .next2:
 	dec.b d4
-	bpl .l3
+	bpl .loop4
 	stx.b xsave
 	ldx.w #$0012
 .popa:
@@ -1626,7 +1626,7 @@ SetPlList:		;93G SetPlList (hockey93_05): make PlList, the players we want on th
 	lda.w tmap,y		; tmap: players on ice
 	sta.b d4
 	bra .next
-.l0:
+.loop:
 	ldy.b d4
 	lda.b [a0],y
 	and.w #$00FF
@@ -1658,10 +1658,10 @@ SetPlList:		;93G SetPlList (hockey93_05): make PlList, the players we want on th
 	rep #$20
 .next:
 	dec.b d4
-	bpl .l0
+	bpl .loop
 	lda.w #$0005
 	sta.b d4
-.l1:		;is each wanted player available?
+.loop2:		;is each wanted player available?
 	ldy.b d4
 	lda.b [a4],y
 	and.w #$00FF
@@ -1732,7 +1732,7 @@ SetPlList:		;93G SetPlList (hockey93_05): make PlList, the players we want on th
 .next1:
 	dec.b d4
 	bmi .rtl
-	jmp.w .l1
+	jmp.w .loop2
 .rtl:
 	rtl
 .all:		;try every roster player, last first

@@ -69,10 +69,10 @@ checksso:		;93G checksso (video93_2): arrows for the two pad players when they a
 	sec
 	sbc.w #-116		; left
 	beq .lb
-	bmi .l0
+	bmi .neg
 	bvs .lb
 	bra .one
-.l0:
+.neg:
 	bvs .one
 .lb:
 	lda.w #4

@@ -1007,7 +1007,7 @@ puckfaceoff2:		;asstab $1C. 93G puckfaceoff2 (logic93_4): face off control logic
 	stz.b a3
 	lda.w #$000B
 	sta.b d2
-.l0:		;each player: assignment and faceoff position
+.loop:		;each player: assignment and faceoff position
 	ldx.b a3
 	lda.w #$FF10		; Xpos = -240, off the screen
 	sta.w Xpos,x
@@ -1023,7 +1023,7 @@ puckfaceoff2:		;asstab $1C. 93G puckfaceoff2 (logic93_4): face off control logic
 	sta.b d0
 	lda.b d1
 	cmp.w #$0004
-	bne .l1
+	bne .d1ne
 	stz.b a2		; center: team touches = him only
 	lda.w pfteam,x
 	beq .tm
@@ -1042,7 +1042,7 @@ puckfaceoff2:		;asstab $1C. 93G puckfaceoff2 (logic93_4): face off control logic
 	sta.w tmflags,y
 	lda.w #afaceoffpl		; afaceoffpl
 	sta.b d0
-.l1:
+.d1ne:
 	jsl.l assinsert
 .goalie1:
 	lda.w tmap		; d4 = (6-tmap)*8: .apl row
@@ -1179,7 +1179,7 @@ puckfaceoff2:		;asstab $1C. 93G puckfaceoff2 (logic93_4): face off control logic
 	inc.b a3
 	dec.b d2
 	bmi .done
-	jmp.w .l0
+	jmp.w .loop
 .done:
 	jsl.l SprSort		; SprSort
 	pla

@@ -28,7 +28,7 @@ PTRLO = re.compile(r'^\s+(?:sta\.b\s+(?:a[0-4]|tmp0|vbint|hbint|sndptr|farptr|fo
 NOISE = re.compile(r';\s*\$[0-9A-F]{6}:(?: [0-9A-F]{2})+')
 GENERIC = re.compile(r'\b(?:CODE|DATA|sub|loc|unk|byte|word|off)_[0-9A-Fa-f]{4,6}\b')
 AUTOLOCAL = re.compile(r'(?<![\w.])\.l\d+\b')
-AUTOTRACE = re.compile(r';\s*auto\b')
+AUTOTRACE = re.compile(r';\s*auto(?::| \()')
 GLOBAL = re.compile(r'^([A-Za-z_][A-Za-z0-9_]*):(.*)$')
 
 counts = {k: 0 for k in ('raw_operand', 'pointer_imm', 'bank_imm', 'noise', 'generic_label', 'auto_local',
@@ -62,7 +62,7 @@ for f in files:
             hit('pointer_imm', f, n, line)
         if BANKIMM.match(code) and n < len(lines) and PTRHI.match(lines[n]):
             hit('bank_imm', f, n, line)
-        if GENERIC.search(code) or (GENERIC.search(line) and not AUTOTRACE.search(line)):
+        if GENERIC.search(code):
             hit('generic_label', f, n, line)
         if AUTOLOCAL.search(code):
             hit('auto_local', f, n, line)
