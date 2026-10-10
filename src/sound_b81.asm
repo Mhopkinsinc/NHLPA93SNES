@@ -1,7 +1,6 @@
-; $818000-$818FFF  ROM $08000-$08FFF: the in-game SPC700 upload stream (GameSoundUpload), $818000-$82B86B. setupice sends it
-; with the uploader at $82FA7A ($82FAB9: blocks of length word, APU address word, data; a length of 0 ends and jumps to the address).
-; Blocks: the sample directory (to APU $2C00), the BRR samples (data/gamesamples.brr, to APU $2C50), the end block (jump to SPCRESUME, in bank82_B000).
-; The samples run on through bank $81 (one incbin slice per segment file) and end in bank82_B000.
+; sound_b81: 93G sound93: SPC700 uploads, the sound queue, music cues (93G keeps ScoutingReportText here too).
+; Bank $81. Each block keeps its ROM address with org; blocks of other modules sit between them.
+
 org $818000
 GameSoundUpload:		;in-game sample set for the SPC700 sound driver (the boot stream at $868000 carries the driver itself)
 	dw GameSampleDirEnd-GameSampleDir, SPCSAMPLEDIR		; block 1: 76 bytes to APU $2C00
@@ -28,4 +27,6 @@ GameSampleDir:		;DSP sample directory: per sample the APU address of its start a
 GameSampleDirEnd:
 	dw GAMESAMPLESIZE, SPCSAMPLES		; block 2: the BRR samples to APU $2C50
 GameSamples:		;BRR samples (9-byte blocks), $818054-$82B867
-	incbin "../data/gamesamples.brr":0..$FAC		; $818054-$818FFF
+	incbin "../data/gamesamples.brr"
+GameSamplesEnd:
+	dw $0000, SPCRESUME		; end block: length 0, start the driver at $0800

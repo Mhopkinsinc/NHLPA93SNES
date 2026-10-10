@@ -1,11 +1,7 @@
-; $82B86C-$82CD9F  ROM $1386C-$14D9F: SPAList, the animation tables (93G frames93.asm SPAList). Starts at SPAList (boundary moved from
-; ), ends before the packed rink tiles. SPA (sort object field) is an offset in this table. Each SPA table: 8 words = offset
-; of the frame list for each direction (facedir 0-7, from the table start), 1 word of attributes (bit 0 = the animation loops),
-; then the frame lists: pairs of (sprite frame, delay in frames); a negative delay marks the last frame (updateanim, bank80_E000).
-; Frames are SPF base + n (SNES frame numbering, see ram93snes.asm). Each table is asserted against its SPA constant.
-org $82B86C
-SPAList:		;93G SPAList
-	dw 0		; (SPA 0 = no animation)
+; frames: 93G frames93: the SPA animation tables.
+; Bank $82. Each block keeps its ROM address with org; blocks of other modules sit between them.
+
+org $82B86E
 
 SPAgready_table:		;SPA $0002 (93G SPAgready)
 	dw .d0-SPAgready_table		; direction 0
