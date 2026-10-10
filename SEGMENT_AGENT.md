@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank85_B000` ($85B000-$85BFFF). <- CURRENT
+`bank85_C000` ($85C000-$85CFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -116,8 +116,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank85_8000 | matched | $858000 | $858FFF | data | 4096 bytes $858000-$858FFF. SpriteSet4 (frame set 4, frames 225-272: hip/shoulder/sweep checks): header, frame table, pieces (data/Sprites/set04.pieces), tiles (set04.chr) |
 | bank85_9000 | matched | $859000 | $859FFF | data | 4096 bytes $859000-$859FFF. SpriteSet4 tiles (incbin data/Sprites/set04.chr slice) |
 | bank85_A000 | matched | $85A000 | $85AFFF | data | 4096 bytes $85A000-$85AFFF. SpriteSet4 tiles (incbin data/Sprites/set04.chr slice) |
-| bank85_B000 | not matched <- CURRENT | $85B000 | $85BFFF | 0% |  |
-| bank85_C000 | not matched | $85C000 | $85CFFF | 0% |  |
+| bank85_B000 | matched | $85B000 | $85BFFF | data | 4096 bytes $85B000-$85BFFF. SpriteSet4 tiles (incbin data/Sprites/set04.chr slice) |
+| bank85_C000 | not matched <- CURRENT | $85C000 | $85CFFF | 0% |  |
 | bank85_D000 | not matched | $85D000 | $85DFFF | 1% |  |
 | bank85_E000 | not matched | $85E000 | $85EFFF | 0% |  |
 | bank85_F000 | not matched | $85F000 | $84FFFF | -2% |  |
@@ -250,3 +250,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank85_8000: matched $858000-$858FFF (4096 bytes): sprite frame set 4, frames 225-272 (SPFhipl .. SPFsweep+15). MATCH.
 - bank85_9000: matched $859000-$859FFF (4096 bytes): SpriteSet4 tiles. MATCH.
 - bank85_A000: matched $85A000-$85AFFF (4096 bytes): SpriteSet4 tiles. MATCH.
+- bank85_B000: matched $85B000-$85BFFF (4096 bytes): SpriteSet4 tiles. MATCH.
