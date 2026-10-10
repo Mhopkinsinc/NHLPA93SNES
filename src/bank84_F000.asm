@@ -5,7 +5,8 @@ org $84EF3C
 HotList:		;93G HotList: hot spot (stick blade) x, y bytes for every sprite frame (763 pairs, data/HotList.bin), read by GetHot
 	incbin "../data/HotList.bin"		; $84EF3C-$84F531
 HotListEnd:
-UpdateScoutingDisplay:		;auto: CODE_84F532. 93G UpdateScoutingDisplay (hockey93_07): when ScoutingReportTimer runs out (at once with asv), print the next word of ScoutingReportText. ~ { } [ ] print a team or goalie name
+UpdateScoutingDisplay:		;auto: CODE_84F532. 93G UpdateScoutingDisplay (hockey93_07): when ScoutingReportTimer runs out (at once with asv), print the next word of ScoutingReportText. ~ { } [ ] print
+		;   a team or goalie name
 	lda.w ScoutingReportTimer		; $84F532: AD EF 08  text finished ($7FFF)
 	sec		; $84F535: 38
 	sbc.w #$1000		; $84F536: E9 00 10
@@ -319,9 +320,10 @@ ScrollDisplayUp:		;auto: CODE_84F734. 93G ScrollDisplayUp (hockey93_07): next te
 	bpl .pop		; $84F798: 10 F9
 	ldx.b xsave		; $84F79A: A6 0A
 	rtl		; $84F79C: 6B
-MenuTiles88:		;packed tiles (decompressor $86FA3E) that the bank $88 screen setup ($88F55B) sends to vram $1000 (data/MenuTiles88.pak)
-	incbin "../data/MenuTiles88.pak"		; $84F79D-$84F815
-InitSortObjects:		;auto: CODE_84F816. SNES: clear the sort objects, then set the 4 sso arrows, the 5 ffo objects and the 16 sort objects from SsoInitTable, FfoInitTable and SortObjInitTable; then SprSort
+MenuTiles88:		;packed tiles (decompressor $86FA3E) that the bank $88 screen setup ($88F55B) sends to vram $1000 (data/MenuTiles88.chr.pak)
+	incbin "../data/MenuTiles88.chr.pak"		; $84F79D-$84F815
+InitSortObjects:		;auto: CODE_84F816. SNES: clear the sort objects, then set the 4 sso arrows, the 5 ffo objects and the 16 sort objects from SsoInitTable, FfoInitTable and SortObjInitTable; then
+		;   SprSort
 	ldx.w #$0000		; $84F816: A2 00 00  SortCords (all fields of the 16 objects)
 .clr:
 	stz.w Xpos,x		; $84F819: 9E FF 08
@@ -614,7 +616,8 @@ DisplayStats:		;auto: CODE_84FAE3. 92G DisplayStats (penalty.asm): the STATS pag
 	jml.l print		; $84FC2C: 5C 2D B9 80
 DisplayStats_sslist:		;92G .sslist: stat, second stat (-1 = none)
 	dw tmshots,-1, tmPwrGoals,tmPwrPlays, tmPenalties,tmPenmin, tmchecks,-1, -1,-1		; $84FC30
-GetNameandAttrib:		;auto: CODE_84FC44. 93G GetNameandAttrib (stats93): print player d0 (number and name), then at x 26 the column d4 (attribjmp); columns above 2 average the rating nibbles masked by d4 high word
+GetNameandAttrib:		;auto: CODE_84FC44. 93G GetNameandAttrib (stats93): print player d0 (number and name), then at x 26 the column d4 (attribjmp); columns above 2 average the rating nibbles masked by
+		;   d4 high word
 	stx.b xsave		; $84FC44: 86 0A
 	ldx.w #$0000		; $84FC46: A2 00 00
 .pushd:

@@ -2,9 +2,10 @@
 ; the SNES menu has a fifth item, Team Roster), Restart, RefsMap (the ref window frames), assgoalietopuck (logic93_3), $FF fill.
 ; Starts at the rink palette (boundary moved from $83F000).
 org $83F72B
-RinkPalette:		;the game palette: 128 colours (data/Pals/Rink.pal), copied to both halves of palbuffer by setupice
-	incbin "../data/Pals/Rink.pal"		; $83F72B-$83F82A
-Pausemode:		;auto: CODE_83F82B (called from $8E817B). 92G Pausemode: game is in pause mode now. Save textmap, stop the sound, horizontal screen, PAUSE title and frame, PauseMenu until it returns 0, then PauseExit ($8F8E0D)
+RinkPalette:		;the game palette: 128 colours (data/Pals/Rink.snespal), copied to both halves of palbuffer by setupice
+	incbin "../data/Pals/Rink.snespal"		; $83F72B-$83F82A
+Pausemode:		;auto: CODE_83F82B (called from $8E817B). 92G Pausemode: game is in pause mode now. Save textmap, stop the sound, horizontal screen, PAUSE title and frame, PauseMenu until it returns 0,
+		;   then PauseExit ($8F8E0D)
 	phx		; $83F82B: DA
 	ldx.w #$07FE		; $83F82C: A2 FE 07
 .save:		;textsave = textmap
@@ -41,7 +42,8 @@ Pausemode:		;auto: CODE_83F82B (called from $8E817B). 92G Pausemode: game is in 
 	jsl.l PauseMenu		; $83F887: 22 91 F8 83  nonzero: draw again
 	bne .top		; $83F88B: D0 D1
 	jml.l $8F8E0D		; $83F88D: 5C 0D 8E 8F  bank $8F: 92G PauseExit
-PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB), read the pad (.rjoy); up/down move psitem (5 items), Start leaves, else the .jump handler of the item. Returns A = 0 to leave, 1 to redraw
+PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB), read the pad (.rjoy); up/down move psitem (5 items), Start leaves, else the .jump handler of the item. Returns A =
+		;   0 to leave, 1 to redraw
 	stz.w psitem		; $83F891: 9C 85 04
 .gj:
 	jsl.l $8FECAB		; $83F894: 22 AB EC 8F  bank $8F: 92G Pausemode .Pmenu (menu text and goalie number)
@@ -256,7 +258,8 @@ PauseResume:		;auto: CODE_83FA79. pause menu item 0, Resume Game: A or Start lea
 PauseLeave:		;auto: CODE_83FA83. return 0: leave the pause menu
 	lda.w #$0000		; $83FA83: A9 00 00
 	rtl		; $83FA86: 6B
-Restart:		;auto: CODE_83FA87. SNES: restart the game from scratch (93G Begin role): native mode, stack, DP and DB 0, clear RAM $0000-$15FE, the sprite VRAM cache, vbint vb2, hbint HBdefault, then $8FEE83 and far8B8172
+Restart:		;auto: CODE_83FA87. SNES: restart the game from scratch (93G Begin role): native mode, stack, DP and DB 0, clear RAM $0000-$15FE, the sprite VRAM cache, vbint vb2, hbint HBdefault, then
+		;   $8FEE83 and far8B8172
 	sei		; $83FA87: 78  interrupts off, native mode
 	clc		; $83FA88: 18
 	xce		; $83FA89: FB
@@ -305,11 +308,12 @@ Restart:		;auto: CODE_83FA87. SNES: restart the game from scratch (93G Begin rol
 	sta.b hbint		; $83FAE2: 85 16
 	jsl.l $8FEE83		; $83FAE4: 22 83 EE 8F  bank $8F
 	jml.l far8B8172		; $83FAE8: 5C F2 F5 80
-RefsMap:		;93G RefsMap: the ref window frames, 7 frames of 8 x 7 words (data/Refs.map); PushRef copies frame d0 (+$70 each)
-	incbin "../data/Refs.map"		; $83FAEC-$83FDFB
+RefsMap:		;93G RefsMap: the ref window frames, 7 frames of 8 x 7 words (data/Refs.snesmap); PushRef copies frame d0 (+$70 each)
+	incbin "../data/Refs.snesmap"		; $83FAEC-$83FDFB
 RefsMapEnd:
 	assert RefsMapEnd-RefsMap == 7*$70
-assgoalietopuck:		;auto: CODE_83FDFC (asstab $F). 93G assgoalietopuck (logic93_3): goalie skates out to a loose puck (inserted by assgoalie) while the puck moves toward him and the tmnear stats allow it, else assexit
+assgoalietopuck:		;auto: CODE_83FDFC (asstab $F). 93G assgoalietopuck (logic93_3): goalie skates out to a loose puck (inserted by assgoalie) while the puck moves toward him and the tmnear stats
+		;   allow it, else assexit
 	lda.w pflags,x		; $83FDFC: BD DF 0E  joystick controlled or clock stopped: assexit
 	and.w #pfjoycon		; $83FDFF: 29 08 00
 	ora.w gmclock		; $83FE02: 0D 8A 12

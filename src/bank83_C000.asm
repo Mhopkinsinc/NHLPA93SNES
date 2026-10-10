@@ -10,8 +10,8 @@ Vancouver:		;93G Vancouver (TeamList 21)
 	dw .ls-.0		; $83BCAE LineSets
 	dw .sr-.0		; $83BCB0 ScoutReport
 	dw .sodds-.0		; $83BCB2 ScoreOdds
-.pad:	incbin "../data/Pals/VANh.pal"		; $83BCB4 home colours (SNES BGR555, 16 colours)
-	incbin "../data/Pals/VANv.pal"		; $83BCD4 visitor colours
+.pad:	incbin "../data/Pals/VANh.snespal"		; $83BCB4 home colours (SNES BGR555, 16 colours)
+	incbin "../data/Pals/VANv.snespal"		; $83BCD4 visitor colours
 .sr:	%hex2($4111,$10E8,$6877,$7577)		; $83BCF4 uupu,uuuu,skpd,cfgo
 .sodds:	db 211,0		; $83BCFC
 .ls:		;-G,LD,RD,LW,-C,RW,XA,00
@@ -58,8 +58,8 @@ Winnipeg:		;93G Winnipeg (TeamList 23)
 	dw .ls-.0		; $83BF55 LineSets
 	dw .sr-.0		; $83BF57 ScoutReport
 	dw .sodds-.0		; $83BF59 ScoreOdds
-.pad:	incbin "../data/Pals/WPGh.pal"		; $83BF5B home colours (SNES BGR555, 16 colours)
-	incbin "../data/Pals/WPGv.pal"		; $83BF7B visitor colours
+.pad:	incbin "../data/Pals/WPGh.snespal"		; $83BF5B home colours (SNES BGR555, 16 colours)
+	incbin "../data/Pals/WPGv.snespal"		; $83BF7B visitor colours
 .sr:	%hex2($2020,$10E7,$4555,$2185)		; $83BF9B uupu,uuuu,skpd,cfgo
 .sodds:	db 149,48		; $83BFA3
 .ls:		;-G,LD,RD,LW,-C,RW,XA,00
@@ -106,8 +106,8 @@ Washington:		;93G Washington (TeamList 22)
 	dw .ls-.0		; $83C20A LineSets
 	dw .sr-.0		; $83C20C ScoutReport
 	dw .sodds-.0		; $83C20E ScoreOdds
-.pad:	incbin "../data/Pals/WSHh.pal"		; $83C210 home colours (SNES BGR555, 16 colours)
-	incbin "../data/Pals/WSHv.pal"		; $83C230 visitor colours
+.pad:	incbin "../data/Pals/WSHh.snespal"		; $83C210 home colours (SNES BGR555, 16 colours)
+	incbin "../data/Pals/WSHv.snespal"		; $83C230 visitor colours
 .sr:	%hex2($7320,$00E7,$9697,$8458)		; $83C250 uupu,uuuu,skpd,cfgo
 .sodds:	db 164,32		; $83C258
 .ls:		;-G,LD,RD,LW,-C,RW,XA,00
@@ -185,5 +185,5 @@ playoffseats:		;93G playoffseats: 34 playoff trees, 16 team numbers each (maketr
 playoffseatsEnd:
 
 BigFontTiles:		;packed big font tiles (100 4bpp tiles; setupice and banks $83/$88/$8F unpack them, PixelRemap83)
-	incbin "../data/BigFont.pak"		; $83C6D8-$83CC0B
+	incbin "../data/BigFont.chr.pak"		; $83C6D8-$83CC0B
 BigFontTilesEnd:

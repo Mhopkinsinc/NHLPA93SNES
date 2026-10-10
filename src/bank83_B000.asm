@@ -9,8 +9,8 @@ Pittsburgh:		;93G Pittsburgh (TeamList 15)
 	dw .ls-.0		; $83AD08 LineSets
 	dw .sr-.0		; $83AD0A ScoutReport
 	dw .sodds-.0		; $83AD0C ScoreOdds
-.pad:	incbin "../data/Pals/PITh.pal"		; $83AD0E home colours (SNES BGR555, 16 colours)
-	incbin "../data/Pals/PITv.pal"		; $83AD2E visitor colours
+.pad:	incbin "../data/Pals/PITh.snespal"		; $83AD0E home colours (SNES BGR555, 16 colours)
+	incbin "../data/Pals/PITv.snespal"		; $83AD2E visitor colours
 .sr:	%hex2($7621,$10E7,$5566,$5725)		; $83AD4E uupu,uuuu,skpd,cfgo
 .sodds:	db 182,0		; $83AD56
 .ls:		;-G,LD,RD,LW,-C,RW,XA,00
@@ -56,8 +56,8 @@ Quebec:		;93G Quebec (TeamList 16)
 	dw .ls-.0		; $83AFA3 LineSets
 	dw .sr-.0		; $83AFA5 ScoutReport
 	dw .sodds-.0		; $83AFA7 ScoreOdds
-.pad:	incbin "../data/Pals/QUEh.pal"		; $83AFA9 home colours (SNES BGR555, 16 colours)
-	incbin "../data/Pals/QUEv.pal"		; $83AFC9 visitor colours
+.pad:	incbin "../data/Pals/QUEh.snespal"		; $83AFA9 home colours (SNES BGR555, 16 colours)
+	incbin "../data/Pals/QUEv.snespal"		; $83AFC9 visitor colours
 .sr:	%hex2($2602,$22E8,$3212,$1321)		; $83AFE9 uupu,uuuu,skpd,cfgo
 .sodds:	db 84,32		; $83AFF1
 .ls:		;-G,LD,RD,LW,-C,RW,XA,00
@@ -105,8 +105,8 @@ SanJose:		;93G SanJose (TeamList 17)
 	dw .ls-.0		; $83B270 LineSets
 	dw .sr-.0		; $83B272 ScoutReport
 	dw .sodds-.0		; $83B274 ScoreOdds
-.pad:	incbin "../data/Pals/SJh.pal"		; $83B276 home colours (SNES BGR555, 16 colours)
-	incbin "../data/Pals/SJv.pal"		; $83B296 visitor colours
+.pad:	incbin "../data/Pals/SJh.snespal"		; $83B276 home colours (SNES BGR555, 16 colours)
+	incbin "../data/Pals/SJv.snespal"		; $83B296 visitor colours
 .sr:	%hex2($0702,$12E6,$2111,$3211)		; $83B2B6 uupu,uuuu,skpd,cfgo
 .sodds:	db 133,34		; $83B2BE
 .ls:		;-G,LD,RD,LW,-C,RW,XA,00
@@ -153,8 +153,8 @@ StLouis:		;93G StLouis (TeamList 18)
 	dw .ls-.0		; $83B51C LineSets
 	dw .sr-.0		; $83B51E ScoutReport
 	dw .sodds-.0		; $83B520 ScoreOdds
-.pad:	incbin "../data/Pals/STLh.pal"		; $83B522 home colours (SNES BGR555, 16 colours)
-	incbin "../data/Pals/STLv.pal"		; $83B542 visitor colours
+.pad:	incbin "../data/Pals/STLh.snespal"		; $83B522 home colours (SNES BGR555, 16 colours)
+	incbin "../data/Pals/STLv.snespal"		; $83B542 visitor colours
 .sr:	%hex2($4210,$21D8,$4364,$4564)		; $83B562 uupu,uuuu,skpd,cfgo
 .sodds:	db 194,32		; $83B56A
 .ls:		;-G,LD,RD,LW,-C,RW,XA,00
@@ -201,8 +201,8 @@ TampaBay:		;93G TampaBay (TeamList 19)
 	dw .ls-.0		; $83B7C9 LineSets
 	dw .sr-.0		; $83B7CB ScoutReport
 	dw .sodds-.0		; $83B7CD ScoreOdds
-.pad:	incbin "../data/Pals/TBYh.pal"		; $83B7CF home colours (SNES BGR555, 16 colours)
-	incbin "../data/Pals/TBYv.pal"		; $83B7EF visitor colours
+.pad:	incbin "../data/Pals/TBYh.snespal"		; $83B7CF home colours (SNES BGR555, 16 colours)
+	incbin "../data/Pals/TBYv.snespal"		; $83B7EF visitor colours
 .sr:	%hex2($0702,$02A7,$2111,$1411)		; $83B80F uupu,uuuu,skpd,cfgo
 .sodds:	db 48,0		; $83B817
 .ls:		;-G,LD,RD,LW,-C,RW,XA,00
@@ -243,8 +243,8 @@ Toronto:		;93G Toronto (TeamList 20)
 	dw .ls-.0		; $83BA00 LineSets
 	dw .sr-.0		; $83BA02 ScoutReport
 	dw .sodds-.0		; $83BA04 ScoreOdds
-.pad:	incbin "../data/Pals/TORh.pal"		; $83BA06 home colours (SNES BGR555, 16 colours)
-	incbin "../data/Pals/TORv.pal"		; $83BA26 visitor colours
+.pad:	incbin "../data/Pals/TORh.snespal"		; $83BA06 home colours (SNES BGR555, 16 colours)
+	incbin "../data/Pals/TORv.snespal"		; $83BA26 visitor colours
 .sr:	%hex2($1411,$12E8,$2123,$3232)		; $83BA46 uupu,uuuu,skpd,cfgo
 .sodds:	db 211,0		; $83BA4E
 .ls:		;-G,LD,RD,LW,-C,RW,XA,00

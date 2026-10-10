@@ -6,9 +6,9 @@ org $87C000
 SpriteSet2End:
 	assert SpriteSet2End-SpriteSet2 == $3A0+512*32
 EASNMap:		;93G EASN.map.jim: the EASN logo backdrop, packed (decompressor $86FA3E): a 32 x 16 map, then the tiles; unpacked by $8FDC7B and $8FE8D9
-	incbin "../data/EASN.pak"		; $87C3A0-$87C6B3
+	incbin "../data/EASN.map.pak"		; $87C3A0-$87C6B3
 RinkSideTiles1:		;packed tiles (55: crowd, boards and bench pieces) sent to vram by setupice after IceRinkTiles
-	incbin "../data/RinkSideTiles1.pak"		; $87C6B4-$87CAB9
+	incbin "../data/RinkSideTiles1.chr.pak"		; $87C6B4-$87CAB9
 TeamBlocksMap:		;93G TeamBlocks.map: per team (26) a 6 x 3 tile block map, 36 bytes each (team * 36 by $88F672, $8D84F4)
 	dw $0400,$0401,$0402,$0403,$0404,$0405,$0406,$0401,$0407,$0408,$0409,$040A,$040B,$040C,$040D,$040E,$0409,$040F		; $87CABA team 0
 	dw $0410,$0411,$0412,$0413,$0414,$0415,$0416,$0417,$0418,$0408,$0419,$041A,$041B,$041C,$041D,$041E,$041F,$040F		; $87CADE team 1
@@ -36,7 +36,8 @@ TeamBlocksMap:		;93G TeamBlocks.map: per team (26) a 6 x 3 tile block map, 36 by
 	dw $0449,$0564,$0565,$0566,$0567,$0568,$0569,$056A,$0451,$0435,$056B,$056C,$056D,$056E,$056F,$0570,$0571,$043D		; $87CDF6 team 23
 	dw $0572,$0573,$0574,$0575,$0576,$0577,$0578,$0579,$0407,$057A,$057B,$057C,$057D,$057E,$057F,$0580,$0581,$0582		; $87CE1A team 24
 	dw $0583,$0584,$0585,$0586,$0587,$0588,$0589,$058A,$058B,$058C,$058D,$058E,$058F,$0590,$0591,$0592,$0593,$0594		; $87CE3E team 25
-DrawFrame:		;auto: CODE_87CE62 (from addframe). SNES: as DrawFrameHi (bank85_F000) for frames below $293 with 4-byte pieces (x, y signed bytes, tile, attributes); sprnodraw skips the upload; a full cache shortens sprslotlife first
+DrawFrame:		;auto: CODE_87CE62 (from addframe). SNES: as DrawFrameHi (bank85_F000) for frames below $293 with 4-byte pieces (x, y signed bytes, tile, attributes); sprnodraw skips the upload; a full
+		;   cache shortens sprslotlife first
 	lda.b farptr+1		; $87CE62: A5 0D
 	sta.b sprtileptr+1		; $87CE64: 85 10
 	lda.b farptr		; $87CE66: A5 0C

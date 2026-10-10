@@ -4,7 +4,8 @@ org $87F000
 	incbin "../data/Sprites/set06.chr":$1C17..$2000		; $87F000-$87F3E8
 SpriteSet6End:
 	assert SpriteSet6End-SpriteSet6 == $1E4+256*32
-RestoreReplayFrame:		;auto: CODE_87F3E9. 93G RestoreReplayFrame (hockey93_02): replay frame record [a4] back into the objects (x, y 12 bits, frame, flip bits), rostnum/position pairs, puck and shadow z, lastsfx, d7 = frame delay, PadControlBits, crowdframe, glovecords, PBnum, Hpos/Vpos (not when sfscrl)
+RestoreReplayFrame:		;auto: CODE_87F3E9. 93G RestoreReplayFrame (hockey93_02): replay frame record [a4] back into the objects (x, y 12 bits, frame, flip bits), rostnum/position pairs, puck and
+		;   shadow z, lastsfx, d7 = frame delay, PadControlBits, crowdframe, glovecords, PBnum, Hpos/Vpos (not when sfscrl)
 	stx.b xsave		; $87F3E9: 86 0A
 	ldx.w #$0000		; $87F3EB: A2 00 00
 .pushd:
@@ -190,7 +191,7 @@ RestoreReplayFrame:		;auto: CODE_87F3E9. 93G RestoreReplayFrame (hockey93_02): r
 PixelRemap87:		;SNES: 4bpp pixel value remap for 4 tiles of the $88872E data (setupice via $8FE0E4): colours 0-3 only
 	db $00,$03,$04,$03		; $87F55A
 RinkSideTiles2:		;packed tiles (117: crowd, boards and bench pieces) sent to vram by setupice
-	incbin "../data/RinkSideTiles2.pak"		; $87F55E-$87FF77
+	incbin "../data/RinkSideTiles2.chr.pak"		; $87F55E-$87FF77
 assepen:		;auto: CODE_87FF78 (asstab $A). 93G assepen (logic93_2): player X leaves the penalty box: PBnum - $10/1, onto the ice at x $88, SPAwallleft; then out of the area (assexit)
 	lda.w pflags,x		; $87FF78: BD DF 0E
 	bit.w #pfna		; $87FF7B: 89 02 00

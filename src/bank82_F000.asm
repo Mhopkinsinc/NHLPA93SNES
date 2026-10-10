@@ -3,7 +3,8 @@
 ; and SNES helpers: the SPC700 uploads and the sound queue, muls32, textmap dirty marks, inline string far calls, trampolines.
 ; Starts after the packed rink tiles (boundary moved from $82F000). Ends with $FF fill.
 org $82F93C
-SetPA2:		;auto: CODE_82F93C. 93G SetPA2 (penalty93_1): next frame/delay pair of the ref animation from the PenaltyList entry of RefPen. A negative pair is the last one (RefStep = -1). RefCnt = delay*8, then PushRef
+SetPA2:		;auto: CODE_82F93C. 93G SetPA2 (penalty93_1): next frame/delay pair of the ref animation from the PenaltyList entry of RefPen. A negative pair is the last one (RefStep = -1). RefCnt =
+		;   delay*8, then PushRef
 	phx		; $82F93C: DA
 	stx.b xsave		; $82F93D: 86 0A
 	ldx.w #$0000		; $82F93F: A2 00 00
@@ -488,7 +489,8 @@ muls32:		;auto: CODE_82FCDB. 68k muls.w with a 32-bit result: A/mulres = low wor
 	clc		; $82FD15: 18
 .rtl:
 	rtl		; $82FD16: 6B
-addframe_hi:		;auto: CODE_82FD17. SNES addframe path for sprframe >= $293: find the frame set in the table at $8FE67D (sprframe -= set size, sprsetofs += set offset) and draw it ($85FBB9); lower frames go to $87D1FE
+addframe_hi:		;auto: CODE_82FD17. SNES addframe path for sprframe >= $293: find the frame set in the table at $8FE67D (sprframe -= set size, sprsetofs += set offset) and draw it ($85FBB9); lower
+		;   frames go to $87D1FE
 	lda.b sprframe		; $82FD17: A5 C3
 	cmp.w #$0293		; $82FD19: C9 93 02
 	bcs .hi		; $82FD1C: B0 04
@@ -585,7 +587,8 @@ appendz:		;auto: CODE_82FDD3. SNES: like printz8B, for appstring $8F87C9 (append
 	adc.b $01,s		; $82FDDF: 63 01
 	sta.b $01,s		; $82FDE1: 83 01
 	jml.l $8F87C9		; $82FDE3: 5C C9 87 8F  bank $8F: appstring
-asscentero:		;auto: CODE_82FDE7 (asstab 6). 93G asscentero (logic93_3): player X is the center on offense. Every aidef frames: acenterd when the other team has the puck, else a random spot in the zone of the puck (.dedata), skateto with EvadePC
+asscentero:		;auto: CODE_82FDE7 (asstab 6). 93G asscentero (logic93_3): player X is the center on offense. Every aidef frames: acenterd when the other team has the puck, else a random spot in the
+		;   zone of the puck (.dedata), skateto with EvadePC
 	lda.w pfalock,x		; $82FDE7: BD 7F 11  anim locked: nothing
 	beq .clk		; $82FDEA: F0 03
 	jmp.w .rtl		; $82FDEC: 4C 15 FF

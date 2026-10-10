@@ -56,8 +56,8 @@ AllStarsEast:		;93G AllStarsEast (TeamList 24)
 	dw .ls-.0		; $83806E LineSets
 	dw .sr-.0		; $838070 ScoutReport
 	dw .sodds-.0		; $838072 ScoreOdds
-.pad:	incbin "../data/Pals/ASEh.pal"		; $838074 home colours (SNES BGR555, 16 colours)
-	incbin "../data/Pals/ASEv.pal"		; $838094 visitor colours
+.pad:	incbin "../data/Pals/ASEh.snespal"		; $838074 home colours (SNES BGR555, 16 colours)
+	incbin "../data/Pals/ASEv.snespal"		; $838094 visitor colours
 .sr:	%hex2($7020,$00D6,$9999,$9099)		; $8380B4 uupu,uuuu,skpd,cfgo
 .sodds:	db 216,160		; $8380BC
 .ls:		;-G,LD,RD,LW,-C,RW,XA,00
@@ -102,8 +102,8 @@ AllStarsWest:		;93G AllStarsWest (TeamList 25)
 	dw .ls-.0		; $8382FC LineSets
 	dw .sr-.0		; $8382FE ScoutReport
 	dw .sodds-.0		; $838300 ScoreOdds
-.pad:	incbin "../data/Pals/ASWh.pal"		; $838302 home colours (SNES BGR555, 16 colours)
-	incbin "../data/Pals/ASWv.pal"		; $838322 visitor colours
+.pad:	incbin "../data/Pals/ASWh.snespal"		; $838302 home colours (SNES BGR555, 16 colours)
+	incbin "../data/Pals/ASWv.snespal"		; $838322 visitor colours
 .sr:	%hex2($7020,$00C7,$9999,$9099)		; $838342 uupu,uuuu,skpd,cfgo
 .sodds:	db 173,224		; $83834A
 .ls:		;-G,LD,RD,LW,-C,RW,XA,00
@@ -148,8 +148,8 @@ Boston:		;93G Boston (TeamList 0)
 	dw .ls-.0		; $838591 LineSets
 	dw .sr-.0		; $838593 ScoutReport
 	dw .sodds-.0		; $838595 ScoreOdds
-.pad:	incbin "../data/Pals/BOSh.pal"		; $838597 home colours (SNES BGR555, 16 colours)
-	incbin "../data/Pals/BOSv.pal"		; $8385B7 visitor colours
+.pad:	incbin "../data/Pals/BOSh.snespal"		; $838597 home colours (SNES BGR555, 16 colours)
+	incbin "../data/Pals/BOSv.snespal"		; $8385B7 visitor colours
 .sr:	%hex2($3311,$21E6,$6766,$6756)		; $8385D7 uupu,uuuu,skpd,cfgo
 .sodds:	db 197,34		; $8385DF
 .ls:		;-G,LD,RD,LW,-C,RW,XA,00
@@ -196,8 +196,8 @@ Buffalo:		;93G Buffalo (TeamList 1)
 	dw .ls-.0		; $838839 LineSets
 	dw .sr-.0		; $83883B ScoutReport
 	dw .sodds-.0		; $83883D ScoreOdds
-.pad:	incbin "../data/Pals/BUFh.pal"		; $83883F home colours (SNES BGR555, 16 colours)
-	incbin "../data/Pals/BUFv.pal"		; $83885F visitor colours
+.pad:	incbin "../data/Pals/BUFh.snespal"		; $83883F home colours (SNES BGR555, 16 colours)
+	incbin "../data/Pals/BUFv.snespal"		; $83885F visitor colours
 .sr:	%hex2($5522,$22D8,$2442,$3933)		; $83887F uupu,uuuu,skpd,cfgo
 .sodds:	db 101,80		; $838887
 .ls:		;-G,LD,RD,LW,-C,RW,XA,00
@@ -244,8 +244,8 @@ Calgary:		;93G Calgary (TeamList 2)
 	dw .ls-.0		; $838AEC LineSets
 	dw .sr-.0		; $838AEE ScoutReport
 	dw .sodds-.0		; $838AF0 ScoreOdds
-.pad:	incbin "../data/Pals/CGYh.pal"		; $838AF2 home colours (SNES BGR555, 16 colours)
-	incbin "../data/Pals/CGYv.pal"		; $838B12 visitor colours
+.pad:	incbin "../data/Pals/CGYh.snespal"		; $838AF2 home colours (SNES BGR555, 16 colours)
+	incbin "../data/Pals/CGYv.snespal"		; $838B12 visitor colours
 .sr:	%hex2($6622,$11D8,$4334,$4823)		; $838B32 uupu,uuuu,skpd,cfgo
 .sodds:	db 196,0		; $838B3A
 .ls:		;-G,LD,RD,LW,-C,RW,XA,00

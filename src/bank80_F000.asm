@@ -1,109 +1,13 @@
-; $80ED38-$80FFFF  ROM $06D38-$07FFF: the packed block at $80ED38, adda43 (hockey93_02), setlccords, startpause, ReadPads,
+; $80ED38-$80FFFF  ROM $06D38-$07FFF: RonBarrMap (packed), adda43 (hockey93_02), setlccords, startpause, ReadPads,
 ; asspuckc (logic93_3), SuperDiv, randomd0s, assgoalie, ClampYPosition, AdjustFacingDirection, GoalieSaveList (logic93_3),
 ; checkgoalp_CalcGoalShotDir, CalcAngleOffset (logic93_1), reenergizeteam (penalty93_2), the internal header and the vectors.
-; Starts at the packed block (boundary moved from $80F008).
+; Starts at RonBarrMap (boundary moved from $80F008).
 org $80ED38
-PackedScreenData:		;packed data (1590 bytes, $80ED38-$80F36D) for the decompressor at $86FA3E: bank $8F ($8FDD22) unpacks it to $7F0000 and sends the colors from $7F0090 to CGRAM. Stream of control bytes: $00-$1F literal run, $2x zero fill, $3x byte fill, $40-$7F/$8x-$Bx/$C0-$DF/$Ex/$Fx copies from the output, $E0 $00 = end
-	db $20,$09,$0C,$01,$0C,$02,$0C,$03,$0C,$04,$0C,$05,$DD,$0A,$06,$0C		; $80ED38
-	db $07,$0C,$08,$0C,$09,$0C,$0A,$0C,$0B,$30,$0C,$02,$0D,$0C,$0E,$80		; $80ED48
-	db $10,$0A,$0F,$0C,$10,$0C,$11,$0C,$12,$0C,$13,$0C,$14,$82,$10,$0A		; $80ED58
-	db $15,$0C,$16,$0C,$17,$0C,$18,$0C,$19,$0C,$1A,$82,$10,$0A,$1B,$0C		; $80ED68
-	db $1C,$0C,$1D,$0C,$1E,$0C,$1F,$0C,$20,$82,$10,$0A,$21,$0C,$22,$0C		; $80ED78
-	db $23,$0C,$24,$0C,$25,$0C,$26,$80,$10,$1A,$27,$0C,$28,$0C,$29,$0C		; $80ED88
-	db $2A,$0C,$2B,$0C,$2C,$0C,$2D,$0C,$2E,$0C,$2F,$0C,$30,$0C,$31,$0C		; $80ED98
-	db $32,$0C,$33,$0C,$34,$DD,$0C,$35,$0C,$36,$0C,$37,$0C,$38,$0C,$39		; $80EDA8
-	db $0C,$3A,$0C,$3B,$DD,$05,$3C,$0C,$F2,$7F,$E4,$7F,$21,$0F,$84,$10		; $80EDB8
-	db $29,$25,$AD,$35,$52,$4A,$D6,$5A,$7B,$6F,$FF,$7F,$FF,$03,$20,$00		; $80EDC8
-	db $7C,$20,$00,$6C,$20,$00,$58,$20,$00,$48,$20,$0E,$34,$F2,$7F,$7B		; $80EDD8
-	db $6F,$52,$4A,$29,$25,$84,$10,$5B,$02,$B6,$01,$21,$00,$84,$80,$14		; $80EDE8
-	db $02,$24,$01,$80,$20,$02,$36,$01,$0D,$20,$0D,$B6,$35,$2D,$11,$F2		; $80EDF8
-	db $7F,$FF,$7F,$D6,$5A,$52,$4A,$AD,$35,$81,$24,$21,$01,$84,$34,$20		; $80EE08
-	db $0A,$24,$80,$24,$4D,$5A,$CD,$6E,$6D,$7F,$3F,$25,$20,$01,$10,$F2		; $80EE18
-	db $80,$5E,$81,$5C,$83,$5A,$02,$20,$49,$09,$20,$00,$0D,$20,$00,$12		; $80EE28
-	db $20,$00,$96,$20,$08,$3B,$11,$5B,$36,$DF,$4A,$7F,$5B,$ED,$80,$20		; $80EE38
-	db $9C,$80,$BB,$BF,$20,$06,$FF,$7F,$80,$40,$80,$5F,$9F,$4E,$00,$FF		; $80EE48
-	db $20,$8B,$02,$50,$59,$61,$47,$9B,$1F,$05,$FE,$FC,$F8,$F0,$E2,$C1		; $80EE58
-	db $87,$1A,$05,$FC,$01,$F0,$07,$C0,$1E,$84,$20,$07,$C0,$C0,$39,$38		; $80EE68
-	db $FF,$8A,$8C,$38,$DD,$4A,$00,$C0,$21,$00,$06,$21,$01,$70,$03,$20		; $80EE78
-	db $00,$3F,$84,$20,$05,$3F,$CF,$03,$BB,$03,$7F,$86,$3C,$E0,$17,$02		; $80EE88
-	db $F0,$03,$C4,$20,$00,$80,$E4,$59,$86,$80,$01,$1F,$5F,$8B,$7E,$07		; $80EE98
-	db $1F,$A0,$01,$FE,$FD,$02,$05,$06,$CC,$4E,$00,$FE,$20,$00,$FC,$20		; $80EEA8
-	db $00,$F8,$88,$02,$87,$DA,$8F,$E0,$E6,$C8,$02,$FE,$FE,$FC,$4A,$03		; $80EEB8
-	db $FF,$F8,$FF,$F0,$81,$14,$80,$44,$00,$01,$4A,$00,$F8,$20,$00,$F0		; $80EEC8
-	db $20,$02,$C4,$83,$87,$20,$00,$07,$20,$00,$3E,$20,$09,$E5,$03,$C6		; $80EED8
-	db $20,$BF,$20,$30,$4F,$80,$3C,$20,$00,$7F,$80,$57,$00,$C1,$20,$07		; $80EEE8
-	db $1F,$1F,$3F,$1F,$7F,$3F,$FF,$EC,$20,$00,$5F,$20,$04,$82,$01,$98		; $80EEF8
-	db $78,$07,$80,$38,$02,$F2,$3F,$63,$60,$00,$F3,$20,$00,$A0,$20,$01		; $80EF08
-	db $7F,$07,$33,$FF,$03,$F3,$FF,$E3,$0E,$20,$04,$10,$09,$01,$01,$F4		; $80EF18
-	db $20,$07,$FA,$04,$85,$7A,$05,$FA,$FB,$FC,$20,$02,$FF,$06,$FF,$E3		; $80EF28
-	db $6F,$44,$1C,$9F,$07,$5F,$03,$07,$9B,$B7,$89,$1B,$45,$5B,$64,$9F		; $80EF38
-	db $20,$AD,$22,$07,$60,$03,$A0,$03,$E0,$01,$C0,$81,$E0,$80,$E0,$C0		; $80EF48
-	db $48,$00,$F0,$3C,$FF,$00,$7F,$8B,$BE,$00,$7F,$20,$87,$FA,$4C,$89		; $80EF58
-	db $FC,$4A,$80,$D2,$8A,$02,$00,$F0,$80,$D4,$89,$02,$00,$3F,$20,$02		; $80EF68
-	db $9F,$40,$5F,$80,$C4,$0A,$5E,$01,$1F,$40,$59,$46,$7C,$47,$7F,$FF		; $80EF78
-	db $3F,$89,$02,$03,$FC,$C0,$FF,$80,$80,$74,$04,$FC,$03,$31,$CF,$8F		; $80EF88
-	db $DC,$01,$7F,$FF,$E0,$0D,$3B,$FF,$0A,$F3,$FC,$8F,$70,$F8,$07,$02		; $80EF98
-	db $FF,$E6,$FF,$0C,$E0,$D5,$00,$C0,$20,$36,$FF,$02,$E7,$FF,$0F,$72		; $80EFA8
-	db $00,$DF,$20,$00,$D7,$49,$02,$57,$80,$97,$20,$02,$87,$10,$CF,$CC		; $80EFB8
-	db $04,$08,$E0,$F0,$E0,$F8,$4E,$00,$F0,$49,$80,$D2,$8A,$73,$00,$7F		; $80EFC8
-	db $80,$D4,$00,$3F,$88,$02,$85,$B8,$03,$F9,$FC,$F8,$FD,$C8,$40,$84		; $80EFD8
-	db $B8,$01,$06,$FA,$48,$00,$07,$4A,$00,$B0,$20,$17,$A4,$08,$B6,$18		; $80EFE8
-	db $ED,$86,$70,$04,$B0,$80,$7F,$C0,$BF,$CF,$7F,$FF,$70,$FF,$67,$FF		; $80EFF8
-	db $78,$FE,$FA,$FD,$83,$57,$02,$7E,$60,$46,$20,$17,$25,$42,$F5,$02		; $80F008
-	db $95,$02,$C5,$12,$95,$12,$F5,$12,$FF,$FF,$1F,$BF,$8F,$DF,$0F,$1F		; $80F018
-	db $2F,$5D,$EF,$FD,$4A,$0A,$2F,$30,$E8,$C0,$55,$06,$5E,$21,$46,$31		; $80F028
-	db $66,$20,$05,$32,$02,$8F,$30,$C0,$FF,$20,$09,$F7,$83,$EF,$80,$E1		; $80F038
-	db $91,$EA,$DF,$FF,$FD,$30,$FF,$02,$1F,$08,$93,$20,$00,$63,$20,$11		; $80F048
-	db $E0,$80,$22,$80,$60,$06,$A2,$46,$4A,$EE,$F0,$F8,$78,$FC,$B8,$FC		; $80F058
-	db $79,$FF,$48,$00,$F9,$49,$01,$F1,$FF,$E5,$B6,$C0,$40,$01,$BF,$BF		; $80F068
-	db $D9,$E3,$BA,$00,$80,$4A,$00,$3F,$E0,$90,$01,$FE,$FC,$48,$02,$FF		; $80F078
-	db $FD,$FC,$C4,$30,$FE,$32,$FF,$00,$03,$4D,$01,$01,$FE,$C4,$20,$48		; $80F088
-	db $11,$38,$4F,$90,$4F,$1C,$C7,$09,$C6,$2C,$62,$25,$61,$B2,$F3,$BB		; $80F098
-	db $9B,$BF,$F8,$49,$19,$FC,$BF,$FF,$9F,$FF,$9E,$FF,$0C,$FF,$84,$7F		; $80F0A8
-	db $64,$C3,$68,$C7,$B5,$8E,$C8,$98,$83,$08,$B5,$86,$A4,$99,$5F,$20		; $80F0B8
-	db $0A,$FF,$7C,$FF,$7E,$FF,$FF,$27,$FF,$70,$FC,$78,$D9,$10,$BF,$FF		; $80F0C8
-	db $86,$1F,$CC,$07,$E3,$07,$89,$DB,$59,$C4,$3C,$80,$A8,$90,$FA,$20		; $80F0D8
-	db $03,$FF,$FE,$FF,$FC,$81,$20,$02,$3B,$FF,$7F,$49,$04,$FD,$FF,$E9		; $80F0E8
-	db $CC,$AB,$49,$05,$6A,$8C,$49,$8C,$CB,$0F,$48,$03,$8F,$0B,$F3,$FF		; $80F0F8
-	db $4C,$00,$F2,$58,$00,$FC,$4A,$80,$BA,$81,$BB,$47,$81,$B8,$81,$98		; $80F108
-	db $4F,$38,$FF,$E0,$C3,$50,$88,$1C,$00,$FE,$20,$00,$FC,$20,$14,$BB		; $80F118
-	db $9B,$ED,$CD,$CA,$CE,$C0,$C6,$E3,$E5,$B1,$E2,$40,$83,$D0,$11,$84		; $80F128
-	db $7F,$C2,$3F,$C1,$49,$05,$C0,$1F,$80,$0F,$20,$1F,$C4,$07,$FF,$C0		; $80F138
-	db $A7,$90,$80,$AF,$0E,$13,$20,$06,$0F,$CF,$0F,$E3,$03,$98,$40,$20		; $80F148
-	db $07,$DF,$4F,$E0,$50,$FF,$EF,$FF,$F0,$49,$18,$7C,$FF,$3F,$FF,$FC		; $80F158
-	db $30,$EC,$30,$3E,$88,$4E,$90,$1C,$E0,$80,$81,$05,$01,$54,$29,$03		; $80F168
-	db $FB,$C3,$07,$77,$80,$20,$00,$1F,$80,$DE,$00,$FE,$49,$11,$17,$1B		; $80F178
-	db $13,$1B,$6B,$73,$F3,$E3,$03,$E3,$2D,$C3,$16,$C1,$23,$94,$E3,$FC		; $80F188
-	db $48,$02,$83,$FC,$03,$49,$01,$01,$F8,$20,$02,$F8,$08,$F8,$3B,$FF		; $80F198
-	db $01,$DF,$3F,$8A,$BC,$20,$00,$1F,$20,$01,$5F,$9F,$4A,$07,$5E,$9F		; $80F1A8
-	db $59,$9E,$47,$98,$5F,$80,$48,$85,$BA,$00,$F8,$20,$00,$E0,$4B,$05		; $80F1B8
-	db $F7,$F8,$DF,$E0,$BF,$C0,$87,$F4,$00,$F0,$20,$00,$C0,$20,$00,$80		; $80F1C8
-	db $2A,$13,$C0,$08,$E0,$3A,$E0,$3D,$C2,$35,$E2,$08,$F1,$1E,$F0,$05		; $80F1D8
-	db $F8,$0E,$30,$0F,$10,$07,$48,$06,$18,$03,$1C,$03,$0C,$01,$0E,$20		; $80F1E8
-	db $00,$07,$20,$0A,$90,$4F,$6C,$23,$90,$31,$35,$8F,$01,$40,$57,$20		; $80F1F8
-	db $00,$8F,$20,$02,$40,$80,$3F,$80,$BA,$00,$0E,$83,$4B,$00,$F8,$59		; $80F208
-	db $08,$7F,$F0,$F1,$D3,$E0,$05,$C0,$9A,$F1,$21,$00,$89,$20,$00,$E3		; $80F218
-	db $20,$06,$02,$01,$FE,$FF,$FC,$FF,$38,$83,$20,$E1,$1C,$10,$FE,$53		; $80F228
-	db $3C,$97,$74,$07,$FC,$43,$8C,$8F,$70,$0F,$D8,$0F,$A0,$1F,$70,$20		; $80F238
-	db $01,$F0,$08,$48,$07,$E0,$38,$E0,$18,$C0,$30,$80,$70,$81,$A0,$02		; $80F248
-	db $0F,$FD,$03,$89,$D2,$00,$07,$20,$00,$01,$2C,$01,$FD,$FE,$48,$07		; $80F258
-	db $7D,$FE,$9D,$7E,$F5,$0E,$FD,$06,$4A,$00,$F8,$80,$77,$00,$78,$20		; $80F268
-	db $00,$18,$28,$81,$F4,$89,$02,$83,$F6,$4F,$E9,$50,$4B,$2F,$03,$F0		; $80F278
-	db $0F,$F8,$07,$49,$05,$03,$FC,$07,$FC,$01,$FE,$68,$01,$03,$07,$80		; $80F288
-	db $82,$4A,$00,$03,$49,$00,$01,$49,$14,$38,$40,$18,$A0,$06,$E8,$0E		; $80F298
-	db $F4,$1F,$E8,$3C,$D0,$7B,$A3,$FE,$42,$80,$3F,$C0,$1F,$F0,$80,$30		; $80F2A8
-	db $00,$F0,$20,$0B,$E1,$03,$C0,$07,$81,$0F,$2C,$02,$02,$09,$60,$17		; $80F2B8
-	db $20,$08,$5F,$C0,$5F,$E0,$8F,$D0,$C7,$58,$63,$E0,$45,$05,$F0,$0F		; $80F2C8
-	db $E0,$3F,$80,$3F,$20,$01,$1F,$80,$78,$05,$87,$F0,$0F,$F0,$1F,$E0		; $80F2D8
-	db $E0,$31,$58,$01,$A0,$7F,$68,$C4,$84,$A0,$00,$C0,$49,$00,$80,$4B		; $80F2E8
-	db $83,$D6,$4F,$00,$06,$2F,$89,$DC,$01,$40,$BF,$85,$40,$85,$46,$00		; $80F2F8
-	db $80,$8B,$DC,$00,$FF,$8F,$E0,$00,$FF,$20,$00,$FE,$58,$00,$01,$87		; $80F308
-	db $20,$81,$D4,$2B,$0B,$EE,$82,$EA,$06,$CA,$06,$82,$26,$05,$F1,$10		; $80F318
-	db $C3,$82,$20,$00,$1F,$49,$06,$3F,$01,$5F,$62,$0F,$60,$0F,$23,$0B		; $80F328
-	db $26,$41,$04,$62,$4A,$C5,$5D,$CE,$20,$D1,$61,$8D,$81,$20,$03,$83		; $80F338
-	db $F8,$81,$F8,$20,$00,$F0,$20,$04,$E0,$0E,$C0,$1E,$80,$83,$60,$00		; $80F348
-	db $7F,$58,$01,$80,$7F,$C6,$80,$8D,$E1,$8E,$82,$17,$28,$89,$DC,$01		; $80F358
-	db $01,$FE,$8F,$A0,$E0,$00		; $80F368
+RonBarrMap:		;93G RonBarrMap (RonBarr.map.jim): the Ron Barr picture of the scouting report, packed for DecompressGraphics (data/RonBarr.map.pak, 1590 bytes): unpacked an 8 x 9 map, 64 colours at
+		;   +$90, tiles at +$190 (loaded by $8FDD22)
+	incbin "../data/RonBarr.map.pak"		; $80ED38-$80F36D
+RonBarrMapEnd:
+	assert RonBarrMapEnd-RonBarrMap == $636
 adda43:		;auto: CODE_80F36E. 93G adda43 (hockey93_02): a4 += replaysize, wrapping from ReplayBufferEnd to ReplayBufferStart
 	lda.b a4		; $80F36E: A5 43
 	clc		; $80F370: 18
@@ -206,7 +110,8 @@ ReadPads:		;auto: CODE_80F3E8. SNES: once per frame (padvcount) read the 4 auto-
 	lda.w joypad4		; $80F454: AD 64 01
 	sta.w padlast1+6		; $80F457: 8D 6C 01
 	rtl		; $80F45A: 6B
-asspuckc:		;auto: CODE_80F45B (asstab $10). 93G asspuckc (logic93_3): player X is the puck carrier: every aioff frames checkob, chk4lc, chk4shot, chk4pass; skate to a postab spot (bank $8F) with .chkdir
+asspuckc:		;auto: CODE_80F45B (asstab $10). 93G asspuckc (logic93_3): player X is the puck carrier: every aioff frames checkob, chk4lc, chk4shot, chk4pass; skate to a postab spot (bank $8F) with
+		;   .chkdir
 	txa		; $80F45B: 8A  not the carrier: assexit
 	lsr a		; $80F45C: 4A
 	cmp.w puckc		; $80F45D: CD BB 0E
@@ -399,7 +304,8 @@ DecodePW:		;auto: CODE_80F5EA. 92G DecodePW: translate the password in PassWord 
 far8B8172:		;auto: CODE_80F5F2. far trampoline: $88F512 (font tile bases), then on at $8B8172
 	jsl.l $88F512		; $80F5F2: 22 12 F5 88  bank $88: font tile bases
 	jml.l $8B8172		; $80F5F6: 5C 72 81 8B  bank $8B
-SuperDiv:		;auto: CODE_80F5FA. 92G SuperDiv: passbits (128 bits) / d0: quotient in passbits, remainder in d0. Shift-subtract over 128 bits with the divisor in mula+0..+16 and the remainder in mulres+0..+14
+SuperDiv:		;auto: CODE_80F5FA. 92G SuperDiv: passbits (128 bits) / d0: quotient in passbits, remainder in d0. Shift-subtract over 128 bits with the divisor in mula+0..+16 and the remainder in
+		;   mulres+0..+14
 	phx		; $80F5FA: DA  remainder = passbits, divisor = d0 << 128
 	ldx.w #$000E		; $80F5FB: A2 0E 00
 .init:
@@ -492,7 +398,8 @@ randomd0s:		;auto: CODE_80F6A1. 93G randomd0s: A = random -A..A (randoma of 2A, 
 	sbc.b tmp0		; $80F6A9: E5 73
 	clc		; $80F6AB: 18
 	rtl		; $80F6AC: 6B
-assgoalie:		;auto: CODE_80F6AD (asstab $E). 93G assgoalie (logic93_3): goalie X. Skate back to the crease, hold/pass the puck, cover a loose puck, follow the puck and lead it, saves (GoalieSaveList), hug the post, rush a loose puck (agoalietopuck)
+assgoalie:		;auto: CODE_80F6AD (asstab $E). 93G assgoalie (logic93_3): goalie X. Skate back to the crease, hold/pass the puck, cover a loose puck, follow the puck and lead it, saves
+		;   (GoalieSaveList), hug the post, rush a loose puck (agoalietopuck)
 	lda.w pfalock,x		; $80F6AD: BD 7F 11  anim locked: nothing
 	beq .go		; $80F6B0: F0 03
 	jmp.w .rtl		; $80F6B2: 4C D0 F8
@@ -1352,7 +1259,8 @@ AdjustFacingDirection:		;auto: CODE_80FD05. 93G AdjustFacingDirection (logic93_3
 	rtl		; $80FD6F: 6B
 GoalieSaveList:		;93G GoalieSaveList (logic93_3): save anims by index: glove 0/1, stack 2/3, stick 4/5
 	dw SPAgglover,SPAgglovel,SPAgstackr,SPAgstackl,SPAgstickr,SPAgstickl		; $80FD70
-checkgoalp_CalcGoalShotDir:		;auto: CODE_80FD7C. 93G checkgoalp_CalcGoalShotDir (logic93_1): if the opposing goalie covers the middle of the net, passdir 2 or 6 to shoot at the open side, else 0. Skipped for joystick players
+checkgoalp_CalcGoalShotDir:		;auto: CODE_80FD7C. 93G checkgoalp_CalcGoalShotDir (logic93_1): if the opposing goalie covers the middle of the net, passdir 2 or 6 to shoot at the open side, else 0.
+		;   Skipped for joystick players
 	lda.w pflags,x		; $80FD7C: BD DF 0E  joystick player: skip
 	bit.w #pfjoycon		; $80FD7F: 89 08 00
 	beq .go		; $80FD82: F0 03

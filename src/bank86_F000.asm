@@ -6,7 +6,8 @@ org $86F000
 BootSamplesEnd:
 	assert BootSamplesEnd-BootSamples == BOOTSAMPLESIZE
 	dw $0000, SPCDRIVER		; $86FA3A end block: length 0, start the driver at $0400
-DecompressGraphics:		;auto: CODE_86FA3E. SNES: unpack the stream at [tmp0] to $7F0000 (output pointer tmp1+1..+3, copy distance tmp2+2). Control byte: $00-$1F copy n+1 bytes; $2x n+1 zeros; $3x n+3 times the next byte; $40-$7F, $8x, $9x, $Ax, $Bx copy from earlier output going up; $C0-$DF, $Ex, $Fx going down; $E0 $00 ends
+DecompressGraphics:		;auto: CODE_86FA3E. SNES: unpack the stream at [tmp0] to $7F0000 (output pointer tmp1+1..+3, copy distance tmp2+2). Control byte: $00-$1F copy n+1 bytes; $2x n+1 zeros; $3x n+3
+		;   times the next byte; $40-$7F, $8x, $9x, $Ax, $Bx copy from earlier output going up; $C0-$DF, $Ex, $Fx going down; $E0 $00 ends
 	stz.b tmp1+1		; $86FA3E: 64 76
 	lda.w #TestList>>16		; $86FA40: A9 7F 00
 	sta.b tmp1+3		; $86FA43: 85 78
@@ -315,7 +316,8 @@ setteams:		;auto: CODE_86FC29. 93G setteams (hockey93_06) with InitTeamSructure:
 	lda.l TeamList,x		; $86FC4B: BF 00 80 83
 	sta.w tmdata+2		; $86FC4F: 8D D0 13
 	rtl		; $86FC52: 6B
-ProcessInputWithRepeat:		;auto: CODE_86FC53. 93G ProcessInputWithRepeat (middle93_1): nodiag (nullrtl85), then key repeat: a change (d2) resets the delay to 15 frames; while the same buttons stay held, every 4 frames d1 = held buttons (d3)
+ProcessInputWithRepeat:		;auto: CODE_86FC53. 93G ProcessInputWithRepeat (middle93_1): nodiag (nullrtl85), then key repeat: a change (d2) resets the delay to 15 frames; while the same buttons stay
+		;   held, every 4 frames d1 = held buttons (d3)
 	jsl.l nullrtl85		; $86FC53: 22 96 FF 85
 	lda.b d3		; $86FC57: A5 5F
 	beq .rtl		; $86FC59: F0 13
@@ -391,7 +393,8 @@ lcfound2:		;auto: CODE_86FCB7. 93G lcfound2 (logic93_1): close the line change b
 	jsl.l $8D847C		; $86FCDB: 22 7C 84 8D  bank $8D: 92G eraser
 .ps:
 	jml.l $89E95D		; $86FCDF: 5C 5D E9 89  bank $89: 93G printscores1
-PickStartingGoalie:		;auto: CODE_86FCE3. SNES: tmgoalie of team a2 = 0 ($8B807D); a computer team in the later playoff rounds (gamelevel >= 2, line changes on) picks the goalie by its scouting report ($8FF4D8, $8FE3B0)
+PickStartingGoalie:		;auto: CODE_86FCE3. SNES: tmgoalie of team a2 = 0 ($8B807D); a computer team in the later playoff rounds (gamelevel >= 2, line changes on) picks the goalie by its scouting
+		;   report ($8FF4D8, $8FE3B0)
 	stx.b xsave		; $86FCE3: 86 0A
 	ldx.w #$0000		; $86FCE5: A2 00 00
 .pushd:

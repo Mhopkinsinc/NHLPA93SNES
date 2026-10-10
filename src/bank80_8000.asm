@@ -3,7 +3,8 @@
 ; X = SCnum*2 of the current object (93G a3). Out-of-bank or later-segment calls keep their address with the 93G name in the comment.
 org $808000
 
-Start:		;auto: CODE_808000. 93G main93 Start + hockey93_01 Begin (RAM clear). Reset vector. Native mode, stack $1FFF, D=0, DB=$00; clears DP/RAM, sets vbint/hbint, inits the sprite tile cache, checks the ROM sum, inits hardware/sound, then the title screen
+Start:		;auto: CODE_808000. 93G main93 Start + hockey93_01 Begin (RAM clear). Reset vector. Native mode, stack $1FFF, D=0, DB=$00; clears DP/RAM, sets vbint/hbint, inits the sprite tile cache,
+		;   checks the ROM sum, inits hardware/sound, then the title screen
 	sei		; $808000: 78  interrupts off
 	clc		; $808001: 18
 	xce		; $808002: FB  native mode

@@ -2,7 +2,8 @@
 ; (penalty93_1), checkplcoll, checkcx, newcheck, checkint, FallDown, checkcheck (hockey93_03), checkfight, SetInst (hockey93_04),
 ; doinput, faceoffinput, holdplayer (logic93_1). Starts at checkgoal (boundary moved from $80D002), ends before setpads.
 org $80CEE7
-checkgoal:		;auto: CODE_80CEE7. 93G checkgoal (hockey93_04): collision with the goal/net. a2 = goal object, X = object, d2/d3 = x/y. Not the puck: checkgoalp. Puck in the goal area: over the top (Zvel), through the mouth (Goal), off a post (deflect) or off the side/back (wallcoll)
+checkgoal:		;auto: CODE_80CEE7. 93G checkgoal (hockey93_04): collision with the goal/net. a2 = goal object, X = object, d2/d3 = x/y. Not the puck: checkgoalp. Puck in the goal area: over the top
+		;   (Zvel), through the mouth (Goal), off a post (deflect) or off the side/back (wallcoll)
 	lda.w Zpos,x		; $80CEE7: BD 9F 09  Zpos > 13 (goal height): over the goal
 	sec		; $80CEEA: 38
 	sbc.w #$000D		; $80CEEB: E9 0D 00
@@ -358,7 +359,8 @@ addteamstat:		;auto: CODE_80D16F. add d0 to the team word stat at d1 (+2 for tea
 	adc.b d0		; $80D17C: 65 53
 	sta.w $0000,y		; $80D17E: 99 00 00
 	rtl		; $80D181: 6B
-Goal:		;auto: CODE_80D182. 93G Goal (hockey93_04): puck in the goal. Score +1 for the scoring team (a2, a1 = the other team), siren, ScoreSum entry, goal counts, PenGoalStuff, printscores1, ascore for the scorers, puck into the net, siren SPA and PenGoal
+Goal:		;auto: CODE_80D182. 93G Goal (hockey93_04): puck in the goal. Score +1 for the scoring team (a2, a1 = the other team), siren, ScoreSum entry, goal counts, PenGoalStuff, printscores1, ascore
+		;   for the scorers, puck into the net, siren SPA and PenGoal
 	lda.w gmclock		; $80D182: AD 8A 12  clock stopped: no goal
 	beq .go		; $80D185: F0 03
 	jmp.w .rtl		; $80D187: 4C 28 D3
@@ -549,7 +551,8 @@ Goal:		;auto: CODE_80D182. 93G Goal (hockey93_04): puck in the goal. Score +1 fo
 	plx		; $80D327: FA
 .rtl:
 	rtl		; $80D328: 6B
-PenGoalStuff:		;auto: CODE_80D329. 93G PenGoalStuff (penalty93_1): after a goal. a1 = scored on team, a2 = scoring team. If the scoring team had more players on the ice, release the first scored on player in the box without a coincidental penalty
+PenGoalStuff:		;auto: CODE_80D329. 93G PenGoalStuff (penalty93_1): after a goal. a1 = scored on team, a2 = scoring team. If the scoring team had more players on the ice, release the first scored on
+		;   player in the box without a coincidental penalty
 	stx.b xsave		; $80D329: 86 0A
 	ldx.w #$0000		; $80D32B: A2 00 00
 .pushd:
@@ -764,7 +767,8 @@ checkgoalp:		;auto: CODE_80D3D3. 93G checkgoalp (hockey93_04): player X collisio
 	sta.b d3		; $80D4C2: 85 5F
 .rtl:
 	rtl		; $80D4C4: 6B
-CheckBump:		;auto: CODE_80D4C5. 93G CheckBump (hockey93_04): goalie X against the net a2 with the puck near (1 in 32): if moving faster than $2000, bump the net (Xvel/Yvel / 4), stop and call PenGhold
+CheckBump:		;auto: CODE_80D4C5. 93G CheckBump (hockey93_04): goalie X against the net a2 with the puck near (1 in 32): if moving faster than $2000, bump the net (Xvel/Yvel / 4), stop and call
+		;   PenGhold
 	stx.b xsave		; $80D4C5: 86 0A
 	ldx.w #$0000		; $80D4C7: A2 00 00
 .push:
@@ -955,7 +959,8 @@ checkplcoll:		;auto: CODE_80D573. 93G checkplcoll (hockey93_03): d2/d3 = x/y, X 
 	bne .down		; $80D62F: D0 B3
 .ex:
 	rtl		; $80D631: 6B
-checkcx:		;auto: CODE_80D632. 93G checkcx (hockey93_03): Y = object near X. Opposing players add impact and run newcheck, checkint, checkcheck and checkfight; then momentum moves from X to a2 (weights + 140, elasticity evalue)
+checkcx:		;auto: CODE_80D632. 93G checkcx (hockey93_03): Y = object near X. Opposing players add impact and run newcheck, checkint, checkcheck and checkfight; then momentum moves from X to a2
+		;   (weights + 140, elasticity evalue)
 	stx.b xsave		; $80D632: 86 0A
 	ldx.w #$0000		; $80D634: A2 00 00
 .push:
@@ -1347,7 +1352,8 @@ checkint:		;auto: CODE_80D88B. 93G checkint (hockey93_03): interference: goalie 
 	lda.w #PenInt		; $80D92B: A9 22 00
 	sta.b d0		; $80D92E: 85 53
 	jmp.w AddPenalty		; $80D930: 4C 8F C1
-FallDown:		;auto: CODE_80D933. 93G FallDown (hockey93_03): player a2 falls, X is the hitter. Stumble for some players, check stats, fall back/forward/third fall, injuries with a penalty and crowd sounds
+FallDown:		;auto: CODE_80D933. 93G FallDown (hockey93_03): player a2 falls, X is the hitter. Stumble for some players, check stats, fall back/forward/third fall, injuries with a penalty and crowd
+		;   sounds
 	ldy.b a2		; $80D933: A4 3B  players only, not fighting
 	cpy.w #$0018		; $80D935: C0 18 00
 	bcc .f1		; $80D938: 90 03
@@ -1753,7 +1759,8 @@ checkcheck:		;auto: CODE_80DB12. 93G checkcheck (hockey93_03): players in contac
 	jmp.w FallDown		; $80DC82: 4C 33 D9
 .list:		;check anim by direction
 	dw SPAshoulderchkl,SPAshoulderchkr,SPAhipchkr,SPAhipchkr,SPAhipchkr,SPAhipchkl,SPAhipchkl,SPAshoulderchkl		; $80DC85
-checkfight:		;auto: CODE_80DC95. 93G checkfight (hockey93_04): start of a fight between a2 and X. Both impact >= 10, no anim lock, no penalty, no goalie, clock running, no highlight, the puck not fighting or on a faceoff. SetInst both ways with d0 = 10 + max(0, 40 - ChkCnt)/4
+checkfight:		;auto: CODE_80DC95. 93G checkfight (hockey93_04): start of a fight between a2 and X. Both impact >= 10, no anim lock, no penalty, no goalie, clock running, no highlight, the puck not
+		;   fighting or on a faceoff. SetInst both ways with d0 = 10 + max(0, 40 - ChkCnt)/4
 	ldy.b a2		; $80DC95: A4 3B
 	lda.w impact,x		; $80DC97: BD 7F 0B
 	sec		; $80DC9A: 38
@@ -1995,7 +2002,8 @@ checkfight:		;auto: CODE_80DC95. 93G checkfight (hockey93_04): start of a fight 
 	sta.b d1		; $80DE81: 85 57
 	sta.w pf2aip,x		; $80DE83: 9D DF 11
 	jmp.w SetSPA		; $80DE86: 4C 06 B0
-SetInst:		;auto: CODE_80DE89. 93G SetInst (hockey93_04): d0 = fight rating X needs. If fightagg of X >= d0, of a2 >= 2 and >= $10 - 2 * a2 checks, set pf2fight on both. Then 92 style: an instigator penalty for a shoulder check
+SetInst:		;auto: CODE_80DE89. 93G SetInst (hockey93_04): d0 = fight rating X needs. If fightagg of X >= d0, of a2 >= 2 and >= $10 - 2 * a2 checks, set pf2fight on both. Then 92 style: an instigator
+		;   penalty for a shoulder check
 	lda.w fightagg,x		; $80DE89: BD DF 10
 	cmp.b d0		; $80DE8C: C5 53
 	bcc checkfight_rtl		; $80DE8E: 90 97

@@ -504,7 +504,8 @@ setsortcords:		;auto: CODE_80E439. 93G setsortcords (video93_2): addframe for th
 	cmp.w #OOlist+$10		; $80E48F: C9 6F 12
 	bne .top		; $80E492: D0 AA
 	rtl		; $80E494: 6B
-projxy:		;auto: CODE_80E495. SNES (93G addframe position math): rink d0/d1/d2 = x/y/z to screen: d0 = x - Hpos + 128, d1 = 112 - (y - Vpos + 1.5*z); d1 = OFFSCREEN when |x| or |y| > 144. Horizontal rink: x = -y, y = x - 197
+projxy:		;auto: CODE_80E495. SNES (93G addframe position math): rink d0/d1/d2 = x/y/z to screen: d0 = x - Hpos + 128, d1 = 112 - (y - Vpos + 1.5*z); d1 = OFFSCREEN when |x| or |y| > 144. Horizontal
+		;   rink: x = -y, y = x - 197
 	lda.w sfhormode		; $80E495: AD 8E 12
 	beq .nhor		; $80E498: F0 14
 	lda.b d0		; $80E49A: A5 53
@@ -695,7 +696,8 @@ setffo:		;auto: CODE_80E501. 93G setffo (video93_2): uppads, then draw the 5 obj
 	rtl		; $80E604: 6B
 ButtonLabelCharTable:		;93G ButtonLabelCharTable (video93_2): tile of the position letter in the pad label, by position 1-6
 	db $0B,$0B,$0C,$0A,$0D,$0E		; $80E605  tiles by position (index 1-6)
-uppads:		;auto: CODE_80E60B. 93G uppads (video93_2): gloves object from glovecords, and the 4 pad objects from the PadControlBits nibbles ($E = stays, $F = hidden); padcont = label code (position << 8 | rostnum)
+uppads:		;auto: CODE_80E60B. 93G uppads (video93_2): gloves object from glovecords, and the 4 pad objects from the PadControlBits nibbles ($E = stays, $F = hidden); padcont = label code (position <<
+		;   8 | rostnum)
 	ldy.w #$0008		; $80E60B: A0 08 00  gloves (ffo 4): hidden unless glovecords
 	lda.w #$FFFF		; $80E60E: A9 FF FF
 	sta.w ffoz,y		; $80E611: 99 28 01
@@ -824,7 +826,8 @@ chkatop:		;auto: CODE_80E6D6. 93G chkatop (penalty93_1): attack time of possessi
 	sta.w tmATOP,y		; $80E711: 99 CA 13
 .rtl:
 	rtl		; $80E714: 6B
-checkfornewpen:		;auto: CODE_80E715. 93G checkfornewpen (penalty93_1): new penalties in PenBuf. Stops play at once for penalties without minutes or when the guilty team has the puck, otherwise a delayed penalty call
+checkfornewpen:		;auto: CODE_80E715. 93G checkfornewpen (penalty93_1): new penalties in PenBuf. Stops play at once for penalties without minutes or when the guilty team has the puck, otherwise a
+		;   delayed penalty call
 	lda.w sfhormode		; $80E715: AD 8E 12  not in horizontal mode
 	beq .go		; $80E718: F0 03
 	jmp.w .rtl		; $80E71A: 4C DF E7
@@ -1234,7 +1237,8 @@ chkprogress:		;auto: CODE_80E99F. 93G chkprogress (penalty93_1): when the stop d
 	jsl.l $8F83A7		; $80EA3B: 22 A7 83 8F  bank $8F: 93G PushRef
 .rtl:
 	rtl		; $80EA3F: 6B
-InProgress:		;auto: CODE_80EA40. 93G InProgress (penalty93_1): ref in progress. Takes the last PenBuf entry: the first pass logs a penalty with minutes and sends the player to the box, later passes clear it; at the end coinsearch and the face off
+InProgress:		;auto: CODE_80EA40. 93G InProgress (penalty93_1): ref in progress. Takes the last PenBuf entry: the first pass logs a penalty with minutes and sends the player to the box, later passes
+		;   clear it; at the end coinsearch and the face off
 	lda.w RefCnt		; $80EA40: AD EA 12  animation in progress: exit
 	bmi .step		; $80EA43: 30 03
 	jmp.w .rtl		; $80EA45: 4C 88 EC
@@ -1533,7 +1537,8 @@ InProgress:		;auto: CODE_80EA40. 93G InProgress (penalty93_1): ref in progress. 
 	ldx.b a3		; $80EC86: A6 3F
 .rtl:
 	rtl		; $80EC88: 6B
-coinsearch:		;auto: CODE_80EC89. 93G coinsearch (penalty93_1): a2 = team. Clears tmpdst bit $2000, counts the players kept off the ice by penalties (not coincidental, not injured, never below 4) into tmap
+coinsearch:		;auto: CODE_80EC89. 93G coinsearch (penalty93_1): a2 = team. Clears tmpdst bit $2000, counts the players kept off the ice by penalties (not coincidental, not injured, never below 4)
+		;   into tmap
 	lda.w #$0006		; $80EC89: A9 06 00  d1 = 6 players, d0 = last roster word
 	sta.b d1		; $80EC8C: 85 57
 	lda.w #$0032		; $80EC8E: A9 32 00

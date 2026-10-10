@@ -13,6 +13,8 @@ The SNES port is a hybrid: it began as a port of NHL92 Genesis (likely while NHL
 - `src/nhlpa93snes.asm` top level, `src/bankXX_YYYY.asm` one file per ~4 KB segment (FastROM mirror addresses), `src/inc/snes_regs.asm` hardware registers, `src/ram93snes.asm` RAM names.
 - `lst/nhlpa93snes.bin` reference ROM (committed, as NHL94Genesis does).
 - `tools/disasm65816.py` the quick-pass generator (recursive descent from the vectors, REP/SEP/PHP/PLP M/X tracking). Setup only.
+- `data/` the incbin assets; `data/README.md` describes the file formats (`.map.pak`, `.chr.pak`, `.snesmap`, `.snespal`, ...).
+- `tools/snesgfx.py` unpacks the packed streams (a port of `DecompressGraphics`) and renders tiles, maps and screens to PNG.
 - `SEGMENT_AGENT.md` queue and rules, `PROMPT.md` per-session prompt, `docs/HANDOFF.md` setup notes.
 
 ## Build

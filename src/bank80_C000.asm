@@ -2,7 +2,8 @@
 ; readers (hockey93_01/middle93_1), updateplayers (hockey93_02), checkcoll, checkwallcoll, wallcollb, wallcoll (hockey93_03/04),
 ; sroot, divu, puckflip.
 org $80C18F
-AddPenalty:		;auto: CODE_80C18F. 93G AddPenalty (penalty93_1): add penalty d0 (PenaltyList offset) for player X. Ignored while the clock is stopped, when penalties are off, or offsides when offsides are off. Falls into AddPenalty2
+AddPenalty:		;auto: CODE_80C18F. 93G AddPenalty (penalty93_1): add penalty d0 (PenaltyList offset) for player X. Ignored while the clock is stopped, when penalties are off, or offsides when offsides
+		;   are off. Falls into AddPenalty2
 	lda.w gmclock		; $80C18F: AD 8A 12  clock stopped
 	bne .rtl		; $80C192: D0 1B
 	lda.b d0		; $80C194: A5 53

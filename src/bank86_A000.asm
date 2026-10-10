@@ -1,7 +1,7 @@
 ; $86A000-$86AFFF  ROM $32000-$32FFF: the end of SPCDriver, then the other blocks of BootSoundUpload: BootInstruments (APU $2B00),
 ; BootSampleDir (APU $2C00) and the start of BootSamples (data/bootsamples.brr, APU $2C30, continued to bank86_F000).
 org $86A000
-	incbin "../data/spc/driver.bin":$1FFC..$26E7		; $86A000-$86A6EA
+	incbin "../data/spc/driver.spc700":$1FFC..$26E7		; $86A000-$86A6EA
 SPCDriverEnd:
 	assert SPCDriverEnd-SPCDriver == SPCDRIVERSIZE
 	dw BootInstrumentsEnd-BootInstruments, SPCINSTR		; $86A6EB block 2: the instrument table

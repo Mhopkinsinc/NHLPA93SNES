@@ -3,10 +3,11 @@
 ; The cache: sprframetime (4 bytes per frame: sprclock when sent, VRAM slot), sprslottime (sprclock per 32-byte slot);
 ; a slot is free when sprclock - its time >= sprslotlife.
 org $85F000
-	incbin "../data/Title1.pak":$1A40..$25F9		; $85F000-$85FBB8
+	incbin "../data/Title1.map.pak":$1A40..$25F9		; $85F000-$85FBB8
 Title1MapEnd:
 	assert Title1MapEnd-Title1Map == $25F9
-DrawFrameHi:		;auto: CODE_85FBB9 (from addframe_hi). SNES: draw frame sprframe ($293 and up, 6-byte pieces) of the frame set at [farptr] (sprsetofs = its first frame number) at sprx/spry: for each piece an OAM entry, and the piece tiles to a free VRAM slot through DMAList when not cached
+DrawFrameHi:		;auto: CODE_85FBB9 (from addframe_hi). SNES: draw frame sprframe ($293 and up, 6-byte pieces) of the frame set at [farptr] (sprsetofs = its first frame number) at sprx/spry: for each
+		;   piece an OAM entry, and the piece tiles to a free VRAM slot through DMAList when not cached
 	lda.b sprnodraw		; $85FBB9: A5 C7
 	beq .go		; $85FBBB: F0 04
 	jml.l addframe_end		; $85FBBD: 5C FE D1 87

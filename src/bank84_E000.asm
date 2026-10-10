@@ -89,7 +89,8 @@ ScoutPlayersRun:		;auto: CODE_84EA66. SNES scouting report: one frame of the two
 	ldx.b xsave		; $84EABA: A6 0A
 	ldx.b a3		; $84EABC: A6 3F
 	rtl		; $84EABE: 6B
-ScoutTeamStep:		;auto: CODE_84EABF. SNES: step the showcased player of team a2: a new team (tmteam changed) picks its goalie and restarts the order (ScoutPlayerExit); skating out to the side (tmflags bit 1) ends at x 40 (ScoutNextPlayer); else the next script step (SPA, facedir) every 9 frames, then print his number and name
+ScoutTeamStep:		;auto: CODE_84EABF. SNES: step the showcased player of team a2: a new team (tmteam changed) picks its goalie and restarts the order (ScoutPlayerExit); skating out to the side
+		;   (tmflags bit 1) ends at x 40 (ScoutNextPlayer); else the next script step (SPA, facedir) every 9 frames, then print his number and name
 	ldy.b a2		; $84EABF: A4 3B
 	lda.w tmteam,y		; $84EAC1: B9 F6 13  team changed?
 	sta.b d0		; $84EAC4: 85 53
