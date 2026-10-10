@@ -304,6 +304,11 @@ ReplayBufferEnd	= $7EFF41	; replay buffer end: adda43 wraps to ReplayBufferStart
 ReplayBufferStart	= $7E8174	; first replay frame record
 SPAList		= $82B86C	; animation data: SPA offsets point into it (93G SPAList)
 ; --- constants (values, not addresses) ---
+; SPC700 (APU RAM) addresses used by the sound uploads
+SPCSAMPLEDIR	= $2C00	; DSP sample directory (DIR = $2C)
+SPCSAMPLES	= $2C50	; first BRR sample of the in-game set
+SPCRESUME	= $0800	; driver entry after the in-game sample upload (the boot upload starts the driver at $0400)
+GAMESAMPLESIZE	= $B814	; bytes of data/gamesamples.brr
 replaysize	= $71	; bytes per replay frame record (93G replaysize)
 puckobj		= $1C	; object index of the puck (93G puckscnum 14 * 2)
 JMLOPCODE	= $5C	; jml opcode (sfxretjml)
