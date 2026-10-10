@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank83_B000` ($83AD02-$83BFFF). <- CURRENT
+`bank83_C000` ($83BCA8-$83CFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -100,8 +100,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank83_8000 | matched | $838000 | $838D82 | data | 3459 bytes $838000-$838D82 (end moved to the end of Calgary). TeamList (26 long pointers), team records AllStarsEast, AllStarsWest, Boston, Buffalo, Calgary in 93G teamdata93.asm form (macros Player, String, hex2); palettes data/Pals/*.pal |
 | bank83_9000 | matched | $838D83 | $839D7C | data | 4090 bytes $838D83-$839D7C (boundaries moved to the team records). Team records Chicago .. LongIsland in 93G teamdata93.asm form |
 | bank83_A000 | matched | $839D7D | $83AD01 | data | 3973 bytes $839D7D-$83AD01 (boundaries moved to the team records). Team records Minnesota .. Philadelphia in 93G teamdata93.asm form |
-| bank83_B000 | not matched <- CURRENT | $83AD02 | $83BFFF | 0% | Teamdata (92G Teamdata.asm) continues |
-| bank83_C000 | not matched | $83C000 | $83CFFF | 0% | Teamdata (92G Teamdata.asm) continues |
+| bank83_B000 | matched | $83AD02 | $83BCA7 | data | 4006 bytes $83AD02-$83BCA7 (boundaries moved to the team records). Team records Pittsburgh .. Toronto in 93G teamdata93.asm form |
+| bank83_C000 | not matched <- CURRENT | $83BCA8 | $83CFFF | 0% | Teamdata (92G Teamdata.asm) continues |
 | bank83_D000 | not matched | $83D000 | $83DFFF | 0% | Scouting report intro text $D630 (93G $2CEC8) |
 | bank83_E000 | not matched | $83E000 | $83EFFF | 0% |  |
 | bank83_F000 | not matched | $83F000 | $82FFFF | -0% |  |
@@ -234,3 +234,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank83_8000: matched $838000-$838D82 (3459 bytes; bank83_9000 now starts at Chicago). Bank $83 starts with the team data, identical in every value to 93G teamdata93.asm (same 26 teams, ratings, line sets, odds, names, ROM order; only the palettes are SNES BGR555 and words little-endian). TeamList, macros Player/String/hex2, constants Playerdata..ScoreOdds, NumofTeams; SNES palettes extracted to data/Pals with the 93G file names. TeamList entries of later segments stay raw addresses until those teams are named. MATCH.
 - bank83_9000: matched $838D83-$839D7C (4090 bytes): team records Chicago .. LongIsland, same values as 93G. MATCH.
 - bank83_A000: matched $839D7D-$83AD01 (3973 bytes): team records Minnesota .. Philadelphia, same values as 93G. MATCH.
+- bank83_B000: matched $83AD02-$83BCA7 (4006 bytes): team records Pittsburgh .. Toronto, same values as 93G. MATCH.
