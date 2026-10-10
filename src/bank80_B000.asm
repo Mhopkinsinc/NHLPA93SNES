@@ -668,9 +668,9 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	beq .gfx		; $80B555: F0 04
 	jsl.l $82FA7A		; $80B557: 22 7A FA 82  bank $82
 .gfx:		;decompress each tile set to $7F0000 and send it to vram
-	lda.w #$CDA0		; $80B55B: A9 A0 CD  rink tiles (bank $82)
+	lda.w #IceRinkTiles		; $80B55B: A9 A0 CD  packed rink tiles (bank82_D000)
 	sta.b tmp0		; $80B55E: 85 73
-	lda.w #$0082		; $80B560: A9 82 00
+	lda.w #IceRinkTiles>>16		; $80B560: A9 82 00
 	sta.b tmp1		; $80B563: 85 75
 	jsl.l $86FA3E		; $80B565: 22 3E FA 86  bank $86: 93G DecompressGraphics ([tmp0] -> $7F0000)
 	lda.w #$1000		; $80B569: A9 00 10  vram $1000

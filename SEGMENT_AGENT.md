@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank82_D000` ($82CDA0-$82DFFF). <- CURRENT
+`bank82_E000` ($82E000-$82FFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -94,8 +94,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank82_A000 | matched | $82A000 | $82AFFF | data | 4096 bytes $82A000-$82AFFF. GameSamples continued: incbin data/gamesamples.brr $9FAC..$AFAC |
 | bank82_B000 | matched | $82B000 | $82B86B | data | 2156 bytes $82B000-$82B86B (end moved from $82BFFF to the end of the sound stream). GameSamples end: incbin data/gamesamples.brr $AFAC..$B814, GameSamplesEnd, end block (length 0, SPCRESUME) |
 | bank82_C000 | matched | $82B86C | $82CD9F | data | 5428 bytes $82B86C-$82CD9F (start moved by bank82_B000, end moved before the packed rink tiles). SPAList: 59 SPA tables in 93G frames93.asm form (SPAxxx_table, direction offsets, attributes, frame/delay lists as SPF+n), each asserted against its SPA constant |
-| bank82_D000 | not matched <- CURRENT | $82CDA0 | $82DFFF | 0% |  |
-| bank82_E000 | not matched | $82E000 | $82EFFF | 0% |  |
+| bank82_D000 | matched | $82CDA0 | $82DFFF | data | 4704 bytes $82CDA0-$82DFFF (start moved by bank82_C000). IceRinkTiles: packed rink tiles (decompressor $86FA3E), incbin data/IceRinkTiles.pak 0..$1260 |
+| bank82_E000 | not matched <- CURRENT | $82E000 | $82FFFF | 0% |  |
 | bank82_F000 | not matched | $82F000 | $82FFFF | 22% |  |
 | bank83_8000 | not matched | $838000 | $838FFF | 0% | Teamdata $80F8-$C4A9 (92G Teamdata.asm $116C-$32DA) runs through $83C4A9 |
 | bank83_9000 | not matched | $839000 | $839FFF | 0% | Teamdata (92G Teamdata.asm) continues |
@@ -228,3 +228,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank82_A000: matched $82A000-$82AFFF (4096 bytes): BRR samples of the in-game sample set, incbin data/gamesamples.brr $9FAC..$AFAC. MATCH.
 - bank82_B000: matched $82B000-$82B86B (2156 bytes; bank82_C000 now starts at SPAList $82B86C): the last BRR samples and the end block of the in-game upload stream. MATCH.
 - bank82_C000: matched $82B86C-$82CD9F (5428 bytes; bank82_D000 now starts at $82CDA0). SPAList written from the data in 93G frames93.asm style: tables matched to 93G by structure (direction lists, delays, frame groups); 93G-only: SPAgglovel2, SPAgstackr's 93 delays differ, SPAgdive moved to $1490, no SPAfake; SPAstanley and SPAfinjury sit after SPAsiren. SPAwallright/SPAwallleft direction 7 points at the next table header as in 93G. Renamed SPA constants to the frames93.asm names (gglove/gstick/gstack sides swapped, SPAbfall->SPAffall, SPAffall->SPAfinjury, SPAfall3->SPAflip, SPAhold->SPAHold, SPAhold2->SPAhook, SPAslowhit->SPAcatch, SPAglass->SPAbglass, SPAg314->SPAgdive, SPAnomove->SPAinjury1, SPFgoalie->SPFgdive) and added all 59 SPA and the SPF frame bases (SNES numbering). SPAList is now a label. bank80 slices regenerated. MATCH.
+- bank82_D000: matched $82CDA0-$82DFFF (4704 bytes). IceRinkTiles, the packed rink background tiles setupice unpacks to vram $1000 (93G IceRink.map.jim tiles), extracted to data/IceRinkTiles.pak ($2B9C bytes, ends $82F93B); setupice now loads it by label. MATCH.
