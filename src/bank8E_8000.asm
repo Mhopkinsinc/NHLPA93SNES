@@ -101,7 +101,7 @@ Gameloop:		;auto: CODE_8E8000 (from StartPer). 93G Gameloop (hockey93_01): wait 
 	jsl.l DoGameFrame		; $8E80BA: 22 FA B7 80
 	jsl.l demoread		; $8E80BE: 22 D4 C3 80
 	bra .gh		; $8E80C2: 80 3E
-.cheat:		;not reached (the bra above skips it): pad presses Y? $20, $80, $40 in a row set controller 1's team score to 9
+.cheat:		;not reached (the bra above skips it): new pad presses L, A, X in a row set the score of controller 1's team to 9
 	lda.w padnew1		; $8E80C4: AD 6E 01
 	beq .gh		; $8E80C7: F0 39
 	ldx.w cheatpads+2		; $8E80C9: AE 4A 16

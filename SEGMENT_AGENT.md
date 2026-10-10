@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank8E_9000` ($8E900B-$8EA00A). <- CURRENT
+`bank8E_A000` ($8EA00B-$8EAFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -186,8 +186,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank8D_E000 | matched | $8DE00C | $8DF00B | 100% | SpriteSet10 end, BigFontTiles start (data/BigFont.chr.pak) |
 | bank8D_F000 | matched | $8DF00C | $8DFFFF | 100% | BigFontTiles end, StartHL2 (.sv, .lo, .ranres, .team, .postab), asspenalty, clrplayer, avdgoal (.ch1), zero fill |
 | bank8E_8000 | matched | $8E8000 | $8E900A | 100% | Gameloop (.cheat unreached), PlayerShortName, assbench, SpriteSet3 header |
-| bank8E_9000 | not matched <- CURRENT | $8E900B | $8EA00A | 0% |  |
-| bank8E_A000 | not matched | $8EA00B | $8EAFFF | 0% |  |
+| bank8E_9000 | matched | $8E900B | $8EA00A | data | SpriteSet3 tiles |
+| bank8E_A000 | not matched <- CURRENT | $8EA00B | $8EAFFF | 0% |  |
 | bank8E_B000 | not matched | $8EB00B | $8EBFFF | 0% |  |
 | bank8E_C000 | not matched | $8EC00B | $8ECFFF | 0% |  |
 | bank8E_D000 | not matched | $8ED00B | $8EDFFF | 0% |  |
@@ -322,3 +322,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank8D_E000: matched $8DE00C-$8DF00B (4096 bytes): the last SpriteSet10 tiles, then the packed big font ($8DEEC8, 144 tiles = BigFontChars). Rendering showed the bank $83 BigFontTiles (100 tiles) is the small font: renamed SmallFontTiles (data/SmallFont.chr.pak); BigFontTiles/data/BigFont.chr.pak are now the real big font. MATCH.
 - bank8D_F000: matched $8DF00C-$8DFFFF (4084 bytes): StartHL2 is the 92G highlight player (penalty.asm), asspenalty/clrplayer 93G, avdgoal the SNES form (aims beside the net). asstab now names asspenalty. RAM: hlsavebuf. Bank $8D complete. MATCH.
 - bank8E_8000: matched $8E8000-$8E900A (4107 bytes): Gameloop (93G, with the SNES clock fraction, cue timers and crowd cheers), PlayerShortName, assbench (93G); $8E80C4 is unreached cheat code (L, A, X: score 9). SpriteSet3 = frame set 3, frames 185-224 (SPFcelebrate, SPFpump, SPFcup). RAM: cheercnt, cheervc, cheatpads. MATCH.
+- bank8E_9000: matched $8E900B-$8EA00A (4096 bytes): SpriteSet3 tiles. MATCH.
