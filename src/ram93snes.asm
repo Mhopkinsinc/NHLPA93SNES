@@ -373,6 +373,7 @@ Framercset	= $1BDB	; vram tiles for the Framer box. 93G Framercset
 logochars	= $1BDD	; vram tiles for the NHLPA logo (game setup and playoff screens, packed at $8C8000)
 refcharshor	= $1BDF	; vram tiles for the little ref (horizontal rink)
 refchars	= $1BE1	; vram tiles for the little ref (vertical rink)
+ronbarrchars	= $1BE3	; vram tiles for the Ron Barr picture (ScoutingReport)
 scorechars	= $1BE5	; vram tiles for the scoreboard / team block maps
 blankchar	= $1BE7	; vram tile of the blank character (93G uses tile $7FF)
 

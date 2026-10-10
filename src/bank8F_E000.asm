@@ -1,5 +1,6 @@
-; $8FE00E-$8FEFFF  ROM $7E00E  (from src/bank8F.asm; quick pass, TODO segment agents refine)
-org $8FE00E
+; $8FE00A-$8FEFFF  ROM $7E00A  (quick pass; starts at SetupTeamForIntermission, boundary moved from $8FE00E)
+org $8FE00A
+	db $22,$1A,$B0,$80	; $8FE00A
 	db $64,$3B,$A9,$02,$00,$85,$3F,$22,$20,$E0,$8F,$64,$3F,$A9,$02,$00	; $8FE00E
 	db $85,$3B,$22,$D1,$FE,$80,$A6,$3F,$A4,$3B,$9E,$DE,$13,$AD,$0C,$16	; $8FE01E
 	db $D0,$1B,$BD,$EE,$13,$38,$F9,$EE,$13,$85,$53,$F0,$10,$A9,$03,$00	; $8FE02E
