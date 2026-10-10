@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank87_F000` ($87F000-$87FFFF). <- CURRENT
+Bank $87 done (bank87_8000 .. bank87_F000 matched). Waiting for the user before the next bank (`bank88_8000`). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -136,8 +136,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank87_C000 | matched | $87C000 | $87D204 | 100% | 4613 bytes $87C000-$87D204 (end moved to the end of DrawFrame). SpriteSet2 end (size asserted); EASNMap (93G EASN.map.jim, packed, data/EASN.pak); RinkSideTiles1 (packed, data/RinkSideTiles1.pak); TeamBlocksMap (26 x 6x3 words); SNES DrawFrame, addframe_end |
 | bank87_D000 | matched | $87D205 | $87DFFF | data | 3579 bytes $87D205-$87DFFF (start moved by bank87_C000). SpriteSet6 (frame set 6, frames 337-352: duck and hold): header, frame table, pieces (data/Sprites/set06.pieces), tiles (set06.chr) |
 | bank87_E000 | matched | $87E000 | $87EFFF | data | 4096 bytes $87E000-$87EFFF. SpriteSet6 tiles (incbin data/Sprites/set06.chr slice) |
-| bank87_F000 | not matched <- CURRENT | $87F000 | $87FFFF | -0% |  |
-| bank88_8000 | not matched | $888000 | $888FFF | 28% |  |
+| bank87_F000 | matched | $87F000 | $87FFFF | 100% | 4096 bytes $87F000-$87FFFF. SpriteSet6 tiles end (size asserted); 93G RestoreReplayFrame, assepen (asstab $A); PixelRemap87; RinkSideTiles2 (packed, data/RinkSideTiles2.pak); $FF fill |
+| bank88_8000 | not matched <- CURRENT | $888000 | $888FFF | 28% |  |
 | bank88_9000 | not matched | $88900F | $889FFF | 0% |  |
 | bank88_A000 | not matched | $88A00F | $88AFFF | 0% |  |
 | bank88_B000 | not matched | $88B00F | $88BFFF | 0% |  |
@@ -271,3 +271,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank87_C000: matched $87C000-$87D204 (4613 bytes; bank87_D000 now starts at SpriteSet6 $87D205). Rendered the packed blocks: $87C3A0 is the EASN logo backdrop (93G EASN.map.jim), $87C6B4 rink surround tiles. TeamBlocksMap: one 6 x 3 tile block per team. DrawFrame draws frames below $293 (4-byte pieces); the bank $85 emitter (6-byte pieces, $293 and up) is renamed DrawFrameHi. MATCH.
 - bank87_D000: matched $87D205-$87DFFF (3579 bytes): sprite frame set 6, frames 337-352 (SPFduck .. SPFhold+7). Committed after bank87_E000 (the old D000 ran to $87E004, the old E000 started at $87E005). MATCH.
 - bank87_E000: matched $87E000-$87EFFF (4096 bytes): SpriteSet6 tiles. MATCH.
+- bank87_F000: matched $87F000-$87FFFF (4096 bytes): the last frame set 6 tiles, RestoreReplayFrame (sfscrl added), the 4-entry PixelRemap87, the second packed rink surround tile set, assepen. setupice and the pause roster code now load RinkSideTiles1/2 and PixelRemap83/87/8D by label. Bank $87 complete. MATCH.

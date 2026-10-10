@@ -165,9 +165,9 @@ PauseMenu:		;auto: CODE_83F891. 92G Pausemode .gj: draw the menu (.Pmenu $8FECAB
 	sta.b a0		; $83F9A6: 85 33
 	lda.w #$0088		; $83F9A8: A9 88 00
 	sta.b a0+2		; $83F9AB: 85 35
-	lda.w #$F55A		; $83F9AD: A9 5A F5
+	lda.w #PixelRemap87		; $83F9AD: A9 5A F5
 	sta.b a1		; $83F9B0: 85 37
-	lda.w #$0087		; $83F9B2: A9 87 00
+	lda.w #PixelRemap87>>16		; $83F9B2: A9 87 00
 	sta.b a1+2		; $83F9B5: 85 39
 	lda.w #$0004		; $83F9B7: A9 04 00
 	sta.b d0		; $83F9BA: 85 53

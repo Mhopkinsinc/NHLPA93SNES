@@ -683,9 +683,9 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	inx		; $80B57A: E8
 	cpx.w #$40E0		; $80B57B: E0 E0 40
 	bne .up1		; $80B57E: D0 F2
-	lda.w #$C6B4		; $80B580: A9 B4 C6  bank $87 tiles
+	lda.w #RinkSideTiles1		; $80B580: A9 B4 C6  packed rink surround tiles (bank87_C000)
 	sta.b tmp0		; $80B583: 85 73
-	lda.w #$0087		; $80B585: A9 87 00
+	lda.w #RinkSideTiles1>>16		; $80B585: A9 87 00
 	sta.b tmp1		; $80B588: 85 75
 	jsl.l DecompressGraphics		; $80B58A: 22 3E FA 86
 	ldx.w #$0000		; $80B58E: A2 00 00
@@ -722,9 +722,9 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	inx		; $80B5D7: E8
 	cpx.w #$0D00		; $80B5D8: E0 00 0D
 	bne .up4		; $80B5DB: D0 F2
-	lda.w #$F55E		; $80B5DD: A9 5E F5  bank $87 tiles
+	lda.w #RinkSideTiles2		; $80B5DD: A9 5E F5  packed rink surround tiles (bank87_F000)
 	sta.b tmp0		; $80B5E0: 85 73
-	lda.w #$0087		; $80B5E2: A9 87 00
+	lda.w #RinkSideTiles2>>16		; $80B5E2: A9 87 00
 	sta.b tmp1		; $80B5E5: 85 75
 	jsl.l DecompressGraphics		; $80B5E7: 22 3E FA 86
 	ldx.w #$0000		; $80B5EB: A2 00 00
@@ -748,9 +748,9 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	stz.b a0		; $80B613: 64 33  sprite frame list from the $7F0000 data
 	lda.w #$007F		; $80B615: A9 7F 00
 	sta.b a0+2		; $80B618: 85 35
-	lda.w #$FCD4		; $80B61A: A9 D4 FC
+	lda.w #PixelRemap83		; $80B61A: A9 D4 FC
 	sta.b a1		; $80B61D: 85 37
-	lda.w #$0082		; $80B61F: A9 82 00
+	lda.w #PixelRemap83>>16		; $80B61F: A9 82 00
 	sta.b a1+2		; $80B622: 85 39
 	lda.w #$0064		; $80B624: A9 64 00
 	sta.b d0		; $80B627: 85 53
@@ -759,9 +759,9 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	sta.b a0		; $80B630: 85 33
 	lda.w #$0088		; $80B632: A9 88 00
 	sta.b a0+2		; $80B635: 85 35
-	lda.w #$F55A		; $80B637: A9 5A F5
+	lda.w #PixelRemap87		; $80B637: A9 5A F5
 	sta.b a1		; $80B63A: 85 37
-	lda.w #$0087		; $80B63C: A9 87 00
+	lda.w #PixelRemap87>>16		; $80B63C: A9 87 00
 	sta.b a1+2		; $80B63F: 85 39
 	lda.w #$0004		; $80B641: A9 04 00
 	sta.b d0		; $80B644: 85 53
@@ -774,9 +774,9 @@ setupice:		;auto: CODE_80B4C1. 93G setupice (hockey93_06): set all variables, se
 	stz.b a0		; $80B658: 64 33
 	lda.w #$007F		; $80B65A: A9 7F 00
 	sta.b a0+2		; $80B65D: 85 35
-	lda.w #$FCBD		; $80B65F: A9 BD FC
+	lda.w #PixelRemap8D		; $80B65F: A9 BD FC
 	sta.b a1		; $80B662: 85 37
-	lda.w #$0082		; $80B664: A9 82 00
+	lda.w #PixelRemap8D>>16		; $80B664: A9 82 00
 	sta.b a1+2		; $80B667: 85 39
 	lda.w #$0090		; $80B669: A9 90 00
 	sta.b d0		; $80B66C: 85 53
