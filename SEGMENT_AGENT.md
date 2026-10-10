@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank8A_B000` ($8AB000-$8ABFFF). <- CURRENT
+`bank8A_C000` ($8AC000-$8ACFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -156,8 +156,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank8A_8000 | matched | $8A8000 | $8A8FFF | data | SpriteSet12 (frame set 12) header, pieces, tiles |
 | bank8A_9000 | matched | $8A9000 | $8A9FFF | data | SpriteSet12 tiles |
 | bank8A_A000 | matched | $8AA000 | $8AAFFF | data | SpriteSet12 tiles |
-| bank8A_B000 | not matched <- CURRENT | $8AB000 | $8ABFFF | 0% |  |
-| bank8A_C000 | not matched | $8AC000 | $8ACFFF | 0% |  |
+| bank8A_B000 | matched | $8AB000 | $8ABFFF | data | SpriteSet12 tiles |
+| bank8A_C000 | not matched <- CURRENT | $8AC000 | $8ACFFF | 0% |  |
 | bank8A_D000 | not matched | $8AD000 | $8ADFFF | 0% |  |
 | bank8A_E000 | not matched | $8AE000 | $8AEFFF | 0% |  |
 | bank8A_F000 | not matched | $8AF000 | $8AFFFF | 14% |  |
@@ -292,3 +292,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank8A_8000: matched $8A8000-$8A8FFF (4096 bytes): SpriteSet12 = frame set 12, frames 532-605 (with SPFflip, SPFstumble, SPFhook); tiles run to $8AF87F. MATCH.
 - bank8A_9000: matched $8A9000-$8A9FFF (4096 bytes): SpriteSet12 tiles. MATCH.
 - bank8A_A000: matched $8AA000-$8AAFFF (4096 bytes): SpriteSet12 tiles. MATCH.
+- bank8A_B000: matched $8AB000-$8ABFFF (4096 bytes): SpriteSet12 tiles. MATCH.
