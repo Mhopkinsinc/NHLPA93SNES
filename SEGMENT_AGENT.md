@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-Bank $85 done (bank85_8000 .. bank85_F000 matched). Waiting for the user before the next bank (`bank86_8000`). <- CURRENT
+`bank86_9000` ($869000-$869FFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -121,8 +121,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank85_D000 | matched | $85D000 | $85DFFF | 100% | 4096 bytes $85D000-$85DFFF. SpriteSet4 tiles end (size asserted); 93G/92G GetShifter; Title1Map start (93G Title1Map: packed title screen, data/Title1.pak) |
 | bank85_E000 | matched | $85E000 | $85EFFF | data | 4096 bytes $85E000-$85EFFF. Title1Map continued (incbin $A40..$1A40) |
 | bank85_F000 | matched | $85F000 | $85FFFF | 100% | 4096 bytes $85F000-$85FFFF. Title1Map end (size asserted); SNES DrawFrameSet (sprite emitter with the VRAM tile cache); 93G getpzjoy, ResetClock; SNES PrintTeamNames, nullrtl85; $FF fill |
-| bank86_8000 | not matched <- CURRENT | $868000 | $868FFF | 0% |  |
-| bank86_9000 | not matched | $869000 | $869FFF | 0% |  |
+| bank86_8000 | matched | $868000 | $868FFF | data | 4096 bytes $868000-$868FFF. BootSoundUpload (boot SPC upload stream), block 1 header, SPCDriver (SPC700 driver code, data/spc/driver.bin 0..$FFC) |
+| bank86_9000 | not matched <- CURRENT | $869000 | $869FFF | 0% |  |
 | bank86_A000 | not matched | $86A000 | $86AFFF | 0% |  |
 | bank86_B000 | not matched | $86B000 | $86BFFF | 0% |  |
 | bank86_C000 | not matched | $86C000 | $86CFFF | 0% |  |
@@ -256,3 +256,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank85_E000: matched $85E000-$85EFFF (4096 bytes): packed menu screen continued. MATCH.
 - bank85_F000: matched $85F000-$85FFFF (4096 bytes). DrawFrameSet: the SNES sprite emitter behind addframe (OAM entries in Satt/SattHi, 8x8 and 16x16 VRAM slot rotors, tile uploads through DMAList, cache by sprframetime/sprslottime). New RAM: the emitter DP variables (sprcount, sprpal, sprpattr, sprbigslot(end), sprslot(end), sprtile, sprox, sproy, sprtileptr, sprnodraw, sprpieces), SattHi, HomeTeam/VisTeam ($129A/$129C; PenaltyBufferEnd is now PenBuf-2), PerTimeTotal, gamelevel, sfpj. Bank $85 complete. MATCH.
 - bank85 follow-up: MenuScreen88 renamed Title1Map (data/Title1.pak): rendered, it is the title screen (goalie and the NHLPA Hockey '93 logo), the 93G Title1Map / Title1.map.jim backdrop; $88F2B0 is the title screen code. MATCH.
+- bank86_8000: matched $868000-$868FFF (4096 bytes). Bank $86 starts with the boot SPC upload stream (SPCBootUpload): the SPC700 sound driver ($26E7 bytes to APU $0400, kept as data/spc/driver.bin, not disassembled), the instrument table, the sample directory and the boot samples. Constants SPCDRIVER, SPCINSTR, SPCBOOTSAMPLES, SPCDRIVERSIZE, BOOTSAMPLESIZE. MATCH.

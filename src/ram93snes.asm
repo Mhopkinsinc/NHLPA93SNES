@@ -377,8 +377,13 @@ pwlength	= 16	; password characters (92G pwlength)
 sf3alttree	= $0004	; alt. playoff tree (93G sf3alttree 2)
 ; SPC700 (APU RAM) addresses used by the sound uploads
 SPCSAMPLEDIR	= $2C00	; DSP sample directory (DIR = $2C)
+SPCDRIVER	= $0400	; SPC700 sound driver code (boot upload); the boot upload starts it here
+SPCINSTR	= $2B00	; instrument table of the boot set (6 bytes per instrument)
+SPCBOOTSAMPLES	= $2C30	; first BRR sample of the boot set
 SPCSAMPLES	= $2C50	; first BRR sample of the in-game set
 SPCRESUME	= $0800	; driver entry after the in-game sample upload (the boot upload starts the driver at $0400)
+SPCDRIVERSIZE	= $26E7	; bytes of data/spc/driver.bin
+BOOTSAMPLESIZE	= $5271	; bytes of data/bootsamples.brr
 GAMESAMPLESIZE	= $B814	; bytes of data/gamesamples.brr
 replaysize	= $71	; bytes per replay frame record (93G replaysize)
 puckobj		= $1C	; object index of the puck (93G puckscnum 14 * 2)
