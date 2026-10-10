@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank81_B000` ($81B000-$81BFFF). <- CURRENT
+`bank81_C000` ($81C000-$81CFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -84,8 +84,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank81_8000 | matched | $818000 | $818FFF | data | 4096 bytes $818000-$818FFF. GameSoundUpload: SPC700 upload stream of the in-game sample set (setupice via $82FA7A): block headers, GameSampleDir (19 DSP directory entries, start/loop as SPCSAMPLES+offset), GameSamples incbin data/gamesamples.brr 0..$FAC |
 | bank81_9000 | matched | $819000 | $819FFF | data | 4096 bytes $819000-$819FFF. GameSamples continued: incbin data/gamesamples.brr $FAC..$1FAC |
 | bank81_A000 | matched | $81A000 | $81AFFF | data | 4096 bytes $81A000-$81AFFF. GameSamples continued: incbin data/gamesamples.brr $1FAC..$2FAC |
-| bank81_B000 | not matched <- CURRENT | $81B000 | $81BFFF | 0% |  |
-| bank81_C000 | not matched | $81C000 | $81CFFF | 0% |  |
+| bank81_B000 | matched | $81B000 | $81BFFF | data | 4096 bytes $81B000-$81BFFF. GameSamples continued: incbin data/gamesamples.brr $2FAC..$3FAC |
+| bank81_C000 | not matched <- CURRENT | $81C000 | $81CFFF | 0% |  |
 | bank81_D000 | not matched | $81D000 | $81DFFF | 0% |  |
 | bank81_E000 | not matched | $81E000 | $81EFFF | 0% |  |
 | bank81_F000 | not matched | $81F000 | $80FFFF | -0% |  |
@@ -218,3 +218,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank81_8000: matched $818000-$818FFF (4096 bytes). Bank $81 is not code: $818000-$82B86B is one SPC700 upload stream (format from the uploader $82FAB9: length, APU address, data; length 0 ends and jumps), sent by $82FA7A from setupice. Blocks: 76-byte sample directory to APU $2C00, $B814 bytes of BRR samples to $2C50 (extracted to data/gamesamples.brr, incbin in slices, one per segment file), end block jumping to $0800 (in bank82_B000). Constants SPCSAMPLEDIR, SPCSAMPLES, SPCRESUME, GAMESAMPLESIZE. MATCH.
 - bank81_9000: matched $819000-$819FFF (4096 bytes): BRR samples of the in-game sample set, incbin data/gamesamples.brr $FAC..$1FAC. MATCH.
 - bank81_A000: matched $81A000-$81AFFF (4096 bytes): BRR samples of the in-game sample set, incbin data/gamesamples.brr $1FAC..$2FAC. MATCH.
+- bank81_B000: matched $81B000-$81BFFF (4096 bytes): BRR samples of the in-game sample set, incbin data/gamesamples.brr $2FAC..$3FAC. MATCH.
