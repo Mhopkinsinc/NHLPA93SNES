@@ -103,6 +103,8 @@ fofdata		= $0142	; frame/attribute of the faceoff ref (big faceoff sprites). 93G
 fox		= $0146	; faceoff spot x. 93G fox
 foy		= $0148	; faceoff spot y. 93G foy
 glovecords	= $014E	; x/y bytes of the dropped gloves (chkhit). 93G glovecords
+cheercnt	= $0150	; crowd cheers still to play after a goal (SFXcrowdcheer every 150 frames, Gameloop)
+cheervc		= $0152	; vcount of the last crowd cheer
 Hpos		= $0154	; ice rink horizontal position. 93G Hpos
 Hscroll		= $0156	; horizontal scroll: BG2HOFS = Hscroll+$C0 (VBlank). 93G Hscroll
 HmAwBonus	= $015A	; setplayer: home bonus / visitor penalty. 93G HmAwBonus
@@ -347,6 +349,7 @@ PassWord	= $1610	; 16 password characters (indexes into PasstoText; bit 7 hides 
 OptPen		= $160A	; penalties (0 = off). 93G OptPen
 asv		= $1644	; scouting text without delays (down pressed). 93G asv
 crowdvol	= $1646	; crowd noise volume last sent to the sound driver (updatesound)
+cheatpads	= $1648	; 3 words: the last three new pad presses (the unreached Gameloop .cheat)
 passbits	= $1624	; password bits: a 128-bit number, 8 words, low word first (SuperDiv, PushBits). 92G PassBits
 tpassbits	= $1634	; 8 words: passbits before all games are resolved (EncodePW, sf3alttree). 92G tpassbits
 OptLine		= $160C	; line changes (0 = on). 93G OptLine
