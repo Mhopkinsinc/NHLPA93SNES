@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-Bank $8E done (bank8E_8000 .. bank8E_F000 matched). Waiting for the user before the next bank (`bank8F_8000`). <- CURRENT
+`bank8F_9000` ($8F9085-$8FA004). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -193,8 +193,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank8E_D000 | matched | $8ED00B | $8EE00A | data | SpriteSet3 end, SpriteSet14 header and first pieces (6-byte pieces) |
 | bank8E_E000 | matched | $8EE00B | $8EF00A | data | SpriteSet14 pieces end, tiles |
 | bank8E_F000 | matched | $8EF00B | $8EFFFF | 100% | SpriteSet14 end, assdefo, zero fill |
-| bank8F_8000 | not matched <- CURRENT | $8F8000 | $8F8FFF | 58% | PerLabels "Final" $8248 (92G $A34E); GameLabels $89A5 (92G $AB16, 93G $F6CC) |
-| bank8F_9000 | not matched | $8F9000 | $8F9FFF | 3% |  |
+| bank8F_8000 | matched | $8F8000 | $8F9084 | 100% | BigFontMap, unusedEnergyBar, unusedStatLabels, PerLabels, EASNLogoMap, BigFontIndex, showclock, asseben, PushRef, SetHor, USBoard, pplpen, pushnumber, Intermission, the ticker code, GameLabels, showzam, waitxsr, clockcont, DoHiLights, assdopen, updatepentime, linebar, lcfound, PauseExit, suba4/adda4, the DMA queuers, jdtab8F, InitScores, ResetPassWord |
+| bank8F_9000 | not matched <- CURRENT | $8F9085 | $8FA004 | 3% |  |
 | bank8F_A000 | not matched | $8FA005 | $8FAFFF | 0% |  |
 | bank8F_B000 | not matched | $8FB005 | $8FBFFF | 0% |  |
 | bank8F_C000 | not matched | $8FC005 | $8FCFFF | 0% |  |
@@ -329,3 +329,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank8E_D000: matched $8ED00B-$8EE00A (4096 bytes): the last SpriteSet3 tiles; SpriteSet14 = frame set 14, frames 659-720, the first set with 6-byte pieces (drawn by DrawFrameHi). MATCH.
 - bank8E_E000: matched $8EE00B-$8EF00A (4096 bytes): the rest of the SpriteSet14 pieces, its first tiles. MATCH.
 - bank8E_F000: matched $8EF00B-$8EFFFF (4085 bytes): the last SpriteSet14 tiles, assdefo (93G logic93_2). asstab now names assdefo and assbench. Bank $8E complete. MATCH.
+- bank8F_8000: matched $8F8000-$8F9084 (4229 bytes; bank8F_9000 now starts at SpriteSet1 $8F9085): the clock, ref window, scoreboard, ticker, intermission, pause and replay helpers (93G names). $8F8130 is an energy bar routine and $8F8213 seven stat labels with no caller found. Minor locals get autolab names (.lN). The quick-pass F000 had a brl into a string (now db). RAM: tickervc, tickerstart, pentimer. MATCH.

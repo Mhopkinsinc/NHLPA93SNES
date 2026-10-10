@@ -105,6 +105,7 @@ foy		= $0148	; faceoff spot y. 93G foy
 glovecords	= $014E	; x/y bytes of the dropped gloves (chkhit). 93G glovecords
 cheercnt	= $0150	; crowd cheers still to play after a goal (SFXcrowdcheer every 150 frames, Gameloop)
 cheervc		= $0152	; vcount of the last crowd cheer
+tickerstart	= $0158	; TickerNum at the start of the intermission (IntermissionTick: all shown when it comes round again)
 Hpos		= $0154	; ice rink horizontal position. 93G Hpos
 Hscroll		= $0156	; horizontal scroll: BG2HOFS = Hscroll+$C0 (VBlank). 93G Hscroll
 HmAwBonus	= $015A	; setplayer: home bonus / visitor penalty. 93G HmAwBonus
@@ -172,6 +173,7 @@ sprslottime	= $04AB	; 512 words: sprclock value when each 32-byte VRAM sprite ti
 colorflag1	= $08B7	; cleared by setplayercolors (no reader found)
 colorflag2	= $08B9	; cleared by setplayercolors (no reader found)
 TickerNum	= $08D7	; playoff game the score ticker shows next. 93G TickerNum
+tickervc	= $08D9	; vcount when the ticker box was last shown (Intermission: next one after $150 frames)
 ssoattr		= $08AB	; 4 words: attribute of the off-screen arrow objects (93G sso, checksso; field roles by analogy with ffo)
 ssoframe	= $08B3	; 4 words: sso frame
 ssoz		= $08BB	; 4 words: sso z ($FFFF = hidden)
@@ -288,6 +290,7 @@ VisTeam		= $129C	; visiting team number. 93G VisTeam
 PenBuf		= $129E	; up to 32 penalties: (penalty number, SCnum) byte pairs, 0 = free. 93G PenBuf
 PenaltyBufferEnd	= PenBuf-2	; the word before PenBuf, used as the list base. 93G PenaltyBufferEnd
 Pencntdwn	= $12E0	; penalty/fight count down (negative = fight over). 93G Pencntdwn
+pentimer	= $12E2	; frames to the next penalty clock second (updatepentime, 24 per second)
 PBnum		= $12E4	; players in the penalty boxes: home*16 + visitors. 93G PBnum
 InjCntDown	= $12E6	; 93G InjCntDown
 penmsgtimer	= $12E8	; count down to reprinting the horizontal penalty message line ($7FFF = never). 93G penmsgtimer
