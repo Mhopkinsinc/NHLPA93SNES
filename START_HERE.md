@@ -1,13 +1,13 @@
 # START HERE (instructions for the AI agent)
 
-You are the agent doing this whole project. The human does nothing by hand: you set up the tools, build, work the segment queue, commit and push. Read this file, then `SEGMENT_AGENT.md` and `PROMPT.md`.
+You are the agent doing this whole project. The human does nothing by hand: you set up the tools, build, work the cleanup, commit and push. Read this file, then `SEGMENT_AGENT.md` (rules and history) and the `Cleanup progress` section of `docs/HANDOFF.md`.
 
 ## Hard rules
 
 - Never change a ROM byte. Every commit must build to MATCH (sha1 `76a01492cfb656e9fce0094bca356c312adfea0e`).
 - Never force-push, never rewrite pushed history, never push a commit that does not MATCH.
 - Never edit `lst/nhlpa93snes.bin`.
-- One segment per commit.
+- Small commits, one file or file group per commit.
 
 ## 1. Setup (fresh clone)
 
@@ -29,31 +29,27 @@ If setup fails after you have tried to install the missing prerequisite, stop an
 
 The last line must be `MATCH` and both sha1 lines must equal `76a01492cfb656e9fce0094bca356c312adfea0e`. On a fresh clone, if it is not MATCH, stop and report the output. Do not try to fix a fresh clone.
 
-## 3. Work loop: one bank per run
+## 3. Source layout
 
-A run covers one bank: the 8 segments of the bank that holds the current segment (e.g. `bank80_8000` ... `bank80_F000`). Then you stop and wait.
+The segment phase is finished: every bank is disassembled and named (the per-slice log is in `SEGMENT_AGENT.md`).
+The source is now laid out like the NHLPA 93 Genesis source: `src/nhlpa93snes.asm` includes one file per 93G module per bank
+(`main`, `video_bXX`, `logic_bXX`, `hockey_bXX`, `middle_bXX`, `penalty_bXX`, `stats_bXX`, `sound_bXX`, `frames`, `teamdata_bXX`,
+and `gfx/graphics_bXX`, `gfx/sprites_bXX` for the graphics data). A module's SNES code is spread over the ROM, so a file holds one or
+more blocks, each with its own `org` at its exact ROM address; the include order does not move bytes. `docs/file_map.md` lists every
+block and routine; `docs/name_map.csv` maps the quick-pass `CODE_xxxxxx` names to the real names.
 
-1. `git pull --ff-only` on `main`.
-2. Open `SEGMENT_AGENT.md`. The current segment is the line marked `<- CURRENT` (the first row not `matched`). This run's bank is that segment's bank.
-3. Do that segment exactly as `PROMPT.md` says. Follow every rule in `SEGMENT_AGENT.md`.
-   A segment is done only when it is **fully named**: every routine, every local label, every RAM variable it touches (in `src/ram93snes.asm`), parameters / arguments passed in registers or RAM, constants and bit values (equates instead of magic numbers), hardware registers (`src/inc/snes_regs.asm`), data tables, and comments on routines and non-obvious lines. Naming only the routines is not done. No `CODE_` labels and no unexplained `db` in code may remain.
-4. Build after each batch of edits. It must print MATCH. If it does not, undo your last edit and redo it; the build lists the first differing offsets.
-5. When the segment is done: mark the row `matched` with the byte range, add one History line, move `<- CURRENT` to the next row.
-   If you ran out of context: mark the row `in progress` with what is named and keep it current; end the run there and report.
-6. Build once more (MATCH), commit only this segment's files plus `SEGMENT_AGENT.md`, `src/ram93snes.asm`, `src/inc/snes_regs.asm` if changed:
-   `git commit -m "<segment>: <short summary>"`
-7. `git push origin main`. If rejected because the remote moved: `git pull --rebase`, build (MATCH), push. Never `--force`.
-8. If the bank has another segment, go to step 3 with it.
-9. When the bank's last segment is committed and pushed, **STOP**. Post a summary to the user:
-   - segments done (and any `in progress` / `blocked`, with why)
-   - functions, local labels, RAM variables, constants named (lists, with the 93G/92G counterpart where there is one)
-   - the final build result (MATCH and sha1)
-   - the commit hash of each segment
-   Then wait. Do not start the next bank until the user says continue.
+## 4. Work loop: cleanup
 
-## 4. When stuck
+1. `git pull --ff-only`, `./build.sh` (MATCH), `python3 tools/scan_cleanup.py` for what is left (raw addresses, generic labels, noise comments).
+2. Read the `Cleanup progress` section of `docs/HANDOFF.md`: it says what is done and what is next.
+3. Work one file (or one file group) at a time. Rebuild after every logical change; it must print MATCH. If not, fix or revert before moving on.
+4. Names: 93G first, then 92G, then a name from what the code does (`SEGMENT_AGENT.md` naming rules). Rename across the whole repo at once.
+   Keep operand sizes explicit (`lda.b name` / `lda.w name` / `lda.l name`, `lda.w #label>>16`) so asar emits the same bytes.
+5. Moving code between files: cut at a routine boundary and give the moved block its own `org` (its ROM address, from `output/nhlpa93snes.sym`).
+   Update `docs/file_map.md`.
+6. Commit with a clear message, push, and update the `Cleanup progress` section of `docs/HANDOFF.md` before you stop.
 
-- 5 failed builds in a row on one segment, or code you cannot trace (unknown M/X width, a jump you cannot resolve): put the edits back to the last MATCH state (`git checkout -- <file>`), keep whatever named part still MATCHes.
-- In that segment's row, set the status to `blocked` and write in the Note what is unresolved (address, what you tried, what you suspect).
-- Commit and push that (MATCH), then move `<- CURRENT` to the next row and continue. A later session (or the human) comes back to blocked rows.
-- Never mark a row `matched` that still has `CODE_` names or unexplained `db` in code.
+## 5. When stuck
+
+- A rename or address change that cannot be made without changing bytes: leave it and list it with the reason in `docs/HANDOFF.md`.
+- 5 failed builds in a row on one change: `git checkout -- <file>` back to the last MATCH state and note what was tried.

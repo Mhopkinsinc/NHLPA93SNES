@@ -3,6 +3,13 @@
 This file is the queue and the history. Do not rewrite it as a whole file. Edit it in place.
 (Adapted from the NHL94Genesis SEGMENT_AGENT.md for 65816 / asar.)
 
+## Layout note (cleanup pass)
+
+The 128 `src/bankXX_YYYY.asm` slices named below no longer exist: after every slice was matched they were regrouped into the 93G
+module files (`src/hockey_b80.asm`, `src/logic_b80.asm`, ..., `src/gfx/sprites_b84.asm`; see `docs/file_map.md`). The ROM map and the
+History keep the slice names as a record. The slice header notes are in `docs/segment_notes.md`. The rule "do not delete an asm file"
+and "one segment per commit" belonged to the segment phase; START_HERE.md has the cleanup loop.
+
 ## Current segment
 
 Bank $8F done (bank8F_8000..bank8F_F000 all MATCH). Every bank segment ($80-$8F) is matched; no segment is left in the queue. <- CURRENT
@@ -20,7 +27,7 @@ NHLPA Hockey 93 SNES is a hybrid. The SNES port started from NHL92 Genesis (like
 - Reference ROM: `lst/nhlpa93snes.bin` (524288 bytes, sha1 `76a01492cfb656e9fce0094bca356c312adfea0e`). Bytes and branch targets come from it. Do not substitute another ROM.
 - There is no IDA listing. The starting point is the auto-generated `src/bankXX_YYYY.asm` slices (quick recursive-descent pass from the vectors, `tools/disasm65816.py`). Each instruction line carries `; $address: bytes`. Unreached bytes are `db` lines: they are unresolved, not proven data. Do not re-run the generator over a bank once it has been edited.
 - Style / naming source: https://github.com/abdulahmad/NHLPA93Genesis (first), then https://github.com/abdulahmad/NHL92Genesis where 93 lacks the routine.
-- `src/nhlpa93snes.asm` is the full build top level: `inc/snes_regs.asm`, `ram93snes.asm`, then the segment files in ROM order. Keep includes in ROM order.
+- `src/nhlpa93snes.asm` is the full build top level: `inc/snes_regs.asm`, `macros/snes93.mac`, `ram93snes.asm`, then the module files (each block has its own `org`).
 
 ## Mapping
 

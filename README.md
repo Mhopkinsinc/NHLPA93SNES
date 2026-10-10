@@ -2,7 +2,7 @@
 
 **AI agent: start with [START_HERE.md](START_HERE.md).**
 
-Bitwise rebuild of NHLPA Hockey '93 for the Super Nintendo, assembled with asar. The full build is byte-identical to `lst/nhlpa93snes.bin` (sha1 `76a01492cfb656e9fce0094bca356c312adfea0e`). No segment is named yet: `src/bankXX_YYYY.asm` (128 ~4 KB segments) are a quick auto-generated pass.
+Bitwise rebuild of NHLPA Hockey '93 for the Super Nintendo, assembled with asar. The full build is byte-identical to `lst/nhlpa93snes.bin` (sha1 `76a01492cfb656e9fce0094bca356c312adfea0e`). Every bank is disassembled and named; the source is laid out like the NHLPA 93 Genesis source (one file per 93G module per bank).
 
 ## Lineage
 
@@ -10,12 +10,15 @@ The SNES port is a hybrid: it began as a port of NHL92 Genesis (likely while NHL
 
 ## Layout
 
-- `src/nhlpa93snes.asm` top level, `src/bankXX_YYYY.asm` one file per ~4 KB segment (FastROM mirror addresses), `src/inc/snes_regs.asm` hardware registers, `src/macros/snes93.mac` macros, `src/ram93snes.asm` RAM names.
+- `src/nhlpa93snes.asm` top level. Module files named after the 93G source files: `main`, `video_bXX`, `logic_bXX`, `hockey_bXX`, `middle_bXX`, `penalty_bXX`, `stats_bXX`, `sound_bXX`, `frames`, `teamdata_bXX`; graphics data in `src/gfx/` (`graphics_bXX`, `sprites_bXX`). Each file holds that module's code of one bank as `org` blocks at their ROM addresses (FastROM mirror). `docs/file_map.md` lists every block and routine.
+- `src/inc/snes_regs.asm` hardware registers and register values, `src/macros/snes93.mac` macros, `src/ram93snes.asm` RAM names and constants.
+- `docs/name_map.csv` the quick-pass names (`CODE_xxxxxx`) of the named routines; `docs/segment_notes.md` the notes of the old ~4 KB slices.
+- `tools/scan_cleanup.py` counts raw addresses, generic labels and noise comments left in `src/`.
 - `lst/nhlpa93snes.bin` reference ROM (committed, as NHL94Genesis does).
-- `tools/disasm65816.py` the quick-pass generator (recursive descent from the vectors, REP/SEP/PHP/PLP M/X tracking). Setup only.
+- `tools/disasm65816.py` the quick-pass generator (recursive descent from the vectors, REP/SEP/PHP/PLP M/X tracking). Setup only; it wrote the old `bankXX_YYYY` slices.
 - `data/` the incbin assets; `data/README.md` describes the file formats (`.map.pak`, `.chr.pak`, `.snesmap`, `.snespal`, ...).
 - `tools/snesgfx.py` unpacks the packed streams (a port of `DecompressGraphics`) and renders tiles, maps and screens to PNG.
-- `SEGMENT_AGENT.md` queue and rules, `PROMPT.md` per-session prompt, `docs/HANDOFF.md` setup notes.
+- `SEGMENT_AGENT.md` rules and the per-slice history, `PROMPT.md` the per-segment prompt (segment phase, finished), `docs/HANDOFF.md` setup notes and the cleanup progress.
 
 ## Build
 

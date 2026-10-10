@@ -1,6 +1,6 @@
 # data/
 
-Binary assets that the `src/bank*.asm` files `incbin`. Each file holds the exact ROM bytes, so the build stays byte-identical.
+Binary assets that the `src/*.asm` and `src/gfx/*.asm` files `incbin`. Each file holds the exact ROM bytes, so the build stays byte-identical.
 The file extension gives the format. The SNES formats are not the same as the Genesis (93G/94G) `.map.jim` / `.pal` / `.tiles` files of the
 same names, so the SNES files get their own extensions.
 
@@ -14,7 +14,7 @@ same names, so the SNES files get their own extensions.
 | `.snespal` | Palette, 16 colours per row. `Pals/Rink`: SNES BGR555 words. `Pals/<team>h`, `Pals/<team>v`: 93G colour words `0000 BBBB GGGG RRRR`, high byte first, which `SetTeamColors` ($80B706) converts to BGR555 | `Pals/<team>h`, `Pals/<team>v`, `Pals/Rink` |
 | `.brr` | SPC700 BRR sound samples (the sample block of an SPC upload stream) | `bootsamples`, `gamesamples` |
 | `.spc700` | SPC700 sound driver code, uploaded to APU $0400 | `spc/driver` |
-| `.bin` | Tables or text with their own format, described where they are included | `HotList`, `Text/ScoutingReportText` |
+| `.bin` | Tables or text with their own format, described where they are included | `HotList` (the 549 hot spot pairs, then the packed `RinkLogoTiles` stream at $44A), `Text/ScoutingReportText` |
 
 Genesis vs SNES, for comparison:
 
@@ -27,7 +27,7 @@ Genesis vs SNES, for comparison:
 
 ## Packed streams (`.pak`)
 
-`DecompressGraphics` (`$86FA3E`, `bank86_F000`) unpacks a stream to `$7F0000`. Control bytes:
+`DecompressGraphics` (`$86FA3E`, `src/middle_b86.asm`) unpacks a stream to `$7F0000`. Control bytes:
 
 - `$00-$1F`: copy the next n+1 bytes
 - `$2x`: write n+1 zero bytes
@@ -50,7 +50,7 @@ The unpacked data holds the map words, then the palette, then the tiles. Offsets
 
 ## Sprites (`Sprites/setNN`)
 
-`FrameSetTable` ($8FE67D) lists the 15 frame sets. Each set's header in `src/bank*.asm` (`SpriteSetN:`) gives the frame,
+`FrameSetTable` ($8FE67D) lists the 15 frame sets. Each set's header in `src/gfx/sprites_bXX.asm` (`SpriteSetN:`) gives the frame,
 piece and tile counts and the first piece of each frame (`.frames`). `setNN.pieces` holds the pieces and `setNN.chr` the 4bpp tiles.
 Frame numbers (`sprframe`, the `SPF` names in `ram93snes.asm`) run on from set to set, starting at 1 (set 0).
 

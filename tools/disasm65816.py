@@ -4,7 +4,7 @@ Tracks M/X through REP/SEP (and PLP/RTI heuristically: state after PLP = state a
 Emits asar asm, one file per bank, under src/. Unreached bytes become db (TODO for segment agents).
 Usage: python3 tools/disasm65816.py rom.bin outdir [--entry 8080CE:16:16 ...]
 Writes to outdir; to decode a new region for an edited bank, write to a scratch dir (e.g. /tmp/dis) and paste
-the lines for that region into the src/bankXX_YYYY.asm slice by hand. Never point outdir at src/ after setup.
+the lines for that region into the module file that holds that address (docs/file_map.md) by hand. Never point outdir at src/ after setup.
 """
 import sys, os, collections
 M = {}
