@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank89_C000` ($89C000-$89CFFF). <- CURRENT
+`bank89_D000` ($89D000-$89DFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -149,8 +149,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank89_9000 | matched | $899000 | $899FFF | 100% | SpriteSet11 end, ReplayMode, SpriteSet13 header, pieces, first tiles |
 | bank89_A000 | matched | $89A000 | $89AFFF | data | SpriteSet13 tiles |
 | bank89_B000 | matched | $89B000 | $89BFFF | data | SpriteSet13 tiles |
-| bank89_C000 | not matched <- CURRENT | $89C000 | $89CFFF | 0% |  |
-| bank89_D000 | not matched | $89D000 | $89DFFF | 0% |  |
+| bank89_C000 | matched | $89C000 | $89CFFF | data | SpriteSet13 tiles |
+| bank89_D000 | not matched <- CURRENT | $89D000 | $89DFFF | 0% |  |
 | bank89_E000 | not matched | $89E000 | $89EFFF | 5% |  |
 | bank89_F000 | not matched | $89F00A | $88FFFF | -0% |  |
 | bank8A_8000 | not matched | $8A8000 | $8A8FFF | 0% |  |
@@ -285,3 +285,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank89_9000: matched $899000-$899FFF (4096 bytes): ReplayMode is the 92G-style instant replay (no 93G camera tracking; L/R step one frame), SpriteSet13 = frame set 13, frames 606-658 (SPFcatch .. SPFgdive+15). RAM: sf2replay, sf3rmplay, lastframevc. MATCH.
 - bank89_A000: matched $89A000-$89AFFF (4096 bytes): SpriteSet13 tiles. MATCH.
 - bank89_B000: matched $89B000-$89BFFF (4096 bytes): SpriteSet13 tiles. MATCH.
+- bank89_C000: matched $89C000-$89CFFF (4096 bytes): SpriteSet13 tiles. MATCH.
