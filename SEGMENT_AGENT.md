@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank85_E000` ($85E000-$85EFFF). <- CURRENT
+`bank85_F000` ($85F000-$85FFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -119,8 +119,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank85_B000 | matched | $85B000 | $85BFFF | data | 4096 bytes $85B000-$85BFFF. SpriteSet4 tiles (incbin data/Sprites/set04.chr slice) |
 | bank85_C000 | matched | $85C000 | $85CFFF | data | 4096 bytes $85C000-$85CFFF. SpriteSet4 tiles (incbin data/Sprites/set04.chr slice) |
 | bank85_D000 | matched | $85D000 | $85DFFF | 100% | 4096 bytes $85D000-$85DFFF. SpriteSet4 tiles end (size asserted); 93G/92G GetShifter; MenuScreen88 start (packed screen, data/MenuScreen88.pak) |
-| bank85_E000 | not matched <- CURRENT | $85E000 | $85EFFF | 0% |  |
-| bank85_F000 | not matched | $85F000 | $84FFFF | -2% |  |
+| bank85_E000 | matched | $85E000 | $85EFFF | data | 4096 bytes $85E000-$85EFFF. MenuScreen88 continued (incbin $A40..$1A40) |
+| bank85_F000 | not matched <- CURRENT | $85F000 | $85FFFF | -2% |  |
 | bank86_8000 | not matched | $868000 | $868FFF | 0% |  |
 | bank86_9000 | not matched | $869000 | $869FFF | 0% |  |
 | bank86_A000 | not matched | $86A000 | $86AFFF | 0% |  |
@@ -253,3 +253,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank85_B000: matched $85B000-$85BFFF (4096 bytes): SpriteSet4 tiles. MATCH.
 - bank85_C000: matched $85C000-$85CFFF (4096 bytes): SpriteSet4 tiles. MATCH.
 - bank85_D000: matched $85D000-$85DFFF (4096 bytes): the last frame set 4 tiles, GetShifter ($85D5A4, gamelevel $014A), and the start of MenuScreen88, the packed full screen (map, 128 colours, 408 tiles) of the bank $88 menu screen at $88F2B0. MATCH.
+- bank85_E000: matched $85E000-$85EFFF (4096 bytes): packed menu screen continued. MATCH.
