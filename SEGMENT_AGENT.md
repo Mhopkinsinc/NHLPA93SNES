@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank86_A000` ($86A000-$86AFFF). <- CURRENT
+`bank86_B000` ($86B000-$86BFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -123,8 +123,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank85_F000 | matched | $85F000 | $85FFFF | 100% | 4096 bytes $85F000-$85FFFF. Title1Map end (size asserted); SNES DrawFrameSet (sprite emitter with the VRAM tile cache); 93G getpzjoy, ResetClock; SNES PrintTeamNames, nullrtl85; $FF fill |
 | bank86_8000 | matched | $868000 | $868FFF | data | 4096 bytes $868000-$868FFF. BootSoundUpload (boot SPC upload stream), block 1 header, SPCDriver (SPC700 driver code, data/spc/driver.bin 0..$FFC) |
 | bank86_9000 | matched | $869000 | $869FFF | data | 4096 bytes $869000-$869FFF. SPCDriver continued (incbin $FFC..$1FFC) |
-| bank86_A000 | not matched <- CURRENT | $86A000 | $86AFFF | 0% |  |
-| bank86_B000 | not matched | $86B000 | $86BFFF | 0% |  |
+| bank86_A000 | matched | $86A000 | $86AFFF | data | 4096 bytes $86A000-$86AFFF. SPCDriver end (size asserted), BootInstruments (29 x 6 bytes to APU $2B00), BootSampleDir (9 entries), BootSamples start (data/bootsamples.brr) |
+| bank86_B000 | not matched <- CURRENT | $86B000 | $86BFFF | 0% |  |
 | bank86_C000 | not matched | $86C000 | $86CFFF | 0% |  |
 | bank86_D000 | not matched | $86D000 | $86DFFF | 0% |  |
 | bank86_E000 | not matched | $86E000 | $86EFFF | 0% |  |
@@ -258,3 +258,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank85 follow-up: MenuScreen88 renamed Title1Map (data/Title1.pak): rendered, it is the title screen (goalie and the NHLPA Hockey '93 logo), the 93G Title1Map / Title1.map.jim backdrop; $88F2B0 is the title screen code. MATCH.
 - bank86_8000: matched $868000-$868FFF (4096 bytes). Bank $86 starts with the boot SPC upload stream (SPCBootUpload): the SPC700 sound driver ($26E7 bytes to APU $0400, kept as data/spc/driver.bin, not disassembled), the instrument table, the sample directory and the boot samples. Constants SPCDRIVER, SPCINSTR, SPCBOOTSAMPLES, SPCDRIVERSIZE, BOOTSAMPLESIZE. MATCH.
 - bank86_9000: matched $869000-$869FFF (4096 bytes): SPC700 driver code continued. MATCH.
+- bank86_A000: matched $86A000-$86AFFF (4096 bytes): the end of the driver, the 29-entry instrument table (sample, ADSR1, ADSR2, GAIN, pitch), the 9-entry boot sample directory and the first boot samples. MATCH.
