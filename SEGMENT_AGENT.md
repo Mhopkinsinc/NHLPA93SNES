@@ -134,7 +134,7 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank87_A000 | matched | $87A000 | $87AFFF | data | 4096 bytes $87A000-$87AFFF. SpriteSet2 tiles (incbin data/Sprites/set02.chr slice) |
 | bank87_B000 | matched | $87B000 | $87BFFF | data | 4096 bytes $87B000-$87BFFF. SpriteSet2 tiles (incbin data/Sprites/set02.chr slice) |
 | bank87_C000 | matched | $87C000 | $87D204 | 100% | 4613 bytes $87C000-$87D204 (end moved to the end of DrawFrame). SpriteSet2 end (size asserted); EASNMap (93G EASN.map.jim, packed, data/EASN.pak); RinkSideTiles1 (packed, data/RinkSideTiles1.pak); TeamBlocksMap (26 x 6x3 words); SNES DrawFrame, addframe_end |
-| bank87_D000 | not matched <- CURRENT | $87D205 | $87DFFF | 13% |  |
+| bank87_D000 | matched | $87D205 | $87DFFF | data | 3579 bytes $87D205-$87DFFF (start moved by bank87_C000). SpriteSet6 (frame set 6, frames 337-352: duck and hold): header, frame table, pieces (data/Sprites/set06.pieces), tiles (set06.chr) |
 | bank87_E000 | matched | $87E000 | $87EFFF | data | 4096 bytes $87E000-$87EFFF. SpriteSet6 tiles (incbin data/Sprites/set06.chr slice) |
 | bank87_F000 | not matched <- CURRENT | $87F000 | $87FFFF | -0% |  |
 | bank88_8000 | not matched | $888000 | $888FFF | 28% |  |
@@ -269,4 +269,5 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank87_A000: matched $87A000-$87AFFF (4096 bytes): SpriteSet2 tiles. MATCH.
 - bank87_B000: matched $87B000-$87BFFF (4096 bytes): SpriteSet2 tiles. MATCH.
 - bank87_C000: matched $87C000-$87D204 (4613 bytes; bank87_D000 now starts at SpriteSet6 $87D205). Rendered the packed blocks: $87C3A0 is the EASN logo backdrop (93G EASN.map.jim), $87C6B4 rink surround tiles. TeamBlocksMap: one 6 x 3 tile block per team. DrawFrame draws frames below $293 (4-byte pieces); the bank $85 emitter (6-byte pieces, $293 and up) is renamed DrawFrameHi. MATCH.
+- bank87_D000: matched $87D205-$87DFFF (3579 bytes): sprite frame set 6, frames 337-352 (SPFduck .. SPFhold+7). Committed after bank87_E000 (the old D000 ran to $87E004, the old E000 started at $87E005). MATCH.
 - bank87_E000: matched $87E000-$87EFFF (4096 bytes): SpriteSet6 tiles. MATCH.
