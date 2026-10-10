@@ -1,5 +1,6 @@
-; $858000-$858FFF  ROM $28000-$28FFF: SpriteSet4, sprite frame set 4 of the frame set table at $8FE67D: frames 225-272 (SPFhipl ..
-; SPFfallback-1: the hip, shoulder and sweep check frames). Format as SpriteSet9 (bank84_8000); tiles continue to bank85_D000.
+; gfx/sprites_b85: sprite frame sets (SpriteSetN, see FrameSetTable): header, frame table, pieces, 4bpp tiles.
+; Bank $85. Each block keeps its ROM address with org; blocks of other modules sit between them.
+
 org $858000
 SpriteSet4:		;frame set 4 (hip, shoulder and sweep checks): frames 225-272
 	dw 48		; frames
@@ -16,7 +17,9 @@ SpriteSet4:		;frame set 4 (hip, shoulder and sweep checks): frames 225-272
 	dw 273,281,288,296,303,312,321,329
 	dw 334
 .pieces:		;x, y, tile, attributes per piece
-	incbin "../data/Sprites/set04.pieces"		; $85806C-$8585A3
+	incbin "../../data/Sprites/set04.pieces"		; $85806C-$8585A3
 	assert .tiles-.pieces == 4*334
 .tiles:		;640 4bpp tiles (32 bytes each)
-	incbin "../data/Sprites/set04.chr":0..$A5C		; $8585A4-$858FFF
+	incbin "../../data/Sprites/set04.chr"
+SpriteSet4End:
+	assert SpriteSet4End-SpriteSet4 == $5A4+640*32

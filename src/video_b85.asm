@@ -1,11 +1,7 @@
-; $85F000-$85FFFF  ROM $2F000-$2FFFF: the end of Title1Map (packed title screen, see bank85_D000), then DrawFrameHi: the SNES sprite
-; emitter for addframe (OAM entries, the sprite VRAM tile cache and the tile dma list), getpzjoy, PrintTeamNames, ResetClock.
-; The cache: sprframetime (4 bytes per frame: sprclock when sent, VRAM slot), sprslottime (sprclock per 32-byte slot);
-; a slot is free when sprclock - its time >= sprslotlife.
-org $85F000
-	incbin "../data/Title1.map.pak":$1A40..$25F9		; $85F000-$85FBB8
-Title1MapEnd:
-	assert Title1MapEnd-Title1Map == $25F9
+; video_b85: 93G video93_1/video93_2: vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
+; Bank $85. Each block keeps its ROM address with org; blocks of other modules sit between them.
+
+org $85FBB9
 DrawFrameHi:		;SNES: draw frame sprframe ($293 and up, 6-byte pieces) of the frame set at [farptr] (sprsetofs = its first frame number) at sprx/spry: for each
 		;   piece an OAM entry, and the piece tiles to a free VRAM slot through DMAList when not cached
 	lda.b sprnodraw
@@ -472,99 +468,3 @@ DrawFrameHi:		;SNES: draw frame sprframe ($293 and up, 6-byte pieces) of the fra
 	stz.b sprvflip
 	stz.b sprflag
 	rtl
-getpzjoy:		;93G getpzjoy (hockey93_02): read the joystick of the pad that paused (sfpj: Readjoy2, else Readjoy1)
-	lda.w sflags
-	bit.w #sfpj
-	beq .p1
-	jml.l Readjoy2
-.p1:
-	jml.l Readjoy1
-PrintTeamNames:		;SNES: regular season: HomeTeam/VisTeam from the options; print both team names ($8D84E2), then $86FC29
-	stx.b xsave
-	ldx.w #$0000
-.pushd:
-	lda.b d0,x
-	pha
-	inx
-	inx
-	cpx.w #$0020
-	bne .pushd
-	ldx.b xsave
-	stx.b xsave
-	ldx.w #$0000
-.pusha:
-	lda.b a0,x
-	pha
-	inx
-	inx
-	cpx.w #$000C
-	bne .pusha
-	ldx.b xsave
-	lda.w OptPlayMode		; OptPlayMode 0: teams from the options
-	bne .pr
-	lda.w OptTeam1
-	sta.w HomeTeam
-	lda.w OptTeam2
-	sta.w VisTeam
-.pr:
-	jsl.l printz
-	dw $0005		; printz inline string: length (counts itself), then control bytes / text
-	db $BE,$02,$01
-	lda.w VisTeam
-	sta.b d1
-	jsl.l DrawTeamBlocks		; bank $8D: print team d1 name
-	jsl.l printz
-	dw $0005		; printz inline string: length (counts itself), then control bytes / text
-	db $BE,$15,$01
-	lda.w HomeTeam
-	sta.b d1
-	jsl.l DrawTeamBlocks		; bank $8D: print team d1 name
-	jsl.l setteams
-	stx.b xsave
-	ldx.w #$000A
-.popa:
-	pla
-	sta.b a0,x
-	dex
-	dex
-	bpl .popa
-	ldx.b xsave
-	stx.b xsave
-	ldx.w #$001E
-.popd:
-	pla
-	sta.b d0,x
-	dex
-	dex
-	bpl .popd
-	ldx.b xsave
-	rtl
-nullrtl85:		;does nothing
-	rtl
-ResetClock:		;set period length and stop clock (93G hockey93_01)
-		;   SNES: set the period length (GetPeriodTime; regular season overtime is 10:00) and stop the clock
-	jsl.l GetPeriodTime
-	lda.w gsp		; gsp >= 3 (overtime) and OptPlayMode 0: 600 seconds
-	sec
-	sbc.w #$0003
-	bmi .v1
-	bvc .ot
-	bra .set
-.v1:
-	bvc .set
-.ot:
-	lda.w OptPlayMode
-	bne .set
-	lda.w #600
-	sta.b d0
-.set:
-	lda.b d0		; gameclock = PerTimeTotal = d0, gmclock
-	sta.w gameclock
-	sta.w PerTimeTotal
-	sta.w gmclock
-	rtl
-unusedFF85:		;unused, $FF fill to the end of the bank
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
