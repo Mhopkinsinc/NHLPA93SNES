@@ -828,9 +828,9 @@ PlayoffScreen:		;auto: CODE_88F512 (from ContinuePlayoffs, $80F5F2). 93G Playoff
 	dec.b d4		; $88F784: C6 63
 	bne .sc		; $88F786: D0 B4
 .logo:		;the NHLPA logo ($8C8000): palette row 2, tiles at logochars, map at x 60, y 2
-	lda.w #$8000		; $88F788: A9 00 80
+	lda.w #NHLPALogo		; $88F788: A9 00 80
 	sta.b tmp0		; $88F78B: 85 73
-	lda.w #$008C		; $88F78D: A9 8C 00
+	lda.w #NHLPALogo>>16		; $88F78D: A9 8C 00
 	sta.b tmp1		; $88F790: 85 75
 	jsl.l DecompressGraphics		; $88F792: 22 3E FA 86
 	ldx.w #$001E		; $88F796: A2 1E 00  logo palette to palette row 2

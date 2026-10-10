@@ -384,7 +384,7 @@ setvideo:		;auto: CODE_80E35E. 93G setvideo (video93_1): once per game frame, if
 	ldx.b xsave		; $80E385: A6 0A
 	jsl.l show_rink		; $80E387: 22 C9 E3 80  show_rink, checkfo, checksso, setsortcords, setffo, showclock, showzam, showcrowd, showref
 	jsl.l checkfo		; $80E38B: 22 E7 E3 80
-	jsl.l $8CFC1A		; $80E38F: 22 1A FC 8C  bank $8C: 93G checksso
+	jsl.l checksso		; $80E38F: 22 1A FC 8C  bank $8C: 93G checksso
 	jsl.l setsortcords		; $80E393: 22 39 E4 80
 	jsl.l setffo		; $80E397: 22 01 E5 80
 	jsl.l $8F82A4		; $80E39B: 22 A4 82 8F  bank $8F: 93G showclock

@@ -670,9 +670,9 @@ DrawGameSetupBack:		;auto: CODE_8888C3. SNES: game setup screen backdrop: textma
 	stz.b textdirtylo		; $8888F1: 64 D0
 	lda.w #$03FF		; $8888F3: A9 FF 03
 	sta.b textdirtyhi		; $8888F6: 85 D2
-	lda.w #$8000		; $8888F8: A9 00 80  the NHLPA logo (packed at $8C8000)
+	lda.w #NHLPALogo		; $8888F8: A9 00 80  the NHLPA logo (packed)
 	sta.b tmp0		; $8888FB: 85 73
-	lda.w #$008C		; $8888FD: A9 8C 00
+	lda.w #NHLPALogo>>16		; $8888FD: A9 8C 00
 	sta.b tmp1		; $888900: 85 75
 	jsl.l DecompressGraphics		; $888902: 22 3E FA 86
 	lda.w #$0009		; $888906: A9 09 00

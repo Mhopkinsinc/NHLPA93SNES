@@ -156,7 +156,7 @@ asspuckc:		;auto: CODE_80F45B (asstab $10). 93G asspuckc (logic93_3): player X i
 	jsl.l checkob		; $80F4B7: 22 98 85 80
 	jsl.l chk4lc		; $80F4BB: 22 81 86 80
 	jsl.l chk4shot		; $80F4BF: 22 E3 86 80
-	jsl.l $8CFD83		; $80F4C3: 22 83 FD 8C  bank $8C: 93G chk4pass
+	jsl.l chk4pass		; $80F4C3: 22 83 FD 8C  bank $8C: 93G chk4pass
 .nodec:		;IDA asspuckc_onside: d0 = 6 + temp3 (random spot), or position when offsides
 	lda.w #$0006		; $80F4C7: A9 06 00
 	clc		; $80F4CA: 18
@@ -598,7 +598,7 @@ assgoalie:		;auto: CODE_80F6AD (asstab $E). 93G assgoalie (logic93_3): goalie X.
 	bpl .tl		; $80F855: 10 C1
 	lda.w #$0001		; $80F857: A9 01 00  threat = 1, chk4pass
 	sta.w threat		; $80F85A: 8D D3 08
-	jsl.l $8CFD83		; $80F85D: 22 83 FD 8C  bank $8C: 93G chk4pass
+	jsl.l chk4pass		; $80F85D: 22 83 FD 8C  bank $8C: 93G chk4pass
 	bra .de1		; $80F861: 80 6E
 .cover:		;cover a loose puck at the crease
 	lda.w temp4,x		; $80F863: BD BF 0C
