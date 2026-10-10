@@ -1,6 +1,6 @@
-; $8D8000-$8D900B  ROM $68000-$6900B: maketree (hockey93_09), InitPPU, StartPer (hockey93_01), GetLowestPen (penalty93_1), Bcheck (hockey93_03),
-; NewPO93, eraser, DrawTeamBlocks, EASNLogo (penalty93_2), PeriodOver, GetPlayerName, updatesound, asstab, mulu16, puckshadow, setd0player;
-; then SpriteSet10 (frame set 10), tiles continue to bank8D_E000.
+; hockey_b8D: 93G hockey93_01..hockey93_11: the game, screens, menus, password, playoffs.
+; Bank $8D. Each block keeps its ROM address with org; blocks of other modules sit between them.
+
 org $8D8000
 maketree:		;make playoff tree (potree) from playoffseats/winbits. 92 MakeTree. (93G hockey93_09)
 		;   SNES: potree from playoffseats (postarts) and WinBits; reset the games of this round (.sett), then FigureJoy
@@ -147,93 +147,8 @@ maketree:		;make playoff tree (potree) from playoffseats/winbits. 92 MakeTree. (
 	and.w #$00FF
 	sta.w gst2,x
 	rtl
-InitPPU:		;SNES: all PPU and CPU I/O registers to their reset values (forced blank, mode 0, no layers, NMI off)
-	sep #$20
-	lda.b #INIDISP_FBLANK|$0F
-	sta.w INIDISP
-	stz.w OBSEL
-	stz.w OAMADDL
-	stz.w OAMADDH
-	stz.w BGMODE
-	stz.w MOSAIC
-	stz.w BG1SC
-	stz.w BG2SC
-	stz.w BG3SC
-	stz.w BG4SC
-	stz.w BG12NBA
-	stz.w BG34NBA
-	stz.w BG1HOFS
-	stz.w BG1HOFS
-	stz.w BG1VOFS
-	stz.w BG1VOFS
-	stz.w BG2HOFS
-	stz.w BG2HOFS
-	stz.w BG2VOFS
-	stz.w BG2VOFS
-	stz.w BG3HOFS
-	stz.w BG3HOFS
-	stz.w BG3VOFS
-	stz.w BG3VOFS
-	stz.w BG4HOFS
-	stz.w BG4HOFS
-	stz.w BG4VOFS
-	stz.w BG4VOFS
-	lda.b #VMAIN_INCHI
-	sta.w VMAIN
-	stz.w VMADDL
-	stz.w VMADDH
-	stz.w M7SEL
-	stz.w M7A
-	lda.b #$01
-	sta.w M7A
-	stz.w M7B
-	stz.w M7B
-	stz.w M7C
-	stz.w M7C
-	stz.w M7D
-	sta.w M7D
-	stz.w M7X
-	stz.w M7X
-	stz.w M7Y
-	stz.w M7Y
-	stz.w CGADD
-	stz.w W12SEL
-	stz.w W34SEL
-	stz.w WOBJSEL
-	stz.w WH0
-	stz.w WH1
-	stz.w WH2
-	stz.w WH3
-	stz.w WBGLOG
-	stz.w WOBJLOG
-	stz.w TM
-	stz.w TS
-	stz.w TMW
-	stz.w TSW
-	lda.b #$30
-	sta.w CGWSEL
-	stz.w CGADSUB
-	lda.b #$E0
-	sta.w COLDATA
-	stz.w SETINI
-	stz.w NMITIMEN
-	lda.b #$FF
-	sta.w WRIO
-	stz.w WRMPYA
-	stz.w WRMPYB
-	stz.w WRDIVL
-	stz.w WRDIVH
-	stz.w WRDIVB
-	stz.w HTIMEL
-	stz.w HTIMEH
-	stz.w VTIMEL
-	stz.w VTIMEH
-	stz.w MDMAEN
-	stz.w HDMAEN
-	lda.b #$01
-	sta.w MEMSEL
-	rep #$30
-	rtl
+
+org $8D8217
 StartPer:		;start a period: reset stack, rink and clock, face off, run the game loop (93G hockey93_01)
 		;   SNES: reset the stack, rink and clock, faceoff at centre ice, music cue timers, replay reset; then the game loop ($8E8000)
 	lda.w #$1FFF		; reset the stack
@@ -314,92 +229,8 @@ StartPer:		;start a period: reset stack, rink and clock, face off, run the game 
 	stz.w lastframevc
 	stz.w oldvcount
 	jml.l Gameloop		; the game loop (bank $8E)
-GetLowestPen:		;92 name; 93 body differs (92 built a release-order PlList). a2 = team on the power play, a3 = shorthanded team. Return d0 = power play time left from the penalty box times.
-		;   Called from updatepwrplay (93G penalty93_1)
-		;   SNES: d0 = power play time left from the penalty box times
-	stz.b d0
-	stz.b d3
-	lda.b a2
-	beq .a
-	lda.w #$001A
-.a:
-	sta.b a0
-.loop:
-	ldy.b a0		; penalty box list of the power play team ($80 ends)
-	inc.b a0
-	lda.w tmboxlist,y
-	and.w #$00FF
-	sta.b d2
-	bit.w #$0080
-	bne .other
-	lda.b a2
-	beq .h0
-	lda.w #$0034
-.h0:
-	clc
-	adc.b d2
-	tay
-	lda.w tmpdst,y
-	sta.b d2
-	bit.w #$4000		; tmpdst bit 14: not timed
-	bne .loop
-	lda.b d2
-	sec
-	sbc.b d3
-	sta.b d2
-	clc
-	adc.b d0
-	sta.b d0
-	lda.b d2
-	sta.b d3
-	bra .loop
-.other:
-	ldy.b a3		; shorthanded team
-	lda.w tmap,y
-	cmp.w #6
-	beq .rtl
-	lda.b d0
-	sec
-	sbc.b d3
-	sta.b d0
-	lda.b a3
-	beq .b
-	lda.w #$001A
-.b:
-	sta.b a0
-.loop2:
-	ldy.b a0
-	lda.w tmboxlist,y
-	inc.b a0
-	and.w #$00FF
-	sta.b d2
-	bit.w #$0080
-	bne .rtl
-	lda.b a3
-	beq .h1
-	lda.w #$0034
-.h1:
-	clc
-	adc.b d2
-	tay
-	lda.w tmpdst,y
-	bit.w #$4000
-	bne .loop2
-	lda.b d0
-	sec
-	sbc.w tmpdst,y
-	bmi .lt
-	bvc .add
-	bra .rtl
-.lt:
-	bvc .rtl
-.add:
-	lda.b d0
-	clc
-	adc.b d3
-	sta.b d0
-.rtl:
-	rtl
+
+org $8D8389
 Bcheck:		;player a2 is in SPA $B44 and a3 is the other player. Entered from checkcheck .cc. If OptPen is 0 and a2 is joystick controlled, a2 needs randomd0($10 + a2 checking rating - a3
 		;   legstr) >= $C. If a3 is within 1 direction of where a2 faces, a3 falls and checkagr may call penalty $20 on a2. Sets collflag to -1 (93G hockey93_03)
 		;   SNES: a2 checks a3 with SPA $B44: if a3 is in front (within one direction) he falls; checkagr may call a penalty $20 (charging) on
@@ -523,71 +354,8 @@ NewPO93:		;93G NewPO (hockey93_09): continue the playoffs from passbits (ReadPas
 	ldx.b xsave
 	ldx.b a3
 	rtl
-eraser:		;fill rectangle with char. d0/d1 = x/y size of rectangle, d2 = char word to fill with, printx/y/m define top left corner to start at (93G middle93_2)
-		;   SNES: fill d0 x d1 textmap words at printx/printy (print map printm) with tile d2 (+ printfontset)
-	phx
-	lda.b d2
-	clc
-	adc.w printfontset
-	sta.b d2
-	stz.b d1+2
-.row:
-	lda.w printy
-	clc
-	adc.b d1+2
-	asl a
-	asl a
-	asl a
-	asl a
-	asl a
-	adc.w printx
-	asl a
-	adc.b printm
-	tax
-	ldy.b d0
-	lda.b d2
-.col:
-	sta.l textmap,x
-	inx
-	inx
-	dey
-	bne .col
-	inc.b d1+2
-	lda.b d1+2
-	cmp.b d1
-	bne .row
-	plx
-	lda.w printy
-	asl a
-	asl a
-	asl a
-	asl a
-	asl a
-	adc.w printx
-	cmp.b textdirtylo
-	bcs .hi
-	sta.b textdirtylo
-.hi:
-	lda.w printy
-	clc
-	adc.b d1
-	and.w #$001F
-	sta.w printy
-	dec a
-	and.w #$001F
-	asl a
-	asl a
-	asl a
-	asl a
-	asl a
-	adc.w printx
-	adc.b d0
-	dec a
-	cmp.b textdirtyhi
-	bcc .rtl
-	sta.b textdirtyhi
-.rtl:
-	rtl
+
+org $8D84E2
 DrawTeamBlocks:		;draw team block d1 (team*2) from TeamBlocks.map at printx/printy; the user's team (potree entry (93G hockey93_06)
 		;   SNES: the 9 x 2 TeamBlocksMap block of team d1 into textmap at printx/printy (scorechars, printa)
 	lda.b a2
@@ -646,53 +414,8 @@ DrawTeamBlocks:		;draw team block d1 (team*2) from TeamBlocks.map at printx/prin
 	pla
 	sta.b a2
 	rtl
-EASNLogo:		;Draw easn.map at x 1, y $19 on the vertical ice rink if no power play. Falls into DrawEASNMap (93G penalty93_2)
-		;   SNES: the EASN logo (7 x 2 words, $8F824D) at x 1, y $19 of the rink map unless a power play is on
-	lda.w sflags
-	bit.w #sf2pwrplay
-	bne .rtl
-	jsl.l printz
-	dw $0005		; printz inline string: length (counts itself), then control bytes / text
-	db $BF,$01,$19
-	stz.b tmp0
-	stz.b tmp1
-	lda.w #$0002
-	sta.b tmp2
-.row:
-	lda.w #$0007
-	sta.b tmp2+2
-.col:
-	ldx.b tmp0
-	lda.l EASNLogoMap,x
-	clc
-	adc.w unusedchars
-	adc.w charofs
-	ldx.b tmp1
-	ora.w #$2000
-	sta.l textmap+$642,x
-	inc.b tmp0
-	inc.b tmp0
-	inc.b tmp1
-	inc.b tmp1
-	dec.b tmp2+2
-	bne .col
-	lda.b tmp1
-	clc
-	adc.w #$0032
-	sta.b tmp1
-	dec.b tmp2
-	bne .row
-	lda.w #$0321		; dirty range of the rink map rows
-	cmp.b textdirtylo
-	bcs .hi
-	sta.b textdirtylo
-.hi:
-	lda.w #$0347
-	cmp.b textdirtyhi
-	bcc .rtl
-	sta.b textdirtyhi
-.rtl:
-	rtl
+
+org $8D85A9
 PeriodOver:		;what to do if period over. Branched to from puckfaceoff (logic93_4) when the clock runs out. (93G hockey93_06)
 		;   SNES: next period (gmdir flips); overtime only for a tied playoff game; gsp 4 = game over (ContinuePlayoffs), else StartPer
 	jsl.l forceblack
@@ -779,49 +502,8 @@ GetPlayerName:		;93 only: a1 = mesarea "NN First Last" (getname) for player Temp
 	bpl .popd
 	ldx.b xsave
 	rtl
-updatesound:		;move the crowd noise volume (psg noise channel) toward crowdlevel. (93G video93_2)
-		;   SNES: move the crowd volume (asv) toward crowdlevel; send it to the sound driver when it changes (crowdvol)
-	ldy.b d7
-	lda.b crowdlevel		; target volume crowdlevel * 8 + $200 (max $CFF)
-	asl a
-	asl a
-	asl a
-	adc.w #$0200
-	cmp.w #$0CFF
-	bcc .ip
-	lda.w #$0CFF
-.ip:
-	sta.b tmp0
-.step:
-	lda.b tmp0
-	sec
-	sbc.w asv
-	lsr a
-	lsr a
-	lsr a
-	lsr a
-	bit.w #$0800
-	beq .pos
-	ora.w #$F000
-.pos:
-	clc
-	adc.w asv
-	sta.w asv
-	dey
-	bne .step
-	sta.b mula
-	lda.w #$009D		; scale to 0-$9D, + $80
-	sta.b mulb
-	jsl.l mulu
-	lda.b mulres+2
-	adc.w #$0080
-	cmp.w crowdvol
-	beq .rtl
-	sta.w crowdvol
-	pha
-	jsl.l sfx8F		; send it
-.rtl:
-	rtl
+
+org $8D86A8
 asstab:		;SNES: the assignment routines (29 long pointers) that updateplayers calls through jmlvector; numbers as 93G asstab
 	dd rtss		; 0
 	dd assdefo		; 1
@@ -852,116 +534,8 @@ asstab:		;SNES: the assignment routines (29 long pointers) that updateplayers ca
 	dd pucknothing		; 1A
 	dd puckfaceoff		; 1B
 	dd puckfaceoff2		; 1C
-mulu16:		;SNES: 16-bit multiply: A = mula = mulb = mulres = low word of mula * mulb (mode 7 multiplier for a byte factor)
-	lda.b mula
-	bmi .full
-	cmp.w #$0080
-	bcc .byteb
-	lda.b mulb
-	bmi .full
-	cmp.w #$0080
-	bcs .full
-	sep #$20
-	sta.w M7B
-	lda.b mula
-	sta.w M7A
-	lda.b mula+1
-	sta.w M7A
-	rep #$30
-	lda.w MPYL
-	sta.b mula
-	sta.b mulb
-	sta.b mulres
-	rtl
-.byteb:
-	lda.b mulb
-	bmi .full
-	sep #$20
-	sta.w M7A
-	xba
-	sta.w M7A
-	lda.b mula
-	sta.w M7B
-	rep #$30
-	lda.w MPYL
-	sta.b mula
-	sta.b mulb
-	sta.b mulres
-	rtl
-.full:
-	sep #$20
-	lda.b mula
-	sta.w WRMPYA
-	lda.b mulb
-	sta.w WRMPYB
-	clc
-	clc
-	clc
-	clc
-	lda.w RDMPYL
-	sta.b mulres
-	lda.w RDMPYH
-	sta.b mulres+1
-	lda.b mulb+1
-	sta.w WRMPYB
-	clc
-	clc
-	clc
-	clc
-	lda.w RDMPYL
-	adc.b mulres+1
-	sta.b mulres+1
-	lda.b mula+1
-	sta.w WRMPYA
-	lda.b mulb
-	sta.w WRMPYB
-	clc
-	clc
-	clc
-	clc
-	lda.w RDMPYL
-	adc.b mulres+1
-	sta.b mulres+1
-	rep #$30
-	lda.b mulres
-	sta.b mula
-	sta.b mulb
-	clc
-	rtl
-puckshadow:		;asstab $19. assignment for puck shadow. a3 = puck shadow (struct after the puck) (93G logic93_5)
-		;   SNES: the shadow object follows the puck (frame $189); else parks it behind the goal
-	lda.w frame,x
-	cmp.w #$0189		; puck frame: shadow under the puck
-	bne .none
-	lda.w puckx
-	sta.w Xpos,x
-	lda.w pucky
-	sta.w Ypos,x
-	stz.w Zpos,x
-	lda.w sfhormode
-	beq .v
-	inc.w Xpos,x
-	rtl
-.v:
-	inc.w Ypos,x
-	rtl
-.none:
-	tay
-	beq .rtl
-	stz.w Xpos,x
-	lda.w #300		; behind the goal
-	sta.w Ypos,x
-	lda.w #14
-	sta.w Zpos,x
-	lda.w pucky
-	bpl .rtl
-	lda.w #$8000
-	sta.w attribute,x
-	lda.w #-300
-	sta.w Ypos,x
-	dec.w Zpos,x
-.rtl:
-	rtl
+
+org $8D87FB
 setd0player:		;give control of player d0 to a controller if his team is controlled (93G hockey93_05)
 		;   SNES: give player d0 to the controller of his team (setc1player/setc2player) unless a controller has him already
 	lda.b d0
@@ -994,23 +568,3 @@ setd0player:		;give control of player d0 to a controller if his team is controll
 	jml.l setc1player
 .rtl:
 	rtl
-SpriteSet10:		;frame set 10 (frames 462-517): frames 462-517
-	dw 56		; frames
-	dw 388		; pieces
-	dw 768		; tiles
-	dw .pieces-SpriteSet10
-	dw .tiles-SpriteSet10
-.frames:		;first piece of each frame (+1 entry for the end)
-	dw 0,9,18,26,33,42,49,57
-	dw 64,72,80,83,91,99,104,112
-	dw 120,130,135,143,152,158,164,171
-	dw 176,180,184,192,196,202,208,216
-	dw 224,230,236,244,251,258,264,270
-	dw 275,283,292,298,305,311,316,327
-	dw 339,345,349,355,360,367,373,380
-	dw 388
-.pieces:		;x, y, tile, attributes per piece
-	incbin "../data/Sprites/set10.pieces"		; $8D88B8-$8D8EC7
-	assert .tiles-.pieces == 4*388
-.tiles:		;768 4bpp tiles (32 bytes each)
-	incbin "../data/Sprites/set10.chr":0..$144		; $8D8EC8-$8D900B

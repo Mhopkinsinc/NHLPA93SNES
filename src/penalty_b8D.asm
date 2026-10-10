@@ -1,9 +1,144 @@
-; $8DF00C-$8DFFFF  ROM $6F00C-$6FFFF: the rest of BigFontTiles, StartHL2 (92G penalty.asm: play the highlight of another playoff game), asspenalty
-; and clrplayer (logic93_2, asstab $C), avdgoal (logic93_5), zero fill.
-org $8DF00C
-	incbin "../data/BigFont.chr.pak":$144..$9C0		; $8DF00C-$8DF887
-BigFontTilesEnd:
-	assert BigFontTilesEnd-BigFontTiles == $9C0
+; penalty_b8D: 93G penalty93_1/penalty93_2: penalties, scoreboard, ticker, intermission.
+; Bank $8D. Each block keeps its ROM address with org; blocks of other modules sit between them.
+
+org $8D82F0
+GetLowestPen:		;92 name; 93 body differs (92 built a release-order PlList). a2 = team on the power play, a3 = shorthanded team. Return d0 = power play time left from the penalty box times.
+		;   Called from updatepwrplay (93G penalty93_1)
+		;   SNES: d0 = power play time left from the penalty box times
+	stz.b d0
+	stz.b d3
+	lda.b a2
+	beq .a
+	lda.w #$001A
+.a:
+	sta.b a0
+.loop:
+	ldy.b a0		; penalty box list of the power play team ($80 ends)
+	inc.b a0
+	lda.w tmboxlist,y
+	and.w #$00FF
+	sta.b d2
+	bit.w #$0080
+	bne .other
+	lda.b a2
+	beq .h0
+	lda.w #$0034
+.h0:
+	clc
+	adc.b d2
+	tay
+	lda.w tmpdst,y
+	sta.b d2
+	bit.w #$4000		; tmpdst bit 14: not timed
+	bne .loop
+	lda.b d2
+	sec
+	sbc.b d3
+	sta.b d2
+	clc
+	adc.b d0
+	sta.b d0
+	lda.b d2
+	sta.b d3
+	bra .loop
+.other:
+	ldy.b a3		; shorthanded team
+	lda.w tmap,y
+	cmp.w #6
+	beq .rtl
+	lda.b d0
+	sec
+	sbc.b d3
+	sta.b d0
+	lda.b a3
+	beq .b
+	lda.w #$001A
+.b:
+	sta.b a0
+.loop2:
+	ldy.b a0
+	lda.w tmboxlist,y
+	inc.b a0
+	and.w #$00FF
+	sta.b d2
+	bit.w #$0080
+	bne .rtl
+	lda.b a3
+	beq .h1
+	lda.w #$0034
+.h1:
+	clc
+	adc.b d2
+	tay
+	lda.w tmpdst,y
+	bit.w #$4000
+	bne .loop2
+	lda.b d0
+	sec
+	sbc.w tmpdst,y
+	bmi .lt
+	bvc .add
+	bra .rtl
+.lt:
+	bvc .rtl
+.add:
+	lda.b d0
+	clc
+	adc.b d3
+	sta.b d0
+.rtl:
+	rtl
+
+org $8D8549
+EASNLogo:		;Draw easn.map at x 1, y $19 on the vertical ice rink if no power play. Falls into DrawEASNMap (93G penalty93_2)
+		;   SNES: the EASN logo (7 x 2 words, $8F824D) at x 1, y $19 of the rink map unless a power play is on
+	lda.w sflags
+	bit.w #sf2pwrplay
+	bne .rtl
+	jsl.l printz
+	dw $0005		; printz inline string: length (counts itself), then control bytes / text
+	db $BF,$01,$19
+	stz.b tmp0
+	stz.b tmp1
+	lda.w #$0002
+	sta.b tmp2
+.row:
+	lda.w #$0007
+	sta.b tmp2+2
+.col:
+	ldx.b tmp0
+	lda.l EASNLogoMap,x
+	clc
+	adc.w unusedchars
+	adc.w charofs
+	ldx.b tmp1
+	ora.w #$2000
+	sta.l textmap+$642,x
+	inc.b tmp0
+	inc.b tmp0
+	inc.b tmp1
+	inc.b tmp1
+	dec.b tmp2+2
+	bne .col
+	lda.b tmp1
+	clc
+	adc.w #$0032
+	sta.b tmp1
+	dec.b tmp2
+	bne .row
+	lda.w #$0321		; dirty range of the rink map rows
+	cmp.b textdirtylo
+	bcs .hi
+	sta.b textdirtylo
+.hi:
+	lda.w #$0347
+	cmp.b textdirtyhi
+	bcc .rtl
+	sta.b textdirtyhi
+.rtl:
+	rtl
+
+org $8DF888
 StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied game is replayed (beq StartHL2) (93G penalty93_2)
 		;   SNES: play the highlight of playoff game a0: "Highlight from game:", then 1-3 minutes of that game with its score; Start
 		;   or A ends it, a tie gets a random winner
@@ -490,258 +625,3 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	dw 100,40
 	dw -10,10
 	dw -50,0
-asspenalty:		;asstab $C. player a3 should goto penalty box (93G logic93_2)
-		;   SNES: player X skates to the penalty box (temp3/temp4 by PBnum), glides in, faces the ice (SPAwallright), then adopen
-	lda.w pfalock,x
-	beq .go
-	jmp.w .rtl
-.go:
-	lda.w pflags,x		; new assignment
-	bit.w #pfna
-	beq .nna
-	and.w #~pfna&$FFFF
-	ora.w #pf2unav
-	sta.w pflags,x
-	jsl.l clrplayer
-	lda.w #-2		; setpads -2: number on the leaving player
-	sta.b d4
-	jsl.l setpads
-	stz.w temp2,x
-	lda.w #8
-	sta.w temp2b,x
-	lda.w #11		; temp4 = 11 * (n + 3), n = players in the box (0-2)
-	sta.b d0
-	lda.w PBnum
-	sta.b d1
-	lda.w pfteam,x
-	bne .zero
-	lda.b d1
-	lsr a
-	lsr a
-	lsr a
-	lsr a
-	sta.b d1
-	lda.w #-11
-	sta.b d0
-.zero:		;93G .0
-	lda.b d1
-	and.w #$000F
-	sta.b d1
-	cmp.w #3
-	bcc .one
-	lda.w #2
-	sta.b d1
-.one:		;93G .1
-	inc.b d1
-	inc.b d1
-	inc.b d1
-	lda.b d0
-	sta.b mula
-	lda.b d1
-	sta.b mulb
-	jsl.l muls16
-	sta.b d1
-	sta.w temp4,x
-	lda.w #$0088		; temp3 = $88: the sideline
-	sta.w temp3,x
-	stz.w temp1,x
-	lda.w pflags,x		; pf2npc: no player collision
-	ora.w #pf2npc
-	sta.w pflags,x
-	stz.w Wallcos,x
-	stz.w Wallsin,x
-.nna:
-	lda.w Ypos,x
-	sec
-	sbc.w temp4,x
-	bit.w #$8000
-	beq .ay
-	eor.w #$FFFF
-	inc a
-.ay:
-	cmp.w #13
-	bcc .in
-	jmp.w .st
-.in:
-	lda.w Xpos,x
-	sec
-	sbc.w temp3,x
-	sta.b d0
-	sec
-	sbc.w #-24
-	bmi .lt
-	bvc .near
-.st0:
-	jmp.w .st
-.lt:
-	bvc .st0
-.near:
-	lda.w temp1,x
-	sec
-	sbc.b d7
-	sta.w temp1,x
-	bmi .step
-	jmp.w .rtl
-.step:
-	adc.w #8
-	sta.w temp1,x
-	lda.w #SPAglide		; SPAglide, pfnc
-	sta.b d1
-	sta.w pfnc,x
-	jsl.l SetSPA
-	lda.w #6		; face 6 (2 for the other hand)
-	sta.b d2
-	lda.w handed,x
-	beq .left
-	lda.w #2
-	sta.b d2
-.left:
-	lda.w facedir,x
-	cmp.b d2
-	beq .ok
-	inc a
-	and.w #$0007
-	sta.w facedir,x
-.ok:
-	stz.w Yvel,x
-	lda.w #$1000
-	sta.w Xvel,x
-	lda.b d0
-	sec
-	sbc.w #-8
-	bmi .lt2
-	bvc .stop
-	bra .rtl
-.lt2:
-	bvc .rtl
-.stop:
-	stz.w Xvel,x
-	lda.w facedir,x
-	cmp.b d2
-	bne .rtl
-	lda.w #2
-	sta.w facedir,x
-	sta.w pfalock,x
-	lda.w #SPAwallright		; SPAwallright
-	sta.b d1
-	jsl.l SetSPA
-	lda.w pflags,x
-	and.w #~pf2pen&$FFFF		; pf2pen off
-	sta.w pflags,x
-	lda.w #$0D		; adopen
-	sta.b d0
-	jml.l assreplace
-.rtl:
-	rtl
-.st:		;skate to the box
-	lda.w temp3,x
-	sta.b d0
-	lda.w temp4,x
-	sta.b d1
-	lda.w #rtss		; a0 = rtss: no avoidance
-	sta.b a0
-	lda.w #rtss>>16
-	sta.b a0+2
-	jml.l skateto
-clrplayer:		;take the joystick off player a3 (92 asspenalty .clrplayer) (93G logic93_2)
-		;   SNES: take the joystick off player X (changeplayer)
-	lda.w pflags,x
-	bit.w #pfjoycon
-	beq asspenalty_rtl
-	stz.b d4
-	txa
-	lsr a
-	sta.b d0
-	cmp.w c1playernum
-	beq .ch
-	inc.b d4
-	inc.b d4
-.ch:
-	jml.l changeplayer
-avdgoal:		;don't try to skate thru goal: if d0/d1 cords intersect thru goal then provide new d0/d1 cords. a3 = player. 93 .gl 254 ($FE), .yr/.ye 35 (92 258/30/30), .xr 80 (93G logic93_5)
-		;   SNES: if the path d0/d1 crosses a goal line (y +-254) within 40 of the net, aim beside the net (x +-60) instead
-	stz.b tmp2
-	lda.w #-258		; goal line at y -258 ($FEFE) and 258 ($102)
-	jsl.l .ch1
-	lda.w #258
-	jsl.l .ch1
-	lda.b tmp2
-	bne .rtl
-	lda.w Xpos,x		; not crossing: is the player in front of a net?
-	eor.b d0
-	bpl .rtl
-	lda.w Ypos,x
-	sec
-	sbc.w #258
-	bit.w #$8000
-	beq .b
-	eor.w #$FFFF
-	inc a
-.b:
-	cmp.w #32
-	bcc .x
-	lda.w Ypos,x
-	sec
-	sbc.w #-258
-	bit.w #$8000
-	beq .c
-	eor.w #$FFFF
-	inc a
-.c:
-	cmp.w #32
-	bcs .rtl
-.x:
-	stz.b d1
-	rtl
-.ch1:		;goal line A: crossed within 40 of the net: d1 = line, d0 = +-60 by Xvel, tmp2 = 1
-	sta.b tmp0
-	lda.b d1
-	sec
-	sbc.b tmp0
-	sta.b tmp1
-	lda.w Ypos,x
-	sec
-	sbc.b tmp0
-	eor.b tmp1
-	bpl .rtl
-	lda.w Xpos,x
-	bit.w #$8000
-	beq .ax
-	eor.w #$FFFF
-	inc a
-.ax:
-	cmp.w #40
-	bcs .rtl
-	inc.b tmp2
-	lda.b tmp0
-	sta.b d1
-	lda.w #60
-	sta.b d0
-	lda.w Xvel,x
-	bpl .rtl
-	lda.w #-60
-	sta.b d0
-.rtl:
-	rtl
-unused008D:		;unused, zero fill to the end of the bank
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00
