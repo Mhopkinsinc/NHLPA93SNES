@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-Bank $88 done (bank88_8000 .. bank88_F000 matched). Waiting for the user before the next bank (`bank89_8000`). <- CURRENT
+`bank89_9000` ($899000-$899FFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -145,8 +145,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank88_D000 | matched | $88D00F | $88E00E | data | SpriteSet7 tiles |
 | bank88_E000 | matched | $88E00F | $88EF9B | data | SpriteSet7 tiles end (ends at $88EF9B, boundary moved from $88F001) |
 | bank88_F000 | matched | $88EF9C | $88FFFF | 100% | GetPassWord, PasswordText, TitleScreen, CreditsBlank, PlayoffScreen, PlayoffTreeSetup, assdefd, SuperAdd, skateto (starts at $88EF9C, boundary moved from $88F002) |
-| bank89_8000 | not matched <- CURRENT | $898000 | $898FFF | 0% |  |
-| bank89_9000 | not matched | $899000 | $899FFF | 0% |  |
+| bank89_8000 | matched | $898000 | $898FFF | data | SpriteSet11 (frame set 11: goal siren) header, pieces, tiles |
+| bank89_9000 | not matched <- CURRENT | $899000 | $899FFF | 0% |  |
 | bank89_A000 | not matched | $89A000 | $89AFFF | 0% |  |
 | bank89_B000 | not matched | $89B000 | $89BFFF | 0% |  |
 | bank89_C000 | not matched | $89C000 | $89CFFF | 0% |  |
@@ -281,3 +281,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank88_D000: matched $88D00F-$88E00E (4096 bytes): SpriteSet7 tiles. MATCH.
 - bank88_F000: matched $88EF9C-$88FFFF (4196 bytes; starts after SpriteSet7, boundary moved from $88F002). GetPassWord is 92G (the PasstoText grid, Start = DecodePW); TitleScreen scrolls the credits ($8AFAA8); PlayoffScreen draws PlayoffTreeSetup (93G layout data, SNES positions) with TeamBlocksMap and the NHLPA logo. MenuTiles88 renamed PlayoffTiles (its palette and 6 tiles are the playoff screen's). Committed before bank88_E000 (the old E000 ran to $88F001); both states build MATCH. MATCH.
 - bank88_E000: matched $88E00F-$88EF9B (3981 bytes): the last SpriteSet7 tiles; ends at the set end (bank88_F000 starts at $88EF9C). Bank $88 complete. MATCH.
+- bank89_8000: matched $898000-$898FFF (4096 bytes): SpriteSet11 = frame set 11, frames 518-531 (SPFSiren ..). MATCH.
