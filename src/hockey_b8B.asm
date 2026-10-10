@@ -1,5 +1,6 @@
-; $8B8000-$8B9002  ROM $58000-$59002: the 92G playoff code: NewPO, FigureJoy, Opening/Opening4, ReadPassBits, ResolveGames; then SpriteSet5
-; (frame set 5: the falls), tiles continue to bank8B_F000.
+; hockey_b8B: 93G hockey93_01..hockey93_11: the game, screens, menus, password, playoffs.
+; Bank $8B. Each block keeps its ROM address with org; blocks of other modules sit between them.
+
 org $8B8000
 NewPO:		;93 continue playoffs: read the playoff state back from the password bits, rebuild the tree. (93G hockey93_09)
 		;   SNES: new playoffs with the same team 1: random postarts whose playoffseats hold OptTeam1 (all-star teams count as team 23), clear the series, then maketree
@@ -467,24 +468,3 @@ ResolveGames:		;compute winners and losers for playoff matchups. 92 ResolveGames
 	tsb.w WinBits
 	inc.w gamelevel
 	rtl
-SpriteSet5:		;frame set 5 (falls: SPFfallback, SPFfallfwd): frames 273-336
-	dw 64		; frames
-	dw 533		; pieces
-	dw 896		; tiles
-	dw .pieces-SpriteSet5
-	dw .tiles-SpriteSet5
-.frames:		;first piece of each frame (+1 entry for the end)
-	dw 0,5,13,24,31,36,42,50
-	dw 57,65,74,83,91,98,108,117
-	dw 124,132,142,152,161,167,177,187
-	dw 196,205,212,221,229,234,244,253
-	dw 260,263,271,278,283,292,303,314
-	dw 321,331,341,349,356,365,375,384
-	dw 391,398,408,416,423,432,443,455
-	dw 463,471,482,490,498,505,515,526
-	dw 533
-.pieces:		;x, y, tile, attributes per piece
-	incbin "../data/Sprites/set05.pieces"		; $8B847A-$8B8CCD
-	assert .tiles-.pieces == 4*533
-.tiles:		;896 4bpp tiles (32 bytes each)
-	incbin "../data/Sprites/set05.chr":0..$335		; $8B8CCE-$8B9002
