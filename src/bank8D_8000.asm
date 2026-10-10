@@ -823,7 +823,7 @@ asstab:		;SNES: the assignment routines (29 long pointers) that updateplayers ca
 	dd $8F833F		; $8D86CC 9 asseben (not named yet)
 	dd assepen		; $8D86D0 A
 	dd $8E826B		; $8D86D4 B assbench (not named yet)
-	dd $8DFCC7		; $8D86D8 C asspenalty (not named yet)
+	dd asspenalty		; $8D86D8 C
 	dd $8F8C4B		; $8D86DC D assdopen (not named yet)
 	dd assgoalie		; $8D86E0 E
 	dd assgoalietopuck		; $8D86E4 F

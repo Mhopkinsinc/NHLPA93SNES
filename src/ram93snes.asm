@@ -375,6 +375,7 @@ sprframetime	= $7E2000	; 4 bytes per sprite frame: sprclock when its tiles were 
 palbuffer	= $7E6C74	; CGRAM shadow (256 colors, 512 bytes): VBlank_Cram sends it. 93G palbuffer role
 textmap		= $7E6E74	; text layer tile map buffer (32x32 words); textdirtylo/hi mark what to send
 backmap		= $7E7674	; second BG map buffer (32x32 words) after textmap: screen backgrounds (GameSetupMap, Title1Map, EASNMap)
+hlsavebuf	= $7E7E74	; StartHL2: the game state (gmode-1 .. ScoreSumbytes) while a highlight plays. 92G ReplayStart role
 TestList	= $7F0000	; scouting report paragraph numbers (-1 ends). 93G TestList
 textsave	= $7FF800	; copy of textmap while the pause screen is up
 
