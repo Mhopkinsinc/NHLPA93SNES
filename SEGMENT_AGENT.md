@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank8C_A000` ($8CA000-$8CAFFF). <- CURRENT
+`bank8C_B000` ($8CB000-$8CBFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -171,8 +171,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank8B_F000 | matched | $8BF003 | $8BFFFF | 100% | SpriteSet5 end, printbig, asswingo (.dedata), showref, skatetopuckinit |
 | bank8C_8000 | matched | $8C8000 | $8C8FFF | 100% | NHLPALogo (data/NHLPALogo.map.pak), SpriteSet0 header, pieces, tiles |
 | bank8C_9000 | matched | $8C9000 | $8C9FFF | data | SpriteSet0 tiles |
-| bank8C_A000 | not matched <- CURRENT | $8CA000 | $8CAFFF | 0% |  |
-| bank8C_B000 | not matched | $8CB000 | $8CBFFF | 0% |  |
+| bank8C_A000 | matched | $8CA000 | $8CAFFF | data | SpriteSet0 tiles |
+| bank8C_B000 | not matched <- CURRENT | $8CB000 | $8CBFFF | 0% |  |
 | bank8C_C000 | not matched | $8CC000 | $8CCFFF | 0% |  |
 | bank8C_D000 | not matched | $8CD000 | $8CDFFF | 0% |  |
 | bank8C_E000 | not matched | $8CE000 | $8CEFFF | 0% |  |
@@ -307,3 +307,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank8B_F000: matched $8BF003-$8BFFFF (4093 bytes): printbig (93G, 2 x 2 big font tiles from the $8F8000 map), asswingo (93G zones; seed stands in for the HV counter), showref (SNES: only clears sf2refref), skatetopuckinit. Bank $8B complete. MATCH.
 - bank8C_8000: matched $8C8000-$8C8FFF (4096 bytes): NHLPALogo = the packed NHLPA logo picture (game setup and playoff screens), SpriteSet0 = frame set 0, frames 1-96 (SPFskatewp, SPFskate, SPFturnl, SPFturnr). MATCH.
 - bank8C_9000: matched $8C9000-$8C9FFF (4096 bytes): SpriteSet0 tiles. MATCH.
+- bank8C_A000: matched $8CA000-$8CAFFF (4096 bytes): SpriteSet0 tiles. MATCH.
