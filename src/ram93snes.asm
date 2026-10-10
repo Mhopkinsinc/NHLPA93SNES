@@ -145,6 +145,12 @@ colorflag2	= $08B9	; cleared by setplayercolors (no reader found)
 TickerNum	= $08D7	; playoff game the score ticker shows next. 93G TickerNum
 threat		= $08D3	; direction of threat on puck handler (nonzero = threat). 93G threat
 demoflag	= $08D5	; nonzero in demo mode (pause ends by itself when no controller has a team). 93G demoflag
+PlayerScrollCtr	= $08E9	; scouting text: offset of the next word in the paragraph (negative = next paragraph). 93G PlayerScrollCtr
+screentimer	= $08EB	; frames left on the scouting report screen. 93G screentimer
+SelectedPlayerIdx	= $08ED	; scouting text: TestList index. 93G SelectedPlayerIdx
+ScoutingReportTimer	= $08EF	; frames to the next word ($7FFF = text finished). 93G ScoutingReportTimer
+DispAttribCtr	= $08F1	; scouting text column. 93G DispAttribCtr
+VertLineScrolling	= $08F3	; scouting text line (0-6). 93G VertLineScrolling
 xc1		= $08F5	; scroll lock x (fight). 93G xc1
 yc1		= $08F7	; scroll lock y. 93G yc1
 yleader		= $08F9	; lead distance on scrolling. 93G yleader
@@ -274,6 +280,7 @@ tmtouch2	= $13E6	; second last touch (93G $1A)
 tmtouch3	= $13EA	; third last touch (93G $1C)
 tmap		= $13EE	; active players on ice. 93G tmap
 tmgoalie	= $13F2	; goalie: low byte = goalie 0/1, $FFxx = pulled (xx = goalie to return, $FF = stays out). 93G tmgoalie
+tmscoutpl	= $13F6	; scouting report: roster player of the team shown skating in (SNES)
 tmnear		= $13FA	; 32-bit (tmnear = low word, +4 = high word): nearest distance^2 to the puck (assnearest). 93G team long $2A
 tmchecks	= $1402	; checks stat (93G team word $10)
 tmpasscomp	= $1406	; completed passes (93G team word $14)
@@ -301,6 +308,7 @@ OptTeam2	= $1606	; 93G team 2
 OptPerlen	= $1608	; period length index. 93G OptPerlen
 PassWord	= $1610	; 16 password characters (indexes into PasstoText; bit 7 hides it). 92G PassWord
 OptPen		= $160A	; penalties (0 = off). 93G OptPen
+asv		= $1644	; scouting text without delays (down pressed). 93G asv
 passbits	= $1624	; password bits: a 128-bit number, 8 words, low word first (SuperDiv, PushBits). 92G PassBits
 OptLine		= $160C	; line changes (0 = on). 93G OptLine
 
@@ -324,6 +332,7 @@ blankchar	= $1BE7	; vram tile of the blank character (93G uses tile $7FF)
 sprframetime	= $7E2000	; 4 bytes per sprite frame: sprclock when its tiles were last sent (sprite VRAM tile cache)
 palbuffer	= $7E6C74	; CGRAM shadow (256 colors, 512 bytes): VBlank_Cram sends it. 93G palbuffer role
 textmap		= $7E6E74	; text layer tile map buffer (32x32 words); textdirtylo/hi mark what to send
+TestList	= $7F0000	; scouting report paragraph numbers (-1 ends). 93G TestList
 textsave	= $7FF800	; copy of textmap while the pause screen is up
 
 ReplayBufferEnd	= $7EFF41	; replay buffer end: adda43 wraps to ReplayBufferStart
