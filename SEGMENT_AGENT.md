@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank8B_A000` ($8BA003-$8BAFFF). <- CURRENT
+`bank8B_B000` ($8BB003-$8BBFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -163,8 +163,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank8A_F000 | matched | $8AF000 | $8AFFFF | 100% | SpriteSet12 end, PlayoffBracketMap, Credits, lineinput, getlchoice, SetScore, $FF fill |
 | bank8B_8000 | matched | $8B8000 | $8B9002 | 100% | NewPO, FigureJoy (.pojoylist, .noplist), Opening, Opening4, ReadPassBits, ResolveGames, SpriteSet5 header |
 | bank8B_9000 | matched | $8B9003 | $8BA002 | data | SpriteSet5 tiles |
-| bank8B_A000 | not matched <- CURRENT | $8BA003 | $8BAFFF | 0% |  |
-| bank8B_B000 | not matched | $8BB003 | $8BBFFF | 0% |  |
+| bank8B_A000 | matched | $8BA003 | $8BB002 | data | SpriteSet5 tiles |
+| bank8B_B000 | not matched <- CURRENT | $8BB003 | $8BBFFF | 0% |  |
 | bank8B_C000 | not matched | $8BC003 | $8BCFFF | 0% |  |
 | bank8B_D000 | not matched | $8BD003 | $8BDFFF | 0% |  |
 | bank8B_E000 | not matched | $8BE003 | $8BEFFF | 0% |  |
@@ -299,3 +299,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank8A_F000: matched $8AF000-$8AFFFF (4096 bytes): PlayoffBracketMap (the $8AF880 tree connector map, 23 x 12 words), Credits (93G text with the SNES names), lineinput/getlchoice (logic93_1, same .tab), SetScore with .getscore/.sctab (penalty93_2). RAM: nibblebuffer, tmfstartlc. Bank $8A complete. MATCH.
 - bank8B_8000: matched $8B8000-$8B9002 (4099 bytes): the 92G playoff routines (NewPO, FigureJoy, ReadPassBits with the checksum, ResolveGames), Opening/Opening4; SpriteSet5 = frame set 5, frames 273-336 (SPFfallback, SPFfallfwd). RAM: notdemo ($160E). MATCH.
 - bank8B_9000: matched $8B9003-$8BA002 (4096 bytes): SpriteSet5 tiles. MATCH.
+- bank8B_A000: matched $8BA003-$8BB002 (4096 bytes): SpriteSet5 tiles. MATCH.
