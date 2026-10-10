@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank8D_B000` ($8DB00C-$8DBFFF). <- CURRENT
+`bank8D_C000` ($8DC00C-$8DCFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -180,8 +180,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank8D_8000 | matched | $8D8000 | $8D900B | 100% | maketree, InitPPU, StartPer, GetLowestPen, Bcheck, NewPO93, eraser, DrawTeamBlocks, EASNLogo, PeriodOver, GetPlayerName, updatesound, asstab, mulu16, puckshadow, setd0player, SpriteSet10 header |
 | bank8D_9000 | matched | $8D900C | $8DA00B | data | SpriteSet10 tiles |
 | bank8D_A000 | matched | $8DA00C | $8DB00B | data | SpriteSet10 tiles |
-| bank8D_B000 | not matched <- CURRENT | $8DB00C | $8DBFFF | 0% |  |
-| bank8D_C000 | not matched | $8DC00C | $8DCFFF | 0% |  |
+| bank8D_B000 | matched | $8DB00C | $8DC00B | data | SpriteSet10 tiles |
+| bank8D_C000 | not matched <- CURRENT | $8DC00C | $8DCFFF | 0% |  |
 | bank8D_D000 | not matched | $8DD00C | $8DDFFF | 0% |  |
 | bank8D_E000 | not matched | $8DE00C | $8DEFFF | 0% |  |
 | bank8D_F000 | not matched | $8DF00C | $8CFFFF | -0% | penalty StartHL2 "Highlight from game:" $F8D7 (92G $AC98) |
@@ -316,3 +316,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank8D_8000: matched $8D8000-$8D900B (4108 bytes): maketree/StartPer/PeriodOver and the other 93G routines; $8D8416 is 93G NewPO (continue playoffs, no caller found: NewPO93); asstab with labels where they exist. SpriteSet10 = frame set 10, frames 462-517. RAM: p3cue (third period cue timer), crowdvol, d7x1024, gsftf, sf3sbut; tmfstartlc dropped (same bit as tmflcc). MATCH.
 - bank8D_9000: matched $8D900C-$8DA00B (4096 bytes): SpriteSet10 tiles. MATCH.
 - bank8D_A000: matched $8DA00C-$8DB00B (4096 bytes): SpriteSet10 tiles. MATCH.
+- bank8D_B000: matched $8DB00C-$8DC00B (4096 bytes): SpriteSet10 tiles. MATCH.
