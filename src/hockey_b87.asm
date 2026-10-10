@@ -1,9 +1,7 @@
-; $87F000-$87FFFF  ROM $3F000-$3FFFF: the last SpriteSet6 tiles, RestoreReplayFrame (hockey93_02), PixelRemap87, RefTiles (packed ref window tiles, vertical
-; surround tiles for setupice), assepen (logic93_2, asstab $A), $FF fill.
-org $87F000
-	incbin "../data/Sprites/set06.chr":$1C17..$2000		; $87F000-$87F3E8
-SpriteSet6End:
-	assert SpriteSet6End-SpriteSet6 == $1E4+256*32
+; hockey_b87: 93G hockey93_01..hockey93_11: the game, screens, menus, password, playoffs.
+; Bank $87. Each block keeps its ROM address with org; blocks of other modules sit between them.
+
+org $87F3E9
 RestoreReplayFrame:		;a4 = current replay frame address to convert into normal (93G hockey93_02)
 		;   SNES: replay frame record [a4] back into the objects (x, y 12 bits, frame, flip bits), rostnum/position pairs, puck and
 		;   shadow z, lastsfx, d7 = frame delay, PadControlBits, crowdframe, glovecords, PBnum, Hpos/Vpos (not when sfscrl)
@@ -189,59 +187,3 @@ RestoreReplayFrame:		;a4 = current replay frame address to convert into normal (
 	bpl .popd
 	ldx.b xsave
 	rtl
-PixelRemap87:		;SNES: 4bpp pixel value remap for the 4 FramerTiles (bank $88; setupice via $8FE0E4): colours 0-3 only
-	db $00,$03,$04,$03
-RefTiles:		;packed ref window tiles for the vertical rink (117): setupice sends them to refchars
-	incbin "../data/Ref.chr.pak"		; $87F55E-$87FF77
-assepen:		;asstab $A. player a3 should exit penalty area (93G logic93_2)
-		;   SNES: player X leaves the penalty box: PBnum - $10/1, onto the ice at x $88, SPAwallleft; then out of the area (assexit)
-	lda.w pflags,x
-	bit.w #pfna
-	beq .nna
-	and.w #~pfna&$FFFF
-	sta.w pflags,x
-	ldy.w #$0010
-	lda.w pfteam,x
-	beq .one
-	ldy.w #$0001
-.one:		;93G .1
-	sty.b d0
-	lda.w PBnum
-	sec
-	sbc.b d0
-	sta.w PBnum
-	stz.w Xvel,x
-	stz.w Yvel,x
-	lda.w #60
-	sta.b d0
-	lda.w pfteam,x
-	bne .y
-	lda.w #-60
-	sta.b d0
-.y:
-	lda.b d0
-	sta.w Ypos,x
-	lda.w #$0088
-	sta.w Xpos,x
-	lda.w #$0002
-	sta.w facedir,x
-	sta.w pfalock,x
-	lda.w #SPAwallleft
-	sta.b d1
-	jsl.l SetSPA
-	jml.l SprSort
-.nna:
-	lda.w #$0004
-	sta.w facedir,x
-	lda.w #$FFFF
-	sta.w newpnum,x
-	sta.w newpos,x
-	lda.w pflags,x
-	and.w #$6FF7
-	sta.w pflags,x
-	stz.w pfnc,x
-	lda.w #$F000
-	sta.w Xvel,x
-	jml.l assexit
-unusedFF87:		;unused, $FF fill to the end of the bank
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
