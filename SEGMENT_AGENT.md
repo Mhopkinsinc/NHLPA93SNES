@@ -5,7 +5,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 
 ## Current segment
 
-`bank86_D000` ($86D000-$86DFFF). <- CURRENT
+`bank86_E000` ($86E000-$86EFFF). <- CURRENT
 
 `ram93snes` is not a queue segment. It has no ROM bytes, so there is nothing to byte-verify, and the queue moves past its row. That does not put RAM off limits. RAM names come from the code segments as they are transcribed, not from a separate first pass: add each one to `src/ram93snes.asm` whenever it fits. Define each name in one place only.
 
@@ -126,8 +126,8 @@ The first row that is not matched is the current segment. Code% is the share of 
 | bank86_A000 | matched | $86A000 | $86AFFF | data | 4096 bytes $86A000-$86AFFF. SPCDriver end (size asserted), BootInstruments (29 x 6 bytes to APU $2B00), BootSampleDir (9 entries), BootSamples start (data/bootsamples.brr) |
 | bank86_B000 | matched | $86B000 | $86BFFF | data | 4096 bytes $86B000-$86BFFF. BootSamples (incbin data/bootsamples.brr $837..$1837) |
 | bank86_C000 | matched | $86C000 | $86CFFF | data | 4096 bytes $86C000-$86CFFF. BootSamples (incbin data/bootsamples.brr $1837..$2837) |
-| bank86_D000 | not matched <- CURRENT | $86D000 | $86DFFF | 0% |  |
-| bank86_E000 | not matched | $86E000 | $86EFFF | 0% |  |
+| bank86_D000 | matched | $86D000 | $86DFFF | data | 4096 bytes $86D000-$86DFFF. BootSamples (incbin data/bootsamples.brr $2837..$3837) |
+| bank86_E000 | not matched <- CURRENT | $86E000 | $86EFFF | 0% |  |
 | bank86_F000 | not matched | $86F000 | $86FFFF | 19% |  |
 | bank87_8000 | not matched | $878000 | $878FFF | 0% |  |
 | bank87_9000 | not matched | $879000 | $879FFF | 0% |  |
@@ -261,3 +261,4 @@ The first row that is not matched is the current segment. Code% is the share of 
 - bank86_A000: matched $86A000-$86AFFF (4096 bytes): the end of the driver, the 29-entry instrument table (sample, ADSR1, ADSR2, GAIN, pitch), the 9-entry boot sample directory and the first boot samples. MATCH.
 - bank86_B000: matched $86B000-$86BFFF (4096 bytes): boot BRR samples. MATCH.
 - bank86_C000: matched $86C000-$86CFFF (4096 bytes): boot BRR samples. MATCH.
+- bank86_D000: matched $86D000-$86DFFF (4096 bytes): boot BRR samples. MATCH.
