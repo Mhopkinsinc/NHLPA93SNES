@@ -207,7 +207,7 @@ $82FD17,addframe_hi,CODE_82FD17,SNES,,video_b82
 $82FD54,revplayeracc,CODE_82FD54,SNES,,video_b82
 $82FD64,marktexthi,CODE_82FD64,SNES,,video_b82
 $82FD6B,ClearTeamStats,CODE_82FD6B,SNES,,video_b82
-$82FD95,PrintPenaltyMessagesString,CODE_82FD95,93G,,penalty_b82
+$82FD95,ClearPenaltyMessage,CODE_82FD95,93G,93G renamed from PrintPenaltyMessagesString,penalty_b82
 $82FDB5,startpause2,CODE_82FDB5,93G,,hockey_b82
 $82FDBF,printbigz,CODE_82FDBF,SNES,,middle_b82
 $82FDD3,appendz,CODE_82FDD3,SNES,,middle_b82
@@ -425,11 +425,11 @@ $8FF74A,setInjuryType,CODE_8FF74A,93G,,hockey_b8F
 $8FF827,ShowInjuryBox,CODE_8FF827,93G,,hockey_b8F
 $8FF8C4,passtoa0,CODE_8FF8C4,93G,from dopass,logic_b8F
 $8FFAF3,GetPlayerCount,CODE_8FFAF3,93G,,stats_b8F
-$8FFB2B,GetPlayerNameWithAttrib,CODE_8FFB2B,93G,,hockey_b8F
+$8FFB2B,GetPlayerNumInitial,CODE_8FFB2B,93G,93G renamed from GetPlayerNameWithAttrib,hockey_b8F
 $8FFB5B,Acheck,CODE_8FFB5B,93G,,logic_b8F
 $8FFB8B,divs16,CODE_8FFB8B,SNES,,middle_b8F
 $8FFBDC,doplayeracc,CODE_8FFBDC,93G,,logic_b8F
 $8FFDD8,ResetAndSelectPlayers,CODE_8FFDD8,93G,,logic_b8F
 $8FFE7B,MusicCue,CODE_8FFE7B,SNES,from StartSong1-5,sound_b8F
 $8FFE8E,sfx8F,CODE_8FFE8E,SNES,,sound_b8F
-$8FFEB4,DisplayPlayerAttributeMenu,CODE_8FFEB4,93G,,hockey_b8F
+$8FFEB4,ShowGoalBox,CODE_8FFEB4,93G,93G renamed from DisplayPlayerAttributeMenu,hockey_b8F

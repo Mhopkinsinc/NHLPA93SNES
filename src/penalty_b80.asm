@@ -1315,7 +1315,7 @@ coinsearch:		;IDA name; does the job of 92 InProgress .ap (92 coinsearch is inli
 	lda.b d1
 	sta.w tmap,y
 	rtl
-UpdatePA:		;animate ref in ref window. 93: also runs DisplayPeriodOver for game over and reprints the horizontal penalty message line when penmsgtimer runs out (93G penalty93_1)
+UpdatePA:		;animate ref in ref window. 93: also runs ShowThreeStars for game over and reprints the horizontal penalty message line when penmsgtimer runs out (93G penalty93_1)
 		;   SNES: animate the ref (SetPA2 when RefCnt runs out); reprint the horizontal penalty message line when penmsgtimer runs out
 	lda.w RefCnt		; RefCnt negative: idle
 	bmi .rtl
@@ -1332,7 +1332,7 @@ UpdatePA:		;animate ref in ref window. 93: also runs DisplayPeriodOver for game 
 	bpl .rtl
 	lda.w #$7FFF
 	sta.w penmsgtimer
-	jsl.l PrintPenaltyMessagesString		; PrintPenaltyMessagesString, then the player name centered at row $B
+	jsl.l ClearPenaltyMessage		; ClearPenaltyMessage, then the player name centered at row $B
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$11,$0B
@@ -1347,9 +1347,9 @@ UpdatePA:		;animate ref in ref window. 93: also runs DisplayPeriodOver for game 
 	jmp.w print
 .rtl:
 	rtl
-SetPA:		;start ref animation. d0 = animation (penalty number). 93: goal also calls DisplayPlayerAttributeMenu, and penmsgtimer is set to 60 in horizontal mode. Falls into SetPA2 (93G
+SetPA:		;start ref animation. d0 = animation (penalty number). 93: goal also calls ShowGoalBox, and penmsgtimer is set to 60 in horizontal mode. Falls into SetPA2 (93G
 		;   penalty93_1)
-		;   SNES: start the ref animation for penalty d0: prefmes, DisplayPlayerAttributeMenu for a goal, penmsgtimer (60 in horizontal mode), then SetPA2
+		;   SNES: start the ref animation for penalty d0: prefmes, ShowGoalBox for a goal, penmsgtimer (60 in horizontal mode), then SetPA2
 	lda.b d0		; RefPen = d0, RefStep = 0, prefmes
 	sta.w RefPen
 	stz.w RefStep
@@ -1357,7 +1357,7 @@ SetPA:		;start ref animation. d0 = animation (penalty number). 93: goal also cal
 	lda.b d0
 	cmp.w #PenGoal		; goal: the goal box
 	bne .zero
-	jsl.l DisplayPlayerAttributeMenu		; the goal box (93G DisplayPlayerAttributeMenu)
+	jsl.l ShowGoalBox		; the goal box (93G ShowGoalBox)
 .zero:		;93G .0
 	lda.w #$7FFF
 	sta.w penmsgtimer

@@ -1070,7 +1070,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	dec.b d4
 	beq .arrow
 	jmp.w .team
-.arrow:		;DrawPlayoffBracket: arrow column (23 rows of PlayoffBracketMap) at x; $FF ends
+.arrow:		;DrawTreeArrow: arrow column (23 rows of PlayoffBracketMap) at x; $FF ends
 	lda.b [a0]
 	inc.b a0
 	and.w #$00FF

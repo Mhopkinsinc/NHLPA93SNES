@@ -927,7 +927,7 @@ AdvanceStringPtr:		;92 Fprint without the print. Return a1 = string d0 of the St
 	dec.b d0
 	bpl .loop
 	rtl
-AttribMenuSkater:		;SNES: player attribute menu (DisplayPlayerAttributeMenu): 15-byte item strings, the rating bit mask and column, $FFFF ends
+AttribMenuSkater:		;SNES: player attribute menu (ShowGoalBox): 15-byte item strings, the rating bit mask and column, $FFFF ends
 	dw 15
 	db "   Status   ]"
 	dw $0000,$0000		; bit mask, rating column
@@ -1257,7 +1257,7 @@ StatsReport:		;92G StatsReport role: clear the text screen, send 28 rows of HorR
 org $8FF63D
 prefmes:		;print message for penalty d0 (negative clears it). Vertical mode: framed under the ref. Horizontal mode: one centered line on row $B (93G penalty93_1)
 		;   SNES: print the message of penalty d0 (negative clears it). Vertical: framed under the ref at y $A, centred by its length; horizontal (sfhormode):
-		;   PrintPenaltyMessagesString, one centred line at x $11, y $B. Saves d0-d2, a1
+		;   ClearPenaltyMessage, one centred line at x $11, y $B. Saves d0-d2, a1
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -1345,7 +1345,7 @@ prefmes:		;print message for penalty d0 (negative clears it). Vertical mode: fra
 	jsl.l print
 	bra .join2
 .join:
-	jsl.l PrintPenaltyMessagesString
+	jsl.l ClearPenaltyMessage
 	lda.b d0
 	bmi .join2
 	jsl.l printz

@@ -109,7 +109,7 @@ Regenerate the routine lists from the source if they drift; the old ~4 KB slice 
 ## src/penalty_b82.asm
 
 - `$82F93C`: SetPA2, UpdateScores
-- `$82FD95`: PrintPenaltyMessagesString
+- `$82FD95`: ClearPenaltyMessage
 
 ## src/hockey_b82.asm
 
@@ -450,9 +450,9 @@ Regenerate the routine lists from the source if they drift; the old ~4 KB slice 
 - `$8FE825`: TeamRoster, RosterGoalies, RosterG, RosterLineNames
 - `$8FECAB`: Pmenu, GetPadTeam, setpde, setoptions
 - `$8FF741`: CheckInjury, setInjuryType, sublist, priolist, ShowInjuryBox
-- `$8FFB2B`: GetPlayerNameWithAttrib
+- `$8FFB2B`: GetPlayerNumInitial
 - `$8FFDFB`: cd0
-- `$8FFEB4`: DisplayPlayerAttributeMenu, attrText, unusedFF8F
+- `$8FFEB4`: ShowGoalBox, GoalBoxText, unusedFF8F
 
 ## src/video_b8F.asm
 

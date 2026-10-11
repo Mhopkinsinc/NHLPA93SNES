@@ -2213,7 +2213,7 @@ sublist:		;93G sublist (hockey93_11): substitution lists by position: word offse
 priolist:		;93G priolist: positions in order of importance (SetPlList, releasepl, getlinee); no pad byte on the SNES
 	db 0,1,2,4,3,5,6
 ShowInjuryBox:		;93 only: injury box "Injury to:" player TempPlOffset (set by setInjuryType), (93G hockey93_10)
-		;   SNES: "Injury to:" the player TempPlOffset (GetPlayerNameWithAttrib), "Out for period", or "the game" when pf2fight of the puck is set.
+		;   SNES: "Injury to:" the player TempPlOffset (GetPlayerNumInitial), "Out for period", or "the game" when pf2fight of the puck is set.
 		;   Jumped to by CheckInjury; saves d0-d2, a0-a4, ends with X = a3
 	stx.b xsave
 	ldx.w #$0000
@@ -2246,7 +2246,7 @@ ShowInjuryBox:		;93 only: injury box "Injury to:" player TempPlOffset (set by se
 	jsl.l printz
 	dw $0023		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$0C,$04,"Injury to:",$BF,$0C,$06,"Out for period",$BF,$0C,$05
-	jsl.l GetPlayerNameWithAttrib
+	jsl.l GetPlayerNumInitial
 	jsl.l print
 	lda.w pf2fight+puckobj
 	beq .nopf2fight
@@ -2276,7 +2276,7 @@ ShowInjuryBox:		;93 only: injury box "Injury to:" player TempPlOffset (set by se
 	rtl
 
 org $8FFB2B
-GetPlayerNameWithAttrib:		;93 only: a1 = mesarea "NN F. Last" (FormatPlayerNameWithAttrib) for player (93G hockey93_10)
+GetPlayerNumInitial:		;93 only: a1 = mesarea "NN F. Last" (FormatPlayerNumInitial) for player (93G hockey93_10)
 		;   SNES: a1 = the name of player TempPlOffset (PlayerShortName; bit 15 = the visitors); saves d0, a2
 	lda.b d0+2
 	pha
@@ -2318,7 +2318,7 @@ cd0:		;93G cd0 (hockey93_11): $fftt = frame/time for the levels of crowd excitem
 	dw $1203,$1103,$1003,$0F03,$0E03,$0D03,$0C03,$0B03
 
 org $8FFEB4
-DisplayPlayerAttributeMenu:		;93 only: goal box. Closes both line change boxes, then printbig "GOAL!" (or "HAT (93G hockey93_10)
+ShowGoalBox:		;93 only: goal box. Closes both line change boxes, then printbig "GOAL!" (or "HAT (93G hockey93_10)
 		;   SNES: , really the goal box: close both line change boxes (lcfound2), Framer at x $B, y 2 (5-8 tall by the
 		;   assists), printbig "GOAL!" or "HAT TRICK!" (the scorer's third goal, tmgoals), the scorer and "Assist by:" names from the last ScoreSum entry; saves d0-d2, a0-a4, ends with X = a3
 	stx.b xsave
@@ -2378,9 +2378,9 @@ DisplayPlayerAttributeMenu:		;93 only: goal box. Closes both line change boxes, 
 	inc.b a2
 	inc.b a2
 .zero:
-	lda.w #attrText
+	lda.w #GoalBoxText
 	sta.b a1
-	lda.w #attrText>>16
+	lda.w #GoalBoxText>>16
 	sta.b a1+2
 	ldy.w #$0003
 	lda.b [a4],y
@@ -2450,7 +2450,7 @@ DisplayPlayerAttributeMenu:		;93 only: goal box. Closes both line change boxes, 
 	ldx.b xsave
 	ldx.b a3
 	rtl
-attrText:		;93G attrText: printbig strings of DisplayPlayerAttributeMenu: GOAL!, then HAT TRICK!
+GoalBoxText:		;93G GoalBoxText: printbig strings of ShowGoalBox: GOAL!, then HAT TRICK!
 	dw 13
 	db $BF,$0F,$03,"GOAL!",$BF,$0C,$05
 	dw 18

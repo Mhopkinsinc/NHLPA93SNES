@@ -128,7 +128,7 @@ $82E000-$82F93B  ROM $16000-$1793B: IceRinkTiles continued (packed rink tiles, s
 
 ## bank82_F000 (org $82F93C)
 
-$82F93C-$82FFFF  ROM $1793C-$17FFF: code after the packed rink tiles. SetPA2, PrintPenaltyMessagesString (penalty93_1), UpdateScores
+$82F93C-$82FFFF  ROM $1793C-$17FFF: code after the packed rink tiles. SetPA2, ClearPenaltyMessage (penalty93_1), UpdateScores
 (penalty93_2), the 92G password code (BitstoPW, PasstoText, PWtoBits, ClrPassBits, PushBits), asscentero (logic93_3), startpause2,
 and SNES helpers: the SPC700 uploads and the sound queue, muls32, textmap dirty marks, inline string far calls, trampolines.
 Starts after the packed rink tiles (boundary moved from $82F000). Ends with $FF fill.
@@ -623,6 +623,6 @@ pause menu lists, GetPadTeam, setpde. Ends before setoptions (boundaries moved f
 
 $8FEE83-$8FFFFF  ROM $7EE83-$7FFFF: setoptions (hockey93_08) with its option strings, PixelRemapFramer/PixelRemapFont, UnpackNibbles,
 PushNumberWidth, StatsReport, Findhittype, prefmes, CheckInjury, setInjuryType, sublist/priolist, ShowInjuryBox, passtoa0,
-GetPlayerCount, GetPlayerNameWithAttrib, Acheck, divs16, doplayeracc, ResetAndSelectPlayers, cd0, MusicCue, sfx8F and the goal box
-(93G DisplayPlayerAttributeMenu) with attrText. The end of the ROM.
+GetPlayerCount, GetPlayerNumInitial, Acheck, divs16, doplayeracc, ResetAndSelectPlayers, cd0, MusicCue, sfx8F and the goal box
+(93G ShowGoalBox) with GoalBoxText. The end of the ROM.
 

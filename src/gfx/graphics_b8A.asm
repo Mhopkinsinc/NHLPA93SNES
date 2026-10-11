@@ -2,7 +2,7 @@
 ; Bank $8A. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8AF880
-PlayoffBracketMap:		;93G DrawPlayoffBracket graphics: 23 rows of 12 map words; PlayoffScreen copies column n (arrow graphics n) to the tree
+PlayoffBracketMap:		;93G DrawTreeArrow graphics: 23 rows of 12 map words; PlayoffScreen copies column n (arrow graphics n) to the tree
 	dw $0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
 	dw $0801,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$4801
 	dw $0802,$0803,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$4803,$4802

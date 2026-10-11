@@ -47,7 +47,7 @@ UpdateLineChange:		;called once per second. Restore energy for players on the be
 
 org $86FC29
 setteams:		;use hometeam/visteam to set team structures. Falls in from clearTeamStats, also called from hockey93_08. (93G hockey93_06)
-		;   SNES: with InitTeamSructure: use HomeTeam/VisTeam to set the team structs (tmsort, tmteam, tmdata from TeamList). Falls in from ClearTeamStats
+		;   SNES: with InitTeamStructure: use HomeTeam/VisTeam to set the team structs (tmsort, tmteam, tmdata from TeamList). Falls in from ClearTeamStats
 	stz.w tmsort		; home: tmsort 0, away: tmsort $0C
 	lda.w #$000C
 	sta.w tmsort+2
