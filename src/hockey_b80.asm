@@ -3909,7 +3909,7 @@ wallcoll:		;d0 = cosine, d1 = sine of angle of incidence with wall, a3 = object.
 	sta.w puckvz
 	sta.b d0
 	jsl.l puckflip
-	lda.w #SFXpuckwall
+	lda.w #SFXpuckwall1
 	pha
 	lda.b d2
 	sec
@@ -3921,7 +3921,7 @@ wallcoll:		;d0 = cosine, d1 = sine of angle of incidence with wall, a3 = object.
 	bvc .snd
 .s2:
 	pla
-	lda.w #SFXpuckwall+1
+	lda.w #SFXpuckwall1+1
 	pha
 	lda.b d2
 	sec
@@ -3933,7 +3933,7 @@ wallcoll:		;d0 = cosine, d1 = sine of angle of incidence with wall, a3 = object.
 	bvc .snd
 .s3:
 	pla
-	lda.w #SFXpuckwall+2
+	lda.w #SFXpuckwall1+2
 	pha
 .snd:
 	jsl.l sfx
@@ -4335,7 +4335,7 @@ checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 =
 	bvs .goal
 .deflectsf:		;off the post
 	jsl.l ChkShotStat		; off the post: sfx and crowd +300
-	lda.w #SFXpost
+	lda.w #SFXpuckpost
 	pha
 	jsl.l sfx
 	lda.b crowdlevel
