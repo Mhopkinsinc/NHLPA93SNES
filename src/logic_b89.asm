@@ -1,8 +1,8 @@
-; logic_b89: 93G logic93_1..logic93_5: player logic and the assignments (asstab).
+; Player logic and the assignments (asstab).
 ; Bank $89. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $89FD6A
-EvadePC:		;player a3 should avoid the puck carrier if he's on my team (93G logic93_3)
+EvadePC:		;player a3 should avoid the puck carrier if he's on my team
 		;   SNES: within 40 of the puck carrier (after one frame of both velocities) d0 = direction away from him
 	lda.w puckc
 	bmi .rtl
@@ -55,7 +55,7 @@ EvadePC:		;player a3 should avoid the puck carrier if he's on my team (93G logic
 	jml.l vtoa
 .rtl:
 	rtl
-asswingd:		;asstab 3. player a3 is wing on defense (93G logic93_2)
+asswingd:		;asstab 3. player a3 is wing on defense
 		;   SNES: wing on defence: cover his side between the puck and the goal; awingo when the team gets the puck
 	lda.w pfalock,x
 	beq .go
@@ -63,7 +63,7 @@ asswingd:		;asstab 3. player a3 is wing on defense (93G logic93_2)
 .go:
 	lda.w gmclock
 	beq .gm
-	jml.l assnothing		; bank $8F: assnothing
+	jml.l assnothing		; bank $8F
 .gm:
 	jsl.l check4bench
 	lda.w pflags,x
@@ -114,7 +114,7 @@ asswingd:		;asstab 3. player a3 is wing on defense (93G logic93_2)
 	bne .zero
 	lda.w #-100
 	sta.b d0
-.zero:		;93G .0
+.zero:
 	lda.w #158
 	sta.b d1
 	lda.w pfgoal,x		; pfgoal: defending the top goal
@@ -191,7 +191,7 @@ asswingd:		;asstab 3. player a3 is wing on defense (93G logic93_2)
 .set:
 	lda.b d2
 	sta.b d1
-.go2:		;93G .go
+.go2:
 	lda.w #rtss		; a0 = rtss: no avoidance
 	sta.b a0
 	lda.w #rtss>>16

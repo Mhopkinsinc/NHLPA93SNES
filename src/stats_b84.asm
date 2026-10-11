@@ -1,8 +1,8 @@
-; stats_b84: 93G stats93: roster attribute columns.
+; Roster attribute columns.
 ; Bank $84. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $84FC44
-GetNameandAttrib:		;print player d0's name, then at x $1E the column picked by (93G stats93)
+GetNameandAttrib:		;print player d0's name, then at x $1E the column picked by
 		;   SNES: print player d0 (number and name), then at x 26 the column d4 (attribjmp); columns above 2 average the rating nibbles masked by
 		;   d4 high word
 	stx.b xsave
@@ -147,9 +147,9 @@ GetNameandAttrib:		;print player d0's name, then at x $1E the column picked by (
 	bpl .popd
 	ldx.b xsave
 	rtl
-attribjmp:		;93G attribjmp: GetNameandAttrib column handlers, offsets from attribjmp
+attribjmp:		;GetNameandAttrib column handlers, offsets from attribjmp
 	dw AttribStatus-attribjmp,AttribEnergy-attribjmp,AttribHanded-attribjmp,AttribWeight-attribjmp,AttribFighting-attribjmp,AttribRating-attribjmp
-AttribStatus:		;IDA: no label ("jump for status"). Player d0's word at $66(a2): (93G stats93)
+AttribStatus:		;Player d0's word at $66(a2):
 		;   SNES: tmpdst of player d0: Ice/Bench/Injury, or the penalty time (injured: Inj G, $4000: C)
 	asl.b d0
 	lda.b a2
@@ -176,7 +176,7 @@ AttribStatus:		;IDA: no label ("jump for status"). Player d0's word at $66(a2): 
 	sta.b a1+2
 	lda.w #StatusTextTbl
 	sta.b a1
-	jml.l PrintStringFromList		; bank $8F: 93G PrintStringFromList (d0 = index, [a1] = list)
+	jml.l PrintStringFromList		; bank $8F (d0 = index, [a1] = list)
 .pen:
 	lda.b d0
 	bit.w #TMPDINJ
@@ -186,7 +186,7 @@ AttribStatus:		;IDA: no label ("jump for status"). Player d0's word at $66(a2): 
 	sta.b d1
 	and.w #$0FFF
 	sta.b d0
-	jsl.l PushTime		; bank $8F: 93G PushTime (d0 = time)
+	jsl.l PushTime		; bank $8F (d0 = time)
 	jsl.l print
 	lda.w #$0004
 	sta.b d0
@@ -200,15 +200,15 @@ AttribStatus:		;IDA: no label ("jump for status"). Player d0's word at $66(a2): 
 	sta.b a1+2
 	lda.w #StatusTextTbl
 	sta.b a1
-	jml.l PrintStringFromList		; bank $8F: 93G PrintStringFromList (d0 = index, [a1] = list)
-StatusTextTbl:		;93G StatusTextTbl: AttribStatus strings
+	jml.l PrintStringFromList		; bank $8F (d0 = index, [a1] = list)
+StatusTextTbl:		;AttribStatus strings
 	%String("Ice   ")
 	%String("Bench ")
 	%String("Inj P ")
 	%String("Inj G ")
 	%String("  ")
 	%String(" C")
-AttribEnergy:		;IDA: no label ("jump for energy"). $32(a2) word / 40, max 100 (93G stats93)
+AttribEnergy:		;$32(a2) word / 40, max 100
 		;   SNES: tmpde of player d0 / 40, max 100
 	asl.b d0
 	lda.b a2
@@ -228,32 +228,32 @@ AttribEnergy:		;IDA: no label ("jump for energy"). $32(a2) word / 40, max 100 (9
 .pr:
 	sta.b d0
 	bra AttribPrintPct
-AttribFighting:		;IDA: no label ("jump for fighting"). Bit 0 of the nibble is (93G stats93)
+AttribFighting:		;Bit 0 of the nibble is
 		;   SNES: bit 0 of the nibble is handedness, only bits 1-3 count
 	lda.b d0
 	and.w #$000E
 	sta.b d0
 	dec.b d1
-AttribRating:		;IDA: no label. Sum d0 of d1/15 ratings as a percentage (93G stats93)
+AttribRating:		;Sum d0 of d1/15 ratings as a percentage
 	lda.w #$0064
 	sta.b mula
 	lda.b d0
 	sta.b mulb
-	jsl.l mulu		; bank $88: mulu, mulres = mula*mulb
+	jsl.l mulu		; bank $88, mulres = mula*mulb
 	lda.b d1
 	sta.b mula
 	jsl.l divu
 	sta.b d0
-AttribPrintPct:		;93G AttribPrintPct: print d0 4 wide plus padding
+AttribPrintPct:		;print d0 4 wide plus padding
 	lda.w #$0004
 	sta.b d1
-	jsl.l PushNumberWidth		; bank $8F: 93G PushNumberWidth
+	jsl.l PushNumberWidth		; bank $8F
 	jsl.l print
 	jsl.l printz
 	dw $0004		; printz inline string: length (counts itself), then control bytes / text
 	db "  "
 	rtl
-AttribHanded:		;IDA: no label ("jump for handedness"). Bit 0 of the sum (93G stats93)
+AttribHanded:		;Bit 0 of the sum
 	lda.b d0
 	and.w #$0001
 	sta.b d0
@@ -261,18 +261,18 @@ AttribHanded:		;IDA: no label ("jump for handedness"). Bit 0 of the sum (93G sta
 	sta.b a1+2
 	lda.w #HandedTextTbl
 	sta.b a1
-	jml.l PrintStringFromList		; bank $8F: 93G PrintStringFromList (d0 = index, [a1] = list)
-HandedTextTbl:		;93G HandedTextTbl: AttribHanded strings (93G Righty, Lefty)
+	jml.l PrintStringFromList		; bank $8F (d0 = index, [a1] = list)
+HandedTextTbl:		;AttribHanded strings
 	%String("Right ")
 	%String("Left  ")
-AttribWeight:		;IDA: no label ("jump for Weight"). 140 + 8 * rating lb (93G stats93)
+AttribWeight:		;140 + 8 * rating lb
 	lda.b d0
 	asl a
 	asl a
 	asl a
 	adc.w #140
 	sta.b d0
-	jsl.l pushnumber		; bank $8F: 93G pushnumber
+	jsl.l pushnumber		; bank $8F
 	jsl.l print
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text

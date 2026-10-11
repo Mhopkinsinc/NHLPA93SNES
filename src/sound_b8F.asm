@@ -1,4 +1,4 @@
-; sound_b8F: 93G sound93: SPC700 uploads, the sound queue, music cues (93G keeps ScoutingReportText here too).
+; SPC700 uploads, the sound queue, music cues (keeps ScoutingReportText here too).
 ; Bank $8F. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8FFE7B
@@ -14,7 +14,7 @@ MusicCue:		;SNES: send driver command A (a music cue): the sound queue becomes j
 	stz.b sndlock
 	rtl
 sfx8F:		;SNES: bank $8F copy of sfx: queue the sound pushed before the jsl (0 = none) unless within 180 frames of sfxmutetime; no lastsfx; returns through jmlvector. Sends the
-		;   crowd volume (bank $8D, $8F87C4)
+		;   crowd volume (KillCrowd, bank $8D)
 	pla		; return address +1 into jmlvector
 	inc a
 	sta.w jmlvector+1

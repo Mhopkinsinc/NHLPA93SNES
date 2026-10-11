@@ -1,8 +1,8 @@
-; logic_b82: 93G logic93_1..logic93_5: player logic and the assignments (asstab).
+; Player logic and the assignments (asstab).
 ; Bank $82. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $82FDE7
-asscentero:		;asstab 6. player a3 is center on offense (93G logic93_3)
+asscentero:		;asstab 6. player a3 is center on offense
 		;   SNES: player X is the center on offense. Every aidef frames: acenterd when the other team has the puck, else a random spot in the
 		;   zone of the puck (.dedata), skateto with EvadePC
 	lda.w pfalock,x		; anim locked: nothing
@@ -11,7 +11,7 @@ asscentero:		;asstab 6. player a3 is center on offense (93G logic93_3)
 .clk:
 	lda.w gmclock		; clock stopped: assnothing
 	beq .go
-	jml.l assnothing		; bank $8F: 93G assnothing
+	jml.l assnothing		; bank $8F
 .go:
 	jsl.l check4bench
 	lda.w pflags,x		; joystick controlled: nothing
@@ -149,15 +149,15 @@ asscentero:		;asstab 6. player a3 is center on offense (93G logic93_3)
 	eor.w #$FFFF
 	inc a
 	sta.b d1
-.zero:		;93G .0
+.zero:
 	lda.w #EvadePC		; skateto with the EvadePC callback
 	sta.b a0
 	lda.w #EvadePC>>16
 	sta.b a0+2
-	jml.l skateto		; bank $88: 93G skateto (d0/d1 = target, a0 = callback; $89FD6A = 93G EvadePC)
+	jml.l skateto		; bank $88 (d0/d1 = target, a0 = callback; EvadePC = EvadePC)
 .rtl:
 	rtl
-.dedata:		;IDA unk_B14E: per zone (x, random x range, y, random y range)
+.dedata:		;per zone (x, random x range, y, random y range)
 	dw 0,60,-70,10		; zone 0
 	dw 0,60,60,10		; zone 1
 	dw 0,40,170,30		; zone 2

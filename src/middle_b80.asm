@@ -1,4 +1,4 @@
-; middle_b80: 93G middle93_1/middle93_2: utilities (print, joypads, math, decompression).
+; Utilities (print, joypads, math, decompression).
 ; Bank $80. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $808496
@@ -31,7 +31,7 @@ muls16:		;68k muls.w: A = mula*mulb (signed 16-bit result, also in mula/mulb/mul
 	rtl
 
 org $8097A3
-randomd0:		;d0 = range. Return random number in d0 (0 <= d0 < range) (93G middle93_1)
+randomd0:		;d0 = range. Return random number in d0 (0 <= d0 < range)
 		;   SNES: d0 = random 0..d0-1 (via randoma)
 	lda.b d0
 	jsl.l randoma
@@ -91,7 +91,7 @@ divs:		;68k divs: A = mulres = mulb (32-bit) / mula, signed 16-bit quotient. C c
 	rtl
 
 org $80AE56
-random:		;93G randomd0 seed step: seed = seed*$BB40E62D+1 (32-bit LCG); returns A = seed+1 (middle bytes), rndb1/rndb2 set
+random:		;randomd0 seed step: seed = seed*$BB40E62D+1 (32-bit LCG); returns A = seed+1 (middle bytes), rndb1/rndb2 set
 	lda.w seed		; mula = seed (32-bit)
 	sta.b mula
 	lda.w seed+2
@@ -113,13 +113,13 @@ random:		;93G randomd0 seed step: seed = seed*$BB40E62D+1 (32-bit LCG); returns 
 	sta.w rndb1
 	clc
 	rtl
-randoma:		;93G randomd0 with A = range: returns A = random 0..range-1 (high word of random*range). C clear
+randoma:		;randomd0 with A = range: returns A = random 0..range-1 (high word of random*range). C clear
 	pha
 	jsl.l random
 	sta.b mula
 	pla
 	sta.b mulb
-	jsl.l mulu		; bank $88: mulu, mulres = mula*mulb
+	jsl.l mulu		; bank $88, mulres = mula*mulb
 	lda.b mulres+2
 	clc
 	rtl
@@ -154,7 +154,7 @@ divu16:		;68k divu.w: mulres = mulb / mula (16-bit), mulres+2 = remainder; A = m
 	sta.b mulb
 	clc
 	rtl
-printz:		;see print. String macro should follow the bsr/jsr to this routine. 93 keeps a1 (92 popped the return into a1) (93G middle93_2)
+printz:		;see print. String macro should follow the bsr/jsr to this routine. 93 keeps a1 (92 popped the return into a1)
 		;   SNES: print the string that follows the jsl (length word counting itself, then control bytes / text), return after it. Keeps a1
 	lda.b a1+2
 	pha
@@ -175,8 +175,8 @@ printz:		;see print. String macro should follow the bsr/jsr to this routine. 93 
 	pla
 	sta.b a1+2
 	rtl
-print:		;a1 = string macro, printx/y = x/y cordinate on map for printing, printm = map to print on, printa = attribute for characters. string \-$ab,$xx,$yy,'Sample!'\ : a = map number (1-3),
-		;   b = color/priority (0-3 = color fam, prio off),(4-7 = color fam, prio on), xx/yy = x/y cord to print at. 93: '@' = char $7FF, '^' = skip a column (93G middle93_2)
+print:		;a1 = string macro, printx/y = x/y cordinate on map for printing, printm = map to print on, printa = attribute for characters. string \-$ab,$xx,$yy,'Sample!'\ : a = map number (1-3)
+		;   b = color/priority (0-3 = color fam, prio off),(4-7 = color fam, prio on), xx/yy = x/y cord to print at. 93: '@' = char $7FF, '^' = skip a column
 		;   SNES: [a1] = string (length word, control bytes / text) into textmap at printx/printy; marks textdirtylo/hi. "@" = blank tile
 	lda.b [a1]
 	cmp.w #$0100
@@ -297,7 +297,7 @@ print:		;a1 = string macro, printx/y = x/y cordinate on map for printing, printm
 	jmp.w .put
 
 org $80C28B
-sfx:		;play sound effect number. One word passed on stack (93G middle93_1)
+sfx:		;play sound effect number. One word passed on stack
 		;   SNES: play the sound number pushed before the jsl (it is pulled here). Dropped within 180 frames of sfxmutetime; remembered in lastsfx
 	pla		; return address +1 into jmlvector
 	inc a
@@ -323,7 +323,7 @@ sfx:		;play sound effect number. One word passed on stack (93G middle93_1)
 
 org $80C40B
 Readjoy1:		;read controller 1. Return d0 = direction (bit 0-3) and new button (bit 4-7) presses, d1 = new presses (all 8 bits), d2 = changed buttons (all 8), d3 = current held buttons (all
-		;   8) (93G middle93_1)
+		;   8)
 		;   SNES: d0 = direction, d1 = new presses, d2 = changed, d3 = held
 	phx
 	ldx.w #$0000
@@ -340,7 +340,7 @@ Readjoy1:		;read controller 1. Return d0 = direction (bit 0-3) and new button (b
 	sta.b d1
 	rtl
 Readjoy2:		;read controller 2. Return d0 = direction (bit 0-3) and new button (bit 4-7) presses, d1 = new presses (all 8 bits), d2 = changed buttons (all 8), d3 = current held buttons (all
-		;   8) (93G middle93_1)
+		;   8)
 	phx
 	ldx.w #$0002
 	jsl.l ReadJoy
@@ -355,7 +355,7 @@ Readjoy2:		;read controller 2. Return d0 = direction (bit 0-3) and new button (b
 	and.b d1
 	sta.b d1
 	rtl
-ReadJoy:		;read controller a0. Return d0 = direction (bit 0-3) and new button (bit 4-7) presses, d1 = buttons down (all 8 bits) (93G middle93_1)
+ReadJoy:		;read controller a0. Return d0 = direction (bit 0-3) and new button (bit 4-7) presses, d1 = buttons down (all 8 bits)
 		;   SNES: X = 0/2: d1 = buttons held, d0 = direction from jdtab
 	lda.w joypad1,x		; buttons
 	sta.b d0+2
@@ -367,11 +367,11 @@ ReadJoy:		;read controller a0. Return d0 = direction (bit 0-3) and new button (b
 	and.w #$00FF
 	sta.b d0
 	rtl
-jdtab:		;93G jdtab (middle93_1): convert buttons r,l,d,u into directions 0-7, 8
+jdtab:		;convert buttons r,l,d,u into directions 0-7, 8
 	db 8,2,6,8,4,3,5,8,0,1,7,8,8,8,8,8
 
 org $80CBB1
-sroot:		;Square Root, this returns (d0.L)^.5 in d0. 93: values above $F00000 use a binary search (93G middle93_1)
+sroot:		;Square Root, this returns (d0.L)^.5 in d0. 93: values above $F00000 use a binary search
 		;   SNES: d0 = sqrt(d0, 32-bit) by binary search on the square
 	stz.b tmp0
 	lda.w #$1000
@@ -386,7 +386,7 @@ sroot:		;Square Root, this returns (d0.L)^.5 in d0. 93: values above $F00000 use
 	sta.b tmp2
 	sta.b mula
 	sta.b mulb
-	jsl.l mulu		; bank $88: mulu, mulres = mula*mulb
+	jsl.l mulu		; bank $88, mulres = mula*mulb
 	lda.b d0
 	cmp.b mulres
 	lda.b d0+2
@@ -481,7 +481,7 @@ ReadPads:		;SNES: once per frame (padvcount) read the 4 auto-read pads into joyp
 	rtl
 
 org $80F6A1
-randomd0s:		;IDA: sub_D7B2 (Rev A lst). d0 = range. Return d0 = random number (-range < d0 < range) (93G middle93_1)
+randomd0s:		;d0 = range. Return d0 = random number (-range < d0 < range)
 		;   SNES: A = random -A..A (randoma of 2A, minus A)
 	sta.b tmp0
 	asl a

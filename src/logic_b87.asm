@@ -1,8 +1,8 @@
-; logic_b87: 93G logic93_1..logic93_5: player logic and the assignments (asstab).
+; Player logic and the assignments (asstab).
 ; Bank $87. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $87FF78
-assepen:		;asstab $A. player a3 should exit penalty area (93G logic93_2)
+assepen:		;asstab $A. player a3 should exit penalty area
 		;   SNES: player X leaves the penalty box: PBnum - $10/1, onto the ice at x $88, SPAwallleft; then out of the area (assexit)
 	lda.w pflags,x
 	bit.w #pfna
@@ -13,7 +13,7 @@ assepen:		;asstab $A. player a3 should exit penalty area (93G logic93_2)
 	lda.w pfteam,x
 	beq .one
 	ldy.w #$0001
-.one:		;93G .1
+.one:
 	sty.b d0
 	lda.w PBnum
 	sec

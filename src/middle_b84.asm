@@ -1,4 +1,4 @@
-; middle_b84: 93G middle93_1/middle93_2: utilities (print, joypads, math, decompression).
+; Utilities (print, joypads, math, decompression).
 ; Bank $84. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $84EA39

@@ -1,8 +1,8 @@
-; penalty_b84: 93G penalty93_1/penalty93_2: penalties, scoreboard, ticker, intermission.
+; Penalties, scoreboard, ticker, intermission.
 ; Bank $84. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $84FAE3
-DisplayStats:		;92G DisplayStats (penalty.asm): the STATS page of the pause menu: Shots, Power Play, Penalties, Body Checks (92G Fights Won), AttackZone for both teams
+DisplayStats:		;the STATS page of the pause menu: Shots, Power Play, Penalties, Body Checks (Fights Won), AttackZone for both teams
 	jsl.l printbigz
 	dw $000A		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$0B,$02,"STATS"
@@ -15,7 +15,7 @@ DisplayStats:		;92G DisplayStats (penalty.asm): the STATS page of the pause menu
 	sta.b d1
 	lda.w smallfontchars
 	sta.b d2
-	jsl.l eraser		; bank $8D: 92G eraser
+	jsl.l eraser		; bank $8D
 	jsl.l printz
 	dw $000B		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$0D,$06,"      "
@@ -44,7 +44,7 @@ DisplayStats:		;92G DisplayStats (penalty.asm): the STATS page of the pause menu
 	db $BF,$09,$07
 	inc.b a2
 	inc.b a2
-.ss:		;92G .ss: the .sslist stats of team a2 at printx
+.ss:		;the .sslist stats of team a2 at printx
 	lda.w #DisplayStats_sslist
 	sta.b a0
 	lda.w #DisplayStats_sslist>>16
@@ -62,7 +62,7 @@ DisplayStats:		;92G DisplayStats (penalty.asm): the STATS page of the pause menu
 	tay
 	lda.w $0000,y		; stat word of team a2 (absolute address +$0000,y)
 	sta.b d0
-	jsl.l pushnumber		; bank $8F: 93G pushnumber
+	jsl.l pushnumber		; bank $8F
 	lda.b [a0]
 	inc.b a0
 	inc.b a0
@@ -75,7 +75,7 @@ DisplayStats:		;92G DisplayStats (penalty.asm): the STATS page of the pause menu
 	sta.b a3+2
 	lda.w #$0002
 	sta.b [a3]
-	jsl.l appstring		; bank $8F: appstring
+	jsl.l appstring		; bank $8F
 	jsl.l appendz
 	dw $0003		; printz inline string: length (counts itself), then control bytes / text
 	db "/"
@@ -85,8 +85,8 @@ DisplayStats:		;92G DisplayStats (penalty.asm): the STATS page of the pause menu
 	tay
 	lda.w $0000,y
 	sta.b d0
-	jsl.l pushnumber		; bank $8F: 93G pushnumber
-	jsl.l appstring		; bank $8F: appstring
+	jsl.l pushnumber		; bank $8F
+	jsl.l appstring		; bank $8F
 	lda.b a3
 	sta.b a1
 	lda.b a3+2
@@ -109,7 +109,7 @@ DisplayStats:		;92G DisplayStats (penalty.asm): the STATS page of the pause menu
 	ldy.b a2
 	lda.w tmATOP,y
 	sta.b d0
-	jsl.l PushTime		; bank $8F: 93G PushTime (d0 = time)
+	jsl.l PushTime		; bank $8F (d0 = time)
 	lda.b [a1]
 	inc a
 	lsr a
@@ -119,5 +119,5 @@ DisplayStats:		;92G DisplayStats (penalty.asm): the STATS page of the pause menu
 	adc.w printx
 	sta.w printx
 	jml.l print
-DisplayStats_sslist:		;92G .sslist: stat, second stat (-1 = none)
+DisplayStats_sslist:		;stat, second stat (-1 = none)
 	dw tmshots,-1, tmPwrGoals,tmPwrPlays, tmPenalties,tmPenmin, tmchecks,-1, -1,-1

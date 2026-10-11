@@ -1,4 +1,4 @@
-; sound_b86: 93G sound93: SPC700 uploads, the sound queue, music cues (93G keeps ScoutingReportText here too).
+; SPC700 uploads, the sound queue, music cues (keeps ScoutingReportText here too).
 ; Bank $86. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $868000
@@ -53,14 +53,14 @@ BootSampleDir:		;DSP sample directory: per sample the APU address of its start a
 	dw SPCBOOTSAMPLES+$49A7,SPCBOOTSAMPLES+$5271		; sample $08: start, loop (offsets in bootsamples.brr)
 BootSampleDirEnd:
 	dw BOOTSAMPLESIZE, SPCBOOTSAMPLES		; block 4: the BRR samples
-BootSamples:		;BRR samples of the boot set (9-byte blocks), $86A7C9-$86FA39
+BootSamples:		;BRR samples of the boot set (9-byte blocks), BootSamples-BootSamples
 	incbin "../data/bootsamples.brr"
 BootSamplesEnd:
 	assert BootSamplesEnd-BootSamples == BOOTSAMPLESIZE
 	dw $0000, SPCDRIVER		; end block: length 0, start the driver at $0400
 
 org $86FBE1
-StartSong6:		;SNES: start song 6 (the title screen music: TitleScreen $88F3A1, $8FF05C) unless it plays: the boot sound set (SPCBootUpload), then driver command 3
+StartSong6:		;SNES: start song 6 (the title screen music, from TitleScreen and setoptions) unless it plays: the boot sound set (SPCBootUpload), then driver command 3
 	lda.w cursong
 	cmp.w #6
 	beq .rtl

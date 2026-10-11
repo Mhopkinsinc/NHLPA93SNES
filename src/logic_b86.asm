@@ -1,8 +1,8 @@
-; logic_b86: 93G logic93_1..logic93_5: player logic and the assignments (asstab).
+; Player logic and the assignments (asstab).
 ; Bank $86. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $86FCB7
-lcfound2:		;close lc box. Also called from lineinput (93G logic93_1)
+lcfound2:		;close lc box. Also called from lineinput
 		;   SNES: close the line change box (setlccords; the lower box clears sf3llcs), erase it unless the faceoff box is up, then printscores1
 	jsl.l setlccords
 	lda.w printy
@@ -22,12 +22,12 @@ lcfound2:		;close lc box. Also called from lineinput (93G logic93_1)
 	sta.b d2
 	lda.b fobox
 	bne .ps
-	jsl.l eraser		; bank $8D: 92G eraser
+	jsl.l eraser		; bank $8D
 .ps:
 	jml.l printscores1
 
 org $86FD86
-assscore:		;asstab 7. player a3 celebrates, if scoring player then do arm pump (93G logic93_2)
+assscore:		;asstab 7. player a3 celebrates, if scoring player then do arm pump
 		;   SNES: player X celebrates, the scorer pumps his arm. SNES: velocities * 3/4 each frame, the carrier drops the puck (nopuck 1800)
 	lda.w Xvel,x		; Xvel, Yvel *= $C0/256
 	sta.b mula
@@ -69,7 +69,7 @@ assscore:		;asstab 7. player a3 celebrates, if scoring player then do arm pump (
 	bpl .zero
 	lda.w #-90
 	sta.w temp3,x
-.zero:		;93G .0
+.zero:
 	lda.w Vpos
 	sta.w temp4,x
 .nna:
@@ -97,7 +97,7 @@ assscore:		;asstab 7. player a3 celebrates, if scoring player then do arm pump (
 	sta.b d1
 .nopump:
 	jsl.l SetSPA
-.one:		;93G .1: temp1 = random 120
+.one:		;temp1 = random 120
 	lda.w #120
 	jsl.l randoma
 	sta.w temp1,x

@@ -1,8 +1,8 @@
-; penalty_b8A: 93G penalty93_1/penalty93_2: penalties, scoreboard, ticker, intermission.
+; Penalties, scoreboard, ticker, intermission.
 ; Bank $8A. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8AFE21
-SetScore:		;add to score for game in a0. After period 3 a game within one goal goes to OT (gsper 3) and asks for a highlight (93G penalty93_2)
+SetScore:		;add to score for game in a0. After period 3 a game within one goal goes to OT (gsper 3) and asks for a highlight
 		;   SNES: one period of playoff game a0: random goals by ScoreOdds (.getscore); after period 3 a game within one
 		;   goal goes to overtime and asks for a highlight
 	ldy.b a0
@@ -53,7 +53,7 @@ SetScore:		;add to score for game in a0. After period 3 a game within one goal g
 	ora.w #gsfhl		; gsfhl: show it in the ticker
 	sta.w gsflags,y
 	bra .ex
-.zero:		;93G .0
+.zero:
 	lda.w gsper,y
 	inc a
 	sta.w gsper,y
@@ -98,7 +98,7 @@ SetScore:		;add to score for game in a0. After period 3 a game within one goal g
 	ldx.b xsave
 .rtl:
 	rtl
-.getscore:		;93G .getscore: d0 = scoring team, d1 = other team; nibblebuffer = the .sctab rows of both ScoreOdds nibbles; returns d0 = goals 0-3
+.getscore:		;d0 = scoring team, d1 = other team; nibblebuffer = the .sctab rows of both ScoreOdds nibbles; returns d0 = goals 0-3
 	asl.b d0
 	asl.b d0
 	lda.w #TeamList		; TeamList entry of team d0
@@ -108,7 +108,7 @@ SetScore:		;add to score for game in a0. After period 3 a game within one goal g
 	ldy.b d0
 	lda.b [a1],y
 	sta.b a1
-	ldy.w #ScoutReport		; 93G 8(a1): the 92G ScoreOdds offset, ScoutReport in the 93G record
+	ldy.w #ScoutReport		; 8(a1): the ScoreOdds offset, ScoutReport in the record
 	adc.b [a1],y
 	sta.b a1
 	lda.b [a1]
@@ -167,8 +167,8 @@ SetScore:		;add to score for game in a0. After period 3 a game within one goal g
 	sta.w nibblebuffer+6
 	lda.w #4		; 4 weights
 	sta.b d0
-	jml.l WeightedRandomSelect		; bank $8F: 93G WeightedRandomSelect (d0 weights in nibblebuffer)
-.sctab:		;93G .sctab: weights for 0, 1, 2, 3 goals by ScoreOdds row
+	jml.l WeightedRandomSelect		; bank $8F (d0 weights in nibblebuffer)
+.sctab:		;weights for 0, 1, 2, 3 goals by ScoreOdds row
 	dw $2B,$1E,$17,$04
 	dw $27,$20,$18,$05
 	dw $23,$21,$1A,$06

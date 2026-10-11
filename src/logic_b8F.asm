@@ -1,8 +1,8 @@
-; logic_b8F: 93G logic93_1..logic93_5: player logic and the assignments (asstab).
+; Player logic and the assignments (asstab).
 ; Bank $8F. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8F833F
-asseben:		;asstab 9. player a3 should exit bench area (93G logic93_2)
+asseben:		;asstab 9. player a3 should exit bench area
 		;   SNES: player X comes onto the ice from the bench door (SPAwallright), then assexit
 	lda.w pfalock,x
 	bne .rtl
@@ -48,7 +48,7 @@ asseben:		;asstab 9. player a3 should exit bench area (93G logic93_2)
 	jml.l assexit
 
 org $8F8C4B
-assdopen:		;asstab $D. add player a3 to penalty box (93G logic93_2)
+assdopen:		;asstab $D. add player a3 to penalty box
 		;   SNES: add player X to the penalty box (PBnum), position -1, frame 0
 	lda.w pfalock,x
 	bne .rtl
@@ -70,7 +70,7 @@ assdopen:		;asstab $D. add player a3 to penalty box (93G logic93_2)
 	rtl
 
 org $8F8DC7
-lcfound:		;93G lcfound (logic93_1): d2 = line choice 0-2: getlchoice; loadTeamStruct, tmline, setpersonel, lcfound2
+lcfound:		;d2 = line choice 0-2: getlchoice; loadTeamStruct, tmline, setpersonel, lcfound2
 	ldx.b a3
 	ldy.b a2
 	lda.b d2
@@ -96,7 +96,7 @@ lcfound:		;93G lcfound (logic93_1): d2 = line choice 0-2: getlchoice; loadTeamSt
 	rtl
 
 org $8FD4F9
-fightinput:		;controller processing for fighting (93G logic93_1)
+fightinput:		;controller processing for fighting
 		;   SNES: pad input in a fight: dpad moves (playeracc), stay near the fight spot (xc1), B/A/Y punch (SPA $F82/$F50/$F0C)
 	lda.w temp3,x
 	ora.w Pencntdwn
@@ -192,7 +192,7 @@ fightinput:		;controller processing for fighting (93G logic93_1)
 	rtl
 
 org $8FD75A
-assnothing:		;player should do nothing (93G logic93_2)
+assnothing:		;player should do nothing
 		;   SNES: a computer player stands (doplayeracc 8)
 	lda.w pflags,x
 	bit.w #$0008
@@ -229,7 +229,7 @@ GoalieCount:		;SNES: d0 = goalies of team a2 (nibbles of its goalie weights word
 	rtl
 
 org $8FDA8F
-assstanley:		;asstab 8. player a3 skates with stanley cup overhead (93G logic93_2)
+assstanley:		;asstab 8. player a3 skates with stanley cup overhead
 		;   SNES: skate to the side of the screen holding the Stanley Cup (SPAcup)
 	lda.w pfalock,x
 	bne .rtl
@@ -278,7 +278,7 @@ assstanley:		;asstab 8. player a3 skates with stanley cup overhead (93G logic93_
 	rtl
 
 org $8FDB1B
-asscenterd:		;asstab 5. player a3 is center on defense (93G logic93_3)
+asscenterd:		;asstab 5. player a3 is center on defense
 		;   SNES: centre on defence: halfway between the puck and his goal; acentero when the team gets the puck
 	lda.w gmclock
 	beq .nogmclock
@@ -380,7 +380,7 @@ asscenterd:		;asstab 5. player a3 is center on defense (93G logic93_3)
 	jml.l skateto
 
 org $8FE164
-playeracc:		;d2 = direction of acc (93G logic93_5)
+playeracc:		;d2 = direction of acc
 		;   SNES: accelerate player X in direction d2 (dirtab8F, Wallsin/Wallcos, weight and legstr), cap at MaxSpeed; energy use
 	asl.b d2
 	asl.b d2
@@ -571,7 +571,7 @@ playeracc:		;d2 = direction of acc (93G logic93_5)
 	jmp.w setpde
 .rtl:
 	rtl
-dirtab8F:		;93G dirtab: x, y acceleration per direction 0-7 (playeracc)
+dirtab8F:		;x, y acceleration per direction 0-7 (playeracc)
 	dw 0,800
 	dw 565,565
 	dw 800,0
@@ -582,8 +582,8 @@ dirtab8F:		;93G dirtab: x, y acceleration per direction 0-7 (playeracc)
 	dw -565,565
 
 org $8FE3B0
-WeightedRandomSelect:		;d0 = number of word weights at nibblebuffer. Return d0 = random index, picked with those weights. Called from SetScore_getscore and UpdateTeamNameisplay (93G
-		;   logic93_5)
+WeightedRandomSelect:		;d0 = number of word weights at nibblebuffer. Return d0 = random index, picked with those weights. Called from SetScore_getscore and UpdateTeamNameisplay
+
 		;   SNES: d0 = random index 0..d0-1 weighted by the words in nibblebuffer
 	lda.b d1+2
 	pha
@@ -636,7 +636,7 @@ WeightedRandomSelect:		;d0 = number of word weights at nibblebuffer. Return d0 =
 	rtl
 
 org $8FE43C
-passmode:		;dpad sets passdir until bbut changes (93G logic93_1)
+passmode:		;dpad sets passdir until bbut changes
 		;   SNES: B held: a dpad direction sets passdir (d0 | 8) before dopass
 	lda.b d2
 	bit.w #$8000
@@ -651,7 +651,7 @@ passmode:		;dpad sets passdir until bbut changes (93G logic93_1)
 	bra dopass
 .rtl:
 	rtl
-dopass:		;pass the puck in passdir, to the best teammate there if any. (93G logic93_1)
+dopass:		;pass the puck in passdir, to the best teammate there if any.
 		;   SNES: the team mate nearest the passdir lane (or passdir), puck velocity, SPA, pfalock
 	stx.b xsave
 	ldx.w #$0000
@@ -917,7 +917,7 @@ dopass:		;pass the puck in passdir, to the best teammate there if any. (93G logi
 	rtl
 
 org $8FE6BD
-CompLine:		;find good line for comp to switch to. a2 = team, a1 = other team. Called from chk4lc and puckfaceoff (93G logic93_4)
+CompLine:		;find good line for comp to switch to. a2 = team, a1 = other team. Called from chk4lc and puckfaceoff
 		;   SNES: the computer team picks a line by the man advantage, the score late in the game and the line energies (getlinee)
 	stx.b xsave
 	ldx.w #$0000
@@ -1035,7 +1035,7 @@ CompLine:		;find good line for comp to switch to. a2 = team, a1 = other team. Ca
 	ldy.b a2
 	sta.w tmline,y
 	bra .loop
-.tie:		;93G CompLine tables: next line by tmline, score tied (7 words)
+.tie:		;CompLine tables: next line by tmline, score tied (7 words)
 	dw 0,1,2,0,1,0,1
 .ahead:		;ahead in the third period
 	dw 2,0,1,2,0,2,0
@@ -1089,7 +1089,7 @@ CompLine:		;find good line for comp to switch to. a2 = team, a1 = other team. Ca
 	dw 0,1,0
 
 org $8FF4D8
-UnpackNibbles:		;a0 = packed data, d0 = count. Unpacks d0 4-bit values (high nibble first) into words at nibblebuffer. Called from UpdateTeamNameisplay (93G logic93_5)
+UnpackNibbles:		;a0 = packed data, d0 = count. Unpacks d0 4-bit values (high nibble first) into words at nibblebuffer. Called from UpdateTeamNameisplay
 		;   SNES: d0 nibbles at [a0], high nibble first, to words at nibblebuffer; saves d0-d2, a0-a1
 	stx.b xsave
 	ldx.w #$0000
@@ -1163,7 +1163,7 @@ UnpackNibbles:		;a0 = packed data, d0 = count. Unpacks d0 4-bit values (high nib
 	rtl
 
 org $8FF603
-Findhittype:		;look for type of swing (forhand or backhand) (93G logic93_1)
+Findhittype:		;look for type of swing (forhand or backhand)
 		;   SNES: swing type of player X for launch direction d0: A = 0 forehand (Z set), 1 backhand; .xflip when attribute bit $800 (x
 		;   flip)
 	lda.b d0
@@ -1189,13 +1189,13 @@ Findhittype:		;look for type of swing (forhand or backhand) (93G logic93_1)
 	plx
 	and.w #$00FF
 	rtl
-.xflip:		;x flip: 1 = backhand for d0 4-7 (93G %11110000); its last 5 bytes start .noflip
+.xflip:		;x flip: 1 = backhand for d0 4-7 (%11110000); its last 5 bytes start .noflip
 	db $00,$00,$00
-.noflip:		;1 = backhand for d0 1-4 (93G %00011110)
+.noflip:		;1 = backhand for d0 1-4
 	db $00,$01,$01,$01,$01,$00,$00,$00
 
 org $8FF8C4
-passtoa0:		;pass puck to player a0 (93G logic93_1)
+passtoa0:		;pass puck to player a0
 		;   SNES: pass the puck from player a3 to player a0 (no pass count on the SNES): lead him by his velocity, solve the travel time d2
 		;   (sroot, divs16; 1-$18), then puckvz, the puck temp1/nopuck, the target temp3/temp4, puckvx/puckvy
 	jsl.l loadTeamStruct
@@ -1474,7 +1474,7 @@ passtoa0:		;pass puck to player a0 (93G logic93_1)
 	rtl
 
 org $8FFB5B
-Acheck:		;start hold (or hook if a0 is ahead, $CB0) on player a0. Also entered (93G logic93_1)
+Acheck:		;start hold (or hook if a0 is ahead, $CB0) on player a0. Also entered
 		;   SNES: player X holds a0: pfalock, SPAhook, or SPAHold when he has impact and a0 is not ahead. SNES: with pfgoal clear the bmi tests the pfgoal load, so
 		;   always SPAHold then
 	ldy.b a0
@@ -1501,7 +1501,7 @@ Acheck:		;start hold (or hook if a0 is ahead, $CB0) on player a0. Also entered (
 	jml.l SetSPA
 
 org $8FFBDC
-doplayeracc:		;player a3 gets acc. in d0 dir (93G logic93_5)
+doplayeracc:		;player a3 gets acc. in d0 dir
 		;   SNES: player X skates in direction d0 (0-7; 8 glides, 9 stops when moving); goalies use goalieacc. Sets pfrev to skate backwards in his own
 		;   zone, turns facedir/facefrac toward d0 (.ftab * d7, slower when fast), SPAturnl/SPAturnr or SPAglide/SPAglideback; revplayeracc when moving
 	lda.w position,x
@@ -1514,7 +1514,7 @@ doplayeracc:		;player a3 gets acc. in d0 dir (93G logic93_5)
 	beq .d0
 	lda.w #SPAglideback
 	sta.b d1
-.d0:		;93G .d0
+.d0:
 	lda.b d0
 	and.w #$000F
 	sta.b d0
@@ -1526,13 +1526,13 @@ doplayeracc:		;player a3 gets acc. in d0 dir (93G logic93_5)
 	ora.w Yvel,x
 	beq .cgl
 	jml.l dostop
-.cgl:		;93G .cgl: no turn animation playing (pf2aip): SetSPA
+.cgl:		;no turn animation playing (pf2aip): SetSPA
 	lda.w pf2aip,x
 	bne .rtl
 	jml.l SetSPA
 .rtl:
 	rtl
-.d1:		;93G .d1: a direction: pfrev, then the turn
+.d1:		;a direction: pfrev, then the turn
 	lda.b d1
 	pha
 	lda.b d0
@@ -1584,7 +1584,7 @@ doplayeracc:		;player a3 gets acc. in d0 dir (93G logic93_5)
 	lda.b d2
 	eor.w #$0004
 	sta.b d2
-.c1:		;93G .c1
+.c1:
 	lda.w pfrev,x
 	bne .inrev
 	lda.b d3
@@ -1598,7 +1598,7 @@ doplayeracc:		;player a3 gets acc. in d0 dir (93G logic93_5)
 	cmp.w #$0003
 	bcs .clrrev
 	bra .rev
-.inrev:		;93G .inrev
+.inrev:
 	lda.b d2
 	sec
 	sbc.w #$0003
@@ -1611,7 +1611,7 @@ doplayeracc:		;player a3 gets acc. in d0 dir (93G logic93_5)
 	and.w #$0007
 	cmp.w #$0005
 	bcs .clrrev
-.rev:		;93G .rev
+.rev:
 	lda.w pfrev,x
 	bne .done
 	lda.w Xvel,x
@@ -1627,13 +1627,13 @@ doplayeracc:		;player a3 gets acc. in d0 dir (93G logic93_5)
 	and.w #$0007
 	cmp.w #$0003
 	bcs .done
-.setrev:		;93G .setrev
+.setrev:
 	inc a
 	sta.w pfrev,x
 	bra .done
-.clrrev:		;93G .fwd / .clrrev
+.clrrev:		;.fwd / .clrrev
 	stz.w pfrev,x
-.done:		;93G .done: turn rate = .ftab (direction difference) * d7; 0: noturn0
+.done:		;turn rate = .ftab (direction difference) * d7; 0: noturn0
 	pla
 	sta.b d0
 	pla
@@ -1687,7 +1687,7 @@ doplayeracc:		;player a3 gets acc. in d0 dir (93G logic93_5)
 .vs:
 	lda.w #$0180
 	sta.b d4
-.iok:		;93G .iok
+.iok:
 	lda.b tmp0
 	sta.b mula
 	lda.b d4
@@ -1705,7 +1705,7 @@ doplayeracc:		;player a3 gets acc. in d0 dir (93G logic93_5)
 	lda.w #$0000
 	sbc.b d4+2
 	sta.b d4+2
-.i0:		;93G .i0: facedir.l + d4
+.i0:		;facedir.l + d4
 	lda.w facefrac,x
 	clc
 	adc.b d4
@@ -1723,20 +1723,20 @@ doplayeracc:		;player a3 gets acc. in d0 dir (93G logic93_5)
 	bpl .s1
 	lda.w #SPAturnl-SPAturnr
 	sta.b d1
-.s1:		;93G .s1
+.s1:
 	lda.w attribute,x
 	bit.w #$0800
 	beq .s2
 	lda.b d1
 	eor.w #SPAturnl-SPAturnr
 	sta.b d1
-.s2:		;93G .s2: SPAturnr (or SPAturnl), pf2aip
+.s2:		;SPAturnr (or SPAturnl), pf2aip
 	lda.b d1
 	clc
 	adc.w #SPAturnr
 	sta.b d1
 	sta.w pf2aip,x
-.s3:		;93G .s3
+.s3:
 	jsl.l SetSPA
 	lda.b d3
 	cmp.w #$0003
@@ -1744,9 +1744,9 @@ doplayeracc:		;player a3 gets acc. in d0 dir (93G logic93_5)
 	jml.l revplayeracc
 .rtl2:
 	rtl
-.ftab:		;93G .ftab: turn rate by the direction difference (93G $10)
+.ftab:		;turn rate by the direction difference (93 $10)
 	dw 0,23,23,23,0,-23,-23,-23
-ResetAndSelectPlayers:		;93 split from 92 puckfaceoff2: c1playernum/c2playernum = -1, then changeplayer for each human team. Called from puckfaceoff2 (93G logic93_4)
+ResetAndSelectPlayers:		;93 split from 92 puckfaceoff2: c1playernum/c2playernum = -1, then changeplayer for each human team. Called from puckfaceoff2
 		;   SNES: c1playernum/c2playernum = -1, then changeplayer for each human team (d4 = 0, 2)
 	lda.w #$FFFF
 	sta.w c1playernum

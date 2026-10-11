@@ -1,8 +1,8 @@
-; logic_b8D: 93G logic93_1..logic93_5: player logic and the assignments (asstab).
+; Player logic and the assignments (asstab).
 ; Bank $8D. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8D87B0
-puckshadow:		;asstab $19. assignment for puck shadow. a3 = puck shadow (struct after the puck) (93G logic93_5)
+puckshadow:		;asstab $19. assignment for puck shadow. a3 = puck shadow (struct after the puck)
 		;   SNES: the shadow object follows the puck (frame $189); else parks it behind the goal
 	lda.w frame,x
 	cmp.w #$0189		; puck frame: shadow under the puck
@@ -38,7 +38,7 @@ puckshadow:		;asstab $19. assignment for puck shadow. a3 = puck shadow (struct a
 	rtl
 
 org $8DFCC7
-asspenalty:		;asstab $C. player a3 should goto penalty box (93G logic93_2)
+asspenalty:		;asstab $C. player a3 should goto penalty box
 		;   SNES: player X skates to the penalty box (temp3/temp4 by PBnum), glides in, faces the ice (SPAwallright), then adopen
 	lda.w pfalock,x
 	beq .go
@@ -71,7 +71,7 @@ asspenalty:		;asstab $C. player a3 should goto penalty box (93G logic93_2)
 	sta.b d1
 	lda.w #-11
 	sta.b d0
-.zero:		;93G .0
+.zero:
 	lda.b d1
 	and.w #$000F
 	sta.b d1
@@ -79,7 +79,7 @@ asspenalty:		;asstab $C. player a3 should goto penalty box (93G logic93_2)
 	bcc .one
 	lda.w #2
 	sta.b d1
-.one:		;93G .1
+.one:
 	inc.b d1
 	inc.b d1
 	inc.b d1
@@ -191,7 +191,7 @@ asspenalty:		;asstab $C. player a3 should goto penalty box (93G logic93_2)
 	lda.w #rtss>>16
 	sta.b a0+2
 	jml.l skateto
-clrplayer:		;take the joystick off player a3 (92 asspenalty .clrplayer) (93G logic93_2)
+clrplayer:		;take the joystick off player a3 (92 asspenalty .clrplayer)
 		;   SNES: take the joystick off player X (changeplayer)
 	lda.w pflags,x
 	bit.w #pfjoycon
@@ -206,7 +206,7 @@ clrplayer:		;take the joystick off player a3 (92 asspenalty .clrplayer) (93G log
 	inc.b d4
 .ch:
 	jml.l changeplayer
-avdgoal:		;don't try to skate thru goal: if d0/d1 cords intersect thru goal then provide new d0/d1 cords. a3 = player. 93 .gl 254 ($FE), .yr/.ye 35 (92 258/30/30), .xr 80 (93G logic93_5)
+avdgoal:		;don't try to skate thru goal: if d0/d1 cords intersect thru goal then provide new d0/d1 cords. a3 = player. 93 .gl 254 ($FE), .yr/.ye 35 (92 258/30/30), .xr 80
 		;   SNES: if the path d0/d1 crosses a goal line (y +-254) within 40 of the net, aim beside the net (x +-60) instead
 	stz.b tmp2
 	lda.w #-258		; goal line at y -258 ($FEFE) and 258 ($102)

@@ -1,8 +1,8 @@
-; middle_b8D: 93G middle93_1/middle93_2: utilities (print, joypads, math, decompression).
+; Utilities (print, joypads, math, decompression).
 ; Bank $8D. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8D847C
-eraser:		;fill rectangle with char. d0/d1 = x/y size of rectangle, d2 = char word to fill with, printx/y/m define top left corner to start at (93G middle93_2)
+eraser:		;fill rectangle with char. d0/d1 = x/y size of rectangle, d2 = char word to fill with, printx/y/m define top left corner to start at
 		;   SNES: fill d0 x d1 textmap words at printx/printy (print map printm) with tile d2 (+ printfontset)
 	phx
 	lda.b d2

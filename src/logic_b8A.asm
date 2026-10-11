@@ -1,8 +1,8 @@
-; logic_b8A: 93G logic93_1..logic93_5: player logic and the assignments (asstab).
+; Player logic and the assignments (asstab).
 ; Bank $8A. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8AFD0C
-lineinput:		;process input for line changes (93G logic93_1)
+lineinput:		;process input for line changes
 		;   SNES: line change input, d1 = new buttons: Y/B/A choose line choice 0-2 (lcfound); else skate with the dpad
 	lda.b d1
 	pha
@@ -11,7 +11,7 @@ lineinput:		;process input for line changes (93G logic93_1)
 	beq .zero
 	inc.b a2
 	inc.b a2
-.zero:		;93G .0
+.zero:
 	ldy.b a2
 	lda.w tmflags,y		; tmflags bit 0: start line change mode
 	bit.w #tmflcc
@@ -20,23 +20,23 @@ lineinput:		;process input for line changes (93G logic93_1)
 	sta.w tmflags,y
 	jsl.l lcfound2
 	jsl.l SetLCmode2
-.one:		;93G .1
+.one:
 	pla
 	sta.b d1
 	stz.b d2
 	bit.w #abut		; Y: choice 0
 	beq .b
-	jml.l lcfound		; bank $8F: 93G lcfound (d2 = choice)
+	jml.l lcfound		; bank $8F (d2 = choice)
 .b:
 	inc.b d2
 	bit.w #bbut		; B: choice 1
 	beq .a
-	jml.l lcfound		; bank $8F: 93G lcfound (d2 = choice)
+	jml.l lcfound		; bank $8F (d2 = choice)
 .a:
 	inc.b d2
 	bit.w #JOYA		; A: choice 2
 	beq .dpad
-	jml.l lcfound		; bank $8F: 93G lcfound (d2 = choice)
+	jml.l lcfound		; bank $8F (d2 = choice)
 .dpad:
 	lda.w pflags,x		; joystick controlled, not locked or fighting: skate
 	bit.w #pfjoycon
@@ -45,10 +45,10 @@ lineinput:		;process input for line changes (93G logic93_1)
 	bne .x
 	lda.w pf2fight,x
 	bne .x
-	jml.l doplayeracc		; bank $8F: doplayeracc
+	jml.l doplayeracc		; bank $8F
 .x:
 	rtl
-getlchoice:		;93G getlchoice (logic93_1): d0 = choice 0-2 of team a2 -> d0 = line 0-6 by the man advantage and tmline (.tab), -1 = none
+getlchoice:		;d0 = choice 0-2 of team a2 -> d0 = line 0-6 by the man advantage and tmline (.tab), -1 = none
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -78,7 +78,7 @@ getlchoice:		;93G getlchoice (logic93_1): d0 = choice 0-2 of team a2 -> d0 = lin
 	clc
 	adc.w #21
 	sta.b d0
-.one:		;93G .1
+.one:
 	ldy.b a2		; + 3 * tmline
 	lda.w tmline,y
 	sta.b d1
@@ -112,7 +112,7 @@ getlchoice:		;93G getlchoice (logic93_1): d0 = choice 0-2 of team a2 -> d0 = lin
 	bpl .popd
 	ldx.b xsave
 	rtl
-.tab:		;93G .tab: line for choice 0-2 by tmline, 3 entries per line (-1 = none)
+.tab:		;line for choice 0-2 by tmline, 3 entries per line (-1 = none)
 	db 0,1,2, 1,2,0, 2,0,1, 0,1,2, 0,1,2, 0,1,2, 0,1,2		; no power play: lines 0-6
 	db 3,4,-1, 3,4,-1, 3,4,-1, 3,4,-1, 4,3,-1, 3,4,-1, 3,4,-1		; penalty killing: lines 0-6
 	db 5,6,-1, 5,6,-1, 5,6,-1, 5,6,-1, 5,6,-1, 5,6,-1, 6,5,-1		; power play: lines 0-6

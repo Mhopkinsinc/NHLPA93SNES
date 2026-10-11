@@ -1,9 +1,9 @@
-; frames: 93G frames93: the SPA animation tables.
+; frames: the SPA animation tables.
 ; Bank $82. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $82B86E
 
-SPAgready_table:		;SPA $0002 (93G SPAgready)
+SPAgready_table:		;SPA $0002
 	dw .d0-SPAgready_table		; direction 0
 	dw .d1-SPAgready_table		; direction 1
 	dw .d2-SPAgready_table		; direction 2
@@ -31,7 +31,7 @@ SPAgready_table:		;SPA $0002 (93G SPAgready)
 	dw SPFgready+14,-10
 	assert SPAgready_table-SPAList == SPAgready
 
-SPAgready2_table:		;SPA $0134 (93G SPAgready2)
+SPAgready2_table:		;SPA $0134
 	dw .d0-SPAgready2_table		; direction 0
 	dw .d1-SPAgready2_table		; direction 1
 	dw .d2-SPAgready2_table		; direction 2
@@ -51,7 +51,7 @@ SPAgready2_table:		;SPA $0134 (93G SPAgready2)
 .d7:	dw SPFGoalie+21,-30
 	assert SPAgready2_table-SPAList == SPAgready2
 
-SPAgglover_table:		;SPA $0166 (93G SPAgglover)
+SPAgglover_table:		;SPA $0166
 	dw .d0-SPAgglover_table		; direction 0
 	dw .d1-SPAgglover_table		; direction 1
 	dw .d2-SPAgglover_table		; direction 2
@@ -71,7 +71,7 @@ SPAgglover_table:		;SPA $0166 (93G SPAgglover)
 .d7:	dw SPFGoalie+22,-32
 	assert SPAgglover_table-SPAList == SPAgglover
 
-SPAgglovel_table:		;SPA $0198 (93G SPAgglovel)
+SPAgglovel_table:		;SPA $0198
 	dw .d0-SPAgglovel_table		; direction 0
 	dw .d1-SPAgglovel_table		; direction 1
 	dw .d2-SPAgglovel_table		; direction 2
@@ -91,7 +91,7 @@ SPAgglovel_table:		;SPA $0198 (93G SPAgglovel)
 .d7:	dw SPFGoalie+23,-32
 	assert SPAgglovel_table-SPAList == SPAgglovel
 
-SPAgstickr_table:		;SPA $01CA (93G SPAgstickr)
+SPAgstickr_table:		;SPA $01CA
 	dw .d0-SPAgstickr_table		; direction 0
 	dw .d1-SPAgstickr_table		; direction 1
 	dw .d2-SPAgstickr_table		; direction 2
@@ -111,7 +111,7 @@ SPAgstickr_table:		;SPA $01CA (93G SPAgstickr)
 .d7:	dw SPFGoalie+78,-32
 	assert SPAgstickr_table-SPAList == SPAgstickr
 
-SPAgstickl_table:		;SPA $01FC (93G SPAgstickl)
+SPAgstickl_table:		;SPA $01FC
 	dw .d0-SPAgstickl_table		; direction 0
 	dw .d1-SPAgstickl_table		; direction 1
 	dw .d2-SPAgstickl_table		; direction 2
@@ -131,7 +131,7 @@ SPAgstickl_table:		;SPA $01FC (93G SPAgstickl)
 .d7:	dw SPFGoalie+79,-32
 	assert SPAgstickl_table-SPAList == SPAgstickl
 
-SPAgstackr_table:		;SPA $022E (93G SPAgstackr)
+SPAgstackr_table:		;SPA $022E
 	dw .d0-SPAgstackr_table		; direction 0
 	dw .d1-SPAgstackr_table		; direction 1
 	dw .d2-SPAgstackr_table		; direction 2
@@ -151,7 +151,7 @@ SPAgstackr_table:		;SPA $022E (93G SPAgstackr)
 .d7:	dw SPFGoalie+50,8,SPFGoalie+51,-20
 	assert SPAgstackr_table-SPAList == SPAgstackr
 
-SPAgstackl_table:		;SPA $0280 (93G SPAgstackl)
+SPAgstackl_table:		;SPA $0280
 	dw .d0-SPAgstackl_table		; direction 0
 	dw .d1-SPAgstackl_table		; direction 1
 	dw .d2-SPAgstackl_table		; direction 2
@@ -171,7 +171,7 @@ SPAgstackl_table:		;SPA $0280 (93G SPAgstackl)
 .d7:	dw SPFGoalie+62,8,SPFGoalie+63,-20
 	assert SPAgstackl_table-SPAList == SPAgstackl
 
-SPAgswing_table:		;SPA $02D2 (93G SPAgswing)
+SPAgswing_table:		;SPA $02D2
 	dw .d0-SPAgswing_table		; direction 0
 	dw .d1-SPAgswing_table		; direction 1
 	dw .d2-SPAgswing_table		; direction 2
@@ -191,7 +191,7 @@ SPAgswing_table:		;SPA $02D2 (93G SPAgswing)
 .d7:	dw SPFGoalie+38,5,SPFGoalie+39,8,SPFGoalie+38,-16
 	assert SPAgswing_table-SPAList == SPAgswing
 
-SPAgskate_table:		;SPA $0344 (93G SPAgskate)
+SPAgskate_table:		;SPA $0344
 	dw .d0-SPAgskate_table		; direction 0
 	dw .d1-SPAgskate_table		; direction 1
 	dw .d2-SPAgskate_table		; direction 2
@@ -211,7 +211,7 @@ SPAgskate_table:		;SPA $0344 (93G SPAgskate)
 .d7:	dw SPFGoalie+108,10,SPFGoalie+109,10,SPFGoalie+110,10,SPFGoalie+111,-15
 	assert SPAgskate_table-SPAList == SPAgskate
 
-SPApflip_table:		;SPA $03D6 (93G SPApflip)
+SPApflip_table:		;SPA $03D6
 	dw .d0-SPApflip_table		; direction 0
 	dw .d1-SPApflip_table		; direction 1
 	dw .d2-SPApflip_table		; direction 2
@@ -231,7 +231,7 @@ SPApflip_table:		;SPA $03D6 (93G SPApflip)
 .d7:	dw SPFpuck+5,-4096
 	assert SPApflip_table-SPAList == SPApflip
 
-SPAglide_table:		;SPA $0478 (93G SPAglide)
+SPAglide_table:		;SPA $0478
 	dw .d0-SPAglide_table		; direction 0
 	dw .d1-SPAglide_table		; direction 1
 	dw .d2-SPAglide_table		; direction 2
@@ -251,7 +251,7 @@ SPAglide_table:		;SPA $0478 (93G SPAglide)
 .d7:	dw SPFskatewp+35,-8
 	assert SPAglide_table-SPAList == SPAglide
 
-SPAskatewp_table:		;SPA $04AA (93G SPAskatewp)
+SPAskatewp_table:		;SPA $04AA
 	dw .d0-SPAskatewp_table		; direction 0
 	dw .d1-SPAskatewp_table		; direction 1
 	dw .d2-SPAskatewp_table		; direction 2
@@ -271,7 +271,7 @@ SPAskatewp_table:		;SPA $04AA (93G SPAskatewp)
 .d7:	dw SPFskatewp+36,10,SPFskatewp+37,10,SPFskatewp+38,10,SPFskatewp+39,10,SPFskatewp+35,-15
 	assert SPAskatewp_table-SPAList == SPAskatewp
 
-SPAskate_table:		;SPA $055C (93G SPAskate)
+SPAskate_table:		;SPA $055C
 	dw .d0-SPAskate_table		; direction 0
 	dw .d1-SPAskate_table		; direction 1
 	dw .d2-SPAskate_table		; direction 2
@@ -291,7 +291,7 @@ SPAskate_table:		;SPA $055C (93G SPAskate)
 .d7:	dw SPFskate+36,10,SPFskate+37,10,SPFskate+38,10,SPFskate+39,10,SPFskate+35,-15
 	assert SPAskate_table-SPAList == SPAskate
 
-SPAturnl_table:		;SPA $060E (93G SPAturnl)
+SPAturnl_table:		;SPA $060E
 	dw .d0-SPAturnl_table		; direction 0
 	dw .d1-SPAturnl_table		; direction 1
 	dw .d2-SPAturnl_table		; direction 2
@@ -311,7 +311,7 @@ SPAturnl_table:		;SPA $060E (93G SPAturnl)
 .d7:	dw SPFturnl+7,-18
 	assert SPAturnl_table-SPAList == SPAturnl
 
-SPAturnr_table:		;SPA $0640 (93G SPAturnr)
+SPAturnr_table:		;SPA $0640
 	dw .d0-SPAturnr_table		; direction 0
 	dw .d1-SPAturnr_table		; direction 1
 	dw .d2-SPAturnr_table		; direction 2
@@ -331,7 +331,7 @@ SPAturnr_table:		;SPA $0640 (93G SPAturnr)
 .d7:	dw SPFturnr+7,-18
 	assert SPAturnr_table-SPAList == SPAturnr
 
-SPAstop_table:		;SPA $0672 (93G SPAstop)
+SPAstop_table:		;SPA $0672
 	dw .d0-SPAstop_table		; direction 0
 	dw .d1-SPAstop_table		; direction 1
 	dw .d2-SPAstop_table		; direction 2
@@ -351,7 +351,7 @@ SPAstop_table:		;SPA $0672 (93G SPAstop)
 .d7:	dw SPFstop+14,4,SPFstop+15,-4
 	assert SPAstop_table-SPAList == SPAstop
 
-SPApassf_table:		;SPA $06C4 (93G SPApassf)
+SPApassf_table:		;SPA $06C4
 	dw .d0-SPApassf_table		; direction 0
 	dw .d1-SPApassf_table		; direction 1
 	dw .d2-SPApassf_table		; direction 2
@@ -371,7 +371,7 @@ SPApassf_table:		;SPA $06C4 (93G SPApassf)
 .d7:	dw SPFswing+45,4,SPFswing+46,4,SPFswing+47,-20
 	assert SPApassf_table-SPAList == SPApassf
 
-SPApassb_table:		;SPA $0736 (93G SPApassb)
+SPApassb_table:		;SPA $0736
 	dw .d0-SPApassb_table		; direction 0
 	dw .d1-SPApassb_table		; direction 1
 	dw .d2-SPApassb_table		; direction 2
@@ -391,7 +391,7 @@ SPApassb_table:		;SPA $0736 (93G SPApassb)
 .d7:	dw SPFswing+45,4,SPFswing+44,4,SPFswing+43,-20
 	assert SPApassb_table-SPAList == SPApassb
 
-SPAshotf_table:		;SPA $07A8 (93G SPAshotf)
+SPAshotf_table:		;SPA $07A8
 	dw .d0-SPAshotf_table		; direction 0
 	dw .d1-SPAshotf_table		; direction 1
 	dw .d2-SPAshotf_table		; direction 2
@@ -411,7 +411,7 @@ SPAshotf_table:		;SPA $07A8 (93G SPAshotf)
 .d7:	dw SPFswing+45,4,SPFswing+44,4,SPFswing+43,4,SPFswing+42,4,SPFswing+44,0,SPFswing+45,0,SPFswing+46,0,SPFswing+47,-20
 	assert SPAshotf_table-SPAList == SPAshotf
 
-SPAshotb_table:		;SPA $08BA (93G SPAshotb)
+SPAshotb_table:		;SPA $08BA
 	dw .d0-SPAshotb_table		; direction 0
 	dw .d1-SPAshotb_table		; direction 1
 	dw .d2-SPAshotb_table		; direction 2
@@ -431,7 +431,7 @@ SPAshotb_table:		;SPA $08BA (93G SPAshotb)
 .d7:	dw SPFswing+45,4,SPFswing+46,4,SPFswing+47,4,SPFswing+47,4,SPFswing+46,0,SPFswing+45,0,SPFswing+44,0,SPFswing+43,-20
 	assert SPAshotb_table-SPAList == SPAshotb
 
-SPAglideback_table:		;SPA $09CC (93G SPAglideback)
+SPAglideback_table:		;SPA $09CC
 	dw .d0-SPAglideback_table		; direction 0
 	dw .d1-SPAglideback_table		; direction 1
 	dw .d2-SPAglideback_table		; direction 2
@@ -451,7 +451,7 @@ SPAglideback_table:		;SPA $09CC (93G SPAglideback)
 .d7:	dw SPFskateb+21,-8
 	assert SPAglideback_table-SPAList == SPAglideback
 
-SPAskateback_table:		;SPA $09FE (93G SPAskateback)
+SPAskateback_table:		;SPA $09FE
 	dw .d0-SPAskateback_table		; direction 0
 	dw .d1-SPAskateback_table		; direction 1
 	dw .d2-SPAskateback_table		; direction 2
@@ -471,7 +471,7 @@ SPAskateback_table:		;SPA $09FE (93G SPAskateback)
 .d7:	dw SPFskateb+21,10,SPFskateb+22,10,SPFskateb+21,10,SPFskateb+23,-10
 	assert SPAskateback_table-SPAList == SPAskateback
 
-SPAsweepchk_table:		;SPA $0A90 (93G SPAsweepchk)
+SPAsweepchk_table:		;SPA $0A90
 	dw .d0-SPAsweepchk_table		; direction 0
 	dw .d1-SPAsweepchk_table		; direction 1
 	dw .d2-SPAsweepchk_table		; direction 2
@@ -491,7 +491,7 @@ SPAsweepchk_table:		;SPA $0A90 (93G SPAsweepchk)
 .d7:	dw SPFsweep+14,4,SPFsweep+15,8,SPFsweep+14,-4
 	assert SPAsweepchk_table-SPAList == SPAsweepchk
 
-SPAshoulderchkl_table:		;SPA $0B02 (93G SPAshoulderchkl)
+SPAshoulderchkl_table:		;SPA $0B02
 	dw .d0-SPAshoulderchkl_table		; direction 0
 	dw .d1-SPAshoulderchkl_table		; direction 1
 	dw .d2-SPAshoulderchkl_table		; direction 2
@@ -511,7 +511,7 @@ SPAshoulderchkl_table:		;SPA $0B02 (93G SPAshoulderchkl)
 .d7:	dw SPFshoulderl+7,-24
 	assert SPAshoulderchkl_table-SPAList == SPAshoulderchkl
 
-SPAshoulderchkr_table:		;SPA $0B34 (93G SPAshoulderchkr)
+SPAshoulderchkr_table:		;SPA $0B34
 	dw .d0-SPAshoulderchkr_table		; direction 0
 	dw .d1-SPAshoulderchkr_table		; direction 1
 	dw .d2-SPAshoulderchkr_table		; direction 2
@@ -531,7 +531,7 @@ SPAshoulderchkr_table:		;SPA $0B34 (93G SPAshoulderchkr)
 .d7:	dw SPFshoulderr+7,-24
 	assert SPAshoulderchkr_table-SPAList == SPAshoulderchkr
 
-SPAhipchkl_table:		;SPA $0B66 (93G SPAhipchkl)
+SPAhipchkl_table:		;SPA $0B66
 	dw .d0-SPAhipchkl_table		; direction 0
 	dw .d1-SPAhipchkl_table		; direction 1
 	dw .d2-SPAhipchkl_table		; direction 2
@@ -551,7 +551,7 @@ SPAhipchkl_table:		;SPA $0B66 (93G SPAhipchkl)
 .d7:	dw SPFhipl+7,-24
 	assert SPAhipchkl_table-SPAList == SPAhipchkl
 
-SPAhipchkr_table:		;SPA $0B98 (93G SPAhipchkr)
+SPAhipchkr_table:		;SPA $0B98
 	dw .d0-SPAhipchkr_table		; direction 0
 	dw .d1-SPAhipchkr_table		; direction 1
 	dw .d2-SPAhipchkr_table		; direction 2
@@ -571,7 +571,7 @@ SPAhipchkr_table:		;SPA $0B98 (93G SPAhipchkr)
 .d7:	dw SPFhipr+7,-24
 	assert SPAhipchkr_table-SPAList == SPAhipchkr
 
-SPAburst_table:		;SPA $0BCA (93G SPAburst)
+SPAburst_table:		;SPA $0BCA
 	dw .d0-SPAburst_table		; direction 0
 	dw .d1-SPAburst_table		; direction 1
 	dw .d2-SPAburst_table		; direction 2
@@ -591,7 +591,7 @@ SPAburst_table:		;SPA $0BCA (93G SPAburst)
 .d7:	dw SPFskate+35,-24
 	assert SPAburst_table-SPAList == SPAburst
 
-SPAHold_table:		;SPA $0BFC (93G SPAHold)
+SPAHold_table:		;SPA $0BFC
 	dw .d0-SPAHold_table		; direction 0
 	dw .d1-SPAHold_table		; direction 1
 	dw .d2-SPAHold_table		; direction 2
@@ -611,7 +611,7 @@ SPAHold_table:		;SPA $0BFC (93G SPAHold)
 .d7:	dw SPFhold+7,-30
 	assert SPAHold_table-SPAList == SPAHold
 
-SPAHold2_table:		;SPA $0C2E (93G SPAHold2)
+SPAHold2_table:		;SPA $0C2E
 	dw .d0-SPAHold2_table		; direction 0
 	dw .d1-SPAHold2_table		; direction 1
 	dw .d2-SPAHold2_table		; direction 2
@@ -631,7 +631,7 @@ SPAHold2_table:		;SPA $0C2E (93G SPAHold2)
 .d7:	dw SPFhold+7,-30
 	assert SPAHold2_table-SPAList == SPAHold2
 
-SPAflail_table:		;SPA $0C60 (93G SPAflail)
+SPAflail_table:		;SPA $0C60
 	dw .d0-SPAflail_table		; direction 0
 	dw .d1-SPAflail_table		; direction 1
 	dw .d2-SPAflail_table		; direction 2
@@ -651,7 +651,7 @@ SPAflail_table:		;SPA $0C60 (93G SPAflail)
 .d7:	dw SPFskate+35,-30
 	assert SPAflail_table-SPAList == SPAflail
 
-SPAfallfwd_table:		;SPA $0C92 (93G SPAfallfwd)
+SPAfallfwd_table:		;SPA $0C92
 	dw .d0-SPAfallfwd_table		; direction 0
 	dw .d1-SPAfallfwd_table		; direction 1
 	dw .d2-SPAfallfwd_table		; direction 2
@@ -671,7 +671,7 @@ SPAfallfwd_table:		;SPA $0C92 (93G SPAfallfwd)
 .d7:	dw SPFfallfwd+28,6,SPFfallfwd+29,6,SPFfallfwd+30,100,SPFfallfwd+31,8,SPFduck+7,-8
 	assert SPAfallfwd_table-SPAList == SPAfallfwd
 
-SPAfallback_table:		;SPA $0D44 (93G SPAfallback)
+SPAfallback_table:		;SPA $0D44
 	dw .d0-SPAfallback_table		; direction 0
 	dw .d1-SPAfallback_table		; direction 1
 	dw .d2-SPAfallback_table		; direction 2
@@ -691,7 +691,7 @@ SPAfallback_table:		;SPA $0D44 (93G SPAfallback)
 .d7:	dw SPFfallback+28,6,SPFfallback+29,6,SPFfallback+30,100,SPFfallback+31,8,SPFduck+7,-8
 	assert SPAfallback_table-SPAList == SPAfallback
 
-SPAcelebrate_table:		;SPA $0DF6 (93G SPAcelebrate)
+SPAcelebrate_table:		;SPA $0DF6
 	dw .d0-SPAcelebrate_table		; direction 0
 	dw .d1-SPAcelebrate_table		; direction 1
 	dw .d2-SPAcelebrate_table		; direction 2
@@ -711,7 +711,7 @@ SPAcelebrate_table:		;SPA $0DF6 (93G SPAcelebrate)
 .d7:	dw SPFcelebrate+14,12,SPFcelebrate+15,40,SPFcelebrate+14,-5
 	assert SPAcelebrate_table-SPAList == SPAcelebrate
 
-SPApump_table:		;SPA $0E68 (93G SPApump)
+SPApump_table:		;SPA $0E68
 	dw .d0-SPApump_table		; direction 0
 	dw .d1-SPApump_table		; direction 1
 	dw .d2-SPApump_table		; direction 2
@@ -731,7 +731,7 @@ SPApump_table:		;SPA $0E68 (93G SPApump)
 .d7:	dw SPFpump+14,8,SPFpump+15,8,SPFpump+14,-8
 	assert SPApump_table-SPAList == SPApump
 
-SPAfight_table:		;SPA $0EDA (93G SPAfight)
+SPAfight_table:		;SPA $0EDA
 	dw .d0-SPAfight_table		; direction 0
 	dw .d0-SPAfight_table		; direction 1
 	dw .d0-SPAfight_table		; direction 2
@@ -745,7 +745,7 @@ SPAfight_table:		;SPA $0EDA (93G SPAfight)
 .d3:	dw SPFfight,8,SPFfight+1,8,SPFfight+2,8,SPFfight+8,-6
 	assert SPAfight_table-SPAList == SPAfight
 
-SPAfgrab_table:		;SPA $0F0C (93G SPAfgrab)
+SPAfgrab_table:		;SPA $0F0C
 	dw .d0-SPAfgrab_table		; direction 0
 	dw .d0-SPAfgrab_table		; direction 1
 	dw .d0-SPAfgrab_table		; direction 2
@@ -759,7 +759,7 @@ SPAfgrab_table:		;SPA $0F0C (93G SPAfgrab)
 .d3:	dw SPFfight+9,28,SPFfight+8,-4
 	assert SPAfgrab_table-SPAList == SPAfgrab
 
-SPAfheld_table:		;SPA $0F2E (93G SPAfheld)
+SPAfheld_table:		;SPA $0F2E
 	dw .d0-SPAfheld_table		; direction 0
 	dw .d0-SPAfheld_table		; direction 1
 	dw .d0-SPAfheld_table		; direction 2
@@ -773,7 +773,7 @@ SPAfheld_table:		;SPA $0F2E (93G SPAfheld)
 .d3:	dw SPFfight+9,30,SPFfight+8,-4
 	assert SPAfheld_table-SPAList == SPAfheld
 
-SPAfhigh_table:		;SPA $0F50 (93G SPAfhigh)
+SPAfhigh_table:		;SPA $0F50
 	dw .d0-SPAfhigh_table		; direction 0
 	dw .d0-SPAfhigh_table		; direction 1
 	dw .d0-SPAfhigh_table		; direction 2
@@ -787,7 +787,7 @@ SPAfhigh_table:		;SPA $0F50 (93G SPAfhigh)
 .d3:	dw SPFfight+10,6,SPFfight+11,16,SPFfight+10,4,SPFfight+8,-16
 	assert SPAfhigh_table-SPAList == SPAfhigh
 
-SPAflow_table:		;SPA $0F82 (93G SPAflow)
+SPAflow_table:		;SPA $0F82
 	dw .d0-SPAflow_table		; direction 0
 	dw .d0-SPAflow_table		; direction 1
 	dw .d0-SPAflow_table		; direction 2
@@ -801,7 +801,7 @@ SPAflow_table:		;SPA $0F82 (93G SPAflow)
 .d3:	dw SPFfight+10,6,SPFfight+12,16,SPFfight+10,4,SPFfight+8,-16
 	assert SPAflow_table-SPAList == SPAflow
 
-SPAfhith_table:		;SPA $0FB4 (93G SPAfhith)
+SPAfhith_table:		;SPA $0FB4
 	dw .d0-SPAfhith_table		; direction 0
 	dw .d0-SPAfhith_table		; direction 1
 	dw .d0-SPAfhith_table		; direction 2
@@ -815,7 +815,7 @@ SPAfhith_table:		;SPA $0FB4 (93G SPAfhith)
 .d3:	dw SPFfight+14,16,SPFfight+8,-8
 	assert SPAfhith_table-SPAList == SPAfhith
 
-SPAfhitl_table:		;SPA $0FD6 (93G SPAfhitl)
+SPAfhitl_table:		;SPA $0FD6
 	dw .d0-SPAfhitl_table		; direction 0
 	dw .d0-SPAfhitl_table		; direction 1
 	dw .d0-SPAfhitl_table		; direction 2
@@ -829,7 +829,7 @@ SPAfhitl_table:		;SPA $0FD6 (93G SPAfhitl)
 .d3:	dw SPFfight+13,16,SPFfight+8,-8
 	assert SPAfhitl_table-SPAList == SPAfhitl
 
-SPAffall_table:		;SPA $0FF8 (93G SPAffall)
+SPAffall_table:		;SPA $0FF8
 	dw .d0-SPAffall_table		; direction 0
 	dw .d0-SPAffall_table		; direction 1
 	dw .d0-SPAffall_table		; direction 2
@@ -842,7 +842,7 @@ SPAffall_table:		;SPA $0FF8 (93G SPAffall)
 .d0:	dw SPFfight+14,8,SPFfight+15,8,SPFfight+16,200,SPFfight+16,-2
 	assert SPAffall_table-SPAList == SPAffall
 
-SPAwallright_table:		;SPA $101A (93G SPAwallright)
+SPAwallright_table:		;SPA $101A
 	dw .d0-SPAwallright_table		; direction 0
 	dw .d1-SPAwallright_table		; direction 1
 	dw .d1-SPAwallright_table		; direction 2
@@ -850,14 +850,14 @@ SPAwallright_table:		;SPA $101A (93G SPAwallright)
 	dw .d3-SPAwallright_table		; direction 4
 	dw .d3-SPAwallright_table		; direction 5
 	dw .d3-SPAwallright_table		; direction 6
-	dw SPAwallleft_table-SPAwallright_table		; direction 7: points at the next table header (93G: skipped)
+	dw SPAwallleft_table-SPAwallright_table		; direction 7: points at the next table header
 	dw 0		; attributes
 .d0:	dw SPFPen+4,8,SPFPen+5,8,SPFPen+6,-8
 .d1:	dw SPFPen,8,SPFPen+1,8,SPFPen+2,8,SPFPen+3,-8
 .d3:	dw SPFPen+3,8,SPFPen+2,8,SPFPen+1,8,SPFPen,-8
 	assert SPAwallright_table-SPAList == SPAwallright
 
-SPAwallleft_table:		;SPA $1058 (93G SPAwallleft)
+SPAwallleft_table:		;SPA $1058
 	dw .d0-SPAwallleft_table		; direction 0
 	dw .d1-SPAwallleft_table		; direction 1
 	dw .d1-SPAwallleft_table		; direction 2
@@ -865,14 +865,14 @@ SPAwallleft_table:		;SPA $1058 (93G SPAwallleft)
 	dw .d3-SPAwallleft_table		; direction 4
 	dw .d3-SPAwallleft_table		; direction 5
 	dw .d3-SPAwallleft_table		; direction 6
-	dw SPAfaceoff_table-SPAwallleft_table		; direction 7: points at the next table header (93G: skipped)
+	dw SPAfaceoff_table-SPAwallleft_table		; direction 7: points at the next table header
 	dw 0		; attributes
 .d0:	dw SPFPen+6,8,SPFPen+5,8,SPFPen+4,-8
 .d1:	dw SPFPen+3,8,SPFPen+2,8,SPFPen+1,8,SPFPen,-8
 .d3:	dw SPFPen,8,SPFPen+1,8,SPFPen+2,8,SPFPen+3,-8
 	assert SPAwallleft_table-SPAList == SPAwallleft
 
-SPAfaceoff_table:		;SPA $1096 (93G SPAfaceoff)
+SPAfaceoff_table:		;SPA $1096
 	dw .d0-SPAfaceoff_table		; direction 0
 	dw .d1-SPAfaceoff_table		; direction 1
 	dw .d1-SPAfaceoff_table		; direction 2
@@ -886,7 +886,7 @@ SPAfaceoff_table:		;SPA $1096 (93G SPAfaceoff)
 .d1:	dw SPFskatewp+20,2,SPFsweep+9,10,SPFsweep+8,-6
 	assert SPAfaceoff_table-SPAList == SPAfaceoff
 
-SPAfaceoffr_table:		;SPA $10C0 (93G SPAfaceoffr)
+SPAfaceoffr_table:		;SPA $10C0
 	dw .d0-SPAfaceoffr_table		; direction 0
 	dw .d1-SPAfaceoffr_table		; direction 1
 	dw .d1-SPAfaceoffr_table		; direction 2
@@ -900,7 +900,7 @@ SPAfaceoffr_table:		;SPA $10C0 (93G SPAfaceoffr)
 .d1:	dw SPFskatewp+20,-5
 	assert SPAfaceoffr_table-SPAList == SPAfaceoffr
 
-SPAsiren_table:		;SPA $10DA (93G SPAsiren)
+SPAsiren_table:		;SPA $10DA
 	dw .d0-SPAsiren_table		; direction 0
 	dw .d0-SPAsiren_table		; direction 1
 	dw .d0-SPAsiren_table		; direction 2
@@ -914,7 +914,7 @@ SPAsiren_table:		;SPA $10DA (93G SPAsiren)
 	dw SPFSiren+8,3,SPFSiren+9,3,SPFSiren+10,3,SPFSiren+11,3,SPFSiren+12,3,SPFSiren+13,-3
 	assert SPAsiren_table-SPAList == SPAsiren
 
-SPAstanley_table:		;SPA $1124 (93G SPAstanley)
+SPAstanley_table:		;SPA $1124
 	dw .d0-SPAstanley_table		; direction 0
 	dw .d1-SPAstanley_table		; direction 1
 	dw .d2-SPAstanley_table		; direction 2
@@ -934,7 +934,7 @@ SPAstanley_table:		;SPA $1124 (93G SPAstanley)
 .d7:	dw SPFcup+7,-30
 	assert SPAstanley_table-SPAList == SPAstanley
 
-SPAfinjury_table:		;SPA $1156 (93G SPAfinjury)
+SPAfinjury_table:		;SPA $1156
 	dw .d0-SPAfinjury_table		; direction 0
 	dw .d0-SPAfinjury_table		; direction 1
 	dw .d0-SPAfinjury_table		; direction 2
@@ -949,7 +949,7 @@ SPAfinjury_table:		;SPA $1156 (93G SPAfinjury)
 	dw SPFfinjury+4,10,SPFfinjury+5,-400
 	assert SPAfinjury_table-SPAList == SPAfinjury
 
-SPAflip_table:		;SPA $11B0 (93G SPAflip)
+SPAflip_table:		;SPA $11B0
 	dw .d0-SPAflip_table		; direction 0
 	dw .d1-SPAflip_table		; direction 1
 	dw .d2-SPAflip_table		; direction 2
@@ -969,7 +969,7 @@ SPAflip_table:		;SPA $11B0 (93G SPAflip)
 .d7:	dw SPFflip,6,SPFflip+1,6,SPFflip+2,6,SPFflip+3,6,SPFfallback+30,100,SPFfallback+31,8,SPFduck+7,-8
 	assert SPAflip_table-SPAList == SPAflip
 
-SPAstumble_table:		;SPA $12A2 (93G SPAstumble)
+SPAstumble_table:		;SPA $12A2
 	dw .d0-SPAstumble_table		; direction 0
 	dw .d1-SPAstumble_table		; direction 1
 	dw .d2-SPAstumble_table		; direction 2
@@ -989,7 +989,7 @@ SPAstumble_table:		;SPA $12A2 (93G SPAstumble)
 .d7:	dw SPFstumble+21,6,SPFstumble+22,6,SPFstumble+23,8,SPFstumble+22,6,SPFstumble+21,-6
 	assert SPAstumble_table-SPAList == SPAstumble
 
-SPAhook_table:		;SPA $1354 (93G SPAhook)
+SPAhook_table:		;SPA $1354
 	dw .d0-SPAhook_table		; direction 0
 	dw .d1-SPAhook_table		; direction 1
 	dw .d2-SPAhook_table		; direction 2
@@ -1009,7 +1009,7 @@ SPAhook_table:		;SPA $1354 (93G SPAhook)
 .d7:	dw SPFhook+14,-30
 	assert SPAhook_table-SPAList == SPAhook
 
-SPAhook2_table:		;SPA $1386 (93G SPAhook2)
+SPAhook2_table:		;SPA $1386
 	dw .d0-SPAhook2_table		; direction 0
 	dw .d1-SPAhook2_table		; direction 1
 	dw .d2-SPAhook2_table		; direction 2
@@ -1029,7 +1029,7 @@ SPAhook2_table:		;SPA $1386 (93G SPAhook2)
 .d7:	dw SPFhook+14,9,SPFhook+15,9,SPFhook+14,9,SPFhook+15,-9
 	assert SPAhook2_table-SPAList == SPAhook2
 
-SPAcatch_table:		;SPA $1418 (93G SPAcatch)
+SPAcatch_table:		;SPA $1418
 	dw .d0-SPAcatch_table		; direction 0
 	dw .d1-SPAcatch_table		; direction 1
 	dw .d2-SPAcatch_table		; direction 2
@@ -1049,7 +1049,7 @@ SPAcatch_table:		;SPA $1418 (93G SPAcatch)
 .d7:	dw SPFcatch+14,6,SPFcatch+15,-6
 	assert SPAcatch_table-SPAList == SPAcatch
 
-SPAbglass_table:		;SPA $146A (93G SPAbglass)
+SPAbglass_table:		;SPA $146A
 	dw .d0-SPAbglass_table		; direction 0
 	dw .d0-SPAbglass_table		; direction 1
 	dw .d0-SPAbglass_table		; direction 2
@@ -1062,7 +1062,7 @@ SPAbglass_table:		;SPA $146A (93G SPAbglass)
 .d0:	dw SPFbglass,8,SPFbglass+1,8,SPFbglass+2,8,SPFbglass+3,8,SPFbglass+4,-1000
 	assert SPAbglass_table-SPAList == SPAbglass
 
-SPAgdive_table:		;SPA $1490 (93G SPAgdive)
+SPAgdive_table:		;SPA $1490
 	dw .d0-SPAgdive_table		; direction 0
 	dw .d1-SPAgdive_table		; direction 1
 	dw .d2-SPAgdive_table		; direction 2
@@ -1082,7 +1082,7 @@ SPAgdive_table:		;SPA $1490 (93G SPAgdive)
 .d7:	dw SPFgdive+14,8,SPFgdive+15,48,SPFgdive+14,-8
 	assert SPAgdive_table-SPAList == SPAgdive
 
-SPAinjury1_table:		;SPA $1502 (93G SPAinjury1)
+SPAinjury1_table:		;SPA $1502
 	dw .d0-SPAinjury1_table		; direction 0
 	dw .d0-SPAinjury1_table		; direction 1
 	dw .d0-SPAinjury1_table		; direction 2

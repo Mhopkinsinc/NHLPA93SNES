@@ -1,9 +1,9 @@
-; penalty_b88: 93G penalty93_1/penalty93_2: penalties, scoreboard, ticker, intermission.
+; Penalties, scoreboard, ticker, intermission.
 ; Bank $88. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $888405
-getlinee:		;d0 = line number, a2 = team struct. Return d0 = energy level of this line (93G penalty93_2)
-		;   SNES: Returns d0 = average energy (tmpde) of the skaters of that line (priolist $8FF820 picks the positions)
+getlinee:		;d0 = line number, a2 = team struct. Return d0 = energy level of this line
+		;   SNES: Returns d0 = average energy (tmpde) of the skaters of that line (priolist priolist picks the positions)
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -42,7 +42,7 @@ getlinee:		;d0 = line number, a2 = team struct. Return d0 = energy level of this
 	sta.b a1
 	stz.b mulb
 	stz.b mula
-	lda.w #priolist		; a0 = priolist ($8FF820)
+	lda.w #priolist		; a0 = priolist (priolist)
 	sta.b a0
 	lda.w #priolist>>16
 	sta.b a0+2

@@ -1,14 +1,14 @@
-; hockey_b85: 93G hockey93_01..hockey93_11: the game, screens, menus, password, playoffs.
+; The game, screens, menus, password, playoffs.
 ; Bank $85. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $85D5A4
-GetShifter:		;92G/93G GetShifter: d1 = number of games - 1, d2 = first bit of WinBits for the playoff gamelevel
+GetShifter:		;/GetShifter: d1 = number of games - 1, d2 = first bit of WinBits for the playoff gamelevel
 	lda.w #-16
 	sta.b d2
 	lda.w #16
 	sta.b d1
 	ldy.w gamelevel
-.3:		;92G .3
+.3:
 	lda.b d2
 	clc
 	adc.b d1
@@ -20,14 +20,14 @@ GetShifter:		;92G/93G GetShifter: d1 = number of games - 1, d2 = first bit of Wi
 	rtl
 
 org $85FF0E
-getpzjoy:		;93G getpzjoy (hockey93_02): read the joystick of the pad that paused (sfpj: Readjoy2, else Readjoy1)
+getpzjoy:		;read the joystick of the pad that paused (sfpj: Readjoy2, else Readjoy1)
 	lda.w sflags
 	bit.w #sfpj
 	beq .p1
 	jml.l Readjoy2
 .p1:
 	jml.l Readjoy1
-PrintTeamNames:		;SNES: regular season: HomeTeam/VisTeam from the options; print both team names ($8D84E2), then $86FC29
+PrintTeamNames:		;SNES: regular season: HomeTeam/VisTeam from the options; print both team names (DrawTeamBlocks), then setteams
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -89,7 +89,7 @@ PrintTeamNames:		;SNES: regular season: HomeTeam/VisTeam from the options; print
 	rtl
 nullrtl85:		;does nothing
 	rtl
-ResetClock:		;set period length and stop clock (93G hockey93_01)
+ResetClock:		;set period length and stop clock
 		;   SNES: set the period length (GetPeriodTime; regular season overtime is 10:00) and stop the clock
 	jsl.l GetPeriodTime
 	lda.w gsp		; gsp >= 3 (overtime) and OptPlayMode 0: 600 seconds

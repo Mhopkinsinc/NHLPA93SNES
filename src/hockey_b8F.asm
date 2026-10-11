@@ -1,8 +1,8 @@
-; hockey_b8F: 93G hockey93_01..hockey93_11: the game, screens, menus, password, playoffs.
+; The game, screens, menus, password, playoffs.
 ; Bank $8F. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8F8213
-linelist:		;93G linelist (hockey93_11): the line choice names (PrintStringFromList in bank $80): Sc1, Sc2, Chk, Pw1, Pw2, PK1, PK2
+linelist:		;the line choice names (PrintStringFromList in bank $80): Sc1, Sc2, Chk, Pw1, Pw2, PK1, PK2
 	dw 5
 	db "Sc1"
 	dw 5
@@ -17,7 +17,7 @@ linelist:		;93G linelist (hockey93_11): the line choice names (PrintStringFromLi
 	db "PK1"
 	dw 5
 	db "PK2"
-PerLabels:		;93G PerLabels: period names (gsp 0-4); $12-$14 are the "st", "nd", "rd" small font tiles
+PerLabels:		;period names (gsp 0-4); $12-$14 are the "st", "nd", "rd" small font tiles
 	dw 4
 	db "1",$12
 	dw 4
@@ -30,7 +30,7 @@ PerLabels:		;93G PerLabels: period names (gsp 0-4); $12-$14 are the "st", "nd", 
 	db "Final"
 
 org $8F8B11
-clockcont:		;monitor period clock and initiate various clock activated events (93G hockey93_01)
+clockcont:		;monitor period clock and initiate various clock activated events
 		;   SNES: clock at 0: freezewindow, then clockcont_0
 	lda.w gmclock
 	ora.w gameclock
@@ -39,7 +39,7 @@ clockcont:		;monitor period clock and initiate various clock activated events (9
 	jmp.w clockcont_0
 .rtl:
 	rtl
-clockcont_0:		;end of period. Also entered from puckfaceoff+2E (93G hockey93_01)
+clockcont_0:		;end of period. Also entered from puckfaceoff+2E
 		;   SNES: puck pucknorm; third period winners celebrate (assscore, the Stanley Cup in the final), the game clock stops
 	ldx.w #$001C
 	stx.b a3
@@ -157,12 +157,12 @@ clockcont_0:		;end of period. Also entered from puckfaceoff+2E (93G hockey93_01)
 	jml.l AddPenalty2
 
 org $8F8E03
-startpause1:		;pause intiated by cont 1 (93G hockey93_01)
+startpause1:		;pause intiated by cont 1
 		;   SNES: pause started by controller 1 (sfpj off), startpause
 	lda.w #$0002
 	trb.w sflags
 	jml.l startpause
-PauseExit:		;restore graphics and return from pause mode (92G hockey)
+PauseExit:		;restore graphics and return from pause mode
 		;   SNES: restore textmap (textsave), sflags and the rink, printscores1, setvideo
 	stz.w cuetimer
 	stz.w crowdvol
@@ -194,7 +194,7 @@ PauseExit:		;restore graphics and return from pause mode (92G hockey)
 	sta.w lastframevc
 	sta.w oldvcount
 	rtl
-suba4:		;a4 = address in replay buffer of current (93G hockey93_02)
+suba4:		;a4 = address in replay buffer of current
 		;   SNES: replay a4 one frame back (wrap at ReplayBufferStart unless sfwrap), RestoreReplayFrame; d7 = 0 at the end
 	lda.b a4
 	cmp.w #ReplayBufferStart
@@ -238,7 +238,7 @@ suba4:		;a4 = address in replay buffer of current (93G hockey93_02)
 	jsl.l RestoreReplayFrame
 	stz.b d7
 	rtl
-adda4:		;a4 = address in replay buffer of current (93G hockey93_02)
+adda4:		;a4 = address in replay buffer of current
 		;   SNES: replay a4 one frame on unless it reaches ReplayBufferPtr; d7 = 0 at the end
 	stz.b d7
 	lda.w sflags
@@ -277,7 +277,7 @@ adda4:		;a4 = address in replay buffer of current (93G hockey93_02)
 	jml.l adda43
 
 org $8F9073
-ResetPassWord:		;copy '-' char into password (92G hockey)
+ResetPassWord:		;copy '-' char into password
 		;   SNES: PassWord = 16 blanks ($1E) with bit 7 clear
 	sep #$30
 	stz.w PassWord
@@ -291,8 +291,8 @@ ResetPassWord:		;copy '-' char into password (92G hockey)
 	rtl
 
 org $8FD5BF
-holdcheck:		;player a2 is in hold animation looking to hold opponent a3. Entered from checkcheck .cc for SPA $CB0 (92 SPAHold) or $12DC. 93 adds the facing test, the puck carrier sflags
-		;   clear and the second hold anim, and rolls the penalty with checkagr (93G hockey93_03)
+holdcheck:		;player a2 is in hold animation looking to hold opponent a3. Entered from checkcheck .cc for SPA $CB0 or $12DC. 93 adds the facing test, the puck carrier sflags
+		;   clear and the second hold anim, and rolls the penalty with checkagr
 		;   SNES: player X holds a2 (SPAHold/SPAhook), both slow to the average speed; checkagr may call a holding/hooking penalty
 	lda.w pfalock,x
 	ora.w pf2fight,x
@@ -404,8 +404,8 @@ InitScoutDisplay:		;SNES: scouting report scroll state reset; a0 = $7F0000 (the 
 	rtl
 
 org $8FDBDB
-box:		;93 only: fill a $13 x 8 rectangle at printz position $FF,$B,2 with char $7FF (eraser). (93G hockey93_10)
-		;   SNES: erase the 19 x 9 box at x 11, y 2 (93G box role)
+box:		;fill a $13 x 8 rectangle at printz position $FF,$B,2 with char $7FF (eraser).
+		;   SNES: erase the 19 x 9 box at x 11, y 2
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $FF,$0B,$02
@@ -416,15 +416,15 @@ box:		;93 only: fill a $13 x 8 rectangle at printz position $FF,$B,2 with char $
 	lda.w blankchar
 	sta.b d2
 	jml.l eraser
-UpdateCwdExcite:		;called once per second. Track peak and running total of crowd (93G hockey93_01)
+UpdateCwdExcite:		;called once per second. Track peak and running total of crowd
 		;   SNES: nothing on the SNES
 	rtl
-CheckPeriodEnd:		;called once per second. 3rd period: play tune $32 once at the random (93G hockey93_01)
+CheckPeriodEnd:		;called once per second. 3rd period: play tune $32 once at the random
 		;   SNES: nothing on the SNES
 	rtl
 
 org $8FDC0D
-ScoutingReport:		;93 pregame scouting report (92 drew ScoutMap and position check marks). Called from PeriodOver. (93G hockey93_07)
+ScoutingReport:		;93 pregame scouting report (92 drew ScoutMap and position check marks). Called from PeriodOver.
 		;   SNES: the scouting report screen: EASN backdrop, both team blocks, ScoutLabels with both teams' ratings, Ron Barr and
 		;   the scrolling text until Start
 	jsl.l ClearTeamStats
@@ -808,7 +808,7 @@ ScoutCompare:		;SNES: print the scouting ratings of team [a0] (nibbles of .sr, a
 .printxlt:
 	inc.w printy
 	rtl
-ScoutLabels:		;93G scouting labels: the rating names of the scouting report; a $FF string ends the list
+ScoutLabels:		;scouting labels: the rating names of the scouting report; a $FF string ends the list
 	dw 10
 	db "Shooting"
 	dw 9
@@ -831,7 +831,7 @@ ScoutLabels:		;93G scouting labels: the rating names of the scouting report; a $
 	db "Overall"
 	dw 3
 	db $FF
-PuckcSpots:		;93G asspuckc spots: x, y of spot d0 (6 + temp3, or position when offsides)
+PuckcSpots:		;asspuckc spots: x, y of spot d0 (6 + temp3, or position when offsides)
 	dw -100,-20
 	dw 100,-20
 	dw -120,40
@@ -844,7 +844,7 @@ PuckcSpots:		;93G asspuckc spots: x, y of spot d0 (6 + temp3, or position when o
 	dw 30,230
 
 org $8FE32B
-DefaultMenus:		;set default menu choices for beginning of game. Called once from Begin (jsr abs.l). (93G hockey93_09)
+DefaultMenus:		;set default menu choices for beginning of game. Called once from Begin (jsr abs.l).
 		;   SNES: the 7 options at $1600 from .tab; notdemo set
 	lda.w #$FFFF
 	sta.w notdemo
@@ -868,10 +868,10 @@ DefaultMenus:		;set default menu choices for beginning of game. Called once from
 	dec.b d0
 	bpl .loop
 	rtl
-.tab:		;93G DefaultMenus .tab: OptPlayMode, OptPlayers, OptTeam1, OptTeam2, OptPerlen, OptPen, OptLine
+.tab:		;OptPlayMode, OptPlayers, OptTeam1, OptTeam2, OptPerlen, OptPen, OptLine
 	dw $0000,$0001,$000F,$0003,$0001,$0000,$0001
 checkagr:		;penalty roll for player a3. Range = (20 - byte $73) * 13, doubled for a joystick player, halved within $28 of the puck in x and y. Return d0 = randomd0 of that range; the callers
-		;   call a penalty when it is small. Called from checkcheck .cc, holdcheck and Bcheck (93G hockey93_03)
+		;   call a penalty when it is small. Called from checkcheck .cc, holdcheck and Bcheck
 		;   SNES: d0 = random value by the GGSleft rating of player X (x2 joystick controlled, /2 near the puck): small values call a penalty
 	lda.w #$0014
 	sec
@@ -1330,7 +1330,7 @@ RosterLineNames:		;SNES: the Team Roster line names (15-byte strings)
 	db "{Pen. Kill 2 "
 
 org $8FECAB
-Pmenu:		;92G Pausemode .Pmenu: the 5 pause menu items (.mlist, game-over list when gsp = 4), item psitem highlighted
+Pmenu:		;the 5 pause menu items (.mlist, game-over list when gsp = 4), item psitem highlighted
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$06,$0D
@@ -1454,7 +1454,7 @@ Pmenu:		;92G Pausemode .Pmenu: the 5 pause menu items (.mlist, game-over list wh
 	inc.w mesarea
 	inc.w mesarea
 	rtl
-.mlist:		;92G Pausemode .mlist: the pause menu items
+.mlist:		;the pause menu items
 	dw 13
 	db "Resume Game"
 	dw 16
@@ -1494,7 +1494,7 @@ GetPadTeam:		;SNES: a2 = team of the controller that paused (cont1team/cont2team
 	inc.b a2
 .rtl:
 	rtl
-setpde:		;d1 = rostnum of player * 2, a2 = team struct (93G hockey93_05)
+setpde:		;d1 = rostnum of player * 2, a2 = team struct
 		;   SNES: tmpde of player d1 (team a2) = d0 (not below 0)
 	lda.b a2
 	beq .noa2
@@ -1510,7 +1510,7 @@ setpde:		;d1 = rostnum of player * 2, a2 = team struct (93G hockey93_05)
 .d0pos:
 	sta.w tmpde,y
 	rtl
-setoptions:		;options screen display and input. Called from PeriodOver (hockey93_06). (93G hockey93_08)
+setoptions:		;options screen display and input. Called from PeriodOver .
 		;   SNES: the options screen: GameSetupMap backdrop, small font and Framer tiles (remapped), NHLPA logo, team blocks; Up/Down
 		;   picks a line (.nms), Left/Right changes it (.IncItem), Start goes to maketree; after $12C0 idle frames a demo with random teams
 	lda.w #vb2_blank
@@ -1686,7 +1686,7 @@ setoptions:		;options screen display and input. Called from PeriodOver (hockey93
 	sta.b a1
 	lda.w #.text>>16
 	sta.b a1+2
-.textlp:		;93G .textlp: print the .text lines until a 0 byte
+.textlp:		;print the .text lines until a 0 byte
 	jsl.l print
 	ldy.w #$0002
 	lda.b [a1],y
@@ -1802,7 +1802,7 @@ setoptions:		;options screen display and input. Called from PeriodOver (hockey93
 	jsl.l .IncItem
 	jsl.l .ps
 	jmp.w .idle
-.IncItem:		;93G .IncItem: add d2 to option d7 (OptPlayMode + d7) within .pslim (d2 = 0: just limit it). Players is fixed to One outside Regular Season; Team 1 has $18 choices in the playoffs; a new
+.IncItem:		;add d2 to option d7 (OptPlayMode + d7) within .pslim (d2 = 0: just limit it). Players is fixed to One outside Regular Season; Team 1 has $18 choices in the playoffs; a new
 		;   mode or Team 1 in the playoffs restarts them (NewPO)
 	lda.w #OptPlayMode
 	sta.b a2
@@ -1853,7 +1853,7 @@ setoptions:		;options screen display and input. Called from PeriodOver (hockey93
 	jml.l NewPO
 .rts:
 	rtl
-.iilimit:		;93G .iilimit: d3 + d2, wrapped into d5 ... d4-1
+.iilimit:		;d3 + d2, wrapped into d5 ... d4-1
 	lda.b d3
 	clc
 	adc.b d2
@@ -1882,7 +1882,7 @@ setoptions:		;options screen display and input. Called from PeriodOver (hockey93
 	lda.b d5
 	sta.b d3
 	rtl
-.ps:		;93G .ps: print the choices of all 7 lines (.psd), then PrintTeamNames
+.ps:		;print the choices of all 7 lines (.psd), then PrintTeamNames
 	lda.b d7
 	sta.b d6
 	lda.w #$FFFE
@@ -1899,7 +1899,7 @@ setoptions:		;options screen display and input. Called from PeriodOver (hockey93
 	lda.b d6
 	sta.b d7
 	jml.l PrintTeamNames
-.psd:		;93G .psd: print the choice of line d7 at x $11 (14 chars erased first): string d3 of its .pl list; the team lines print the team name (.psdtp)
+.psd:		;print the choice of line d7 at x $11 (14 chars erased first): string d3 of its .pl list; the team lines print the team name (.psdtp)
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BE,$11,$0D
@@ -1935,7 +1935,7 @@ setoptions:		;options screen display and input. Called from PeriodOver (hockey93
 	clc
 	adc.b [a0],y
 	sta.b a0
-.psd3:		;93G .psd3: step to string d3
+.psd3:		;step to string d3
 	lda.b a0+2
 	sta.b a1+2
 	lda.b a0
@@ -1946,7 +1946,7 @@ setoptions:		;options screen display and input. Called from PeriodOver (hockey93
 	dec.b d3
 	bpl .psd3
 	jml.l print
-.psdtp:		;93G .psdtp: team line: the name of team d3 from its bank $83 team record, or .playoffs in Cont. Playoffs
+.psdtp:		;team line: the name of team d3 from its bank $83 team record, or .playoffs in Cont. Playoffs
 	ldy.b d7
 	lda.w #OptPlayMode
 	sta.b a1
@@ -1979,7 +1979,7 @@ setoptions:		;options screen display and input. Called from PeriodOver (hockey93
 .playoffs:		;the Team 1 / Team 2 choice in Cont. Playoffs
 	dw 10
 	db "Playoffs"
-.nms:		;93G .nms: move to line d7 + d0 (0..$C), skipping the lines fixed in this mode (Players in the playoffs, lines 1-3 in Cont. Playoffs, Team 2 in the playoffs), then move the frame from line d3
+.nms:		;move to line d7 + d0 (0..$C), skipping the lines fixed in this mode (Players in the playoffs, lines 1-3 in Cont. Playoffs, Team 2 in the playoffs), then move the frame from line d3
 		;   to d7
 	lda.b d7
 	sta.b d3
@@ -2021,7 +2021,7 @@ setoptions:		;options screen display and input. Called from PeriodOver (hockey93
 	lda.b d7
 	cmp.w #$0006
 	beq .nms0
-.nms4:		;93G .nms4: erase the old frame, draw the new one
+.nms4:		;erase the old frame, draw the new one
 	jsl.l .setrect
 	lda.w blankchar
 	sta.b d2
@@ -2030,7 +2030,7 @@ setoptions:		;options screen display and input. Called from PeriodOver (hockey93
 	sta.b d3
 	jsl.l .setrect
 	jml.l Framer
-.setrect:		;93G .setrect: printx $10, printy $C + d3, frame size d0 x d1 = $10 x 3 (5 tall for Team 1 in the new playoffs)
+.setrect:		;printx $10, printy $C + d3, frame size d0 x d1 = $10 x 3 (5 tall for Team 1 in the new playoffs)
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $FF,$10,$0C
@@ -2056,9 +2056,9 @@ setoptions:		;options screen display and input. Called from PeriodOver (hockey93
 	sta.b d1
 	rtl
 	dw 0
-.pslim:		;93G .pslim: choices of each line (Play Mode, Players, Team 1, Team 2, Per. Length, Penalties, Line Changes)
+.pslim:		;choices of each line (Play Mode, Players, Team 1, Team 2, Per. Length, Penalties, Line Changes)
 	dw $4,$6,$1A,$1A,$3,$3,$2
-.pl:		;93G .pl: offsets from .pl of the choice strings of each line
+.pl:		;offsets from .pl of the choice strings of each line
 	dw .pl0-.pl
 	dw .pl1-.pl
 	dw .pl2-.pl
@@ -2111,7 +2111,7 @@ setoptions:		;options screen display and input. Called from PeriodOver (hockey93
 	db "On"
 	dw 5
 	db "Off"
-.text:		;93G .text: the line names
+.text:		;the line names
 	dw 14
 	db $FE,$03,$0D,"Play Mode"
 	dw 12
@@ -2130,7 +2130,7 @@ setoptions:		;options screen display and input. Called from PeriodOver (hockey93
 	db 0
 
 org $8FF741
-CheckInjury:		;called once per second. Count down InjCntDown, act on it at zero (93G hockey93_01)
+CheckInjury:		;called once per second. Count down InjCntDown, act on it at zero
 		;   SNES: once a second: count InjCntDown down; at zero ShowInjuryBox
 	dec.w InjCntDown
 	bne .rtl
@@ -2138,7 +2138,7 @@ CheckInjury:		;called once per second. Count down InjCntDown, act on it at zero 
 .rtl:
 	rtl
 setInjuryType:		;sets period injury. a2 = player injured, a3 = player checking. Marks a2 unavailable, pumps up the crowd, plays sfx $D, locks the scroll on a2, sets TempPlOffset (pnum, bit
-		;   15 set for the away team) and puts $FFFD (injured for the period) in a2's tmpdst. Called from FallDown and from logic93_2 chkhit .fall (IDA FightFall) (93G hockey93_03)
+		;   15 set for the away team) and puts $FFFD (injured for the period) in a2's tmpdst. Called from FallDown and from chkhit .fall
 		;   SNES: player a2 is injured: pflags bit $1000, crowdlevel + $12C, sfx $8C, the scroll locked on him (xc1/yc1, sflags $40), TempPlOffset
 		;   = pnum (| $8000 for the visitors), his tmpdst = $FFFD (out for the period)
 	ldy.b a2
@@ -2188,7 +2188,7 @@ setInjuryType:		;sets period injury. a2 = player injured, a3 = player checking. 
 	lda.w #$FFFD
 	sta.w tmpdst,y
 	rtl
-sublist:		;93G sublist (hockey93_11): substitution lists by position: word offsets from sublist, then roster slots (line * 8 + position); -1 ends
+sublist:		;substitution lists by position: word offsets from sublist, then roster slots (line * 8 + position); -1 ends
 	dw .defl-sublist		; goalie
 	dw .defl-sublist		; LD
 	dw .defr-sublist		; RD
@@ -2210,9 +2210,9 @@ sublist:		;93G sublist (hockey93_11): substitution lists by position: word offse
 	db 0+3,8+3,16+3,24+3,32+3,40+3,48+3
 	db 0+5,8+5,16+5,24+5,32+5,40+5,48+5
 	db -1
-priolist:		;93G priolist: positions in order of importance (SetPlList, releasepl, getlinee); no pad byte on the SNES
+priolist:		;positions in order of importance (SetPlList, releasepl, getlinee); no pad byte on the SNES
 	db 0,1,2,4,3,5,6
-ShowInjuryBox:		;93 only: injury box "Injury to:" player TempPlOffset (set by setInjuryType), (93G hockey93_10)
+ShowInjuryBox:		;injury box "Injury to:" player TempPlOffset (set by setInjuryType)
 		;   SNES: "Injury to:" the player TempPlOffset (GetPlayerNumInitial), "Out for period", or "the game" when pf2fight of the puck is set.
 		;   Jumped to by CheckInjury; saves d0-d2, a0-a4, ends with X = a3
 	stx.b xsave
@@ -2276,7 +2276,7 @@ ShowInjuryBox:		;93 only: injury box "Injury to:" player TempPlOffset (set by se
 	rtl
 
 org $8FFB2B
-GetPlayerNumInitial:		;93 only: a1 = mesarea "NN F. Last" (FormatPlayerNumInitial) for player (93G hockey93_10)
+GetPlayerNumInitial:		;a1 = mesarea "NN F. Last" (FormatPlayerNumInitial) for player
 		;   SNES: a1 = the name of player TempPlOffset (PlayerShortName; bit 15 = the visitors); saves d0, a2
 	lda.b d0+2
 	pha
@@ -2307,7 +2307,7 @@ GetPlayerNumInitial:		;93 only: a1 = mesarea "NN F. Last" (FormatPlayerNumInitia
 	rtl
 
 org $8FFDFB
-cd0:		;93G cd0 (hockey93_11): $fftt = frame/time for the levels of crowd excitement (updatecrowdf: crowd level, crowdstep); 4 levels of 16
+cd0:		;$fftt = frame/time for the levels of crowd excitement (updatecrowdf: crowd level, crowdstep); 4 levels of 16
 	dw $010C,$020C,$030C,$040C,$050C,$0A0C,$090C,$080C
 	dw $060C,$070C,$080C,$090C,$0A0C,$050C,$040C,$030C
 	dw $0107,$0207,$0307,$0407,$0507,$0B07,$0C07,$0D07
@@ -2318,7 +2318,7 @@ cd0:		;93G cd0 (hockey93_11): $fftt = frame/time for the levels of crowd excitem
 	dw $1203,$1103,$1003,$0F03,$0E03,$0D03,$0C03,$0B03
 
 org $8FFEB4
-ShowGoalBox:		;93 only: goal box. Closes both line change boxes, then printbig "GOAL!" (or "HAT (93G hockey93_10)
+ShowGoalBox:		;goal box. Closes both line change boxes, then printbig "GOAL!" (or "HAT
 		;   SNES: , really the goal box: close both line change boxes (lcfound2), Framer at x $B, y 2 (5-8 tall by the
 		;   assists), printbig "GOAL!" or "HAT TRICK!" (the scorer's third goal, tmgoals), the scorer and "Assist by:" names from the last ScoreSum entry; saves d0-d2, a0-a4, ends with X = a3
 	stx.b xsave
@@ -2429,7 +2429,7 @@ ShowGoalBox:		;93 only: goal box. Closes both line change boxes, then printbig "
 	db $BF,$0C,$08
 	jsl.l PlayerShortName
 	jsl.l print
-.ex:		;93G .ex
+.ex:
 	stx.b xsave
 	ldx.w #$0012
 .popa:
@@ -2450,7 +2450,7 @@ ShowGoalBox:		;93 only: goal box. Closes both line change boxes, then printbig "
 	ldx.b xsave
 	ldx.b a3
 	rtl
-GoalBoxText:		;93G GoalBoxText: printbig strings of ShowGoalBox: GOAL!, then HAT TRICK!
+GoalBoxText:		;printbig strings of ShowGoalBox: GOAL!, then HAT TRICK!
 	dw 13
 	db $BF,$0F,$03,"GOAL!",$BF,$0C,$05
 	dw 18

@@ -1,8 +1,8 @@
-; logic_b83: 93G logic93_1..logic93_5: player logic and the assignments (asstab).
+; Player logic and the assignments (asstab).
 ; Bank $83. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $83FDFC
-assgoalietopuck:		;asstab $F. 93 only: goalie skates out to a loose puck (inserted by (93G logic93_3)
+assgoalietopuck:		;asstab $F. goalie skates out to a loose puck (inserted by
 		;   SNES: goalie skates out to a loose puck (inserted by assgoalie) while the puck moves toward him and the tmnear stats
 		;   allow it, else assexit
 	lda.w pflags,x		; joystick controlled or clock stopped: assexit

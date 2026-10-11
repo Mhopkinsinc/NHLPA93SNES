@@ -1,8 +1,8 @@
-; hockey_b80: 93G hockey93_01..hockey93_11: the game, screens, menus, password, playoffs.
+; The game, screens, menus, password, playoffs.
 ; Bank $80. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8084C4
-getpde:		;get player a3's energy level into d0. Return a2 = his team struct, d1 = pnum*2 (93G hockey93_05)
+getpde:		;get player a3's energy level into d0. Return a2 = his team struct, d1 = pnum*2
 		;   SNES: d0 = energy of player X (tmpde of its team, entry pnum)
 	lda.w pfteam,x
 	beq .team
@@ -21,11 +21,11 @@ getpde:		;get player a3's energy level into d0. Return a2 = his team struct, d1 
 	tay
 	lda.w tmpde,y
 	sta.b d0
-rtss:		;93G rtss: the rtl that ends getpde, also used as a do-nothing callback (lda #rtss for skateto)
+rtss:		;the rtl that ends getpde, also used as a do-nothing callback (lda #rtss for skateto)
 	rtl
 
 org $809D17
-checkpuckcoll:		;look for puck coll with players. a3 = puck. Entered from pucknorm (logic93_4) (93G hockey93_04)
+checkpuckcoll:		;look for puck coll with players. a3 = puck. Entered from pucknorm
 		;   SNES: puck collision with the players within 22 in y (OOlist up and down from the puck)
 	lda.w Zpos+puckobj		; puck feet in the air (Zpos > 16): no collision
 	sec
@@ -89,7 +89,7 @@ checkpuckcoll:		;look for puck coll with players. a3 = puck. Entered from puckno
 	bne .dn
 .rtl:
 	rtl
-checkpuckcoll_ccx:		;93G checkpuckcoll .ccx: d4 = object index: stick (puckstick), body (puckbody) or goalie (puckgoalie) contact
+checkpuckcoll_ccx:		;d4 = object index: stick (puckstick), body (puckbody) or goalie (puckgoalie) contact
 	stx.b xsave
 	ldx.w #$0000
 .push:
@@ -287,7 +287,7 @@ checkpuckcoll_ccx:		;93G checkpuckcoll .ccx: d4 = object index: stick (puckstick
 	bcs .exit
 	jsl.l puckgoalie
 	bra .exit
-puckstick:		;puck collides with stick (93G hockey93_05)
+puckstick:		;puck collides with stick
 		;   SNES: puck hits the stick of player a2. d0 = distance^2 (from checkpuckcoll_ccx)
 	ldy.b a2
 	lda.w position,y
@@ -444,7 +444,7 @@ puckstick:		;puck collides with stick (93G hockey93_05)
 	adc.w #$32C8		; + 13000
 	sta.b mula
 	sta.b mulb
-	jsl.l mulu		; bank $88: mulu, mulres = mula*mulb
+	jsl.l mulu		; bank $88, mulres = mula*mulb
 	cmp.b d0
 	lda.b mulres+2
 	sbc.b d0+2
@@ -453,7 +453,7 @@ puckstick:		;puck collides with stick (93G hockey93_05)
 	lda.w #$0008		; too fast: nopuck 8, deflect
 	sta.w nopuck,y
 	jmp.w .stdef
-puckglue:		;Player a2 takes the puck (92 puckstick .glue) (93G hockey93_05)
+puckglue:		;Player a2 takes the puck (92 puckstick .glue)
 		;   SNES: Falls into setd0player (bank $8D)
 	lda.w seed+2		; pickup sound (one of 4)
 	and.w #$0003
@@ -511,7 +511,7 @@ puckglue:		;Player a2 takes the puck (92 puckstick .glue) (93G hockey93_05)
 	ldy.b a2
 	lda.w position,y
 	beq .goalie
-	jml.l setd0player		; bank $8D: 93G setd0player
+	jml.l setd0player		; bank $8D
 .goalie:
 	jsl.l ChkShotStat		; ChkShotStat (goalie made a save)
 	ldy.b a2
@@ -520,12 +520,12 @@ puckglue:		;Player a2 takes the puck (92 puckstick .glue) (93G hockey93_05)
 	lda.w SPA,y
 	cmp.w #SPAgdive
 	beq .g314
-	jml.l setd0player		; bank $8D: 93G setd0player
+	jml.l setd0player		; bank $8D
 .g314:
 	lda.w #$0005
 	sta.w temp5,y
-	jml.l setd0player		; bank $8D: 93G setd0player
-deflect:		;random puck direction on deflection puck = a3. Entered from puckstick .stdef (93G hockey93_05)
+	jml.l setd0player		; bank $8D
+deflect:		;random puck direction on deflection puck = a3. Entered from puckstick .stdef
 		;   SNES: Entered from puckstick .stdef
 	lda.w #$FFFF		; puck loose
 	sta.w puckc
@@ -541,7 +541,7 @@ deflect:		;random puck direction on deflection puck = a3. Entered from puckstick
 	jmp.w puckflip		; puckflip
 
 org $80A1B4
-makepde:		;pass d0 as value to be scaled by player a0's energy level (93G hockey93_05)
+makepde:		;pass d0 as value to be scaled by player a0's energy level
 		;   SNES: d0 = rating A (on entry) scaled by the energy of player a0: A*energy/$1000
 	pha
 	stx.b xsave
@@ -603,7 +603,7 @@ makepde:		;pass d0 as value to be scaled by player a0's energy level (93G hockey
 	sta.b d0
 	clc
 	rtl
-puckbody:		;puck hits player a2. a3 = puck, d0 = distance^2 (from checkpuckcoll .ccx) (93G hockey93_05)
+puckbody:		;puck hits player a2. a3 = puck, d0 = distance^2 (from checkpuckcoll .ccx)
 		;   SNES: puck (X) hits player a2. d0 = distance^2. A fast high puck knocks a2 down (FallDown), a slower one plays SPAcatch
 	lda.w Zpos,x		; puck above 8: always a hit
 	sec
@@ -647,7 +647,7 @@ puckbody:		;puck hits player a2. a3 = puck, d0 = distance^2 (from checkpuckcoll 
 	sta.b d2
 	lda.w Yvel,x
 	sta.b d3
-	sep #$20		; puck velocity high bytes = offset (93G move.b)
+	sep #$20		; puck velocity high bytes = offset
 	lda.b d0
 	sta.w Xvel+1,x
 	lda.b d1
@@ -712,7 +712,7 @@ puckbody:		;puck hits player a2. a3 = puck, d0 = distance^2 (from checkpuckcoll 
 	stx.b a3
 	sty.b a2
 	rtl
-puckgoalie:		;puck hits goalie a2. a3 = puck, d0/d1 = goalie - puck x/y (93G hockey93_05)
+puckgoalie:		;puck hits goalie a2. a3 = puck, d0/d1 = goalie - puck x/y
 		;   SNES: puck (X) hits goalie a2. d0/d1 = goalie - puck x/y. SNES: save odds from the four save ratings, no .list2 frame table
 	lda.w gmode
 	bit.w #gmhl		; gmhl
@@ -993,7 +993,7 @@ puckgoalie:		;puck hits goalie a2. a3 = puck, d0/d1 = goalie - puck x/y (93G hoc
 	jmp.w puckglue		; puckglue: goalie holds the puck
 
 org $80B01A
-ResetBench:		;remove all players from penalty box/ put all players on their own bench (93G hockey93_05)
+ResetBench:		;remove all players from penalty box/ put all players on their own bench
 		;   SNES: empty the penalty boxes / put all players on their own bench. PBnum = players left in the box, home*16 + visitors
 	stz.w PBnum
 	lda.w #$0010		; home: +$10 per player
@@ -1046,7 +1046,7 @@ ResetBench:		;remove all players from penalty box/ put all players on their own 
 	dec.b d0
 	bpl .rb1
 	rtl
-forcepldata:		;no skating on/off force players to correct data (for faceoffs only) (93G hockey93_05)
+forcepldata:		;no skating on/off force players to correct data (for faceoffs only)
 		;   SNES: a2 = team. No skating on/off: force the players to their new positions (faceoffs only)
 	stx.b xsave
 	ldx.w #$0000
@@ -1138,7 +1138,7 @@ forcepldata:		;no skating on/off force players to correct data (for faceoffs onl
 	ldx.b xsave
 	ldx.b a3
 	rtl
-Setplass:		;set players (a3) initial assignment (93G hockey93_05)
+Setplass:		;set players (a3) initial assignment
 		;   SNES: set the initial assignment of player X from its position
 	lda.w position,x
 	sta.b d0
@@ -1154,9 +1154,9 @@ Setplass:		;set players (a3) initial assignment (93G hockey93_05)
 	jmp.w assreplace
 .rtl:
 	rtl
-.alist:		;93G .alist: assignment for each position (goalie, LD, RD, LW, C, RW, extra)
+.alist:		;assignment for each position (goalie, LD, RD, LW, C, RW, extra)
 	db agoalie,adefd,adefd,awingd,acenterd,awingd,acenterd
-setplayer:		;bring player onto the ice and set his stats (93G hockey93_05)
+setplayer:		;bring player onto the ice and set his stats
 		;   SNES: bring roster player d3 (in d3 = $5F) onto the ice as object X and set his stats from the roster record plus the bonuses
 	phx
 	phy
@@ -1483,7 +1483,7 @@ setplayer:		;bring player onto the ice and set his stats (93G hockey93_05)
 	ply
 	plx
 	rtl
-ClampNibble:		;93 only: clamp byte d3 to 0-15. Called by setplayer (93G hockey93_05)
+ClampNibble:		;clamp byte d3 to 0-15. Called by setplayer
 		;   SNES: clamp A to 0-15
 	bit.w #$0080		; negative: 0
 	beq .hi
@@ -1494,7 +1494,7 @@ ClampNibble:		;93 only: clamp byte d3 to 0-15. Called by setplayer (93G hockey93
 	lda.w #$000F
 .x:
 	rtl
-resetplstuff:		;reset team variables/and players on both teams. Called from puckfaceoff2 (logic93_4) and StartHL2 (penalty93_2) (93G hockey93_06)
+resetplstuff:		;reset team variables/and players on both teams. Called from puckfaceoff2 and StartHL2
 		;   SNES: reset team variables and the players on both teams
 	stx.b xsave
 	ldx.w #$0000
@@ -1578,9 +1578,9 @@ resetplstuff:		;reset team variables/and players on both teams. Called from puck
 	rtl
 
 org $80B4C1
-setupice:		;set all variables, send non purgeable graphics, build sprite frame lists for ice rink. (93G hockey93_06)
+setupice:		;set all variables, send non purgeable graphics, build sprite frame lists for ice rink.
 		;   SNES: set all variables, send the rink and text graphics to vram, palettes, video mode, team colors
-	jsl.l forceblack		; 93G setvram role (bank $8F), bank $8F
+	jsl.l forceblack		; setvram role (bank $8F), bank $8F
 	lda.w #$0207		; vram tile bases of the text layer
 	sta.w faceoffvrcset
 	clc
@@ -1790,7 +1790,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	lda.w #$000A
 	sta.b fadein
 	rtl
-setplayercolors:		;copy in correct color data for each team. Called from setupice, setupice_highlight, stats93 and (93G hockey93_06)
+setplayercolors:		;copy in correct color data for each team. Called from setupice, setupice_highlight,
 		;   SNES: team colors into palbuffer, then the whole palette to CGRAM
 	stz.w ffoframe+6		; pad 3 frame = 0
 	stz.w colorflag1
@@ -1810,7 +1810,7 @@ setplayercolors:		;copy in correct color data for each team. Called from setupic
 	sta.w MDMAEN
 	rep #$30
 	rtl
-SetTeamColors:		;92 SetTeamColors role: convert both teams' Genesis colors (team data +2) to SNES colors in palbuffer (BG and sprite halves)
+SetTeamColors:		;convert both teams' Genesis colors (team data +2) to SNES colors in palbuffer (BG and sprite halves)
 	phx
 	phy
 	ldx.w #$0000
@@ -1867,7 +1867,7 @@ SetTeamColors_team:		;one team: tmp0 = team data, tmp2+1 = palbuffer offset
 	rtl
 nullrtl:		;does nothing (setupice calls it)
 	rtl
-SprSort:		;sort objects in struct SortObj and set corresponding tables for keeping them sorted later (93G hockey93_06)
+SprSort:		;sort objects in struct SortObj and set corresponding tables for keeping them sorted later
 		;   SNES: sort the objects by y (x in horizontal mode) into OOlist/OOlistpos
 	phx
 	phy
@@ -1948,19 +1948,19 @@ SprSort:		;sort objects in struct SortObj and set corresponding tables for keepi
 	ply
 	plx
 	rtl
-DoGameFrame:		;wait for at least one vblank, then run one frame of game logic (93G hockey93_01)
+DoGameFrame:		;wait for at least one vblank, then run one frame of game logic
 		;   SNES: one frame of game logic (d7 = elapsed frames, set by the caller)
 	jsl.l periodicevents		; periodicevents
 	jsl.l updateplayers		; updateplayers
 	jsl.l checkwindow		; checkwindow
 	jsl.l updatereplay		; updatereplay
 	jmp.w setvideo
-periodicevents:		;called every time thru game loop with d7 = elapsed frames (93G hockey93_01)
+periodicevents:		;called every time thru game loop with d7 = elapsed frames
 		;   SNES: every game loop; once a second (lldisp) the slower checks
 	jsl.l PenaltyManager		; PenaltyManager
 	jsl.l updatecrowdf		; updatecrowdf
-	jsl.l updatesound		; updatesound, bank $8D: 93G updatesound
-	jsl.l clockcont		; clockcont, bank $8F: 93G clockcont
+	jsl.l updatesound		; updatesound, bank $8D
+	jsl.l clockcont		; clockcont, bank $8F
 	lda.w sfhormode		; horizontal: no screen updates
 	bne .rtl
 	lda.w lldisp
@@ -1972,16 +1972,16 @@ periodicevents:		;called every time thru game loop with d7 = elapsed frames (93G
 	adc.w #$0018		; +$18 frames
 	sta.w lldisp
 	jsl.l ChkGoalies		; ChkGoalies
-	jsl.l UpdateCwdExcite		; UpdateCwdExcite, bank $8F: 93G UpdateCwdExcite
-	jsl.l CheckPeriodEnd		; CheckPeriodEnd, bank $8F: 93G CheckPeriodEnd
+	jsl.l UpdateCwdExcite		; UpdateCwdExcite, bank $8F
+	jsl.l CheckPeriodEnd		; CheckPeriodEnd, bank $8F
 	jsl.l UpdateLineChange		; UpdateLineChange
-	jsl.l CheckInjury		; CheckInjury, bank $8F: 93G CheckInjury
+	jsl.l CheckInjury		; CheckInjury, bank $8F
 	jmp.w updatepwrplay
 .rtl:
 	rtl
 
 org $80BB5A
-setpersonel:		;this will set personel on team a2 according to team a2's registers (93G hockey93_05)
+setpersonel:		;this will set personel on team a2 according to team a2's registers
 		;   SNES: set the personel of team a2 from SetPlList: keep the players already on the ice, place the rest
 	stx.b xsave
 	ldx.w #$0000
@@ -2162,7 +2162,7 @@ setpersonel:		;this will set personel on team a2 according to team a2's register
 	ldx.b xsave
 	ldx.b a3
 	rtl
-SetPlList:		;create list (PlList) of players who we want on the ice now (93G hockey93_05)
+SetPlList:		;create list (PlList) of players who we want on the ice now
 		;   SNES: make PlList, the players we want on the ice now (team a2)
 	lda.w #PlList
 	sta.b a4
@@ -2313,7 +2313,7 @@ SetPlList:		;create list (PlList) of players who we want on the ice now (93G hoc
 .rtl:
 	rtl
 .all:		;try every roster player, last first
-	jsl.l GetPlayerCount		; GetPlayerCount, bank $8F: 93G GetPlayerCount
+	jsl.l GetPlayerCount		; GetPlayerCount, bank $8F
 	lda.b d0
 	sta.b d3
 .try:
@@ -2324,7 +2324,7 @@ SetPlList:		;create list (PlList) of players who we want on the ice now (93G hoc
 	jsl.l TryAddPlayerToList
 	beq .try
 	bra .next1
-TryAddPlayerToList:		;93 split of 92 SetPlList .s1/.s2. d0 = player number (1 based), d4 = PlList slot (93G hockey93_05)
+TryAddPlayerToList:		;Split out of SetPlList. d0 = player number (1 based), d4 = PlList slot
 		;   SNES: d0 = roster player (1 based), d4 = PlList slot. A = d1 = player if added, 0 (Z set) if not available
 	lda.b d0
 	sta.b d1
@@ -2376,7 +2376,7 @@ TryAddPlayerToList:		;93 split of 92 SetPlList .s1/.s2. d0 = player number (1 ba
 	rtl
 
 org $80BED1
-updatecrowdf:		;this is called every game loop with d7 = elapsed frames (93G hockey93_01)
+updatecrowdf:		;this is called every game loop with d7 = elapsed frames
 		;   SNES: every game loop (d7 = elapsed frames): crowd level decay and the crowd animation frame
 	lda.b crowdlevel
 	sec
@@ -2460,16 +2460,16 @@ updatecrowdf:		;this is called every game loop with d7 = elapsed frames (93G hoc
 	rep #$30
 .rtl:
 	rtl
-PenaltyList:		;93G PenaltyList (hockey93_11): penalty number = word offset into this table. Used by AddPenalty, the penalty box and stats
+PenaltyList:		;penalty number = word offset into this table. Used by AddPenalty, the penalty box and stats
 	dw $0000		; 0
-	dw .eop-PenaltyList		; $02 period over (92 PenEOP 2)
-	dw .eog-PenaltyList		; $04 game over (92 PenEOG 4)
-	dw .ghold-PenaltyList		; $06 (92 PenOOP $C)
-	dw .ghold-PenaltyList		; $08 (92 PenGhold $E)
-	dw .whistle-PenaltyList		; $0A whistle (92 PenWhistle $26)
-	dw .ice-PenaltyList		; $0C icing (92 PenIcing 8)
-	dw .goal-PenaltyList		; $0E goal (92 PenGoal 6)
-	dw .offsides-PenaltyList		; $10 offsides (92 PenOffsides $A)
+	dw .eop-PenaltyList		; $02 period over (92 value 2)
+	dw .eog-PenaltyList		; $04 game over (92 value 4)
+	dw .ghold-PenaltyList		; $06 (92 value $C)
+	dw .ghold-PenaltyList		; $08 (92 value $E)
+	dw .whistle-PenaltyList		; $0A whistle (92 value $26)
+	dw .ice-PenaltyList		; $0C icing (92 value 8)
+	dw .goal-PenaltyList		; $0E goal (92 value 6)
+	dw .offsides-PenaltyList		; $10 offsides (92 value $A)
 	dw .rough2-PenaltyList		; $12 roughing, slow down time $A
 	dw .p14-PenaltyList		; $14 93 only, no text
 	dw .charge-PenaltyList		; $16 charging
@@ -2483,20 +2483,20 @@ PenaltyList:		;93G PenaltyList (hockey93_11): penalty number = word offset into 
 	dw .fight-PenaltyList		; $26 fighting
 	dw .fight2-PenaltyList		; $28 fighting * (93 only)
 	dw .inst-PenaltyList		; $2A fight instigator
-	dw .delay-PenaltyList		; $2C delay (92 PenDelay $24)
-;format: dw $ttmm (tt = slow down time in half secs, mm = penalty min.); string (length word counting itself, text);
-;then dw $ffdd,... (ff = frame, dd = delay; negative ends). 93G PenaltyList (hockey93_11)
-.eop:		;period over (92 PenEOP 2)
+	dw .delay-PenaltyList		; $2C delay (92 value $24)
+;format: dw $ttmm (tt = slow down time in half secs, mm = penalty min.); string (length word counting itself, text)
+;then dw $ffdd,... (ff = frame, dd = delay; negative ends)
+.eop:		;period over (92 value 2)
 	dw $0100
 	dw 13
 	db "Period Over"
 	dw -$0510
-.eog:		;game over (92 PenEOG 4)
+.eog:		;game over (92 value 4)
 	dw $0100
 	dw 11
 	db "Game Over"
 	dw $0510,-$4030
-.goal:		;goal (92 PenGoal 6)
+.goal:		;goal (92 value 6)
 	dw $0100
 	dw 2
 	dw $050A,-$4010
@@ -2504,27 +2504,27 @@ PenaltyList:		;93G PenaltyList (hockey93_11): penalty number = word offset into 
 	dw $0100
 	dw 2
 	dw $0510,-$4018
-.ice:		;icing (92 PenIcing 8)
+.ice:		;icing (92 value 8)
 	dw $0100
 	dw 7
 	db "Icing"
 	dw $0002,$0101,-$0206
-.offsides:		;offsides (92 PenOffsides $A)
+.offsides:		;offsides (92 value $A)
 	dw $0100
 	dw 10
 	db "Off-side"
 	dw $0002,$0301,-$040F
-.ghold:		;(92 PenOOP $C)
+.ghold:		;(92 value $C)
 	dw $0100
 	dw 10
 	db "Face Off"
 	dw -$050A
-.delay:		;delay (92 PenDelay $24)
+.delay:		;delay (92 value $24)
 	dw $0000
 	dw 9
 	db "Penalty"
 	dw $0003,$0301,-$040F
-.whistle:		;whistle (92 PenWhistle $26)
+.whistle:		;whistle (92 value $26)
 	dw $0000
 	dw 2
 	dw -$050A
@@ -2590,7 +2590,7 @@ PenaltyList:		;93G PenaltyList (hockey93_11): penalty number = word offset into 
 	dw $0004,$0D01,$0E01,$0D01,$0E01,$0D01,$0E01,$0D01,$0E01,-$0101
 
 org $80C278
-freezewindow:		;lock scrolling to current position (93G hockey93_02)
+freezewindow:		;lock scrolling to current position
 		;   SNES: lock scrolling at the current position
 	lda.w Vpos		; yc1 = Vpos, xc1 = Hpos, sfslock
 	sta.w yc1
@@ -2601,7 +2601,7 @@ freezewindow:		;lock scrolling to current position (93G hockey93_02)
 	rtl
 
 org $80C2B4
-updatereplay:		;called every frame to save replay events, d7 = elapsed frames (93G hockey93_02)
+updatereplay:		;called every frame to save replay events, d7 = elapsed frames
 		;   SNES: save this frame into the replay buffer (positions, frames, players, puck, sound, pads, crowd, gloves, box, scroll)
 	lda.w gmode
 	bit.w #gmhl		; gmhl: no recording
@@ -2740,7 +2740,7 @@ updatereplay:		;called every frame to save replay events, d7 = elapsed frames (9
 	sta.b [a0]
 .rtl:
 	rtl
-demoread:		;monitor joystick if in demo mode (called every game loop) (93G hockey93_01)
+demoread:		;monitor joystick if in demo mode (called every game loop)
 		;   SNES: in demo mode (no controller team), Start pauses and any other button ends the demo
 	lda.w cont1team		; a controller team: not a demo
 	ora.w cont2team
@@ -2749,7 +2749,7 @@ demoread:		;monitor joystick if in demo mode (called every game loop) (93G hocke
 	lda.b d1
 	bit.w #JOYSTART		; Start on pad 1: startpause1
 	beq .any1
-	jml.l startpause1		; bank $8F: 93G startpause1
+	jml.l startpause1		; bank $8F
 .any1:
 	lda.b d1
 	bne .exit
@@ -2763,12 +2763,12 @@ demoread:		;monitor joystick if in demo mode (called every game loop) (93G hocke
 	bne .exit
 .rtl:
 	rtl
-.exit:		;end the demo: back to the title screen (93G ExitToOpening)
+.exit:		;end the demo: back to the title screen
 	jsl.l sndqreset		; sound queue reset; on to the title screen
-	jml.l Opening		; bank $8B: on to the title screen (93G Opening)
+	jml.l Opening		; bank $8B: on to the title screen
 
 org $80C46D
-updateplayers:		;93G updateplayers (hockey93_02): animation, velocity, position, input and the assignment for every sort object
+updateplayers:		;animation, velocity, position, input and the assignment for every sort object
 	ldx.w #$0016		; 12 players
 .spd:		;pspeed = max($1000, (|Xvel|+|Yvel|)*5/4) for the 12 players
 	lda.w Xvel,x
@@ -2850,7 +2850,7 @@ updateplayers:		;93G updateplayers (hockey93_02): animation, velocity, position,
 	cmp.w #$0000
 	bmi .vel
 	asl.b d0
-	jsl.l loadTeamStruct		; bank $8F: 93G loadTeamStruct
+	jsl.l loadTeamStruct		; bank $8F
 .vel:
 	lda.w SPA,x
 	cmp.w #SPAinjury1		; SPAinjury1: no movement
@@ -3037,7 +3037,7 @@ updateplayers:		;93G updateplayers (hockey93_02): animation, velocity, position,
 	lda.l asstab+1,x
 	sta.w jmlvector+2
 	ldx.b a3
-	jsl.l loadTeamStruct		; loadTeamStruct, then the assignment, bank $8F: 93G loadTeamStruct
+	jsl.l loadTeamStruct		; loadTeamStruct, then the assignment, bank $8F
 	jsl.l jmlvector
 .cc:
 	lda.w Ypos,x
@@ -3262,7 +3262,7 @@ updateplayers:		;93G updateplayers (hockey93_02): animation, velocity, position,
 .rtl:
 	rtl
 checkcoll:		;d2 = new x cord, d3 = new y cord, a3 = struct of object. Check wall collision (around the hot spot and the end of the stick) and player collisions, then move a3 in the OOlist
-		;   sort order by its y. If a player collision set collflag, restore the old x/y instead. 93 no longer clears Wallcos/Wallsin first. Called from updateplayers (93G hockey93_03)
+		;   sort order by its y. If a player collision set collflag, restore the old x/y instead. 93 no longer clears Wallcos/Wallsin first. Called from updateplayers
 		;   SNES: d2/d3 = new x/y of object X. Wall collision (hot spot, end of the stick), player collision, then keep OOlist sorted
 	stz.b collflag		; collflag = 0
 	lda.w sfhormode		; horizontal: exg d2,d3
@@ -3470,7 +3470,7 @@ checkcoll:		;d2 = new x cord, d3 = new y cord, a3 = struct of object. Check wall
 	lda.w OldYpos,x
 	sta.w Ypos,x
 	rtl
-checkwallcoll:		;d2/d3 = x/y to test, a3 = object, wcradiusx/wcradiusy = radius. Called from checkcoll (hockey93_03) (93G hockey93_04)
+checkwallcoll:		;d2/d3 = x/y to test, a3 = object, wcradiusx/wcradiusy = radius. Called from checkcoll
 		;   SNES: d2/d3 = x/y, object X, wcradiusx/y. Corner circles, goals, then side and end boards
 	lda.w #$012A		; d3 = $12A - wcradiusy, d2 = $88 - wcradiusx; corner centers 64 in
 	sec
@@ -3709,7 +3709,7 @@ checkwallcoll:		;d2/d3 = x/y to test, a3 = object, wcradiusx/wcradiusy = radius.
 	rtl
 
 org $80CC1E
-wallcollb:		;check for puck over wall. a3 = object, d0/d1 = cos/sin of the wall. Called from checkwallcoll (93G hockey93_04)
+wallcollb:		;check for puck over wall. a3 = object, d0/d1 = cos/sin of the wall. Called from checkwallcoll
 		;   SNES: object X hits a wall (d0/d1 = cos/sin). The puck may go over the glass; otherwise wallcoll
 	cpx.w #$001C		; not the puck: wallcoll
 	beq .puck
@@ -3813,7 +3813,7 @@ wallcollb:		;check for puck over wall. a3 = object, d0/d1 = cos/sin of the wall.
 	stx.b a3
 .rtl:
 	rtl
-wallcoll:		;d0 = cosine, d1 = sine of angle of incidence with wall, a3 = object. Called from checkgoal, checkgoalp, wallcollb (93G hockey93_04)
+wallcoll:		;d0 = cosine, d1 = sine of angle of incidence with wall, a3 = object. Called from checkgoal, checkgoalp, wallcollb
 		;   SNES: d0/d1 = cos/sin of the wall; bounce object X: puck loses speed, flips, sound; players sound on a hard hit
 	lda.b d0		; Wallcos/Wallsin
 	sta.w Wallcos,x
@@ -4079,7 +4079,7 @@ wallcoll:		;d0 = cosine, d1 = sine of angle of incidence with wall, a3 = object.
 	rtl
 
 org $80CEE7
-checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 = x/y. Called from checkwallcoll (93G hockey93_04)
+checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 = x/y. Called from checkwallcoll
 		;   SNES: collision with the goal/net. a2 = goal object, X = object, d2/d3 = x/y. Not the puck: checkgoalp. Puck in the goal area: over the top
 		;   (Zvel), through the mouth (Goal), off a post (deflect) or off the side/back (wallcoll)
 	lda.w Zpos,x		; Zpos > 13 (goal height): over the goal
@@ -4390,7 +4390,7 @@ checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 =
 	jmp.w wallcoll
 
 org $80D182
-Goal:		;puck in goal. a3 = puck. Entered from checkgoal (93G hockey93_04)
+Goal:		;puck in goal. a3 = puck. Entered from checkgoal
 		;   SNES: puck in the goal. Score +1 for the scoring team (a2, a1 = the other team), siren, ScoreSum entry, goal counts, PenGoalStuff, printscores1, ascore
 		;   for the scorers, puck into the net, siren SPA and PenGoal
 	lda.w gmclock		; clock stopped: no goal
@@ -4501,7 +4501,7 @@ Goal:		;puck in goal. a3 = puck. Entered from checkgoal (93G hockey93_04)
 	rep #$20
 .noast:
 	jsl.l PenGoalStuff		; PenGoalStuff, printscores1, ascore for the scoring team
-	jsl.l printscores1		; bank $89: 93G printscores1
+	jsl.l printscores1		; bank $89
 	lda.w #ascore
 	sta.b d0
 	jsl.l .setass
@@ -4560,7 +4560,7 @@ Goal:		;puck in goal. a3 = puck. Entered from checkgoal (93G hockey93_04)
 	ldx.w #puckobj
 	stx.b a3
 	rtl
-.setass:		;IDA ResetTeamPlayerAssignments: give each skater of team a2 that is not fighting assignment d0, clear pfnc
+.setass:		;give each skater of team a2 that is not fighting assignment d0, clear pfnc
 	phx
 	ldy.b a2
 	lda.w tmsort,y
@@ -4585,7 +4585,7 @@ Goal:		;puck in goal. a3 = puck. Entered from checkgoal (93G hockey93_04)
 	rtl
 
 org $80D3D3
-checkgoalp:		;check for player a3 collision with goal/net a2. Entered from checkgoal (93G hockey93_04)
+checkgoalp:		;check for player a3 collision with goal/net a2. Entered from checkgoal
 		;   SNES: player X collision with the goal/net a2 (oval, radius x 32, y 11). CheckBump, then wallcoll with the normal
 	lda.w pflags,x
 	bit.w #pf2npc
@@ -4710,7 +4710,7 @@ checkgoalp:		;check for player a3 collision with goal/net a2. Entered from check
 	sta.b d3
 .rtl:
 	rtl
-CheckBump:		;supply minimum separation velocity for coll with walls/goal/net. a2 = goal, a3 = player. Called from checkgoalp (93G hockey93_04)
+CheckBump:		;supply minimum separation velocity for coll with walls/goal/net. a2 = goal, a3 = player. Called from checkgoalp
 		;   SNES: goalie X against the net a2 with the puck near (1 in 32): if moving faster than $2000, bump the net (Xvel/Yvel / 4), stop and call
 		;   PenGhold
 	stx.b xsave
@@ -4805,7 +4805,7 @@ CheckBump:		;supply minimum separation velocity for coll with walls/goal/net. a2
 	lda.w #PenGhold
 	sta.b d0
 	jmp.w AddPenalty2
-checkplcoll:		;d2/d3 = x/y cords, a3 = struct. Walk up and down the OOlist from a3 and call checkcx for each object within $10 in y (92 collrad*2). Called from checkcoll (93G hockey93_03)
+checkplcoll:		;d2/d3 = x/y cords, a3 = struct. Walk up and down the OOlist from a3 and call checkcx for each object within $10 in y (92 collrad*2). Called from checkcoll
 		;   SNES: d2/d3 = x/y, X = object. Walk up and down the OOlist from X and call checkcx for each object within 14 in y
 	lda.w pflags,x
 	bit.w #pf2npc
@@ -4904,8 +4904,8 @@ checkplcoll:		;d2/d3 = x/y cords, a3 = struct. Walk up and down the OOlist from 
 	bne .down
 .ex:
 	rtl
-checkcx:		;d4 = obj. # * 2 for possible coll so check x range and distance for coll. d2 = x, d5 = delta y, a3 = moving object. Opposing players add impact and run newcheck, checkint,
-		;   checkcheck and checkfight; then momentum moves from a3 to a2. Called from checkplcoll (93G hockey93_03)
+checkcx:		;d4 = obj. # * 2 for possible coll so check x range and distance for coll. d2 = x, d5 = delta y, a3 = moving object. Opposing players add impact and run newcheck, checkint
+		;   checkcheck and checkfight; then momentum moves from a3 to a2. Called from checkplcoll
 		;   SNES: Y = object near X. Opposing players add impact and run newcheck, checkint, checkcheck and checkfight; then momentum moves from X to a2
 		;   (weights + 140, elasticity evalue)
 	stx.b xsave
@@ -5207,7 +5207,7 @@ checkcx:		;d4 = obj. # * 2 for possible coll so check x range and distance for c
 	pla
 	bra .exit
 newcheck:		;start a new check sound. 93: one of 4 sounds $1C-$1F (92: one of 5 from SFXcheck = 18), never the last one again. Called from checkcx; FallDown branches here when the player who
-		;   fell did not have the puck (93G hockey93_03)
+		;   fell did not have the puck
 		;   SNES: check sound SFXcheck + random 0/1
 	lda.w seed+1
 	and.w #$0001
@@ -5216,7 +5216,7 @@ newcheck:		;start a new check sound. 93: one of 4 sounds $1C-$1F (92: one of 5 f
 	pha
 	jsl.l sfx
 	rtl
-checkint:		;check for interference penalty. player a2 interferes with a3 or vice-versa; goalie is only player who cause an interference call. Called from checkcx (93G hockey93_03)
+checkint:		;check for interference penalty. player a2 interferes with a3 or vice-versa; goalie is only player who cause an interference call. Called from checkcx
 		;   SNES: goalie a2 against a3 and the other way round
 	lda.b d0+2		; a2 and a3 swapped for the second call
 	pha
@@ -5238,7 +5238,7 @@ checkint:		;check for interference penalty. player a2 interferes with a3 or vice
 	sta.b d0+2
 .rtl:
 	rtl
-.ci:		;IDA checkint_ci: a2 must be a goalie, clock running
+.ci:		;a2 must be a goalie, clock running
 	ldy.b a2
 	lda.w position,y
 	bne .rtl
@@ -5303,7 +5303,7 @@ checkint:		;check for interference penalty. player a2 interferes with a3 or vice
 	sta.b d0
 	jmp.w AddPenalty
 FallDown:		;player a2 falls down, player a3 is the hitting player. 93 adds anim $13A0 in place of a fall for some players, check stats for the hitter, a third fall anim ($1524), and injuries
-		;   (setInjuryType) with a penalty. Called from checkint .ci, checkcheck .cc and Bcheck; also entered from setd0player (hockey93_05) (93G hockey93_03)
+		;   (setInjuryType) with a penalty. Called from checkint .ci, checkcheck .cc and Bcheck; also entered from setd0player
 		;   SNES: player a2 falls, X is the hitter. Stumble for some players, check stats, fall back/forward/third fall, injuries with a penalty and crowd
 		;   sounds
 	ldy.b a2		; players only, not fighting
@@ -5335,7 +5335,7 @@ FallDown:		;player a2 falls down, player a3 is the hitting player. 93 adds anim 
 	cmp.w #SPAflip
 	bne .s6
 	jmp.w .rtl
-.s6:		;stumble when stickhand (93G byte $71) >= $C, nopuckb is 0 and impact < $10-$1F
+.s6:		;stumble when stickhand (byte $71) >= $C, nopuckb is 0 and impact < $10-$1F
 	lda.w #SPAstumble
 	sta.b d1
 	lda.w stickhand,y
@@ -5498,7 +5498,7 @@ FallDown:		;player a2 falls down, player a3 is the hitting player. 93 adds anim 
 	ldy.b a3
 	stx.b a3
 	sty.b a2
-	jsl.l setInjuryType		; setInjuryType, bank $8F: 93G setInjuryType
+	jsl.l setInjuryType		; setInjuryType, bank $8F
 	lda.w #$0004
 	sta.w InjCntDown
 	lda.w #PenInjury		; PenInjury if the hitter is a goalie or penalties are off, else PenRough2 and Stop4Pen
@@ -5527,7 +5527,7 @@ FallDown:		;player a2 falls down, player a3 is the hitting player. 93 adds anim 
 	jsl.l sfx
 .rtl:
 	rtl
-checkcheck:		;player is in contact look for various contact events. Runs .cc for a3 on a2, then for a2 on a3. d4 = impact. Called from checkcx (93G hockey93_03)
+checkcheck:		;player is in contact look for various contact events. Runs .cc for a3 on a2, then for a2 on a3. d4 = impact. Called from checkcx
 		;   SNES: players in contact: .cc for X on a2, then for a2 on X. d4 = impact
 	stx.b xsave
 	ldx.w #$0000
@@ -5576,20 +5576,20 @@ checkcheck:		;player is in contact look for various contact events. Runs .cc for
 	ldx.b a3
 .rtl:
 	rtl
-.cc:		;IDA CC: X is checking a2
+.cc:		;X is checking a2
 	ldy.b a2		; a2 holding: holdcheck
 	lda.w SPA,y
 	cmp.w #SPAHold
 	bne .h2
-	jml.l holdcheck		; bank $8F: 93G holdcheck
+	jml.l holdcheck		; bank $8F
 .h2:
 	cmp.w #SPAhook
 	bne .b
-	jml.l holdcheck		; bank $8F: 93G holdcheck
+	jml.l holdcheck		; bank $8F
 .b:
 	cmp.w #SPAsweepchk
 	bne .burst
-	jml.l Bcheck		; bank $8D: 93G Bcheck
+	jml.l Bcheck		; bank $8D
 .burst:		;X must be in the burst anim
 	lda.w SPA,x
 	cmp.w #SPAburst
@@ -5677,7 +5677,7 @@ checkcheck:		;player is in contact look for various contact events. Runs .cc for
 .v2:
 	bvc .down
 .pen:
-	jsl.l checkagr		; checkagr <= 4 and no highlight: PenCharge or PenSlash, bank $8F: 93G checkagr (d0 = penalty roll)
+	jsl.l checkagr		; checkagr <= 4 and no highlight: PenCharge or PenSlash, bank $8F (d0 = penalty roll)
 	lda.b d0
 	cmp.w #$0005
 	bcc .nohl
@@ -5695,7 +5695,7 @@ checkcheck:		;player is in contact look for various contact events. Runs .cc for
 	sta.b d0
 	jmp.w AddPenalty
 .down:
-	jsl.l checkagr		; checkagr <= 3 and no highlight: PenRough or PenCross, bank $8F: 93G checkagr (d0 = penalty roll)
+	jsl.l checkagr		; checkagr <= 3 and no highlight: PenRough or PenCross, bank $8F (d0 = penalty roll)
 	lda.b d0
 	cmp.w #$0004
 	bcs .dn2
@@ -5712,7 +5712,7 @@ checkcheck:		;player is in contact look for various contact events. Runs .cc for
 	jmp.w FallDown
 .list:		;check anim by direction
 	dw SPAshoulderchkl,SPAshoulderchkr,SPAhipchkr,SPAhipchkr,SPAhipchkr,SPAhipchkl,SPAhipchkl,SPAshoulderchkl
-checkfight:		;look for start of fight between players a2 & a3. Called from checkcx (hockey93_03) (93G hockey93_04)
+checkfight:		;look for start of fight between players a2 & a3. Called from checkcx
 		;   SNES: start of a fight between a2 and X. Both impact >= 10, no anim lock, no penalty, no goalie, clock running, no highlight, the puck not
 		;   fighting or on a faceoff. SetInst both ways with d0 = 10 + max(0, 40 - ChkCnt)/4
 	ldy.b a2
@@ -5917,7 +5917,7 @@ checkfight:		;look for start of fight between players a2 & a3. Called from check
 	ldx.b a3
 .rtl:
 	rtl
-.sf:		;IDA checkfight_sf: start the fight for X against a2
+.sf:		;start the fight for X against a2
 	ldy.b a2		; impactp = a2
 	tya
 	lsr a
@@ -5928,7 +5928,7 @@ checkfight:		;look for start of fight between players a2 & a3. Called from check
 	txa		; setd0player
 	lsr a
 	sta.b d0
-	jsl.l setd0player		; bank $8D: 93G setd0player
+	jsl.l setd0player		; bank $8D
 	lda.w #afight
 	sta.b d0
 	jsl.l assinsert
@@ -5956,7 +5956,7 @@ checkfight:		;look for start of fight between players a2 & a3. Called from check
 	sta.b d1
 	sta.w pf2aip,x
 	jmp.w SetSPA
-SetInst:		;d0 = fight rating a3 needs. Called twice from checkfight (a2/a3 swapped) (93G hockey93_04)
+SetInst:		;d0 = fight rating a3 needs. Called twice from checkfight (a2/a3 swapped)
 		;   SNES: If fightagg of X >= d0, of a2 >= 2 and >= $10 - 2 * a2 checks, set pf2fight on both. Then 92 style: an instigator
 		;   penalty for a shoulder check
 	lda.w fightagg,x
@@ -6053,7 +6053,7 @@ SetInst:		;d0 = fight rating a3 needs. Called twice from checkfight (a2/a3 swapp
 	rtl
 
 org $80E13E
-updateanim:		;frame switch control on struct a3. Also called from (93G hockey93_02)
+updateanim:		;frame switch control on struct a3. Also called
 		;   SNES: SPA = offset in SPAList; next frame when SPAcnt runs out (d7), loops or ends the animation
 	lda.w SPA,x		; no animation: clear pfalock, pf2aip
 	bne .ia
@@ -6127,7 +6127,7 @@ updateanim:		;frame switch control on struct a3. Also called from (93G hockey93_
 	lsr a
 	bcs .one
 	stz.w SPA,x
-.one:		;93G .1: SPAcnt = |delay|
+.one:		;SPAcnt = |delay|
 	ldy.b d0
 	iny
 	iny
@@ -6138,11 +6138,11 @@ updateanim:		;frame switch control on struct a3. Also called from (93G hockey93_
 	inc a
 .zero:
 	sta.w SPAcnt,x
-.cframe:		;frame = new frame (93G also has a minimum switch time)
+.cframe:		;frame = new frame
 	lda.b d2
 	sta.w frame,x
 	rtl
-checkwindow:		;set hpos and vpos according to how screen should follow puck (93G hockey93_02)
+checkwindow:		;set hpos and vpos according to how screen should follow puck
 		;   SNES: set Hpos/Vpos so the screen follows the puck (or xc1/yc1 when sfslock)
 	lda.w yc1
 	sta.b d2
@@ -6239,7 +6239,7 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck (93G
 	lda.w #$FF39
 	sta.b d1
 	bra .two
-.one:		;93G .1
+.one:
 	lda.b d0
 	sec
 	sbc.w #$000A
@@ -6264,7 +6264,7 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck (93G
 .yslimu:
 	lda.w #$0100
 	sta.b d1
-.two:		;93G .2: Vpos += (target - Vpos) / 8 (at least 1)
+.two:		;Vpos += (target - Vpos) / 8 (at least 1)
 	lda.b d1
 	sec
 	sbc.w Vpos
@@ -6283,7 +6283,7 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck (93G
 	clc
 	adc.w Vpos
 	sta.w Vpos
-.twox:		;93G .2x
+.twox:
 	lda.b d3		; |target - Hpos| > 40: scroll
 	sec
 	sbc.w Hpos
@@ -6311,7 +6311,7 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck (93G
 	lda.w #$FFC4
 	sta.b d1
 	bra .four
-.three:		;93G .3
+.three:
 	lda.b d0
 	sec
 	sbc.w #$0028
@@ -6337,7 +6337,7 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck (93G
 .xslim:
 	lda.w #$003C
 	sta.b d1
-.four:		;93G .4: Hpos += (target - Hpos) / 8 (at least 1)
+.four:		;Hpos += (target - Hpos) / 8 (at least 1)
 	lda.b d1
 	sec
 	sbc.w Hpos
@@ -6360,7 +6360,7 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck (93G
 	rtl
 
 org $80F36E
-adda43:		;a4 += replaysize, wrapping from replayend to replaystart (93G hockey93_02)
+adda43:		;a4 += replaysize, wrapping from replayend to replaystart
 		;   SNES: a4 += replaysize, wrapping from ReplayBufferEnd to ReplayBufferStart
 	lda.b a4
 	clc
@@ -6382,20 +6382,20 @@ adda43:		;a4 += replaysize, wrapping from replayend to replaystart (93G hockey93
 	rtl
 
 org $80F3E1
-startpause:		;93G startpause (hockey93_01): set sfpz (startpause1 and startpause2 jump here)
+startpause:		;set sfpz (startpause1 and startpause2 jump here)
 	lda.w #sfpz
 	tsb.w sflags
 	rtl
 
 org $80F5EA
-DecodePW:		;translate char password in PassWord to variables used in game (92G hockey)
-		;   SNES: translate the password in PassWord to game variables: PWtoBits, then ReadPassBits ($8B817A)
+DecodePW:		;translate char password in PassWord to variables used in game
+		;   SNES: translate the password in PassWord to game variables: PWtoBits, then ReadPassBits (ReadPassBits)
 	jsl.l PWtoBits
 	jml.l ReadPassBits		; bank $8B
-PlayoffScreenOpening4:		;SNES: PlayoffScreen, then on to Opening4 (92G: the playoff tree, then the next game)
-	jsl.l PlayoffScreen		; bank $88: 93G PlayoffScreen (font tile bases, the playoff tree)
+PlayoffScreenOpening4:		;SNES: PlayoffScreen, then on to Opening4
+	jsl.l PlayoffScreen		; bank $88 (font tile bases, the playoff tree)
 	jml.l Opening4		; bank $8B
-SuperDiv:		;5 words at a3 divided by 1 word (d0). 92 SuperDiv. (93G hockey93_09)
+SuperDiv:		;5 words at a3 divided by 1 word (d0).
 		;   SNES: passbits (128 bits) / d0: quotient in passbits, remainder in d0. Shift-subtract over 128 bits with the divisor in mula+0..+16 and the remainder in
 		;   mulres+0..+14
 	phx		; remainder = passbits, divisor = d0 << 128

@@ -1,4 +1,4 @@
-; hockey_b84: 93G hockey93_01..hockey93_11: the game, screens, menus, password, playoffs.
+; The game, screens, menus, password, playoffs.
 ; Bank $84. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $84EA66
@@ -240,7 +240,7 @@ ScoutTeamStep:		;SNES: step the showcased player of team a2: a new team (tmteam 
 	lda.w #mesarea
 	sta.b a1
 	jml.l print
-ScoutPlayerExit:		;SNES: the showcased player of team a2 skates off ($89FCC1, tmflags bit 1)
+ScoutPlayerExit:		;SNES: the showcased player of team a2 skates off (EraseScoutName, tmflags bit 1)
 	jsl.l EraseScoutName		; bank $89
 	ldy.b a2
 	lda.w tmflags,y
@@ -467,10 +467,10 @@ DrawScoutPlayer:		;SNES: addframe for object X at (Xpos + OldXpos - 144, Ypos - 
 	lda.w #$8000
 	sta.b sprflag
 .add:
-	jml.l addframe		; bank $8F: 93G addframe
+	jml.l addframe		; bank $8F
 
 org $84F532
-UpdateScoutingDisplay:		;called every frame by ScoutingReport. When ScoutingReportTimer runs out (at once if asv (93G hockey93_07)
+UpdateScoutingDisplay:		;called every frame by ScoutingReport. When ScoutingReportTimer runs out (at once if asv
 		;   SNES: ~ { } [ ] print
 		;   a team or goalie name
 	lda.w ScoutingReportTimer		; text finished ($7FFF)
@@ -730,8 +730,8 @@ UpdateScoutingDisplay:		;called every frame by ScoutingReport. When ScoutingRepo
 .pad:
 	dec.b d1
 	jmp.w .print
-ScrollDisplayUp:		;next text line for UpdateScoutingDisplay (column 0). After line 7, move the text box up (93G hockey93_07)
-		;   SNES: next text line (column 0); after line 7 move the text box up one row ($89FC8F copies 8 textmap rows)
+ScrollDisplayUp:		;next text line for UpdateScoutingDisplay (column 0). After line 7, move the text box up
+		;   SNES: next text line (column 0); after line 7 move the text box up one row (CopyWords copies 8 textmap rows)
 	stz.w DispAttribCtr
 	inc.w VertLineScrolling
 	lda.w VertLineScrolling

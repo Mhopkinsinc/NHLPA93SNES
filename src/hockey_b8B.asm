@@ -1,8 +1,8 @@
-; hockey_b8B: 93G hockey93_01..hockey93_11: the game, screens, menus, password, playoffs.
+; The game, screens, menus, password, playoffs.
 ; Bank $8B. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8B8000
-NewPO:		;93 continue playoffs: read the playoff state back from the password bits, rebuild the tree. (93G hockey93_09)
+NewPO:		;93 continue playoffs: read the playoff state back from the password bits, rebuild the tree.
 		;   SNES: new playoffs with the same team 1: random postarts whose playoffseats hold OptTeam1 (all-star teams count as team 23), clear the series, then maketree
 	lda.w #32		; d0 = random 0-31
 	sta.b d0
@@ -62,8 +62,8 @@ NewPO:		;93 continue playoffs: read the playoff state back from the password bit
 	dec.b d0
 	bpl .cg
 .n0:
-	jml.l maketree		; bank $8D: maketree
-FigureJoy:		;set cont1team/cont2team appropriately. Called from maketree and UpdateTeamNameisplay (hockey93_08). (93G hockey93_09)
+	jml.l maketree		; bank $8D
+FigureJoy:		;set cont1team/cont2team appropriately. Called from maketree and UpdateTeamNameisplay .
 		;   SNES: in the playoffs from the po team's game (gamenum, OptTeam2, HomeTeam/VisTeam) and pojoy; else from OptPlayers. Not after the
 		;   demo (notdemo = 0)
 	stz.w cont1team
@@ -154,7 +154,7 @@ FigureJoy:		;set cont1team/cont2team appropriately. Called from maketree and Upd
 	lda.b [a0],y
 	sta.w cont2team
 	rtl
-.pojoylist:		;92G .pojoylist: cont1team, cont2team by pojoy 0-3 (the po team as team 1), then as team 2
+.pojoylist:		;cont1team, cont2team by pojoy 0-3 (the po team as team 1), then as team 2
 	dw 1,0
 	dw 1,1
 	dw 1,2
@@ -163,20 +163,20 @@ FigureJoy:		;set cont1team/cont2team appropriately. Called from maketree and Upd
 	dw 2,2
 	dw 2,1
 	dw 1,2
-.noplist:		;92G .noplist: cont1team, cont2team by OptPlayers
+.noplist:		;cont1team, cont2team by OptPlayers
 	dw 0,0
 	dw 1,0
 	dw 2,0
 	dw 1,1
 	dw 1,2
-Opening:		;title screen, then into Opening2. Jumped to from Begin (hockey93_01). Same as 92 REV A (93G hockey93_06)
-		;   SNES: TitleScreen, then Restart (93G Opening2: the setup screens)
+Opening:		;title screen, then into Opening2. Jumped to from Begin. Same as 92 REV A
+		;   SNES: TitleScreen, then Restart
 	jsl.l TitleScreen
 	jml.l Restart
-Opening4:		;92G Opening4: ScoutingReport ($8FDC0D), then StartGame
-	jsl.l ScoutingReport		; bank $8F: 93G ScoutingReport
+Opening4:		;ScoutingReport (ScoutingReport), then StartGame
+	jsl.l ScoutingReport		; bank $8F
 	jml.l StartGame
-ReadPassBits:		;translate the password bits at a3 (5 words) to the playoff variables. 92 ReadPassBits. (93G hockey93_09)
+ReadPassBits:		;translate the password bits at a3 (5 words) to the playoff variables.
 		;   SNES: passbits back into the playoff state (SuperDiv by each range, the reverse of WritePassBits); a bad 9-bit checksum sets postarts -1
 	lda.w #512		; checksum first (range 512)
 	sta.b d0
@@ -261,14 +261,14 @@ ReadPassBits:		;translate the password bits at a3 (5 words) to the playoff varia
 	sta.w postarts
 .rtl:
 	rtl
-.sd:		;92G .sd: d0 = passbits mod d0 (SuperDiv), added to the checksum d7
+.sd:		;d0 = passbits mod d0 (SuperDiv), added to the checksum d7
 	jsl.l SuperDiv
 	lda.b d7
 	clc
 	adc.b d0
 	sta.b d7
 	rtl
-ResolveGames:		;compute winners and losers for playoff matchups. 92 ResolveGames. Called from EncodePW (hockey93_09) (93G hockey93_10)
+ResolveGames:		;compute winners and losers for playoff matchups. Called from EncodePW
 		;   SNES: the played game's score into its gstruct, wins for all series of the round; when the round is over (or single games) WinBits and gamelevel move on
 	lda.w gamenum
 	asl a

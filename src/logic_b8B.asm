@@ -1,8 +1,8 @@
-; logic_b8B: 93G logic93_1..logic93_5: player logic and the assignments (asstab).
+; Player logic and the assignments (asstab).
 ; Bank $8B. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8BFE47
-asswingo:		;asstab 4. player a3 is winger on offense (93G logic93_3)
+asswingo:		;asstab 4. player a3 is winger on offense
 		;   SNES: wing on offence: pick a spot in the zone the puck is in (.dedata + random), awingd when the other team has the puck
 	lda.w pfalock,x
 	beq .go
@@ -10,7 +10,7 @@ asswingo:		;asstab 4. player a3 is winger on offense (93G logic93_3)
 .go:
 	lda.w gmclock
 	beq .gm
-	jml.l assnothing		; bank $8F: assnothing
+	jml.l assnothing		; bank $8F
 .gm:
 	jsl.l check4bench
 	lda.w pflags,x
@@ -124,7 +124,7 @@ asswingo:		;asstab 4. player a3 is winger on offense (93G logic93_3)
 	lda.b d2
 	cmp.w temp5,x
 	bne .de3
-	lda.w seed		; same zone: new spot only now and then (93G HV counter, here seed)
+	lda.w seed		; same zone: new spot only now and then
 	cmp.w #$0200
 	bcs .nodec
 .de3:
@@ -165,7 +165,7 @@ asswingo:		;asstab 4. player a3 is winger on offense (93G logic93_3)
 	eor.w #$FFFF
 	inc a
 	sta.b d0
-.one:		;93G .1
+.one:
 	lda.w temp4,x
 	sta.b d1
 	lda.w pfgoal,x
@@ -186,14 +186,14 @@ asswingo:		;asstab 4. player a3 is winger on offense (93G logic93_3)
 	jml.l skateto
 .rtl:
 	rtl
-.dedata:		;93G .dedata: x, x random, y, y random per zone
+.dedata:		;x, x random, y, y random per zone
 	dw 80,20,-70,10		; own zone
 	dw 100,20,60,10		; centre
 	dw 60,50,230,20		; their zone
 	dw 80,30,250,20		; past the goal line
 
 org $8BFFD3
-skatetopuckinit:		;93 split from 92 skatetopuck: d0/d1 = puck x/y plus half the high byte of its velocity. Called from skatetopuck and assnearest (93G logic93_5)
+skatetopuckinit:		;93 split from 92 skatetopuck: d0/d1 = puck x/y plus half the high byte of its velocity. Called from skatetopuck and assnearest
 	lda.w puckvx		; puckvx high byte / 2
 	xba
 	lsr a

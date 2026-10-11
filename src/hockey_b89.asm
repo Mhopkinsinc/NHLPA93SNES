@@ -1,8 +1,8 @@
-; hockey_b89: 93G hockey93_01..hockey93_11: the game, screens, menus, password, playoffs.
+; The game, screens, menus, password, playoffs.
 ; Bank $89. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8990F0
-ReplayMode:		;this is instant replay play-back control and display code. (93G hockey93_02)
+ReplayMode:		;this is instant replay play-back control and display code.
 		;   SNES: replay icon, rewind to the first frame; dpad scrolls, A plays/stops, Y
 		;   rewinds, B steps (slow motion), L/R one frame, Start leaves
 	stz.b DMAListend
@@ -91,7 +91,7 @@ ReplayMode:		;this is instant replay play-back control and display code. (93G ho
 	lda.w #$0000
 	pha
 .rwd:		;rewind to the first frame, counting the frames
-	jsl.l suba4		; bank $8F: 93G suba4 (one replay frame back)
+	jsl.l suba4		; bank $8F (one replay frame back)
 	pla
 	inc a
 	pha
@@ -103,7 +103,7 @@ ReplayMode:		;this is instant replay play-back control and display code. (93G ho
 .fwd:		;then forward to the middle
 	lda.b $01,s
 	beq .go
-	jsl.l adda4		; bank $8F: 93G adda4 (one replay frame on)
+	jsl.l adda4		; bank $8F (one replay frame on)
 	pla
 	dec a
 	pha
@@ -116,7 +116,7 @@ ReplayMode:		;this is instant replay play-back control and display code. (93G ho
 	trb.w sflags3
 	lda.w #$0001
 	sta.b d7
-.top:		;93G .top: wait d7 frames
+.top:		;wait d7 frames
 	lda.b vcount
 	sec
 	sbc.w oldvcount
@@ -191,7 +191,7 @@ ReplayMode:		;this is instant replay play-back control and display code. (93G ho
 	sta.w PadControlBits
 	jsl.l setvideo
 	jmp.w .top
-.stab:		;93G .stab: x, y scroll step per dpad direction
+.stab:		;x, y scroll step per dpad direction
 	dw 0,1,1,1,1,0,1,-1
 	dw 0,-1,-1,-1,-1,0,-1,1
 .nomans:
@@ -210,7 +210,7 @@ ReplayMode:		;this is instant replay play-back control and display code. (93G ho
 	lda.b d3		; Y held: rewind (one frame per vblank)
 	bit.w #abut
 	beq .f0
-	jsl.l suba4		; bank $8F: 93G suba4 (one replay frame back)
+	jsl.l suba4		; bank $8F (one replay frame back)
 	jsl.l SprSort
 	lda.w #VBlank_long
 .wait:
@@ -218,7 +218,7 @@ ReplayMode:		;this is instant replay play-back control and display code. (93G ho
 	beq .wait
 	bra .vid
 .r1:		;L: one frame back
-	jsl.l suba4		; bank $8F: 93G suba4 (one replay frame back)
+	jsl.l suba4		; bank $8F (one replay frame back)
 .show:
 	jsl.l SprSort
 .vid:
@@ -227,31 +227,31 @@ ReplayMode:		;this is instant replay play-back control and display code. (93G ho
 	sta.b d7
 	lda.w #sf3rmplay
 	trb.w sflags3
-.f0:		;93G .0: B steps
+.f0:		;B steps
 	lda.b d3		; B: step
 	bit.w #bbut
 	beq .pl
-	bit.w #abut		; Y+B: manual scroll off (93G hidden feature)
+	bit.w #abut		; Y+B: manual scroll off
 	beq .f1
 	lda.w #sfscrl
 	trb.w sflags
 	jmp.w .top
 .f2:		;R: one frame on
-	jsl.l adda4		; bank $8F: 93G adda4 (one replay frame on)
+	jsl.l adda4		; bank $8F (one replay frame on)
 	bra .show
 .f1:
-	jsl.l adda4		; bank $8F: 93G adda4 (one replay frame on)
+	jsl.l adda4		; bank $8F (one replay frame on)
 	jsl.l SprSort
 	jsl.l setvideo
 	asl.b d7
 	lda.w #sf3rmplay
 	trb.w sflags3
-.pl:		;93G .1: play mode on: one frame at the original speed, with its sounds
+.pl:		;play mode on: one frame at the original speed, with its sounds
 	lda.w sflags3
 	bit.w #sf3rmplay
 	beq .noplay
 	stz.w lastsfx		; lastsfx = 0: play the frame's sound
-	jsl.l adda4		; bank $8F: 93G adda4 (one replay frame on)
+	jsl.l adda4		; bank $8F (one replay frame on)
 	lda.w lastsfx
 	beq .nosfx
 	pha
@@ -265,7 +265,7 @@ ReplayMode:		;this is instant replay play-back control and display code. (93G ho
 	bne .exit
 	jmp.w .top
 .exit:
-	jsl.l forceblack		; bank $8F: 93G forceblack
+	jsl.l forceblack		; bank $8F
 	lda.w #$F000
 	tsb.w PadControlBits
 	lda.w #sfscrl
@@ -282,7 +282,7 @@ ReplayMode:		;this is instant replay play-back control and display code. (93G ho
 	sta.w Vpos
 	lda.w #sf2replay
 	trb.w sflags
-	jsl.l SetHor		; bank $8F: 93G SetHor
+	jsl.l SetHor		; bank $8F
 	jsl.l setvideo
 	stz.b textdirtylo
 	lda.w #$03FF
@@ -298,8 +298,8 @@ EraseScoutName:		;SNES: blank the 11 x 2 showcased player name area (ScoutNamePo
 	sta.b d1
 	lda.w blankchar
 	sta.b d2
-	jml.l eraser		; bank $8D: 92G eraser
-GetPlayerRecord:		;SNES: a0 = roster record of player d0 of team a2 (tmdata: the player data, then name length + 8 bytes per player; 93G does it inline)
+	jml.l eraser		; bank $8D
+GetPlayerRecord:		;SNES: a0 = roster record of player d0 of team a2 (tmdata: the player data, then name length + 8 bytes per player; does it inline)
 	lda.w #TeamList>>16
 	sta.b a0+2
 	ldy.b a2
@@ -328,7 +328,7 @@ MesAreaDone:		;SNES: end a string built in mesarea: length = a1 - mesarea, a1 = 
 	lda.w #mesarea
 	sta.b a1
 	rtl
-StartGame:		;reset game state for a new game, then start the first period (93G hockey93_01)
+StartGame:		;reset game state for a new game, then start the first period
 		;   SNES: reset the game state (gmode, offsides option, team stats, scores, gsp), restoreteams, then on to the period start
 	stz.w gmode
 	lda.w OptPen		; OptPen 1: offsides on
@@ -342,16 +342,16 @@ StartGame:		;reset game state for a new game, then start the first period (93G h
 	stz.w gsp
 	stz.w ChkCnt
 	jsl.l restoreteams
-	jsl.l InitScores		; bank $8F: 93G InitScores
+	jsl.l InitScores		; bank $8F
 	jsl.l UpdateScores
 	jml.l StartPer		; bank $8D: on to the period start
-restoreteams:		;Put both teams' rosters on the bench (93G hockey93_01)
+restoreteams:		;Put both teams' rosters on the bench
 		;   SNES: both rosters to the bench: tmap 6, every tmpdst -2
 	stz.b a2
 	jsl.l .r
 	lda.w #$0002
 	sta.b a2
-.r:		;93G .r: one team (a2)
+.r:		;one team (a2)
 	ldy.b a2
 	lda.w #6
 	sta.w tmap,y

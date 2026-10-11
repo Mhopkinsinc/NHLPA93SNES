@@ -1,8 +1,8 @@
-; logic_b8E: 93G logic93_1..logic93_5: player logic and the assignments (asstab).
+; Player logic and the assignments (asstab).
 ; Bank $8E. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8E826B
-assbench:		;asstab $B. player a3 should goto bench (93G logic93_2)
+assbench:		;asstab $B. player a3 should goto bench
 		;   SNES: player X skates to the bench door and leaves; the new player (newpnum) comes on (setplayer)
 	lda.w pfalock,x
 	beq .go
@@ -32,7 +32,7 @@ assbench:		;asstab $B. player a3 should goto bench (93G logic93_2)
 	bne .zero
 	lda.w #-80
 	sta.b d0
-.zero:		;93G .0
+.zero:
 	lda.b d0
 	sta.w temp4,x
 	lda.w #-144
@@ -177,7 +177,7 @@ assbench:		;asstab $B. player a3 should goto bench (93G logic93_2)
 	rtl
 
 org $8EFE73
-assdefo:		;asstab 1. player a3 is defensive player on offense (93G logic93_2)
+assdefo:		;asstab 1. player a3 is defensive player on offense
 		;   SNES: defenceman on offence: hold the blue line on his side; adefd when offside, the puck goes back past the line or the other team has it
 	lda.w pfalock,x
 	beq .go
@@ -185,7 +185,7 @@ assdefo:		;asstab 1. player a3 is defensive player on offense (93G logic93_2)
 .go:
 	lda.w gmclock
 	beq .gm
-	jml.l assnothing		; bank $8F: assnothing
+	jml.l assnothing		; bank $8F
 .gm:
 	jsl.l check4bench
 	lda.w pflags,x
@@ -263,7 +263,7 @@ assdefo:		;asstab 1. player a3 is defensive player on offense (93G logic93_2)
 	beq .one
 	lda.w #-80
 	sta.b d0
-.one:		;93G .1
+.one:
 	lda.w #98
 	sta.b d1
 	lda.w pfgoal,x
@@ -274,7 +274,7 @@ assdefo:		;asstab 1. player a3 is defensive player on offense (93G logic93_2)
 	sta.b d0
 	lda.w #-98
 	sta.b d1
-.zero:		;93G .0
+.zero:
 	lda.w puckx
 	eor.b d0
 	bmi .two
@@ -282,7 +282,7 @@ assdefo:		;asstab 1. player a3 is defensive player on offense (93G logic93_2)
 	bra .go2
 .rtl:
 	rtl
-.two:		;93G .2: halfway to the puck
+.two:		;halfway to the puck
 	lda.w puckx
 	pha
 	asl a

@@ -1,12 +1,12 @@
-; gfx/graphics_b87: 93G graphics93: packed screens, tiles, maps, palettes, fonts, pixel remap tables.
+; gfx/ packed screens, tiles, maps, palettes, fonts, pixel remap tables.
 ; Bank $87. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $87C3A0
-EASNMap:		;93G EASN.map.jim: the EASN logo backdrop, packed (decompressor $86FA3E): a 32 x 16 map, then the tiles; unpacked by $8FDC7B and $8FE8D9
-	incbin "../../data/EASN.map.pak"		; $87C3A0-$87C6B3
-FaceOffTiles:		;packed faceoff box tiles (55, 93G FaceOff.map.jim tiles): setupice sends them to faceoffvrcset
-	incbin "../../data/FaceOff.chr.pak"		; $87C6B4-$87CAB9
-TeamBlocksMap:		;93G TeamBlocks.map: per team (26) a 9 x 2 tile block map (palette 1, tiles from TeamBlocksTiles), 36 bytes each (team * 36 by $88F672, $8D84F4)
+EASNMap:		;EASN.map.jim: the EASN logo backdrop, packed (decompressor DecompressGraphics): a 32 x 16 map, then the tiles; unpacked by the scouting report and team roster screens
+	incbin "../../data/EASN.map.pak"
+FaceOffTiles:		;packed faceoff box tiles (55, FaceOff.map.jim tiles): setupice sends them to faceoffvrcset
+	incbin "../../data/FaceOff.chr.pak"
+TeamBlocksMap:		;TeamBlocks.map: per team (26) a 9 x 2 tile block map (palette 1, tiles from TeamBlocksTiles), 36 bytes each (team * 36, read by PlayoffScreen and DrawTeamBlocks)
 	dw $0400,$0401,$0402,$0403,$0404,$0405,$0406,$0401,$0407,$0408,$0409,$040A,$040B,$040C,$040D,$040E,$0409,$040F		; team 0
 	dw $0410,$0411,$0412,$0413,$0414,$0415,$0416,$0417,$0418,$0408,$0419,$041A,$041B,$041C,$041D,$041E,$041F,$040F		; team 1
 	dw $0420,$0421,$0422,$0423,$0424,$0425,$0426,$0427,$0428,$0408,$0429,$042A,$042B,$042C,$042D,$042E,$0409,$040F		; team 2
@@ -35,7 +35,7 @@ TeamBlocksMap:		;93G TeamBlocks.map: per team (26) a 9 x 2 tile block map (palet
 	dw $0583,$0584,$0585,$0586,$0587,$0588,$0589,$058A,$058B,$058C,$058D,$058E,$058F,$0590,$0591,$0592,$0593,$0594		; team 25
 
 org $87F55A
-PixelRemap87:		;SNES: 4bpp pixel value remap for the 4 FramerTiles (bank $88; setupice via $8FE0E4): colours 0-3 only
+PixelRemap87:		;SNES: 4bpp pixel value remap for the 4 FramerTiles (bank $88; setupice via RemapTiles): colours 0-3 only
 	db $00,$03,$04,$03
 RefTiles:		;packed ref window tiles for the vertical rink (117): setupice sends them to refchars
-	incbin "../../data/Ref.chr.pak"		; $87F55E-$87FF77
+	incbin "../../data/Ref.chr.pak"

@@ -13,7 +13,7 @@ Follow the rules already in SEGMENT_AGENT.md.
 
 1. Run ./build.sh first. It must print MATCH before you change anything. If it does not, stop and report.
 2. Trace the code in this bank: follow M/X (rep/sep/php/plp), D and DB. Turn unresolved db into instructions where code is reached (jump tables, pushed returns, jsl from other banks), and into labeled data, dw pointer tables, strings, or incbin assets where it is data.
-3. Name everything in the segment, not just routines: every routine, local label, RAM variable, register/RAM parameter, constant and bit value, data table, and comment routines and non-obvious lines. Name them from the matching 93G routine (92G only when 93G lacks it), else by behavior. Add RAM names to src/ram93snes.asm and hardware names from src/inc/snes_regs.asm.
+3. Name everything in the segment, not just routines: every routine, local label, RAM variable, register/RAM parameter, constant and bit value, data table, and comment routines and non-obvious lines. Name them from the matching 93G routine (92G only when 93G lacks it), else by behavior; 92G names are kept as-is, inaccurate 93G names not from 92G are fixed. Comments follow the Comment rules in SEGMENT_AGENT.md (no other-game names, file/segment names, IDA references, ROM addresses or history in comments; history goes in docs/name_map.csv). Add RAM names to src/ram93snes.asm and hardware names from src/inc/snes_regs.asm.
 4. Run ./build.sh after each batch of edits. It must print MATCH. Then add comments and run it again.
 5. In SEGMENT_AGENT.md, mark that file matched with the byte count and range. Add a History line. Set Current segment to the next unmatched file. Do not mark the next file matched.
 

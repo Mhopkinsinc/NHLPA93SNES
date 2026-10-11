@@ -16,7 +16,7 @@ SpriteSet3:		;frame set 3 (SPFcelebrate, SPFpump, SPFcup): frames 185-224
 	dw 267,276,292,304,311,319,327,333
 	dw 344
 .pieces:		;x, y, tile, attributes per piece
-	incbin "../../data/Sprites/set03.pieces"		; $8E8447-$8E89A6
+	incbin "../../data/Sprites/set03.pieces"
 	assert .tiles-.pieces == 4*344
 .tiles:		;640 4bpp tiles (32 bytes each)
 	incbin "../../data/Sprites/set03.chr"

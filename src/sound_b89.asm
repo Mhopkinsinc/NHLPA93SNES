@@ -1,8 +1,8 @@
-; sound_b89: 93G sound93: SPC700 uploads, the sound queue, music cues (93G keeps ScoutingReportText here too).
+; SPC700 uploads, the sound queue, music cues (keeps ScoutingReportText here too).
 ; Bank $89. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $89EB15
-p_music_vblank:		;92 name (vblank handler). Clear the change bits, run the 8 track slots (d7 = track 7-0), (93G sound93)
+p_music_vblank:		;92 name (vblank handler). Clear the change bits, run the 8 track slots (d7 = track 7-0)
 		;   SNES: role: every other frame send the next queued sound command (sndqueue) to APUIO0, a counter to APUIO1
 	lda.w sndsettle		; wait after the sample upload
 	bne .settle
@@ -67,7 +67,7 @@ StartSong9:		;SNES: start song 9 (the playoff screen music, PlayoffScreen) unles
 	sta.w cursong
 .rtl:
 	rtl
-StartSong1:		;SNES: start music cue 1 (home goal) unless it plays: the in-game sound set, then $8FFE7B with 4; cuetimer = its length
+StartSong1:		;SNES: start music cue 1 (home goal) unless it plays: the in-game sound set, then MusicCue with 4; cuetimer = its length
 	lda.w cursong
 	cmp.w #$0001
 	beq .rtl
@@ -85,7 +85,7 @@ StartSong1:		;SNES: start music cue 1 (home goal) unless it plays: the in-game s
 	sta.w cuetimer
 .rtl:
 	rtl
-StartSong2:		;SNES: start music cue 2 (period start) unless it plays: the in-game sound set, then $8FFE7B with 5; cuetimer = its length
+StartSong2:		;SNES: start music cue 2 (period start) unless it plays: the in-game sound set, then MusicCue with 5; cuetimer = its length
 	lda.w cursong
 	cmp.w #$0002
 	beq .rtl
@@ -103,7 +103,7 @@ StartSong2:		;SNES: start music cue 2 (period start) unless it plays: the in-gam
 	sta.w cuetimer
 .rtl:
 	rtl
-StartSong3:		;SNES: start music cue 3 (third period, Gameloop by p3cue) unless it plays: the in-game sound set, then $8FFE7B with 6; cuetimer = its length
+StartSong3:		;SNES: start music cue 3 (third period, Gameloop by p3cue) unless it plays: the in-game sound set, then MusicCue with 6; cuetimer = its length
 	lda.w cursong
 	cmp.w #$0003
 	beq .rtl
@@ -121,7 +121,7 @@ StartSong3:		;SNES: start music cue 3 (third period, Gameloop by p3cue) unless i
 	sta.w cuetimer
 .rtl:
 	rtl
-StartSong4:		;SNES: start music cue 4 (no caller found) unless it plays: the in-game sound set, then $8FFE7B with 7; cuetimer = its length
+StartSong4:		;SNES: start music cue 4 (no caller found) unless it plays: the in-game sound set, then MusicCue with 7; cuetimer = its length
 	lda.w cursong
 	cmp.w #$0004
 	beq .rtl
@@ -139,7 +139,7 @@ StartSong4:		;SNES: start music cue 4 (no caller found) unless it plays: the in-
 	sta.w cuetimer
 .rtl:
 	rtl
-StartSong5:		;SNES: start music cue 5 (mid-period) unless it plays: the in-game sound set, then $8FFE7B with 8; cuetimer = its length
+StartSong5:		;SNES: start music cue 5 (mid-period) unless it plays: the in-game sound set, then MusicCue with 8; cuetimer = its length
 	lda.w cursong
 	cmp.w #$0005
 	beq .rtl

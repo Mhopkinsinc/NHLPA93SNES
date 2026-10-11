@@ -1,8 +1,8 @@
-; hockey_b88: 93G hockey93_01..hockey93_11: the game, screens, menus, password, playoffs.
+; The game, screens, menus, password, playoffs.
 ; Bank $88. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8884A9
-WritePassBits:		;transfer game variables to the password bits at a3. 92 WritePassBits, without the checksum. (93G hockey93_09)
+WritePassBits:		;transfer game variables to the password bits at a3. without the checksum.
 		;   SNES: playoff state into passbits (PushBits with each range), then the 9-bit checksum of the values (d7) with range 512
 	jsl.l ClrPassBits
 	stz.b d7
@@ -41,7 +41,7 @@ WritePassBits:		;transfer game variables to the password bits at a3. 92 WritePas
 	lda.w #7
 	sta.b d2
 	stz.b a1
-.gs:		;93G .0: the 8 series scores, range 5
+.gs:		;the 8 series scores, range 5
 	ldy.b a1
 	lda.w gspotwins,y
 	sta.b d0
@@ -61,7 +61,7 @@ WritePassBits:		;transfer game variables to the password bits at a3. 92 WritePas
 	sta.b d1
 	jsl.l PushBits
 	rtl
-.pb:		;92G .pb: d7 += d0, then PushBits
+.pb:		;d7 += d0, then PushBits
 	lda.b d7
 	clc
 	adc.b d0
@@ -69,7 +69,7 @@ WritePassBits:		;transfer game variables to the password bits at a3. 92 WritePas
 	jml.l PushBits
 
 org $8885F7
-PWprint:		;print pass word (from PassWord (92G hockey)
+PWprint:		;print pass word (from PassWord
 		;   SNES: print the 16 password characters (PassWord through PasstoText) at printx/printy, unless PassWord bit 7 hides it
 	lda.w PassWord
 	bit.w #$0080
@@ -149,7 +149,7 @@ PWprint:		;print pass word (from PassWord (92G hockey)
 	ldx.b xsave
 .rtl:
 	rtl
-EncodePW:		;after playoff game compute winners and password if needed. Called from GameOver (hockey93_06). (93G hockey93_09)
+EncodePW:		;after playoff game compute winners and password if needed. Called from GameOver .
 		;   SNES: after a playoff game, ResolveGames and maketree; then the new password, or new playoffs when the user won or went out
 	lda.w OptPlayMode
 	bne .po
@@ -157,8 +157,8 @@ EncodePW:		;after playoff game compute winners and password if needed. Called fr
 .po:
 	lda.w #$0001
 	sta.w OptPlayMode
-	jsl.l ResolveGames		; bank $8B: 92G ResolveGames
-	jsl.l maketree		; bank $8D: maketree
+	jsl.l ResolveGames		; bank $8B
+	jsl.l maketree		; bank $8D
 	lda.w gamelevel		; finished playoffs
 	cmp.w #$0004
 	beq .userwon
@@ -195,11 +195,11 @@ EncodePW:		;after playoff game compute winners and password if needed. Called fr
 	dey
 	dey
 	bpl .cp
-	jsl.l ReadPassBits		; bank $8B: 92G ReadPassBits
+	jsl.l ReadPassBits		; bank $8B
 .tree:
-	jml.l maketree		; bank $8D: maketree
+	jml.l maketree		; bank $8D
 .userwon:
-	jsl.l ResetPassWord		; bank $8F: 92G ResetPassWord
+	jsl.l ResetPassWord		; bank $8F
 .userfailed:
 	lda.w #$0080		; PassWord bit 7: no password
 	tsb.w PassWord
@@ -214,7 +214,7 @@ EncodePW:		;after playoff game compute winners and password if needed. Called fr
 	rtl
 
 org $888853
-SuperMult:		;1 word (d0) multiplied by the 5 words at a3. 92 SuperMult. (93G hockey93_09)
+SuperMult:		;1 word (d0) multiplied by the 5 words at a3.
 		;   SNES: passbits (8 words) *= d0, by shift and add (mulres..mulres+15 hold the shifted copy)
 	phx
 	ldx.w #$000E
@@ -269,7 +269,7 @@ SuperMult:		;1 word (d0) multiplied by the 5 words at a3. 92 SuperMult. (93G hoc
 	plx
 	clc
 	rtl
-DrawGameSetupBack:		;SNES: game setup screen backdrop: textmap blank, GameSetupMap to backmap (priority off), the NHLPA logo map ($8C8000, 8 x 10) into textmap at x 12-19, y 0-9
+DrawGameSetupBack:		;SNES: game setup screen backdrop: textmap blank, GameSetupMap to backmap (priority off), the NHLPA logo map (NHLPALogo, 8 x 10) into textmap at x 12-19, y 0-9
 	lda.w blankchar
 	ldx.w #$07FE
 .clr:
@@ -333,7 +333,7 @@ DrawGameSetupBack:		;SNES: game setup screen backdrop: textmap blank, GameSetupM
 	rtl
 
 org $88EF9C
-GetPassWord:		;bring up password screen and get input (92G hockey)
+GetPassWord:		;bring up password screen and get input
 		;   SNES: the password screen on the game setup backdrop: pick characters from the PasstoText grid; Start decodes it (DecodePW), a bad one
 		;   offers retry or the setup screen
 	lda.w #$0080		; show the password again
@@ -350,7 +350,7 @@ GetPassWord:		;bring up password screen and get input (92G hockey)
 	sta.b d0
 	lda.w #5
 	sta.b d1
-	jsl.l Framer		; Framer 17 x 5, bank $8F: 93G Framer (d0 x d1)
+	jsl.l Framer		; Framer 17 x 5, bank $8F (d0 x d1)
 	lda.w #PasswordText
 	sta.b a1
 	lda.w #PasswordText>>16
@@ -407,7 +407,7 @@ GetPassWord:		;bring up password screen and get input (92G hockey)
 	stz.b d5
 	jsl.l .setd4		; cursor at character 0, frame around grid character 0
 	jsl.l .setd5
-	jsl.l Framer		; bank $8F: 93G Framer (d0 x d1)
+	jsl.l Framer		; bank $8F (d0 x d1)
 .topx:
 	jsl.l printz
 	dw $0013		; printz inline string: length (counts itself), then control bytes / text
@@ -520,7 +520,7 @@ GetPassWord:		;bring up password screen and get input (92G hockey)
 	pla
 	sta.b d5
 	jsl.l .setd5
-	jsl.l Framer		; bank $8F: 93G Framer (d0 x d1)
+	jsl.l Framer		; bank $8F (d0 x d1)
 	lda.w #PassWord
 	sta.b a0
 	lda.w #$0000
@@ -606,18 +606,18 @@ GetPassWord:		;bring up password screen and get input (92G hockey)
 	sta.b d1
 	lda.w blankchar
 	sta.b d2
-	jsl.l eraser		; erase the message box, bank $8D: 93G eraser (d0 x d1, tile d2)
+	jsl.l eraser		; erase the message box, bank $8D (d0 x d1, tile d2)
 	jmp.w .topx
 .setup:		;Y: back to the setup screen (new playoffs)
 	lda.w #2
 	sta.w OptPlayMode
 	jml.l Restart		; bank $83: the setup screens
-PasswordText:		;92G GetPassWord .text: "Password" at 2, 14, "Press Start" at 10, 24, then print at 21, 14; then an empty string ends it
+PasswordText:		;"Password" at 2, 14, "Press Start" at 10, 24, then print at 21, 14; then an empty string ends it
 	dw 30
 	db $FF,2,14,"Password",$FF,10,24,"Press Start",$FF,21,14
 	dw 3
 	db 0
-TitleScreen:		;bring up title screen and credits. Called from PeriodOver. (93G hockey93_07)
+TitleScreen:		;bring up title screen and credits. Called from PeriodOver.
 		;   SNES: Title1Map backdrop, StartSong6, then the Credits scroll up 6 rows at a time; Start leaves
 	lda.w #$0198		; the blank tile and the small font above the title tiles
 	sta.w blankchar
@@ -625,7 +625,7 @@ TitleScreen:		;bring up title screen and credits. Called from PeriodOver. (93G h
 	sta.w smallfontchars
 	stz.w charofs
 	stz.w charofs2
-	jsl.l forceblack		; bank $8F: 93G forceblack
+	jsl.l forceblack		; bank $8F
 	jsl.l InitPPU		; bank $8D: PPU registers off/clear
 	sep #$20
 	cli
@@ -704,7 +704,7 @@ TitleScreen:		;bring up title screen and credits. Called from PeriodOver. (93G h
 	stz.w VMDATAL
 	dex
 	bne .zero
-	lda.w #SmallFontTiles		; SmallFontTiles, remapped with the table at $8FE154
+	lda.w #SmallFontTiles		; SmallFontTiles, remapped with the table at PixelRemap8F
 	sta.b tmp0
 	lda.w #SmallFontTiles>>16
 	sta.b tmp1
@@ -725,7 +725,7 @@ TitleScreen:		;bring up title screen and credits. Called from PeriodOver. (93G h
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $CF,$00,$1C
 	stz.b d0
-	lda.w #Credits		; a0 = the credits text ($8AFAA8)
+	lda.w #Credits		; a0 = the credits text
 	sta.b a0
 	lda.w #Credits>>16
 	sta.b a0+2
@@ -752,7 +752,7 @@ TitleScreen:		;bring up title screen and credits. Called from PeriodOver. (93G h
 	cmp.w #$00FF		; end of the credits
 	bne .top4
 	jmp.w .exit
-.top4:		;93G .top4: blank the 6 rows below the screen
+.top4:		;blank the 6 rows below the screen
 	lda.w printy
 	pha
 	ldx.w #$0006
@@ -876,7 +876,7 @@ TitleScreen:		;bring up title screen and credits. Called from PeriodOver. (93G h
 CreditsBlank:		;print string of 32 blanks: TitleScreen erases the rows below the credits with it
 	dw 34
 	db "                                "
-PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOver and Opening2. (93G hockey93_06)
+PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOver and Opening2.
 		;   SNES: set the font tile bases; in playoff mode draw the tree (PlayoffTreeSetup by gamelevel: team
 		;   blocks, arrows, series scores) with the NHLPA logo, PWprint; scroll with left/right until Start
 	lda.w #6		; tile bases: small font 6, big font +100, score/team blocks +100, NHLPA logo +405
@@ -894,7 +894,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	bne .po
 	jmp.w .rtl
 .po:
-	jsl.l forceblack		; bank $8F: 93G forceblack
+	jsl.l forceblack		; bank $8F
 	sep #$20
 	lda.b #BGMODE_1
 	sta.w BGMODE
@@ -907,7 +907,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	rep #$30
 	lda.w #$1000
 	sta.w VMADDL
-	lda.w #PlayoffTiles		; PlayoffTiles ($84F79D): 128 colours, then 6 tiles
+	lda.w #PlayoffTiles		; PlayoffTiles: 128 colours, then 6 tiles
 	sta.b tmp0
 	lda.w #PlayoffTiles>>16
 	sta.b tmp1
@@ -928,7 +928,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	inx
 	cpx.w #$0100
 	bne .pl
-	lda.w #SmallFontTiles		; SmallFontTiles twice: remapped with $8FE154, then with PixelRemap83
+	lda.w #SmallFontTiles		; SmallFontTiles twice: remapped with PixelRemap8F, then with PixelRemap83
 	sta.b tmp0
 	lda.w #SmallFontTiles>>16
 	sta.b tmp1
@@ -1161,7 +1161,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	inc.b a2
 	dec.b d4
 	bne .sc
-.logo:		;the NHLPA logo ($8C8000): palette row 2, tiles at logochars, map at x 60, y 2
+.logo:		;the NHLPA logo: palette row 2, tiles at logochars, map at x 60, y 2
 	lda.w #NHLPALogo
 	sta.b tmp0
 	lda.w #NHLPALogo>>16
@@ -1242,7 +1242,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	lda.w BigFontChars		; blank the top and bottom rows with big font tile 0
 	ora.w #$1000
 	sta.b d2
-	jsl.l eraser		; bank $8D: 93G eraser (d0 x d1, tile d2)
+	jsl.l eraser		; bank $8D (d0 x d1, tile d2)
 	stz.w printx
 	lda.w #104
 	sta.w printy
@@ -1253,7 +1253,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	lda.w BigFontChars
 	ora.w #$1000
 	sta.b d2
-	jsl.l eraser		; bank $8D: 93G eraser (d0 x d1, tile d2)
+	jsl.l eraser		; bank $8D (d0 x d1, tile d2)
 	jsl.l StartSong9		; keep the music going
 .scroll:		;clamp Hscroll, queue the 128-column map window, wait a frame
 	lda.w Hscroll
@@ -1446,7 +1446,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	lda.w #$0001
 	sta.b d3+2
 	jmp.w .move
-PlayoffTreeSetup:		;93G PlayoffTreeSetup: playoff tree layout by gamelevel (offsets, then per level: slots, arrows, scroll limits, scores)
+PlayoffTreeSetup:		;playoff tree layout by gamelevel (offsets, then per level: slots, arrows, scroll limits, scores)
 	dw .skip-PlayoffTreeSetup,.skip2-PlayoffTreeSetup,.skip3-PlayoffTreeSetup,.skip4-PlayoffTreeSetup,.skip5-PlayoffTreeSetup
 .skip:		;gamelevel 0: 16 team slots (x, y)
 	db 16
@@ -1492,7 +1492,7 @@ PlayoffTreeSetup:		;93G PlayoffTreeSetup: playoff tree layout by gamelevel (offs
 	db 0		; series scores (x, y)
 
 org $88FDB2
-SuperAdd:		;1 long (d0.L) added to the 5 words at a3. 92 SuperAdd. (93G hockey93_09)
+SuperAdd:		;1 long (d0.L) added to the 5 words at a3.
 		;   SNES: passbits (8 words) += d0
 	phx
 	lda.w passbits

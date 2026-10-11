@@ -1,8 +1,8 @@
-; hockey_b86: 93G hockey93_01..hockey93_11: the game, screens, menus, password, playoffs.
+; The game, screens, menus, password, playoffs.
 ; Bank $86. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $86FB96
-UpdateLineChange:		;called once per second. Restore energy for players on the bench (93G hockey93_01)
+UpdateLineChange:		;called once per second. Restore energy for players on the bench
 		;   SNES: once a second with line changes on, players on the bench (TMPDBENCH) regain 10 energy up to $1000, both teams
 	lda.w OptLine
 	bne .rtl
@@ -46,7 +46,7 @@ UpdateLineChange:		;called once per second. Restore energy for players on the be
 	rtl
 
 org $86FC29
-setteams:		;use hometeam/visteam to set team structures. Falls in from clearTeamStats, also called from hockey93_08. (93G hockey93_06)
+setteams:		;use hometeam/visteam to set team structures. Falls in from clearTeamStats, also called from hockey93_08.
 		;   SNES: with InitTeamStructure: use HomeTeam/VisTeam to set the team structs (tmsort, tmteam, tmdata from TeamList). Falls in from ClearTeamStats
 	stz.w tmsort		; home: tmsort 0, away: tmsort $0C
 	lda.w #$000C
@@ -78,7 +78,7 @@ ScoutNamePos:		;SNES: print position of a showcased player name: x 1, y 10; the 
 	sta.w printx
 .rtl:
 	rtl
-GetPeriodTimeRemaining:		;return d0 = (gsp << 14 | PerTimeTotal) - gameclock. Called from Goal (ScoreSum entry) and InProgress (penalty93_1) (93G hockey93_04)
+GetPeriodTimeRemaining:		;return d0 = (gsp << 14 | PerTimeTotal) - gameclock. Called from Goal (ScoreSum entry) and InProgress
 		;   SNES: d0 = (gsp << 14 | PerTimeTotal) - gameclock (Goal and InProgress log it)
 	lda.w gsp		; gsp in bits 14-15
 	xba
@@ -94,7 +94,7 @@ GetPeriodTimeRemaining:		;return d0 = (gsp << 14 | PerTimeTotal) - gameclock. Ca
 	sbc.w gameclock
 	sta.b d0
 	rtl
-GetPeriodTime:		;return d0 = period length in seconds for the period length option (93G hockey93_01)
+GetPeriodTime:		;return d0 = period length in seconds for the period length option
 		;   SNES: d0 = period length in seconds for OptPerlen
 	phx
 	lda.w OptPerlen
@@ -104,12 +104,12 @@ GetPeriodTime:		;return d0 = period length in seconds for the period length opti
 	sta.b d0
 	plx
 	rtl
-GetPeriodTime_timetab:		;93G .timetab (IDA PeriodTimeTable): 5, 10, 20 minutes, 30 seconds
+GetPeriodTime_timetab:		;5, 10, 20 minutes, 30 seconds
 	dw 5*60,10*60,20*60,30
 
 org $86FCE3
-PickStartingGoalie:		;SNES: tmgoalie of team a2 = 0 ($8B807D); a computer team in the later playoff rounds (gamelevel >= 2, line changes on) picks the goalie by its scouting
-		;   report ($8FF4D8, $8FE3B0)
+PickStartingGoalie:		;SNES: tmgoalie of team a2 = 0 (FigureJoy); a computer team in the later playoff rounds (gamelevel >= 2, line changes on) picks the goalie by its scouting
+		;   report (UnpackNibbles, WeightedRandomSelect)
 	stx.b xsave
 	ldx.w #$0000
 .pushd:

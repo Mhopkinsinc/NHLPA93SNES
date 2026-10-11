@@ -1,8 +1,8 @@
-; penalty_b82: 93G penalty93_1/penalty93_2: penalties, scoreboard, ticker, intermission.
+; Penalties, scoreboard, ticker, intermission.
 ; Bank $82. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $82F93C
-SetPA2:		;update animation for ref. Next frame/delay pair from the PenaltyList animation of RefPen. Also called from UpdatePA (93G penalty93_1)
+SetPA2:		;update animation for ref. Next frame/delay pair from the PenaltyList animation of RefPen. Also called from UpdatePA
 		;   SNES: A negative pair is the last one (RefStep = -1). RefCnt =
 		;   delay*8, then PushRef
 	phx
@@ -52,7 +52,7 @@ SetPA2:		;update animation for ref. Next frame/delay pair from the PenaltyList a
 	sta.b d0
 	lda.w #$FFFF
 	sta.w RefStep
-.zero:		;93G .0
+.zero:
 	lda.b d0		; RefCnt = delay * 8, d0 = frame
 	and.w #$00FF
 	asl a
@@ -65,7 +65,7 @@ SetPA2:		;update animation for ref. Next frame/delay pair from the PenaltyList a
 	and.w #$00FF
 	sta.b d0
 .pr:
-	jsl.l PushRef		; bank $8F: 93G PushRef
+	jsl.l PushRef		; bank $8F
 	stx.b xsave
 	ldx.w #$0006
 .popa:
@@ -86,7 +86,7 @@ SetPA2:		;update animation for ref. Next frame/delay pair from the PenaltyList a
 	ldx.b xsave
 	plx
 	rtl
-UpdateScores:		;update ticker score values. Called from PeriodOver (93G penalty93_2)
+UpdateScores:		;update ticker score values. Called from PeriodOver
 		;   SNES: update the ticker scores of the other playoff games (not gamenum, not over)
 	jsl.l GetShifter		; GetShifter: d1 = games - 1
 	lda.b d1
@@ -103,7 +103,7 @@ UpdateScores:		;update ticker score values. Called from PeriodOver (93G penalty9
 	sta.w gsflags,y
 	bit.w #gsfso
 	bne .next
-	jsl.l SetScore		; bank $8A: 93G SetScore
+	jsl.l SetScore		; bank $8A
 .next:
 	dec.b a0
 	dec.b a0
@@ -112,7 +112,7 @@ UpdateScores:		;update ticker score values. Called from PeriodOver (93G penalty9
 	rtl
 
 org $82FD95
-ClearPenaltyMessage:		;93G ClearPenaltyMessage (penalty93_1): blank the horizontal mode penalty message line (22 spaces at x 5, y $B)
+ClearPenaltyMessage:		;blank the horizontal mode penalty message line (22 spaces at x 5, y $B)
 	jsl.l printz
 	dw $001B		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$05,$0B,"                      "

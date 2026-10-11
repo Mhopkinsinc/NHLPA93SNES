@@ -1,9 +1,9 @@
-; logic_b88: 93G logic93_1..logic93_5: player logic and the assignments (asstab).
+; Player logic and the assignments (asstab).
 ; Bank $88. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $888548
-noturn0:		;doplayeracc when the wanted direction needs no turn (.ftab entry 0). d0 = direction minus facedir, times 2 (93G logic93_5)
-		;   SNES: glide/stop/skate animation, then revplayeracc (93G noturn). d0 = direction - facedir
+noturn0:		;doplayeracc when the wanted direction needs no turn (.ftab entry 0). d0 = direction minus facedir, times 2
+		;   SNES: glide/stop/skate animation, then revplayeracc (noturn). d0 = direction - facedir
 	lda.w #$0002		; d4 (here d2) = 2, 6 skating backwards
 	sta.b d4
 	lda.w pfrev,x
@@ -13,7 +13,7 @@ noturn0:		;doplayeracc when the wanted direction needs no turn (.ftab entry 0). 
 	lda.b d0
 	eor.w #$0008
 	sta.b d0
-.zero:		;93G .0
+.zero:
 	lda.b d0
 	beq .nochg
 	lda.w Xvel,x		; moving: stop if the direction is more than 90 degrees off
@@ -59,7 +59,7 @@ noturn0:		;doplayeracc when the wanted direction needs no turn (.ftab entry 0). 
 	bne .ns
 	lda.w #SPAskate
 	sta.b d1
-	lda.w pflags,x		; pflags $0004 (93G pflags2 bit 6): stumble
+	lda.w pflags,x		; pflags $0004 (pflags2 bit 6): stumble
 	bit.w #$0004
 	beq .nb6
 	lda.w #SPAstumble
@@ -80,7 +80,7 @@ noturn0:		;doplayeracc when the wanted direction needs no turn (.ftab entry 0). 
 	jml.l revplayeracc
 
 org $88FBA6
-assdefd:		;asstab 2. player a3 is defensive player on defense (93G logic93_2)
+assdefd:		;asstab 2. player a3 is defensive player on defense
 		;   SNES: defenceman on defence: stay between the furthest-up attacker and the goal, join the attack (adefo) when the puck is past the line
 	lda.w pfalock,x
 	beq .go
@@ -88,7 +88,7 @@ assdefd:		;asstab 2. player a3 is defensive player on defense (93G logic93_2)
 .go:
 	lda.w gmclock
 	beq .gm
-	jml.l assnothing		; bank $8F: assnothing
+	jml.l assnothing		; bank $8F
 .gm:
 	jsl.l check4bench
 	lda.w pflags,x
@@ -350,7 +350,7 @@ assdefd:		;asstab 2. player a3 is defensive player on defense (93G logic93_2)
 	jml.l check4check
 
 org $88FDD0
-skateto:		;a0 = extra routine for collision avoidance, d0/d1 = x/y cord to skate to, d7 = elapse frames (93G logic93_5)
+skateto:		;a0 = extra routine for collision avoidance, d0/d1 = x/y cord to skate to, d7 = elapse frames
 		;   SNES: a0 = collision avoidance routine, d0/d1 = x/y to skate to, d7 = frames. SNES: a skater near the target (sum of distances < 55) slows to 7/8
 	lda.w position,x
 	beq .t2
@@ -421,7 +421,7 @@ skateto:		;a0 = extra routine for collision avoidance, d0/d1 = x/y cord to skate
 .go:
 	adc.w #11
 	sta.w temp2,x
-	jsl.l avdgoal		; bank $8D: avdgoal
+	jsl.l avdgoal		; bank $8D
 	lda.w #13
 	sta.b d0+2
 	lda.b d0
@@ -545,7 +545,7 @@ skateto:		;a0 = extra routine for collision avoidance, d0/d1 = x/y cord to skate
 .ex:
 	lda.w temp2b,x
 	sta.b d0
-	jml.l doplayeracc		; bank $8F: doplayeracc
+	jml.l doplayeracc		; bank $8F
 unusedFF88:		;unused, $FF fill to the end of the bank
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF

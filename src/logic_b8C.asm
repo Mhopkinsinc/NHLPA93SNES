@@ -1,8 +1,8 @@
-; logic_b8C: 93G logic93_1..logic93_5: player logic and the assignments (asstab).
+; Player logic and the assignments (asstab).
 ; Bank $8C. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8CFD83
-chk4pass:		;player a3 looks for good pass (computer controlled) (93G logic93_3)
+chk4pass:		;player a3 looks for good pass (computer controlled)
 		;   SNES: computer player X looks for a good pass: a random team mate, onside, ahead of the blue line rule, no opponent in the lane; then dopass and
 		;   assexit
 	lda.w threat		; no threat: pass only now and then (spodds)
@@ -190,7 +190,7 @@ chk4pass:		;player a3 looks for good pass (computer controlled) (93G logic93_3)
 	inc.b a1
 	dec.b d3
 	bpl .co0
-	jsl.l dopass		; 93G dopass, bank $8F: 93G dopass
+	jsl.l dopass		; dopass, bank $8F
 	lda.w position,x
 	beq .rtl
 	pla		; drop the return address (3 bytes): assexit returns for the caller

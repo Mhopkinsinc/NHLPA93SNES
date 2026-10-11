@@ -1,8 +1,8 @@
-; teamdata_b8A: 93G teamdata93: TeamList, the team records, playoffseats, Credits.
+; TeamList, the team records, playoffseats, Credits.
 ; Bank $8A. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8AFAA8
-Credits:		;93G Credits: the title screen credit lines (length word, text); $FE ends the copyright page, $FF a page, an empty string the list
+Credits:		;the title screen credit lines (length word, text); $FE ends the copyright page, $FF a page, an empty string the list
 	dw 24
 	db "$ 1992 Electronic Arts"
 	dw 22

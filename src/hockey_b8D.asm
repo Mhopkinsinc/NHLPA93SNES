@@ -1,8 +1,8 @@
-; hockey_b8D: 93G hockey93_01..hockey93_11: the game, screens, menus, password, playoffs.
+; The game, screens, menus, password, playoffs.
 ; Bank $8D. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8D8000
-maketree:		;make playoff tree (potree) from playoffseats/winbits. 92 MakeTree. (93G hockey93_09)
+maketree:		;make playoff tree (potree) from playoffseats/winbits.
 		;   SNES: potree from playoffseats (postarts) and WinBits; reset the games of this round (.sett), then FigureJoy
 	stx.b xsave
 	ldx.w #$0000
@@ -54,7 +54,7 @@ maketree:		;make playoff tree (potree) from playoffseats/winbits. 92 MakeTree. (
 	sta.b a1+2
 	lda.w WinBits
 	sta.b d0
-.zero:		;93G .0: winbit picks the team of each pair
+.zero:		;winbit picks the team of each pair
 	lda.b d0
 	and.w #$0001
 	sta.b d1
@@ -79,7 +79,7 @@ maketree:		;make playoff tree (potree) from playoffseats/winbits. 92 MakeTree. (
 	lda.w #$0000
 	sta.b a0+2
 	stz.b a1
-.two:		;93G .2
+.two:
 	ldx.b a1
 	stz.w gss1,x
 	stz.w gss2,x
@@ -114,7 +114,7 @@ maketree:		;make playoff tree (potree) from playoffseats/winbits. 92 MakeTree. (
 	ldx.b xsave
 	ldx.b a3
 	rtl
-.sett:		;93G .sett: series games 2, 3, 5 in tree order, the others flipped (gsftf)
+.sett:		;series games 2, 3, 5 in tree order, the others flipped (gsftf)
 	lda.b bosgames		; bosgames 2, 3, 5
 	cmp.w #$0002
 	beq .flip
@@ -149,8 +149,8 @@ maketree:		;make playoff tree (potree) from playoffseats/winbits. 92 MakeTree. (
 	rtl
 
 org $8D8217
-StartPer:		;start a period: reset stack, rink and clock, face off, run the game loop (93G hockey93_01)
-		;   SNES: reset the stack, rink and clock, faceoff at centre ice, music cue timers, replay reset; then the game loop ($8E8000)
+StartPer:		;start a period: reset stack, rink and clock, face off, run the game loop
+		;   SNES: reset the stack, rink and clock, faceoff at centre ice, music cue timers, replay reset; then the game loop (Gameloop)
 	lda.w #$1FFF		; reset the stack
 	tcs
 	jsl.l Readjoy1
@@ -232,7 +232,7 @@ StartPer:		;start a period: reset stack, rink and clock, face off, run the game 
 
 org $8D8389
 Bcheck:		;player a2 is in SPA $B44 and a3 is the other player. Entered from checkcheck .cc. If OptPen is 0 and a2 is joystick controlled, a2 needs randomd0($10 + a2 checking rating - a3
-		;   legstr) >= $C. If a3 is within 1 direction of where a2 faces, a3 falls and checkagr may call penalty $20 on a2. Sets collflag to -1 (93G hockey93_03)
+		;   legstr) >= $C. If a3 is within 1 direction of where a2 faces, a3 falls and checkagr may call penalty $20 on a2. Sets collflag to -1
 		;   SNES: a2 checks a3 with SPA $B44: if a3 is in front (within one direction) he falls; checkagr may call a penalty $20 (charging) on
 		;   a2
 	ldy.b a2
@@ -282,7 +282,7 @@ Bcheck:		;player a2 is in SPA $B44 and a3 is the other player. Entered from chec
 	stx.b a3
 	sty.b a2
 	jsl.l FallDown		; a3 falls
-	jsl.l checkagr		; 93G checkagr
+	jsl.l checkagr		; checkagr
 	lda.b d0
 	cmp.w #$0005
 	bcs .swap
@@ -298,7 +298,7 @@ Bcheck:		;player a2 is in SPA $B44 and a3 is the other player. Entered from chec
 	sta.b collflag
 .rtl:
 	rtl
-NewPO93:		;93G NewPO (hockey93_09): continue the playoffs from passbits (ReadPassBits, maketree, OptPlayers = 7 - pojoy); no caller found (92G NewPO is at $8B8000)
+NewPO93:		;continue the playoffs from passbits (ReadPassBits, maketree, OptPlayers = 7 - pojoy); no caller found
 	stx.b xsave
 	ldx.w #$0000
 .pushd:
@@ -356,7 +356,7 @@ NewPO93:		;93G NewPO (hockey93_09): continue the playoffs from passbits (ReadPas
 	rtl
 
 org $8D84E2
-DrawTeamBlocks:		;draw team block d1 (team*2) from TeamBlocks.map at printx/printy; the user's team (potree entry (93G hockey93_06)
+DrawTeamBlocks:		;draw team block d1 (team*2) from TeamBlocks.map at printx/printy; the user's team (potree entry
 		;   SNES: the 9 x 2 TeamBlocksMap block of team d1 into textmap at printx/printy (scorechars, printa)
 	lda.b a2
 	pha
@@ -416,7 +416,7 @@ DrawTeamBlocks:		;draw team block d1 (team*2) from TeamBlocks.map at printx/prin
 	rtl
 
 org $8D85A9
-PeriodOver:		;what to do if period over. Branched to from puckfaceoff (logic93_4) when the clock runs out. (93G hockey93_06)
+PeriodOver:		;what to do if period over. Branched to from puckfaceoff when the clock runs out.
 		;   SNES: next period (gmdir flips); overtime only for a tied playoff game; gsp 4 = game over (ContinuePlayoffs), else StartPer
 	jsl.l forceblack
 	inc.w gsp		; next period
@@ -444,14 +444,14 @@ PeriodOver:		;what to do if period over. Branched to from puckfaceoff (logic93_4
 	jsl.l SetHor
 	jsl.l setvideo
 	jsl.l UpdateScores
-	jsl.l Intermission		; 93G Intermission
+	jsl.l Intermission		; Intermission
 	lda.w gsp
 	cmp.w #$0004
 	bne .per
 	jml.l ContinuePlayoffs
 .per:
 	jmp.w StartPer
-GetPlayerName:		;93 only: a1 = mesarea "NN First Last" (getname) for player TempPlOffset (bit 15 set: away (93G hockey93_10)
+GetPlayerName:		;a1 = mesarea "NN First Last" (getname) for player TempPlOffset (bit 15 set: away
 		;   SNES: mesarea = number and name of player TempPlOffset (bit 15: away team) via PlayerNumName
 	stx.b xsave
 	ldx.w #$0000
@@ -504,7 +504,7 @@ GetPlayerName:		;93 only: a1 = mesarea "NN First Last" (getname) for player Temp
 	rtl
 
 org $8D86A8
-asstab:		;SNES: the assignment routines (29 long pointers) that updateplayers calls through jmlvector; numbers as 93G asstab
+asstab:		;SNES: the assignment routines (29 long pointers) that updateplayers calls through jmlvector; numbers as asstab
 	dd rtss		; 0
 	dd assdefo		; 1
 	dd assdefd		; 2
@@ -536,7 +536,7 @@ asstab:		;SNES: the assignment routines (29 long pointers) that updateplayers ca
 	dd puckfaceoff2		; 1C
 
 org $8D87FB
-setd0player:		;give control of player d0 to a controller if his team is controlled (93G hockey93_05)
+setd0player:		;give control of player d0 to a controller if his team is controlled
 		;   SNES: give player d0 to the controller of his team (setc1player/setc2player) unless a controller has him already
 	lda.b d0
 	cmp.w c1playernum

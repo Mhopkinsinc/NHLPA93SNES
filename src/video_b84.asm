@@ -1,4 +1,4 @@
-; video_b84: 93G video93_1/video93_2: vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
+; Vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
 ; Bank $84. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $84F816

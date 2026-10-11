@@ -1,9 +1,9 @@
-; penalty_b89: 93G penalty93_1/penalty93_2: penalties, scoreboard, ticker, intermission.
+; Penalties, scoreboard, ticker, intermission.
 ; Bank $89. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $89E95D
 printscores1:		;draw scoreboard. Vertical rink: period box and the score box (team names and scores). Horizontal rink (.sbscreen): period and both team logos with big scores. Called from
-		;   USBoard, Pausemode, lcfound2 and others (93G penalty93_2)
+		;   USBoard, Pausemode, lcfound2 and others
 		;   SNES: Vertical rink: period box and score box (team names and scores); horizontal rink (.sbscreen): period, team names, scores
 	stx.b xsave
 	ldx.w #$0000
@@ -36,7 +36,7 @@ printscores1:		;draw scoreboard. Vertical rink: period box and the score box (te
 	sta.b d0
 	lda.w #5
 	sta.b d1
-	jsl.l Framer		; Framer 9 x 5, bank $8F: 93G Framer (d0 x d1)
+	jsl.l Framer		; Framer 9 x 5, bank $8F (d0 x d1)
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$01,$18
@@ -46,8 +46,8 @@ printscores1:		;draw scoreboard. Vertical rink: period box and the score box (te
 	sta.b a1
 	lda.w #PerLabels>>16
 	sta.b a1+2
-	jsl.l PrintStringFromList		; bank $8F: 93G PrintStringFromList
-	jsl.l EASNLogo		; EASNLogo, bank $8D: 93G EASNLogo
+	jsl.l PrintStringFromList		; bank $8F
+	jsl.l EASNLogo		; EASNLogo, bank $8D
 	lda.w sflags3		; lower line change box is up
 	bit.w #sf3llcs
 	bne .ex
@@ -58,7 +58,7 @@ printscores1:		;draw scoreboard. Vertical rink: period box and the score box (te
 	sta.b d0
 	lda.w #5
 	sta.b d1
-	jsl.l Framer		; bank $8F: 93G Framer (d0 x d1)
+	jsl.l Framer		; bank $8F (d0 x d1)
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$1C,$18
@@ -125,15 +125,15 @@ printscores1:		;draw scoreboard. Vertical rink: period box and the score box (te
 	db $BF,$17,$04
 	lda.w tmscore		; home score in big font
 	sta.b d0
-	jsl.l pushnumber		; bank $8F: 93G pushnumber
-	jsl.l printbig		; bank $8B: 93G printbig
+	jsl.l pushnumber		; bank $8F
+	jsl.l printbig		; bank $8B
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$07,$04
 	lda.w tmscore+2		; away score
 	sta.b d0
-	jsl.l pushnumber		; bank $8F: 93G pushnumber
-	jsl.l printbig		; bank $8B: 93G printbig
+	jsl.l pushnumber		; bank $8F
+	jsl.l printbig		; bank $8B
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$17,$02
@@ -145,7 +145,7 @@ printscores1:		;draw scoreboard. Vertical rink: period box and the score box (te
 	inc.b d3
 	jsl.l printteamname
 	bra .ex
-PrintPerLabel:		;SNES: print the PerLabels ($8F8236) entry for gsp (93G AdvanceStringPtr + print)
+PrintPerLabel:		;SNES: print the PerLabels (PerLabels) entry for gsp
 	lda.w gsp
 	sta.b d0
 	lda.w #PerLabels
@@ -164,7 +164,7 @@ PrintPerLabel:		;SNES: print the PerLabels ($8F8236) entry for gsp (93G AdvanceS
 	dec.b d0
 	bpl .next
 	jml.l print
-PrintTeamNameAndScore:		;print the team name of team a2 at printx/printy, then its score as 2 digits at x $1C. Called twice from printscores1 (93G penalty93_2)
+PrintTeamNameAndScore:		;print the team name of team a2 at printx/printy, then its score as 2 digits at x $1C. Called twice from printscores1
 		;   SNES: team name of team a2 (d3 = home/away), then its score as 2 characters (blank tens)
 	jsl.l printteamname
 	lda.w #mesarea

@@ -1,8 +1,8 @@
-; stats_b8F: 93G stats93: roster attribute columns.
+; Roster attribute columns.
 ; Bank $8F. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8FFAF3
-GetPlayerCount:		;d0 = players on team a2 (records until a length word of 2) (93G stats93)
+GetPlayerCount:		;d0 = players on team a2 (records until a length word of 2)
 		;   SNES: d0 = roster players of team a2 (its bank $83 team record: Player entries until the empty one); saves a0
 	lda.b a0+2		; save a0
 	pha

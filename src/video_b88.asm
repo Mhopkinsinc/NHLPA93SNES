@@ -1,8 +1,8 @@
-; video_b88: 93G video93_1/video93_2: vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
+; Vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
 ; Bank $88. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8887AE
-showcrowd:		;draw crowd sprites: up to 3 frames per PBnum nibble, then the two crowdframe frames. (93G video93_1)
+showcrowd:		;draw crowd sprites: up to 3 frames per PBnum nibble, then the two crowdframe frames.
 		;   SNES: up to 3 frames per PBnum nibble (penalty box), then the two crowdframe frames (not on the horizontal rink)
 	stz.b a1
 	lda.w Hpos

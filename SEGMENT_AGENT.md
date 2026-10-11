@@ -48,7 +48,7 @@ Vectors: native COP `$80B4`, BRK `$80B2`, ABORT `$80B4`, NMI `$80B4`, IRQ `$8390
 - Replace `db` with instructions only after you have traced the entry and M/X. Jump tables (`jmp (abs,x)`, `jsr (abs,x)`, pushed-address `rts` tricks) are the main source of unreached code: write the table as `dw label` entries.
 - Hardware registers use the names in `src/inc/snes_regs.asm` (`sta.w INIDISP`). Add DMA channel names there as needed.
 - Data goes in the segment of the code that owns it. Graphics (4bpp planar composite, from about ROM `$709A7`) become `incbin` files under `data/` named for the asset (93G / 92G file name when it is the same asset), never an address. Pointers inside data are written with labels.
-- A 93G name is the field even when the SNES value differs. The equate gets the SNES value; the comment records the 93G value.
+- A 93G name is the field even when the SNES value differs. The equate gets the SNES value; the comment may record the 68000 value as '93 $xx'.
 - A global label ends local-label scope (asar `.local` labels belong to the previous global). Keep comment lines under 200 characters.
 - Do not delete an asm file. Edit it in place. Split a bank into logical files (e.g. `penalty93s.asm`, `teamdata93s.asm`) only by cutting the text at an instruction/data boundary and adding the include in ROM order in the same session; add the new row to the ROM map.
 - RAM names go in `src/ram93snes.asm` as you transcribe. Do not wait for a RAM pass.
@@ -67,11 +67,21 @@ Vectors: native COP `$80B4`, BRK `$80B2`, ABORT `$80B4`, NMI `$80B4`, IRQ `$8390
 - A segment is matched only when it is fully named: routines, local labels, RAM variables, parameters, constants / bit values, data tables, hardware registers, and comments. Routine names alone are not enough.
 - Runs are one bank (8 segments) at a time; see START_HERE.md. After the bank, stop and report to the user.
 
-- Match a routine to the 93G routine when the body does the same thing. Keep the 93G name. If only 92G has it (and the SNES follows 92G), use the 92G name and note `;92G` on the definition.
+- Naming lineage: 93G first, then 92G, then behavior. Match a routine to the 93G routine when the body does the same thing and keep the 93G name. If only 92G has it (and the SNES follows 92G), use the 92G name. Record the source (93G/92G) in docs/name_map.csv, not in a comment.
+- 92G names (EA original source) are sacrosanct, typos included. A 93G name that is inaccurate and does not come from 92G gets fixed (in NHLPA93Genesis first, then here); the old name goes in docs/name_map.csv.
+- NHLPA93 is unlicensed: team labels stay city names.
 - If the name is already used for a different routine, do not steal it. Name the new routine from what it does.
-- Put the generator name in one `;auto: CODE_xxxxxx` comment on the definition, not on every line.
+- The generator name (CODE_xxxxxx) goes in the auto_name column of docs/name_map.csv, not in a comment.
 - Do not leave `CODE_` names in a matched segment.
 - Bring over the 93G/92G comment when the routine matches. If there is none, add one that says what it does.
+
+## Comment rules
+
+Every comment should read like clean original source documentation.
+- No other-game routine/label/variable name notes ('93G X', '92 name', 'a.k.a.'), no source-file/segment names (hockey93_05, penalty93_1, frames93.asm), no IDA references (IDA, loc_, sub_, unk_), no '(was: X)' or 'auto: CODE_xxxx' history. History lives in docs/name_map.csv.
+- No hardcoded ROM addresses in comments (name the label instead). Keep org/code addresses, VRAM/RAM addresses and values that explain the code, and RAM equate address comments.
+- No '93 only' / 'only in 9x' tags. Behavior differences are fine when phrased without names ('92 used bit 6', '93 $E').
+- Keep and polish real explanations: what a routine does, inputs/outputs, register usage. Every routine keeps a header comment. Keep comments concise.
 
 ## ROM map
 

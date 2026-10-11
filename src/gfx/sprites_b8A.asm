@@ -20,7 +20,7 @@ SpriteSet12:		;frame set 12 (includes SPFflip, SPFstumble, SPFhook): frames 532-
 	dw 466,469,473,476,479,482,488,491
 	dw 495,500,504
 .pieces:		;x, y, tile, attributes per piece
-	incbin "../../data/Sprites/set12.pieces"		; $8A80A0-$8A887F
+	incbin "../../data/Sprites/set12.pieces"
 	assert .tiles-.pieces == 4*504
 .tiles:		;896 4bpp tiles (32 bytes each)
 	incbin "../../data/Sprites/set12.chr"

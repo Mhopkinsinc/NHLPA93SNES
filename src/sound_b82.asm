@@ -1,8 +1,8 @@
-; sound_b82: 93G sound93: SPC700 uploads, the sound queue, music cues (93G keeps ScoutingReportText here too).
+; SPC700 uploads, the sound queue, music cues (keeps ScoutingReportText here too).
 ; Bank $82. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $82B86C
-SPAList:		;93G SPAList
+SPAList:		;SPAList
 	dw 0		; (SPA 0 = no animation)
 
 org $82FA1A
@@ -17,7 +17,7 @@ sndqreset:		;SNES: empty the sound command queue and the music cue
 	sta.b sndqin
 	stz.b sndlock
 	rtl
-SPCBootUpload:		;SNES: wait for the queue and a vblank, then send the boot stream at $868000 (driver and its samples, sndbank 2)
+SPCBootUpload:		;SNES: wait for the queue and a vblank, then send the boot stream at BootSoundUpload (driver and its samples, sndbank 2)
 	phy
 	phx
 	pha
@@ -58,7 +58,7 @@ SPCBootUpload:		;SNES: wait for the queue and a vblank, then send the boot strea
 	plx
 	ply
 	rtl
-SPCGameUpload:		;SNES: wait for the queue and 6 frames, then send the in-game sample set GameSoundUpload ($818000, sndbank 1)
+SPCGameUpload:		;SNES: wait for the queue and 6 frames, then send the in-game sample set GameSoundUpload (GameSoundUpload, sndbank 1)
 	phy
 	phx
 	pha

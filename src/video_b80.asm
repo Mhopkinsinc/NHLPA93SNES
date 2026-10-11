@@ -1,10 +1,10 @@
-; video_b80: 93G video93_1/video93_2: vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
+; Vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
 ; Bank $80. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8080B2
-BRKHalt:		;BRK vector: hang. No 92G/93G counterpart (68k traps go to IRQ7 rte)
+BRKHalt:		;BRK vector: hang. No /counterpart (68k traps go to IRQ7 rte)
 	bra BRKHalt
-VBjsr:		;Vertical blank interrupt (vector $78), jumps through the vbint RAM vector (93G hockey93_01)
+VBjsr:		;Vertical blank interrupt (vector $78), jumps through the vbint RAM vector
 		;   SNES: NMI: ack RDNMI, skip if vbactive, else "rts" into the vbint handler
 	rep #$30
 	pha
@@ -32,18 +32,18 @@ vb2_blank:		;vbint target: vb2 with the screen held in forced blank. Resets hbin
 	lda.w #HBdefault
 	sta.b hbint
 	bra vb2_main
-vb2:		;vblank used for palfades only no dmas (vbint target). (93G video93_1)
+vb2:		;vblank used for palfades only no dmas (vbint target).
 		;   SNES: vblank for fades only, no dma. INIDISP from brightness, then vb2_main
 	sep #$20
 	lda.b brightness
 	sta.w INIDISP
-vb2_main:		;common vblank tail: vcount, sound tick (93G p_music_vblank), brightness fades (93G cramfade), rti
+vb2_main:		;common vblank tail: vcount, sound tick (p_music_vblank), brightness fades (cramfade), rti
 	rep #$30
 	inc.b vcount
 	bne .tick
 	inc.b vcount+2
 .tick:
-	jsl.l p_music_vblank		; bank $89: 93G p_music_vblank (sound tick)
+	jsl.l p_music_vblank		; bank $89 (sound tick)
 	stz.b hcount		; clear the IRQ count every frame
 	lda.b fadeout
 	beq .fadein
@@ -80,9 +80,9 @@ vb2_main:		;common vblank tail: vcount, sound tick (93G p_music_vblank), brightn
 	pla
 	stz.b vbactive		; vblank done
 	rti
-VBlank_long:		;vbint target (set by bank $80E3B3): jml into VBlank so it runs from the FastROM bank $80
+VBlank_long:		;vbint target (set by setvideo): jml into VBlank so it runs from the FastROM bank $80
 	jml.l VBlank
-VBlank:		;main vblank code for game play (vbint target, set by setupice). (93G video93_1)
+VBlank:		;main vblank code for game play (vbint target, set by setupice).
 		;   SNES: DumpSprites2+DoDMAList role: forced blank, run DMAList (ch7), BG2 scroll from Hscroll/vramrow/Vscroll, OAM dma from Satt; one shot: sets vbint back to vb2
 	sep #$20
 	lda.b #INIDISP_FBLANK
@@ -358,7 +358,7 @@ VBlank_CramOnly:		;vbint target (stays installed): forced blank, CGRAM 0-127 fro
 	sta.w MDMAEN
 	rep #$30
 	jmp.w vb2
-HBjsr:		;IRQ vector: if TIMEUP set, "rts" into hbint; else HBdefault. No 93G counterpart (Genesis hbint not used this way)
+HBjsr:		;IRQ vector: if TIMEUP set, "rts" into hbint; else HBdefault. No counterpart (Genesis hbint not used this way)
 	rep #$30
 	pha
 	phx
@@ -380,7 +380,7 @@ HBdefault:		;default hbint: count hcount, restore regs, rti
 	rti
 
 org $80E35E
-setvideo:		;this is not vblank code but sets up ram for vblank transfers. (93G video93_1)
+setvideo:		;this is not vblank code but sets up ram for vblank transfers.
 		;   SNES: once per game frame, if vblank is idle (vb2 / vb2_blank): build the sprite table and the dma list, then hand VBlank_long to vbint
 	lda.b vbint		; vblank busy with a list: skip this frame
 	cmp.w #vb2
@@ -405,14 +405,14 @@ setvideo:		;this is not vblank code but sets up ram for vblank transfers. (93G v
 	ldx.b xsave
 	jsl.l show_rink		; show_rink, checkfo, checksso, setsortcords, setffo, showclock, showzam, showcrowd, showref
 	jsl.l checkfo
-	jsl.l checksso		; bank $8C: 93G checksso
+	jsl.l checksso		; bank $8C
 	jsl.l setsortcords
 	jsl.l setffo
-	jsl.l showclock		; bank $8F: 93G showclock
-	jsl.l showzam		; bank $8F: 93G showzam (elapsed time from vcountmark)
-	jsl.l showcrowd		; bank $88: 93G showcrowd
-	jsl.l showref		; bank $8B: 93G showref (clears sf2refref)
-	jsl.l ShowRinkRows		; bank $8F: queue the rink map rows for Vscroll (93G show_rink rows)
+	jsl.l showclock		; bank $8F
+	jsl.l showzam		; bank $8F (elapsed time from vcountmark)
+	jsl.l showcrowd		; bank $88
+	jsl.l showref		; bank $8B (clears sf2refref)
+	jsl.l ShowRinkRows		; bank $8F: queue the rink map rows for Vscroll
 	jsl.l QueueTextDMA		; bank $8F: queue the changed textmap words (textdirtylo/hi)
 	lda.w #VBlank_long		; VBlank sends it all next vblank
 	sta.b vbint
@@ -428,7 +428,7 @@ setvideo:		;this is not vblank code but sets up ram for vblank transfers. (93G v
 	ldx.b a3
 .rtl:
 	rtl
-show_rink:		;using hpos and vpos set scroll cords; queue rink map rows on the dma list (a5) (93G video93_1)
+show_rink:		;using hpos and vpos set scroll cords; queue rink map rows on the dma list (a5)
 		;   SNES: vertical rink: Hscroll = Hpos - 128, Vscroll = -Vpos - 112 (the rows are sent elsewhere)
 	lda.w sfhormode
 	bne .rtl
@@ -444,8 +444,8 @@ show_rink:		;using hpos and vpos set scroll cords; queue rink map rows on the dm
 	sta.w Vscroll
 .rtl:
 	rtl
-checkfo:		;check for face off sprites. Called from setvideo. Falls into checkfo2 (93G video93_1)
-		;   SNES: checkfo2 (video93_1): face off sprites: the three fofdata2 entries (frame, flags) at fodropx/fodropy, priority $30
+checkfo:		;check for face off sprites. Called from setvideo. Falls into checkfo2
+		;   SNES: checkfo2 : face off sprites: the three fofdata2 entries (frame, flags) at fodropx/fodropy, priority $30
 	lda.w sflags		; not in pause, face off only
 	bit.w #sfpz
 	bne .rtl
@@ -473,7 +473,7 @@ checkfo:		;check for face off sprites. Called from setvideo. Falls into checkfo2
 	sta.b sprflag
 .add:
 	phx
-	jsl.l addframe		; bank $8F: 93G addframe (sprframe at sprx/spry)
+	jsl.l addframe		; bank $8F (sprframe at sprx/spry)
 	plx
 	inx
 	inx
@@ -485,7 +485,7 @@ checkfo:		;check for face off sprites. Called from setvideo. Falls into checkfo2
 	sta.b sprpriority
 .rtl:
 	rtl
-setsortcords:		;setup sort cord graphics: addframe for the 16 objects in OOlist order. (93G video93_2)
+setsortcords:		;setup sort cord graphics: addframe for the 16 objects in OOlist order.
 		;   SNES: addframe for the 16 objects in OOlist order (hidden when Zpos < 0 or off the screen)
 	lda.w #OOlist		; a4 = OOlist
 	sta.b a4
@@ -521,14 +521,14 @@ setsortcords:		;setup sort cord graphics: addframe for the 16 objects in OOlist 
 	lda.w #$8000
 	sta.b sprflag
 .add:
-	jsl.l addframe		; bank $8F: 93G addframe (sprframe at sprx/spry)
+	jsl.l addframe		; bank $8F (sprframe at sprx/spry)
 .next:
 	inc.b a4
 	lda.b a4
 	cmp.w #OOlist+$10
 	bne .top
 	rtl
-projxy:		;SNES (93G addframe position math): rink d0/d1/d2 = x/y/z to screen: d0 = x - Hpos + 128, d1 = 112 - (y - Vpos + 1.5*z); d1 = OFFSCREEN when |x| or |y| > 144. Horizontal
+projxy:		;SNES (addframe position math): rink d0/d1/d2 = x/y/z to screen: d0 = x - Hpos + 128, d1 = 112 - (y - Vpos + 1.5*z); d1 = OFFSCREEN when |x| or |y| > 144. Horizontal
 		;   rink: x = -y, y = x - 197
 	lda.w sfhormode
 	beq .nhor
@@ -591,7 +591,7 @@ projxy:		;SNES (93G addframe position math): rink d0/d1/d2 = x/y/z to screen: d0
 	lda.w #OFFSCREEN
 	sta.b d1
 	rtl
-setffo:		;draw the 5 objects tied to icerink scrolling (pads ...). Called from setvideo. (93G video93_2)
+setffo:		;draw the 5 objects tied to icerink scrolling (pads ...). Called from setvideo.
 		;   SNES: uppads, then draw the 5 objects tied to rink scrolling (pads 0-2 with their 3 character label, gloves; pad 3 skipped)
 	jsl.l uppads
 	ldx.w #$0000
@@ -626,7 +626,7 @@ setffo:		;draw the 5 objects tied to icerink scrolling (pads ...). Called from s
 	and.w #$1000
 	sta.b sprvflip
 	phx
-	jsl.l addframe		; bank $8F: 93G addframe (sprframe at sprx/spry)
+	jsl.l addframe		; bank $8F (sprframe at sprx/spry)
 	plx
 	cpx.w #$0006		; gloves: no label
 	bcc .label
@@ -698,7 +698,7 @@ setffo:		;draw the 5 objects tied to icerink scrolling (pads ...). Called from s
 	adc.w #$000A
 	sta.b spry
 	phx
-	jsl.l addframe		; bank $8F: 93G addframe (sprframe at sprx/spry)
+	jsl.l addframe		; bank $8F (sprframe at sprx/spry)
 	plx
 	inc.b d0
 	inc.b d0
@@ -719,9 +719,9 @@ setffo:		;draw the 5 objects tied to icerink scrolling (pads ...). Called from s
 	jmp.w .top
 .rtl:
 	rtl
-ButtonLabelCharTable:		;93G ButtonLabelCharTable (video93_2): tile of the position letter in the pad label, by position 1-6
+ButtonLabelCharTable:		;tile of the position letter in the pad label, by position 1-6
 	db $0B,$0B,$0C,$0A,$0D,$0E		; tiles by position (index 1-6)
-uppads:		;update the gloves object and the 4 pad objects, and queue new pad labels. (93G video93_2)
+uppads:		;update the gloves object and the 4 pad objects, and queue new pad labels.
 		;   SNES: gloves object from glovecords, and the 4 pad objects from the PadControlBits nibbles ($E = stays, $F = hidden); padcont = label code (position <<
 		;   8 | rostnum)
 	ldy.w #$0008		; gloves (ffo 4): hidden unless glovecords

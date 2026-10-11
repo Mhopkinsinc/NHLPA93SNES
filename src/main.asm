@@ -1,9 +1,9 @@
-; main: 93G main93: the reset entry.
+; main: the reset entry.
 ; Bank $80. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $808000
 
-Start:		;93G main93 Start + hockey93_01 Begin (RAM clear). Reset vector. Native mode, stack $1FFF, D=0, DB=$00; clears DP/RAM, sets vbint/hbint, inits the sprite tile cache,
+Start:		; Start + Begin (RAM clear). Reset vector. Native mode, stack $1FFF, D=0, DB=$00; clears DP/RAM, sets vbint/hbint, inits the sprite tile cache
 		;   checks the ROM sum, inits hardware/sound, then the title screen
 	sei		; interrupts off
 	clc
@@ -54,7 +54,7 @@ Start:		;93G main93 Start + hockey93_01 Begin (RAM clear). Reset vector. Native 
 	stz.b tmp0		; sum = 0
 	ldx.w #$0000
 	ldy.w #$0002		; word at +2 of each pointer
-.sumloop:		;sum the word at [ptr]+2 for each long ptr in the table at $8FE67D (0-terminated, 4 bytes per entry)
+.sumloop:		;sum the word at [ptr]+2 for each long ptr in the table at FrameSetTable (0-terminated, 4 bytes per entry)
 	lda.l FrameSetTable,x
 	beq .validate
 	sta.b tmp1
@@ -69,7 +69,7 @@ Start:		;93G main93 Start + hockey93_01 Begin (RAM clear). Reset vector. Native 
 	inx
 	inx
 	bra .sumloop
-.validate:		;anti-tamper: hang forever unless the sum is $131D (93G ValidationRoutine role, inline here)
+.validate:		;anti-tamper: hang forever unless the sum is $131D
 	lda.b tmp0
 	cmp.w #$131D
 	bne .validate
@@ -86,6 +86,6 @@ Start:		;93G main93 Start + hockey93_01 Begin (RAM clear). Reset vector. Native 
 	stz.b sndlock
 	stz.b vbactive		; vblank handlers may run
 	jsl.l ResetPassWord		; bank $8F: $1610-$161F = $1E
-	jsl.l DefaultMenus		; bank $8F: 93G DefaultMenus (initial menu choices at $1600)
+	jsl.l DefaultMenus		; bank $8F (initial menu choices at $1600)
 	jsl.l Readjoy12
-	jml.l Opening		; bank $8B: on to the title screen (93G Opening)
+	jml.l Opening		; bank $8B: on to the title screen

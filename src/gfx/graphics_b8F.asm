@@ -1,8 +1,8 @@
-; gfx/graphics_b8F: 93G graphics93: packed screens, tiles, maps, palettes, fonts, pixel remap tables.
+; gfx/ packed screens, tiles, maps, palettes, fonts, pixel remap tables.
 ; Bank $8F. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8F8000
-BigFontMap:		;93G bigfont.map: big font tiles of each character: 76 top-row words, then the 76 bottom-row words (+$98); printbig uses BigFontIndex
+BigFontMap:		;bigfont.map: big font tiles of each character: 76 top-row words, then the 76 bottom-row words (+$98); printbig uses BigFontIndex
 	dw $0400,$0401,$0402,$0403,$0404,$0405,$0406,$0407
 	dw $0408,$0409,$0408,$0409,$040A,$040B,$040C,$040D
 	dw $040E,$040F,$0410,$0411,$0412,$0413,$0414,$0415
@@ -140,7 +140,7 @@ unusedEnergyBar:		;SNES: no caller found: a 4-character energy bar of d0 (8 leve
 	rtl
 
 org $8F824D
-EASNLogoMap:		;93G easn.map (small): the 7 x 2 EASN logo tile words for EASNLogo (unusedchars + n)
+EASNLogoMap:		;easn.map (small): the 7 x 2 EASN logo tile words for EASNLogo (unusedchars + n)
 	dw $0400,$0401,$0402,$0403,$0404,$0405,$0406
 	dw $0407,$0408,$0409,$040A,$040B,$040C,$040D
 BigFontIndex:		;SNES: big font index of each character $20-$5A (*2 into BigFontMap); negative = one column wide

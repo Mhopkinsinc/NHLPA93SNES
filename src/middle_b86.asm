@@ -1,9 +1,9 @@
-; middle_b86: 93G middle93_1/middle93_2: utilities (print, joypads, math, decompression).
+; Utilities (print, joypads, math, decompression).
 ; Bank $86. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $86FA3E
 DecompressGraphics:		;send tiles to vram. a2 = data: word count of tiles (0 = none, bit 15 set = compressed by DecompressBytecode), then the tiles. d4 = start char, returns d4 = end char +
-		;   1. Uses remap with callbackPtr when it is set, else DoDMApro (93G middle93_2)
+		;   1. Uses remap with callbackPtr when it is set, else DoDMApro
 		;   SNES: unpack the stream at [tmp0] to $7F0000 (output pointer tmp1+1..+3, copy distance tmp2+2). Control byte: $00-$1F copy n+1 bytes; $2x n+1 zeros; $3x n+3
 		;   times the next byte; $40-$7F, $8x, $9x, $Ax, $Bx copy from earlier output going up; $C0-$DF, $Ex, $Fx going down; $E0 $00 ends
 	stz.b tmp1+1		; output pointer = $7F0000
@@ -223,7 +223,7 @@ DecompressGraphics:		;send tiles to vram. a2 = data: word count of tiles (0 = no
 
 org $86FC53
 ProcessInputWithRepeat:		;nodiag, then key repeat on d1-d3 from Readjoy1/2. A change (d2) resets the delay to 15 frames; while the same buttons stay held, every 4 frames return d1 = held
-		;   buttons (d3). Called from Pausemode, menus and IntermissionLoop (93G middle93_1)
+		;   buttons (d3). Called from Pausemode, menus and IntermissionLoop
 		;   SNES: nodiag (nullrtl85), then key repeat: a change (d2) resets the delay to 15 frames; while the same buttons stay
 		;   held, every 4 frames d1 = held buttons (d3)
 	jsl.l nullrtl85

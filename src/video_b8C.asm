@@ -1,8 +1,8 @@
-; video_b8C: 93G video93_1/video93_2: vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
+; Vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
 ; Bank $8C. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8CFC1A
-checksso:		;do graphics for sso structure: arrows for the two players when they are off screen. (93G video93_2)
+checksso:		;do graphics for sso structure: arrows for the two players when they are off screen.
 		;   SNES: falls into .ca for player 2
 	lda.w #2		; player 1: ffo 1, sso 0, SPFarrow
 	sta.b a0
@@ -19,7 +19,7 @@ checksso:		;do graphics for sso structure: arrows for the two players when they 
 	jsl.l .ca
 .rtl:
 	rtl
-.ca:		;93G .ca: a0 = pad object (ffo index), a3 = sso, d3 = first arrow frame
+.ca:		;a0 = pad object (ffo index), a3 = sso, d3 = first arrow frame
 	ldy.b a0
 	lda.w ffoz,y
 	bmi .rtl
@@ -63,7 +63,7 @@ checksso:		;do graphics for sso structure: arrows for the two players when they 
 .rb:
 	lda.w #8
 	sta.b d2
-.zero:		;93G .0
+.zero:
 	lda.b d0
 	sec
 	sbc.w #-116		; left
@@ -76,7 +76,7 @@ checksso:		;do graphics for sso structure: arrows for the two players when they 
 .lb:
 	lda.w #4
 	tsb.b d2
-.one:		;93G .1
+.one:
 	lda.b d1
 	sec
 	sbc.w #100		; above
@@ -87,7 +87,7 @@ checksso:		;do graphics for sso structure: arrows for the two players when they 
 	bvc .two
 .ub:
 	inc.b d2
-.two:		;93G .2
+.two:
 	lda.b d1
 	sec
 	sbc.w #-100		; below
@@ -100,12 +100,12 @@ checksso:		;do graphics for sso structure: arrows for the two players when they 
 .db:
 	inc.b d2
 	inc.b d2
-.three:		;93G .3
+.three:
 	ldx.b d2		; on screen: no arrow
 	bne .off
 	jmp.w .rtl
 .off:
-	lda.l jdtab8F,x		; jdtab ($8F901A): direction 0-7
+	lda.l jdtab8F,x		; jdtab (jdtab8F): direction 0-7
 	and.w #$00FF
 	asl a
 	asl a
@@ -114,7 +114,7 @@ checksso:		;do graphics for sso structure: arrows for the two players when they 
 	lda.l .tab,x		; .tab: x spot (0 = keep), y spot, frame add, flip bits
 	beq .four
 	sta.b d0
-.four:		;93G .4
+.four:
 	lda.b d0
 	clc
 	adc.w #$0100
@@ -123,7 +123,7 @@ checksso:		;do graphics for sso structure: arrows for the two players when they 
 	lda.l .tab+2,x
 	beq .five
 	sta.b d1
-.five:		;93G .5
+.five:
 	lda.b d1
 	eor.w #$FFFF
 	inc a
@@ -153,8 +153,8 @@ checksso:		;do graphics for sso structure: arrows for the two players when they 
 	lda.w ssoattr,x
 	and.w #$1000
 	sta.b sprvflip
-	jml.l addframe		; addframe2, bank $8F: 93G addframe2
-.tab:		;93G checksso .tab: x spot, y spot, frame add, flip bits per direction (.xspot 116, .yspot 100)
+	jml.l addframe		; addframe2, bank $8F: addframe2
+.tab:		;x spot, y spot, frame add, flip bits per direction (.xspot 116, .yspot 100)
 	dw 0,100,0,$0000
 	dw 116,100,1,$0000
 	dw 116,0,2,$0000

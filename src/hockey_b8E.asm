@@ -1,8 +1,8 @@
-; hockey_b8E: 93G hockey93_01..hockey93_11: the game, screens, menus, password, playoffs.
+; The game, screens, menus, password, playoffs.
 ; Bank $8E. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8E8000
-Gameloop:		;main loop for game (93G hockey93_01)
+Gameloop:		;main loop for game
 		;   SNES: wait for a new frame, time steps from d7, clock, music cue timers, crowd cheers, DoGameFrame, demoread, goalie
 		;   puck-handling penalty, line change end, Pausemode
 	lda.b vcount		; wait for the next frame

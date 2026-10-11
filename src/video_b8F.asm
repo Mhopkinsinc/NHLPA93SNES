@@ -1,8 +1,8 @@
-; video_b8F: 93G video93_1/video93_2: vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
+; Vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
 ; Bank $8F. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8F82A4
-showclock:		;put the game clock in the dma list. Called from setvideo; returns unless dfclock is set. (93G video93_2)
+showclock:		;put the game clock in the dma list. Called from setvideo; returns unless dfclock is set.
 		;   SNES: the game clock m:ss at x 3, y $18 (horizontal rink: x $D, y 4; not when gsp = 4); not in replay
 	lda.w sflags
 	bit.w #sf2replay
@@ -66,7 +66,7 @@ showclock:		;put the game clock in the dma list. Called from setvideo; returns u
 	rtl
 
 org $8F87C0
-KillCrowd:		;silence the crowd noise (psg). Called from Reset, SetupPauseScreen, ... (93G video93_2)
+KillCrowd:		;silence the crowd noise (psg). Called from Reset, SetupPauseScreen, ...
 		;   SNES: crowd volume $88 (silence) to the sound driver
 	lda.w #$0088
 	pha
@@ -74,7 +74,7 @@ KillCrowd:		;silence the crowd noise (psg). Called from Reset, SetupPauseScreen,
 	rtl
 
 org $8F8ABC
-showzam:		;zamboni. Called from setvideo. (93G video93_1)
+showzam:		;zamboni. Called from setvideo.
 		;   SNES: role: on the horizontal rink the zamboni sprite ($22D) moves with the time since vcountmark
 	lda.b vcount
 	ldy.b vcount+2
@@ -141,7 +141,7 @@ QueueBackmapDMA:		;SNES: DMAList entry for backmap ($800 bytes) to vram $400
 	adc.w #dmasize
 	sta.b DMAListend
 	rtl
-ShowRinkRows:		;93G show_rink role: DMAList entries for the IceRinkMap rows that Vscroll brought on screen (Oldrow, vramrow)
+ShowRinkRows:		;show_rink role: DMAList entries for the IceRinkMap rows that Vscroll brought on screen (Oldrow, vramrow)
 	ldy.b DMAListend
 	lda.w Vscroll
 	clc
@@ -394,7 +394,7 @@ RemapTiles:		;SNES: d0 4bpp tiles at [a0] to vram with each pixel value remapped
 	rtl
 
 org $8FEC68
-addframe:		;a3 = cords.l frame/oldframe VRsize VRchar. Project the object with find3d, then addframe2. (93G video93_2)
+addframe:		;a3 = cords.l frame/oldframe VRsize VRchar. Project the object with find3d, then addframe2.
 		;   SNES: sprite frame sprframe at sprx/spry: find its frame set in FrameSetTable (sprsetofs), then DrawFrame; frames $293 and up are drawn by addframe_hi
 	lda.b sprframe
 	cmp.w #$0293

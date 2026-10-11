@@ -1,9 +1,9 @@
-; penalty_b8D: 93G penalty93_1/penalty93_2: penalties, scoreboard, ticker, intermission.
+; Penalties, scoreboard, ticker, intermission.
 ; Bank $8D. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8D82F0
 GetLowestPen:		;92 name; 93 body differs (92 built a release-order PlList). a2 = team on the power play, a3 = shorthanded team. Return d0 = power play time left from the penalty box times.
-		;   Called from updatepwrplay (93G penalty93_1)
+		;   Called from updatepwrplay
 		;   SNES: d0 = power play time left from the penalty box times
 	stz.b d0
 	stz.b d3
@@ -90,8 +90,8 @@ GetLowestPen:		;92 name; 93 body differs (92 built a release-order PlList). a2 =
 	rtl
 
 org $8D8549
-EASNLogo:		;Draw easn.map at x 1, y $19 on the vertical ice rink if no power play. Falls into DrawEASNMap (93G penalty93_2)
-		;   SNES: the EASN logo (7 x 2 words, $8F824D) at x 1, y $19 of the rink map unless a power play is on
+EASNLogo:		;Draw easn.map at x 1, y $19 on the vertical ice rink if no power play. Falls into DrawEASNMap
+		;   SNES: the EASN logo (7 x 2 words, EASNLogoMap) at x 1, y $19 of the rink map unless a power play is on
 	lda.w sflags
 	bit.w #sf2pwrplay
 	bne .rtl
@@ -139,7 +139,7 @@ EASNLogo:		;Draw easn.map at x 1, y $19 on the vertical ice rink if no power pla
 	rtl
 
 org $8DF888
-StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied game is replayed (beq StartHL2) (93G penalty93_2)
+StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied game is replayed (beq StartHL2)
 		;   SNES: play the highlight of playoff game a0: "Highlight from game:", then 1-3 minutes of that game with its score; Start
 		;   or A ends it, a tie gets a random winner
 	lda.w sflags3		; Start pressed before: no more highlights
@@ -150,7 +150,7 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	jsl.l .sv		; save the game state
 	lda.b d1
 	sta.b d3
-	jsl.l NewTicker3		; 93G NewTicker3: the score of the highlight game, bank $8F: 93G NewTicker3
+	jsl.l NewTicker3		; the score of the highlight game, bank $8F
 	lda.w sflags3
 	bit.w #sf3sbut
 	beq .show
@@ -166,7 +166,7 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	sta.b d0
 	lda.w #3
 	sta.b d1
-	jsl.l Framer		; bank $8F: 93G Framer (d0 x d1)
+	jsl.l Framer		; bank $8F (d0 x d1)
 	inc.w printx
 	dec.w printy
 	dec.w printy
@@ -175,13 +175,13 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	db "Highlight from game:"
 	lda.w #180		; 180 frames, Start skips
 	sta.b d0
-	jsl.l waitxsr		; bank $8F: wait d0 frames or a button (92G waitxsr)
+	jsl.l waitxsr		; bank $8F: wait d0 frames or a button
 	lda.b d1
 	bit.w #JOYSTART
 	beq .play
 	jmp.w .nhl1
 .play:
-	jsl.l forceblack		; bank $8F: 93G forceblack
+	jsl.l forceblack		; bank $8F
 	jsl.l sndqreset
 	lda.w sndbank
 	cmp.w #$0001
@@ -314,7 +314,7 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	pha
 	lda.b vcount
 	sta.w oldvcount
-.zero:		;92G .0: wait for the next frame
+.zero:		;wait for the next frame
 	lda.b vcount		; the frame time steps as the game loop
 	cmp.w oldvcount
 	beq .zero
@@ -375,7 +375,7 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	sbc.b d7
 	pha
 	bmi .endhl
-.one:		;92G .1
+.one:
 	jsl.l Readjoy12		; Start or A ends it
 	lda.b d1
 	bit.w #JOYSTART|JOYA
@@ -418,7 +418,7 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	cpx.w #$0004
 	bne .pusha4
 	ldx.b xsave
-	jsl.l KillCrowd		; $8F87C0, bank $8F
+	jsl.l KillCrowd		; KillCrowd, bank $8F
 	jsl.l sndqreset
 	stx.b xsave
 	ldx.w #$0002
@@ -448,10 +448,10 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	beq .stats
 	jmp.w .nhl1
 .stats:
-	jsl.l forceblack		; bank $8F: 93G forceblack
+	jsl.l forceblack		; bank $8F
 	jsl.l .lo		; restore the game state
 	jsl.l setplayercolors
-	jsl.l SetHor		; bank $8F: 93G SetHor
+	jsl.l SetHor		; bank $8F
 	jsl.l setvideo
 	jsl.l printz		; DisplayStats box
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
@@ -460,9 +460,9 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	sta.b d0
 	lda.w #7
 	sta.b d1
-	jsl.l Framer		; bank $8F: 93G Framer (d0 x d1)
+	jsl.l Framer		; bank $8F (d0 x d1)
 	jsl.l printscores1
-	jsl.l Pmenu		; bank $8F: 93G DisplayStats
+	jsl.l Pmenu		; bank $8F: DisplayStats
 	stx.b xsave
 	ldx.w #$001A
 .popa5:
@@ -514,10 +514,10 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	sta.w gsper,y
 	lda.b d1
 	sta.b d3
-	jsl.l NewTicker3		; bank $8F: 93G NewTicker3
+	jsl.l NewTicker3		; bank $8F
 	lda.w #180
 	sta.b d0
-	jsl.l waitxsr		; bank $8F: wait d0 frames or a button (92G waitxsr)
+	jsl.l waitxsr		; bank $8F: wait d0 frames or a button
 	lda.b d1
 	bit.w #JOYSTART
 	beq .exit
@@ -562,7 +562,7 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	sta.w tmtouch2,y
 	sta.w tmtouch3,y
 	rtl
-.ranres:		;92G .ranres: a tie gets a random one-goal winner; gsper 5 (final)
+.ranres:		;a tie gets a random one-goal winner; gsper 5 (final)
 	ldy.b a0
 	lda.w gss1,y
 	cmp.w gss2,y
@@ -582,7 +582,7 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	lda.w #5
 	sta.w gsper,y
 	rtl
-.sv:		;92G .sv: save the game state (gmode-1 .. ScoreSumbytes) to hlsavebuf
+.sv:		;save the game state (gmode-1 .. ScoreSumbytes) to hlsavebuf
 	ldx.w #$0000
 .sv1:
 	lda.w gmode-1,x
@@ -598,7 +598,7 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	stz.w tmgoalie
 	stz.w tmgoalie+2
 	rtl
-.lo:		;92G .lo: restore the game state from hlsavebuf
+.lo:		;restore the game state from hlsavebuf
 	ldx.w #$0000
 .lo1:
 	lda.l hlsavebuf,x
@@ -612,7 +612,7 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	inx
 	sta.w ScoreSumbytes
 	rtl
-.postab:		;92G .postab: x, y start spot by position (0-5 attacking up, 6-11 down)
+.postab:		;x, y start spot by position (0-5 attacking up, 6-11 down)
 	dw 0,-240
 	dw -70,-140
 	dw 20,-110

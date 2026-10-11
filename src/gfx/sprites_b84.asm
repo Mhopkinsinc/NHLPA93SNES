@@ -2,7 +2,7 @@
 ; Bank $84. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $848000
-SpriteSet9:		;frame set 9 (SNES sprite frames; the 93G frames come from Sprites.anim)
+SpriteSet9:		;frame set 9 (SNES sprite frames; the frames come from Sprites.anim)
 	dw 56		; frames
 	dw 365		; pieces
 	dw 640		; tiles
@@ -18,7 +18,7 @@ SpriteSet9:		;frame set 9 (SNES sprite frames; the 93G frames come from Sprites.
 	dw 310,318,326,332,338,343,351,356
 	dw 365
 .pieces:		;x, y, tile, attributes per piece
-	incbin "../../data/Sprites/set09.pieces"		; $84807C-$84862F
+	incbin "../../data/Sprites/set09.pieces"
 	assert .tiles-.pieces == 4*365
 .tiles:		;640 4bpp tiles (32 bytes each)
 	incbin "../../data/Sprites/set09.chr"

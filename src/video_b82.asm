@@ -1,4 +1,4 @@
-; video_b82: 93G video93_1/video93_2: vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
+; Vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
 ; Bank $82. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $82FCCD
@@ -10,8 +10,8 @@ marktextlo:		;SNES: textdirtylo = min(textdirtylo, A)
 	rtl
 
 org $82FD17
-addframe_hi:		;SNES addframe path for sprframe >= $293: find the frame set in the table at $8FE67D (sprframe -= set size, sprsetofs += set offset) and draw it ($85FBB9); lower
-		;   frames go to $87D1FE
+addframe_hi:		;SNES addframe path for sprframe >= $293: find the frame set in the table at FrameSetTable (sprframe -= set size, sprsetofs += set offset) and draw it (DrawFrameHi); lower
+		;   frames go to addframe_end
 	lda.b sprframe
 	cmp.w #$0293
 	bcs .hi
@@ -50,14 +50,14 @@ revplayeracc:		;SNES: playeracc with the direction d2 turned 180 degrees for a r
 	eor.w #$0004
 	sta.b d2
 .acc:
-	jml.l playeracc		; bank $8F: 93G playeracc
+	jml.l playeracc		; bank $8F
 marktexthi:		;SNES: textdirtyhi = max(textdirtyhi, A)
 	cmp.b textdirtyhi
 	bcc .rtl
 	sta.b textdirtyhi
 .rtl:
 	rtl
-ClearTeamStats:		;SNES: clear the team stats $13B2-$157D except tmgoalie, empty both penalty box lists, then on at $86FC29
+ClearTeamStats:		;SNES: clear the team stats $13B2-$157D except tmgoalie, empty both penalty box lists, then on at setteams
 	lda.w tmgoalie		; keep tmgoalie (2 words)
 	pha
 	lda.w tmgoalie+2

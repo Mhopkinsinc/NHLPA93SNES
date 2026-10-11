@@ -13,7 +13,7 @@ SpriteSet8:		;frame set 8 (arrows, pads, puck and goal): frames 384-405
 	dw 40,42,43,44,45,46,47,48
 	dw 49,50,51,52,53,63,75
 .pieces:		;x, y, tile, attributes per piece
-	incbin "../../data/Sprites/set08.pieces"		; $888A47-$888B72
+	incbin "../../data/Sprites/set08.pieces"
 	assert .tiles-.pieces == 4*75
 .tiles:		;128 4bpp tiles (32 bytes each)
 	incbin "../../data/Sprites/set08.chr"
@@ -33,7 +33,7 @@ SpriteSet7:		;frame set 7 (gloves, fight, injury and penalty box): frames 353-38
 	dw 98,106,111,115,120,126,130,135
 	dw 141,150,159,167,174,181,186,191
 .pieces:		;x, y, tile, attributes per piece
-	incbin "../../data/Sprites/set07.pieces"		; $88BCA0-$88BF9B
+	incbin "../../data/Sprites/set07.pieces"
 	assert .tiles-.pieces == 4*191
 .tiles:		;384 4bpp tiles (32 bytes each)
 	incbin "../../data/Sprites/set07.chr"

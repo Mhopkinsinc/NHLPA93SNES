@@ -16,7 +16,7 @@ SpriteSet2:		;frame set 2 (stop and skate backwards): frames 145-184
 	dw 171,176,179,184,189,194,199,204
 	dw 209
 .pieces:		;x, y, tile, attributes per piece
-	incbin "../../data/Sprites/set02.pieces"		; $87805C-$87839F
+	incbin "../../data/Sprites/set02.pieces"
 	assert .tiles-.pieces == 4*209
 .tiles:		;512 4bpp tiles (32 bytes each)
 	incbin "../../data/Sprites/set02.chr"
@@ -35,7 +35,7 @@ SpriteSet6:		;frame set 6 (duck and hold): frames 337-352
 	dw 61,65,71,80,85,91,96,103
 	dw 110
 .pieces:		;x, y, tile, attributes per piece
-	incbin "../../data/Sprites/set06.pieces"		; $87D231-$87D3E8
+	incbin "../../data/Sprites/set06.pieces"
 	assert .tiles-.pieces == 4*110
 .tiles:		;256 4bpp tiles (32 bytes each)
 	incbin "../../data/Sprites/set06.chr"

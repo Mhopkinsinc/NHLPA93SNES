@@ -18,7 +18,7 @@ SpriteSet10:		;frame set 10 (frames 462-517): frames 462-517
 	dw 339,345,349,355,360,367,373,380
 	dw 388
 .pieces:		;x, y, tile, attributes per piece
-	incbin "../../data/Sprites/set10.pieces"		; $8D88B8-$8D8EC7
+	incbin "../../data/Sprites/set10.pieces"
 	assert .tiles-.pieces == 4*388
 .tiles:		;768 4bpp tiles (32 bytes each)
 	incbin "../../data/Sprites/set10.chr"

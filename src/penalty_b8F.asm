@@ -1,8 +1,8 @@
-; penalty_b8F: 93G penalty93_1/penalty93_2: penalties, scoreboard, ticker, intermission.
+; Penalties, scoreboard, ticker, intermission.
 ; Bank $8F. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8F83A7
-PushRef:		;tell vblank what to display. d0 = ref frame, $40 clears the window. 93: the horizontal ref uses RefMap2 (93G penalty93_1)
+PushRef:		;tell vblank what to display. d0 = ref frame, $40 clears the window. 93: the horizontal ref uses RefMap2
 		;   SNES: ref window frame d0 (RefsMap or RefsMapHor, 8 x 7 words) into textmap; d0 $40 erases the window and prefmes
 	phx
 	stx.b xsave
@@ -139,7 +139,7 @@ PushRef:		;tell vblank what to display. d0 = ref frame, $40 clears the window. 9
 	ldx.b xsave
 	plx
 	rtl
-SetHor:		;switch graphics to horizontal ice rink graphics mode. 93 does not remap the fonts (93G penalty93_1)
+SetHor:		;switch graphics to horizontal ice rink graphics mode. 93 does not remap the fonts
 		;   SNES: switch to the horizontal rink (scoreboard screen): half puck speed, forceblack, sfhormode, StatsReport
 	stx.b xsave
 	ldx.w #$0000
@@ -204,7 +204,7 @@ SetHor:		;switch graphics to horizontal ice rink graphics mode. 93 does not rema
 	ldx.b xsave
 	ldx.b a3
 	rtl
-USBoard:		;update score board, including the players in the penalty box and their time remaining. Called from InProgress and SetHor (93G penalty93_2)
+USBoard:		;update score board, including the players in the penalty box and their time remaining. Called from InProgress and SetHor
 		;   SNES: printscores1, then each team's penalty box players and their time (.dispen)
 	stx.b xsave
 	ldx.w #$0000
@@ -259,7 +259,7 @@ USBoard:		;update score board, including the players in the penalty box and thei
 	ldx.b a3
 .rtl:
 	rtl
-.dispen:		;93G .dispen: penalty box list of team a2: timed players first
+.dispen:		;penalty box list of team a2: timed players first
 	lda.b a2
 	beq .noa2
 	lda.w #$001A
@@ -312,7 +312,7 @@ USBoard:		;update score board, including the players in the penalty box and thei
 	jsl.l pplpen
 	bra .loop2
 pplpen:		;Print one penalty box line: player number and time remaining. a2 = team, d0 = roster offset (player*2). Only rows up to y $A are printed; printy += 1. Called from USBoard .dispen
-		;   (93G penalty93_2)
+
 		;   SNES: player number and time left (rows up to y $A)
 	lda.w printy
 	cmp.w #$000B
@@ -376,7 +376,7 @@ pplpen:		;Print one penalty box line: player number and time remaining. a2 = tea
 
 org $8F86B6
 Intermission:		;end of period junk (zamboni/stats). 93 opens the pause menu screen (item list by period, +5 in playoffs), shows the ticker scores of the other games, then the highlights.
-		;   Start on either pad cuts it short. Called from PeriodOver (93G penalty93_2)
+		;   Start on either pad cuts it short. Called from PeriodOver
 		;   SNES: the pause menu screen with the ticker scores of the other games (IntermissionTick), then the highlights
 	jsl.l sndqreset
 	jsl.l SetupTeamForIntermission
@@ -501,13 +501,13 @@ TickerNext:		;SNES: next ticker game (restart at the last game of the round), Ne
 	jmp.w NewTicker2
 
 org $8F8858
-NewTicker:		;show the next ticker score once the clock is at 8:00 or less. d3 = -1 if not. Called from chkprogress. Falls into NewTicker2 (93G penalty93_2)
+NewTicker:		;show the next ticker score once the clock is at 8:00 or less. d3 = -1 if not. Called from chkprogress. Falls into NewTicker2
 		;   SNES: once the clock is at 8:00 or less, the next ticker score
 	lda.w gameclock
 	cmp.w #$01E1
 	bcc NewTicker2
 	rtl
-NewTicker2:		;goto next ticker. Return d3 = game, or neg if none left (93 has no OptPlayMode check). Falls into CheckGameTickerStatus (93G penalty93_2)
+NewTicker2:		;goto next ticker. Return d3 = game, or neg if none left (93 has no OptPlayMode check). Falls into CheckGameTickerStatus
 		;   SNES: d3 = next ticker game (not the user game, no highlight coming, series not over)
 	lda.w OptPlayMode
 	beq .rtl
@@ -521,7 +521,7 @@ NewTicker2:		;goto next ticker. Return d3 = game, or neg if none left (93 has no
 	bra NewTicker3
 .rtl:
 	rtl
-NewTicker3:		;display ticker score for game d3 (a0 = gstruct entry), skip if d3 is negative. Called from chkprogress, Intermission and StartHL2 (93G penalty93_2)
+NewTicker3:		;display ticker score for game d3 (a0 = gstruct entry), skip if d3 is negative. Called from chkprogress, Intermission and StartHL2
 		;   SNES: the ticker box for game d3: GameLabels round name, period, both teams with scores (TickerTeam)
 	lda.b d3
 	asl a
@@ -635,7 +635,7 @@ TickerTeam:		;SNES: ticker line: team d0 name (TeamList record) and score d1, on
 	sta.b d0
 	jsl.l pushnumber
 	jml.l print
-GameLabels:		;SNES GameLabels (93G GameLabels): the ticker round names by playoff game (EASN Hockey Night for the regular season)
+GameLabels:		;SNES GameLabels (GameLabels): the ticker round names by playoff game (EASN Hockey Night for the regular season)
 	dw 19
 	db "EASN Hockey Night"
 	dw 18
@@ -670,7 +670,7 @@ GameLabels:		;SNES GameLabels (93G GameLabels): the ticker round names by playof
 	db "EA Cup final"
 
 org $8F8C1B
-DoHiLights:		;hilites logic: search for hilite game and show hilite (93 has no OptPlayMode check). Called from Intermission (93G penalty93_2)
+DoHiLights:		;hilites logic: search for hilite game and show hilite (93 has no OptPlayMode check). Called from Intermission
 		;   SNES: in the playoffs play the highlight of each game of the round that asks for one (gsfhl, StartHL2)
 	lda.w OptPlayMode
 	beq .rtl
@@ -697,7 +697,7 @@ DoHiLights:		;hilites logic: search for hilite game and show hilite (93 has no O
 	rtl
 
 org $8F8C72
-updatepentime:		;update the time remaining on all penalized players, once a second. 93: sets sflags3 bit 6 on that tick. Falls into ProcessPenaltyList for team 2 (93G penalty93_1)
+updatepentime:		;update the time remaining on all penalized players, once a second. 93: sets sflags3 bit 6 on that tick. Falls into ProcessPenaltyList for team 2
 		;   SNES: once a second count down the penalty box times of both teams; release players whose time is up
 	lda.w #$0020
 	trb.w sflags3
@@ -819,7 +819,7 @@ updatepentime:		;update the time remaining on all penalized players, once a seco
 	lda.w #$0000
 	sta.w tmpdst,y
 	jmp.w RemovePlayerFromList
-linebar:		;draw the energy bar of line d0 for team a2 at printx/printy (bitmap from the bar map, 16 steps). Called from SetLCmode2 (93G penalty93_2)
+linebar:		;draw the energy bar of line d0 for team a2 at printx/printy (bitmap from the bar map, 16 steps). Called from SetLCmode2
 		;   SNES: energy bar of line d0 (getlinee) as 5 small font characters
 	jsl.l getlinee
 	lda.w printa
@@ -862,7 +862,7 @@ linebar:		;draw the energy bar of line d0 for team a2 at printx/printy (bitmap f
 	rtl
 
 org $8F902A
-InitScores:		;initialize other games scores/period in playoffs (93 has no OptPlayMode check). Called from StartGame (93G penalty93_2)
+InitScores:		;initialize other games scores/period in playoffs (93 has no OptPlayMode check). Called from StartGame
 		;   SNES: playoff rounds 0-1: random scores so far for the other games of the round (SetScore 1-3 times)
 	lda.w OptPlayMode
 	beq .rtl
@@ -901,7 +901,7 @@ InitScores:		;initialize other games scores/period in playoffs (93 has no OptPla
 	rtl
 
 org $8FD68C
-PrintStringFromList:		;print string d0 of the String list a1 with printsmall (93G penalty93_2)
+PrintStringFromList:		;print string d0 of the String list a1 with printsmall
 		;   SNES: print string d0 of the list [a1]
 	lda.b d0
 	bne .d0
@@ -915,7 +915,7 @@ PrintStringFromList:		;print string d0 of the String list a1 with printsmall (93
 	bra PrintStringFromList
 
 org $8FD793
-AdvanceStringPtr:		;92 Fprint without the print. Return a1 = string d0 of the String list a1 (93G penalty93_2)
+AdvanceStringPtr:		;Return a1 = string d0 of the String list a1
 		;   SNES: a1 = string d0 of the list [a1]
 	bra .join
 .loop:
@@ -1029,7 +1029,7 @@ PositionNames:		;SNES: position names LD, RD, LW, C, RW
 	db "C"
 	dw 4
 	db "RW"
-releasepl:		;player's penalty time is up so let him out (if appropriate). a2 = team, d0 = player*2. Called from ProcessPenaltyList (93G penalty93_1)
+releasepl:		;player's penalty time is up so let him out (if appropriate). a2 = team, d0 = player*2. Called from ProcessPenaltyList
 		;   SNES: player d0 leaves the penalty box: the next free object of team a2 comes on (tmap+1, priolist position), setplayer
 	stx.b xsave
 	ldx.w #$0000
@@ -1111,8 +1111,8 @@ releasepl:		;player's penalty time is up so let him out (if appropriate). a2 = t
 	rtl
 
 org $8FDAFC
-RemovePlayerFromList:		;remove the entry before a0 from a penalty box list by shifting the rest down (list ends with a negative byte). Return a0 = removed slot. Called from PenGoalStuff,
-		;   ProcessPenaltyList (93G penalty93_1)
+RemovePlayerFromList:		;remove the entry before a0 from a penalty box list by shifting the rest down (list ends with a negative byte). Return a0 = removed slot. Called from PenGoalStuff
+		;   ProcessPenaltyList
 		;   SNES: remove entry a0 from the penalty box list (tmboxlist) by shifting the rest down
 	lda.w #$FFFF
 	sta.b d2
@@ -1132,7 +1132,7 @@ RemovePlayerFromList:		;remove the entry before a0 from a penalty box list by sh
 	rtl
 
 org $8FDBF9
-loadTeamStruct:		;return a2 = team struct of player a3, a1 = the other team's struct. Called from ChkShotStat and updateplayers (93G penalty93_2)
+loadTeamStruct:		;return a2 = team struct of player a3, a1 = the other team's struct. Called from ChkShotStat and updateplayers
 		;   SNES: a2 = team of player X, a1 = the other team
 	stz.b a2
 	lda.w #$0002
@@ -1146,8 +1146,8 @@ loadTeamStruct:		;return a2 = team struct of player a3, a1 = the other team's st
 	rtl
 
 org $8FE00A
-SetupTeamForIntermission:		;reset the bench, then for each team refill energy and pick the starting line: 92 Pw1 (3) for the team with more players on ice, PK1 (5) for the team with fewer,
-		;   else 0. Called from Intermission (93G penalty93_2)
+SetupTeamForIntermission:		;reset the bench, then for each team refill energy and pick the starting line: Pw1 (3) for the team with more players on ice, PK1 (5) for the team with fewer
+		;   else 0. Called from Intermission
 		;   SNES: ResetBench; both teams re-energized, line 0 (3/5 when a team is a man short or up)
 	jsl.l ResetBench
 	stz.b a2
@@ -1179,7 +1179,7 @@ SetupTeamForIntermission:		;reset the bench, then for each team refill energy an
 	rtl
 
 org $8FE2F9
-ClearPenaltyBuffer:		;clear PenBuf (92 inlined this in PenGoalStuff). Also called from clockcont (93G penalty93_1)
+ClearPenaltyBuffer:		;clear PenBuf (92 inlined this in PenGoalStuff). Also called from clockcont
 		;   SNES: clear the 32 words of the penalty list (PenBuf)
 	lda.w #$001F
 	sta.b d0
@@ -1197,7 +1197,7 @@ ClearPenaltyBuffer:		;clear PenBuf (92 inlined this in PenGoalStuff). Also calle
 	rtl
 
 org $8FF58D
-StatsReport:		;92G StatsReport role: clear the text screen, send 28 rows of HorRinkMap (32 columns each) to vram $0418 and, 8 columns
+StatsReport:		;StatsReport role: clear the text screen, send 28 rows of HorRinkMap (32 columns each) to vram $0418 and, 8 columns
 		;   in, to $0800, then USBoard
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
@@ -1255,7 +1255,7 @@ StatsReport:		;92G StatsReport role: clear the text screen, send 28 rows of HorR
 	jmp.w USBoard
 
 org $8FF63D
-prefmes:		;print message for penalty d0 (negative clears it). Vertical mode: framed under the ref. Horizontal mode: one centered line on row $B (93G penalty93_1)
+prefmes:		;print message for penalty d0 (negative clears it). Vertical mode: framed under the ref. Horizontal mode: one centered line on row $B
 		;   SNES: print the message of penalty d0 (negative clears it). Vertical: framed under the ref at y $A, centred by its length; horizontal (sfhormode):
 		;   ClearPenaltyMessage, one centred line at x $11, y $B. Saves d0-d2, a1
 	stx.b xsave

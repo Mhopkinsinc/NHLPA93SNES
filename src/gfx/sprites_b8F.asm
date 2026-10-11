@@ -17,7 +17,7 @@ SpriteSet1:		;frame set 1 (SPFswing): frames 97-144
 	dw 215,224,232,238,243,248,252,255
 	dw 258
 .pieces:		;x, y, tile, attributes per piece
-	incbin "../../data/Sprites/set01.pieces"		; $8F90F1-$8F94F8
+	incbin "../../data/Sprites/set01.pieces"
 	assert .tiles-.pieces == 4*258
 .tiles:		;512 4bpp tiles (32 bytes each)
 	incbin "../../data/Sprites/set01.chr"

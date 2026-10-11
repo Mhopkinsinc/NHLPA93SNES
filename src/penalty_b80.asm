@@ -1,8 +1,8 @@
-; penalty_b80: 93G penalty93_1/penalty93_2: penalties, scoreboard, ticker, intermission.
+; Penalties, scoreboard, ticker, intermission.
 ; Bank $80. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $80A828
-ClrHor:		;revert the graphics back to vertical ice rink mode. 93 does not remap the fonts (93G penalty93_1)
+ClrHor:		;revert the graphics back to vertical ice rink mode. 93 does not remap the fonts
 		;   SNES: revert to the vertical ice rink: clear sfhormode, Oldrow, SprSort, clear the text map, printscores1
 	stx.b xsave
 	ldx.w #$0000
@@ -33,7 +33,7 @@ ClrHor:		;revert the graphics back to vertical ice rink mode. 93 does not remap 
 	stz.b textdirtylo		; whole text map dirty
 	lda.w #$03FF
 	sta.b textdirtyhi
-	jsl.l printscores1		; bank $89: 93G printscores1
+	jsl.l printscores1		; bank $89
 .pop:
 	stx.b xsave
 	ldx.w #$003A
@@ -48,7 +48,7 @@ ClrHor:		;revert the graphics back to vertical ice rink mode. 93 does not remap 
 	rtl
 
 org $80B84C
-AvgCline:		;return d0 = average energy of current line on team a2 (93G penalty93_2)
+AvgCline:		;return d0 = average energy of current line on team a2
 		;   SNES: d0 = average energy of the current line of team a2
 	stx.b xsave
 	ldx.w #$0000
@@ -130,7 +130,7 @@ AvgCline:		;return d0 = average energy of current line on team a2 (93G penalty93
 	rtl
 
 org $80B9F4
-updatepwrplay:		;show graphic and time remaining for power plays. 93: plays song $33 at the start of a home power play, then prints the time and the team on the power play (93G penalty93_1)
+updatepwrplay:		;show graphic and time remaining for power plays. 93: plays song $33 at the start of a home power play, then prints the time and the team on the power play
 		;   SNES: show the power play box: time left and the team on the power play
 	stz.b a2		; a2 = home, a3 = away
 	lda.w #$0002
@@ -171,8 +171,8 @@ updatepwrplay:		;show graphic and time remaining for power plays. 93: plays song
 	jsl.l printz
 	dw $0012		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$01,$19,"   ",$16,$17,$18,$19,$BF,$01,$1A,"   "
-	jsl.l GetLowestPen		; bank $8D: 93G GetLowestPen
-	jsl.l PushTime		; bank $8F: 93G PushTime
+	jsl.l GetLowestPen		; bank $8D
+	jsl.l PushTime		; bank $8F
 	jsl.l print
 	ldx.b a3
 	lda.w tmdata,x		; team name (bank $83)
@@ -198,17 +198,17 @@ updatepwrplay:		;show graphic and time remaining for power plays. 93: plays song
 	sta.b a1
 	lda.b a0+2
 	sta.b a1+2
-	jsl.l appstring		; appstring, bank $8F: 93G appstring
+	jsl.l appstring		; appstring, bank $8F
 	lda.b a3
 	sta.b a1
 	lda.b a3+2
 	sta.b a1+2
 	jmp.w print
-updatepwrplay_clr:		;93G updatepwrplay .clrpwrplay: power play over, EASN logo back
+updatepwrplay_clr:		;power play over, EASN logo back
 	lda.w #sf2pwrplay
 	trb.w sflags
 	beq .rtl
-	jml.l EASNLogo		; EASNLogo, bank $8D: 93G EASNLogo
+	jml.l EASNLogo		; EASNLogo, bank $8D
 .rtl:
 	rtl
 printteamname:		;print the team name of team d3 (0 home) at printx/printy, then printy += 2
@@ -239,7 +239,7 @@ printteamname:		;print the team name of team d3 (0 home) at printx/printy, then 
 	rtl
 
 org $80C18F
-AddPenalty:		;93G AddPenalty (penalty93_1): add penalty d0 (PenaltyList offset) for player X. Ignored while the clock is stopped, when penalties are off, or offsides when offsides
+AddPenalty:		;add penalty d0 (PenaltyList offset) for player X. Ignored while the clock is stopped, when penalties are off, or offsides when offsides
 		;   are off. Falls into AddPenalty2
 	lda.w gmclock		; clock stopped
 	bne .rtl
@@ -256,7 +256,7 @@ AddPenalty:		;93G AddPenalty (penalty93_1): add penalty d0 (PenaltyList offset) 
 	bne AddPenalty2
 .rtl:
 	rtl
-AddPenalty2:		;93G AddPenalty2 (penalty93_1): forced penalties like face off and game over. d0 = penalty, X = player or a player of the penalized team
+AddPenalty2:		;forced penalties like face off and game over. d0 = penalty, X = player or a player of the penalized team
 	lda.w sfhormode		; horizontal rink: none
 	beq .go
 	jmp.w .rtl
@@ -283,7 +283,7 @@ AddPenalty2:		;93G AddPenalty2 (penalty93_1): forced penalties like face off and
 	ldx.b xsave
 	lda.b d0
 	sec
-	sbc.w #$000E		; goal (93G $E) and up
+	sbc.w #$000E		; goal (93 $E) and up
 	bmi .v1
 	bvc .snd
 	bra .nosnd
@@ -370,7 +370,7 @@ AddPenalty2:		;93G AddPenalty2 (penalty93_1): forced penalties like face off and
 	rtl
 
 org $80D12E
-ChkShotStat:		;add to shot stat if a shot was taken. 93 also raises the crowd and counts the shot for the shooter and against the other team's goalie (93G penalty93_2)
+ChkShotStat:		;add to shot stat if a shot was taken. 93 also raises the crowd and counts the shot for the shooter and against the other team's goalie
 		;   SNES: if a shot was taken (sf2shot, cleared here), add 1 to the shooting team tmshots
 	lda.w #sf2shot
 	trb.w sflags
@@ -408,7 +408,7 @@ ChkShotStat:		;add to shot stat if a shot was taken. 93 also raises the crowd an
 	ldx.b xsave
 .rtl:
 	rtl
-addteamstat:		;add d0 to the team word stat at d1 (+2 for team 2, pfteam of X). 93G inline in ChkShotStat
+addteamstat:		;add d0 to the team word stat at d1 (+2 for team 2, pfteam of X). inline in ChkShotStat
 	ldy.b d1		; pfteam: team 2 word
 	lda.w pfteam,x
 	beq .add
@@ -423,7 +423,7 @@ addteamstat:		;add d0 to the team word stat at d1 (+2 for team 2, pfteam of X). 
 
 org $80D329
 PenGoalStuff:		;do this stuff after a goal. a1 = scored on team, a2 = scoring team. If the scoring team had more players on ice, the first scored on player in the box without a coincidental
-		;   penalty is released (93G penalty93_1)
+		;   penalty is released
 		;   SNES: a1 = scored on team, a2 = scoring team. If the scoring team had more players on the ice, release the first scored on
 		;   player in the box without a coincidental penalty
 	stx.b xsave
@@ -446,7 +446,7 @@ PenGoalStuff:		;do this stuff after a goal. a1 = scored on team, a2 = scoring te
 	cpx.w #$0004
 	bne .pusha
 	ldx.b xsave
-	jsl.l ClearPenaltyBuffer		; ClearPenaltyBuffer, bank $8F: 93G ClearPenaltyBuffer
+	jsl.l ClearPenaltyBuffer		; ClearPenaltyBuffer, bank $8F
 	ldy.b a2
 	lda.w tmap,y		; tmap(a2) - tmap(a1) > 0?
 	ldy.b a1
@@ -484,7 +484,7 @@ PenGoalStuff:		;do this stuff after a goal. a1 = scored on team, a2 = scoring te
 	bne .loop
 	lda.w #$0000		; out of the box, one more on the ice, power play goal
 	sta.w tmpdst,y
-	jsl.l RemovePlayerFromList		; bank $8F: 93G RemovePlayerFromList
+	jsl.l RemovePlayerFromList		; bank $8F
 	ldy.b a1
 	lda.w tmap,y
 	inc a
@@ -518,13 +518,13 @@ PenGoalStuff:		;do this stuff after a goal. a1 = scored on team, a2 = scoring te
 	rtl
 
 org $80E6C7
-PenaltyManager:		;called periodically. d7 = elapsed time since last call (93G penalty93_1)
+PenaltyManager:		;called periodically. d7 = elapsed time since last call
 		;   SNES: updatepentime, checkfornewpen, chkprogress, UpdatePA
-	jsl.l updatepentime		; updatepentime, checkfornewpen, chkprogress, then UpdatePA, bank $8F: 93G updatepentime
+	jsl.l updatepentime		; updatepentime, checkfornewpen, chkprogress, then UpdatePA, bank $8F
 	jsl.l checkfornewpen
 	jsl.l chkprogress
 	jmp.w UpdatePA
-chkatop:		;attack time of possession stat update. Called once a second from updatepentime (93G penalty93_1)
+chkatop:		;attack time of possession stat update. Called once a second from updatepentime
 		;   SNES: tmATOP +1 for the team with the puck past the blue line ($58)
 	stz.b d1
 	lda.w pucky
@@ -547,7 +547,7 @@ chkatop:		;attack time of possession stat update. Called once a second from upda
 	bra .rtl
 .v2:
 	bvs .rtl
-.one:		;93G .1
+.one:
 	lda.w gmode		; gmdir: swap the teams
 	bit.w #gmdir
 	beq .zero
@@ -562,7 +562,7 @@ chkatop:		;attack time of possession stat update. Called once a second from upda
 .rtl:
 	rtl
 checkfornewpen:		;look for new penalty (entered thru addpenalty(2)). Stops play at once for penalties without minutes or when the guilty team does not have the puck, otherwise starts a
-		;   delayed penalty call (93G penalty93_1)
+		;   delayed penalty call
 		;   SNES: new penalties in PenBuf. Stops play at once for penalties without minutes or when the guilty team has the puck, otherwise a
 		;   delayed penalty call
 	lda.w sfhormode		; not in horizontal mode
@@ -680,7 +680,7 @@ checkfornewpen:		;look for new penalty (entered thru addpenalty(2)). Stops play 
 	sta.b d0
 	jsl.l SetPA
 	jmp.w .next
-Stop4Pen:		;a0 = penaltylist penalty +2. Stop the clock, set the face off spot from the penalty type, blow the whistle. Also entered from puckfaceoff+38 (93G penalty93_1)
+Stop4Pen:		;a0 = penaltylist penalty +2. Stop the clock, set the face off spot from the penalty type, blow the whistle. Also entered from puckfaceoff+38
 		;   SNES: a0 = PenBuf entry +2. Stop the clock, set the face off spot from the penalty type, blow the whistle
 	lda.w #$FFFF		; clock already stopped: skip the face off spot
 	tsb.w gmclock
@@ -734,7 +734,7 @@ Stop4Pen:		;a0 = penaltylist penalty +2. Stop the clock, set the face off spot f
 .x0:
 	lda.w #$0046
 	sta.b d0
-.zero:		;93G .0
+.zero:
 	lda.b d0
 	sec
 	sbc.w #$FFBA
@@ -747,7 +747,7 @@ Stop4Pen:		;a0 = penaltylist penalty +2. Stop the clock, set the face off spot f
 .x1:
 	lda.w #$FFBA
 	sta.b d0
-.one:		;93G .1
+.one:
 	lda.b d1
 	sec
 	sbc.w #$00A6
@@ -765,7 +765,7 @@ Stop4Pen:		;a0 = penaltylist penalty +2. Stop the clock, set the face off spot f
 	bpl .two
 	lda.w #$FFBA
 	sta.b d0
-.two:		;93G .2
+.two:
 	lda.b d1
 	sec
 	sbc.w #$FF5A
@@ -784,7 +784,7 @@ Stop4Pen:		;a0 = penaltylist penalty +2. Stop the clock, set the face off spot f
 	bpl .three
 	lda.w #$FFBA
 	sta.b d0
-.three:		;93G .3
+.three:
 	lda.b d0
 	sta.w fox
 	lda.b d1
@@ -807,7 +807,7 @@ Stop4Pen:		;a0 = penaltylist penalty +2. Stop the clock, set the face off spot f
 	lda.w #PenWhistle
 	sta.b d0
 	jmp.w SetPA
-limitfo:		;limit face off to 5-20 feet from walls of rink. Checks every player in PenBuf (93G penalty93_1)
+limitfo:		;limit face off to 5-20 feet from walls of rink. Checks every player in PenBuf
 		;   SNES: keep the face off spot 65 from the blue line for every player in PenBuf
 	stx.b xsave
 	ldx.w #$0000
@@ -858,7 +858,7 @@ limitfo:		;limit face off to 5-20 feet from walls of rink. Checks every player i
 	bpl .popd
 	ldx.b xsave
 	rtl
-.lf:		;IDA limitfo_lf: a0 = PenBuf entry
+.lf:		;a0 = PenBuf entry
 	lda.b [a0]		; player SCnum*2; blue line +-$58 by pfgoal
 	xba
 	and.w #$007F
@@ -881,7 +881,7 @@ limitfo:		;limit face off to 5-20 feet from walls of rink. Checks every player i
 	lda.w #$FFBF
 	sta.w foy
 	bra .sx
-.zero:		;93G .0
+.zero:
 	lda.b d1
 	sec
 	sbc.w foy
@@ -907,7 +907,7 @@ limitfo:		;limit face off to 5-20 feet from walls of rink. Checks every player i
 .rtl:
 	rtl
 chkprogress:		;control progress of ref and game control thru penalty events. When the stop delay runs out and a penalty with minutes is in PenBuf, switch to the horizontal rink for the
-		;   player to enter the penalty box (93G penalty93_1)
+		;   player to enter the penalty box
 		;   SNES: when the stop delay runs out and a penalty with minutes is in PenBuf, switch to the horizontal rink for the player to enter the box
 	lda.w gmode		; gmpen: ref in progress
 	bit.w #gmpen
@@ -956,8 +956,8 @@ chkprogress:		;control progress of ref and game control thru penalty events. Whe
 	beq .find
 	lda.w #sf2drec		; sf2drec, SetHor, load the horizontal ref; the puck does nothing for 120 s
 	tsb.w sflags
-	jsl.l SetHor		; bank $8F: 93G SetHor
-	jsl.l NewTicker		; bank $8F: 93G NewTicker (horizontal ref)
+	jsl.l SetHor		; bank $8F
+	jsl.l NewTicker		; bank $8F (horizontal ref)
 	lda.w #$FF00
 	tsb.w puckc
 	ldx.w #puckobj
@@ -975,11 +975,11 @@ chkprogress:		;control progress of ref and game control thru penalty events. Whe
 	lda.w #$0032
 	sta.w RefCnt
 	stz.b d0
-	jsl.l PushRef		; bank $8F: 93G PushRef
+	jsl.l PushRef		; bank $8F
 .rtl:
 	rtl
-InProgress:		;ref in progress-- update graphics and stats and penalty information. Takes the last PenBuf entry: the first pass logs a penalty with minutes and sends the player to the box,
-		;   later passes wait until he is off the ice and drop the entry. When PenBuf is empty, recount players and go to the face off. Entered from chkprogress (93G penalty93_1)
+InProgress:		;ref in progress-- update graphics and stats and penalty information. Takes the last PenBuf entry: the first pass logs a penalty with minutes and sends the player to the box
+		;   later passes wait until he is off the ice and drop the entry. When PenBuf is empty, recount players and go to the face off. Entered from chkprogress
 		;   SNES: Takes the last PenBuf entry: the first pass logs a penalty with minutes and sends the player to the box, later passes
 		;   clear it; at the end coinsearch and the face off
 	lda.w RefCnt		; animation in progress: exit
@@ -1234,7 +1234,7 @@ InProgress:		;ref in progress-- update graphics and stats and penalty informatio
 	ldx.b xsave
 	ldx.b a3		; SetPA, USBoard
 	jsl.l SetPA
-	jsl.l USBoard		; bank $8F: 93G USBoard
+	jsl.l USBoard		; bank $8F
 	bra .ex
 .sa2:
 	lda.w #$0000		; no minutes: clear it, SetPA
@@ -1280,8 +1280,8 @@ InProgress:		;ref in progress-- update graphics and stats and penalty informatio
 	ldx.b a3
 .rtl:
 	rtl
-coinsearch:		;IDA name; does the job of 92 InProgress .ap (92 coinsearch is inlined in InProgress). a2 = team. Clears tmpdst bit 5, counts players kept off the ice by penalties (coincidental
-		;   and bit 4 times do not count, at most 2) and sets tmap. Called twice from InProgress (93G penalty93_1)
+coinsearch:		;penalty-box part of InProgress. a2 = team. Clears tmpdst bit 5, counts players kept off the ice by penalties (coincidental
+		;   and bit 4 times do not count, at most 2) and sets tmap. Called twice from InProgress
 		;   SNES: Clears tmpdst bit $2000, counts the players kept off the ice by penalties (not coincidental, not injured, never below 4)
 		;   into tmap
 	lda.w #$0006		; d1 = 6 players, d0 = last roster word
@@ -1315,7 +1315,7 @@ coinsearch:		;IDA name; does the job of 92 InProgress .ap (92 coinsearch is inli
 	lda.b d1
 	sta.w tmap,y
 	rtl
-UpdatePA:		;animate ref in ref window. 93: also runs ShowThreeStars for game over and reprints the horizontal penalty message line when penmsgtimer runs out (93G penalty93_1)
+UpdatePA:		;animate ref in ref window. 93: also runs ShowThreeStars for game over and reprints the horizontal penalty message line when penmsgtimer runs out
 		;   SNES: animate the ref (SetPA2 when RefCnt runs out); reprint the horizontal penalty message line when penmsgtimer runs out
 	lda.w RefCnt		; RefCnt negative: idle
 	bmi .rtl
@@ -1324,7 +1324,7 @@ UpdatePA:		;animate ref in ref window. 93: also runs ShowThreeStars for game ove
 	sta.w RefCnt
 	bpl .zero
 	jsl.l SetPA2		; SetPA2
-.zero:		;93G .1
+.zero:
 	lda.w penmsgtimer
 	sec
 	sbc.b d7
@@ -1336,7 +1336,7 @@ UpdatePA:		;animate ref in ref window. 93: also runs ShowThreeStars for game ove
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$11,$0B
-	jsl.l GetPlayerName		; bank $8D: 93G GetPlayerName (a1 = name)
+	jsl.l GetPlayerName		; bank $8D (a1 = name)
 	lda.b [a1]
 	lsr a
 	sta.b d0
@@ -1347,18 +1347,18 @@ UpdatePA:		;animate ref in ref window. 93: also runs ShowThreeStars for game ove
 	jmp.w print
 .rtl:
 	rtl
-SetPA:		;start ref animation. d0 = animation (penalty number). 93: goal also calls ShowGoalBox, and penmsgtimer is set to 60 in horizontal mode. Falls into SetPA2 (93G
-		;   penalty93_1)
+SetPA:		;start ref animation. d0 = animation (penalty number). 93: goal also calls ShowGoalBox, and penmsgtimer is set to 60 in horizontal mode. Falls into SetPA2
+
 		;   SNES: start the ref animation for penalty d0: prefmes, ShowGoalBox for a goal, penmsgtimer (60 in horizontal mode), then SetPA2
 	lda.b d0		; RefPen = d0, RefStep = 0, prefmes
 	sta.w RefPen
 	stz.w RefStep
-	jsl.l prefmes		; bank $8F: 93G prefmes
+	jsl.l prefmes		; bank $8F
 	lda.b d0
 	cmp.w #PenGoal		; goal: the goal box
 	bne .zero
-	jsl.l ShowGoalBox		; the goal box (93G ShowGoalBox)
-.zero:		;93G .0
+	jsl.l ShowGoalBox		; the goal box
+.zero:
 	lda.w #$7FFF
 	sta.w penmsgtimer
 	lda.w sfhormode
@@ -1369,8 +1369,8 @@ SetPA:		;start ref animation. d0 = animation (penalty number). 93: goal also cal
 	jml.l SetPA2
 
 org $80FED1
-reenergizeteam:		;set all players to max energy on team a2. 93 also moves players marked -3 in tmpdst to the bench (-2). Called from SetupTeamForIntermission and StartHL2 .setteam (93G
-		;   penalty93_2)
+reenergizeteam:		;set all players to max energy on team a2. 93 also moves players marked -3 in tmpdst to the bench (-2). Called from SetupTeamForIntermission and StartHL2 .setteam
+
 		;   SNES: max energy for every player of team a2; TMPDOUT players go to the bench
 	lda.w #$0032
 	sta.b d0
