@@ -249,7 +249,7 @@ $85FF1E,PrintTeamNames,CODE_85FF1E,SNES,,hockey_b85
 $85FF96,nullrtl85,CODE_85FF96,,,hockey_b85
 $85FF97,ResetClock,CODE_85FF97,93G,,hockey_b85
 $86FA3E,DecompressGraphics,CODE_86FA3E,SNES,,middle_b86
-$86FB96,UpdateLineChange,CODE_86FB96,93G,,hockey_b86
+$86FB96,RestoreBenchEnergy,CODE_86FB96,93G,93G renamed from UpdateLineChange,hockey_b86
 $86FBE1,StartSong6,CODE_86FBE1,SNES,,sound_b86
 $86FC05,StartSong7,CODE_86FC05,SNES,,sound_b86
 $86FC29,setteams,CODE_86FC29,93G,,hockey_b86
@@ -392,7 +392,7 @@ $8FDAFC,RemovePlayerFromList,CODE_8FDAFC,93G,,penalty_b8F
 $8FDB1B,asscenterd,CODE_8FDB1B,,asstab 5,logic_b8F
 $8FDBDB,box,CODE_8FDBDB,SNES,,hockey_b8F
 $8FDBF7,UpdateCwdExcite,CODE_8FDBF7,93G,,hockey_b8F
-$8FDBF8,CheckPeriodEnd,CODE_8FDBF8,93G,,hockey_b8F
+$8FDBF8,CheckLateGameSong,CODE_8FDBF8,93G,93G renamed from CheckPeriodEnd,hockey_b8F
 $8FDBF9,loadTeamStruct,CODE_8FDBF9,93G,,penalty_b8F
 $8FDC0D,ScoutingReport,CODE_8FDC0D,93G,from Opening4,hockey_b8F
 $8FDED2,ScoutCompare,CODE_8FDED2,SNES,,hockey_b8F

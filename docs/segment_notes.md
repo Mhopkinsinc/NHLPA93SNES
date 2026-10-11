@@ -295,7 +295,7 @@ $86E000-$86EFFF  ROM $36000: BootSamples continued (BRR samples of the boot SPC 
 
 ## bank86_F000 (org $86F000)
 
-$86F000-$86FFFF  ROM $37000-$37FFF: the last BootSamples and the end block of BootSoundUpload, then DecompressGraphics, UpdateLineChange,
+$86F000-$86FFFF  ROM $37000-$37FFF: the last BootSamples and the end block of BootSoundUpload, then DecompressGraphics, RestoreBenchEnergy,
 the song starters, setteams, ProcessInputWithRepeat, GetPeriodTimeRemaining, GetPeriodTime, lcfound2, PickStartingGoalie,
 assscore (logic93_2), $FF fill.
 

@@ -215,7 +215,7 @@ Regenerate the routine lists from the source if they drift; the old ~4 KB slice 
 
 ## src/hockey_b86.asm
 
-- `$86FB96`: UpdateLineChange
+- `$86FB96`: RestoreBenchEnergy
 - `$86FC29`: setteams
 - `$86FC76`: ScoutNamePos, GetPeriodTimeRemaining, GetPeriodTime, GetPeriodTime_timetab
 - `$86FCE3`: PickStartingGoalie

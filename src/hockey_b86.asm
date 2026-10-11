@@ -2,7 +2,7 @@
 ; Bank $86. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $86FB96
-UpdateLineChange:		;called once per second. Restore energy for players on the bench
+RestoreBenchEnergy:		;called once per second. Restore energy for players on the bench
 		;   SNES: once a second with line changes on, players on the bench (TMPDBENCH) regain 10 energy up to $1000, both teams
 	lda.w OptLine
 	bne .rtl

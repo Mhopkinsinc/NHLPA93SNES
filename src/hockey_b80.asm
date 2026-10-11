@@ -1973,8 +1973,8 @@ periodicevents:		;called every time thru game loop with d7 = elapsed frames
 	sta.w lldisp
 	jsl.l ChkGoalies		; ChkGoalies
 	jsl.l UpdateCwdExcite		; UpdateCwdExcite, bank $8F
-	jsl.l CheckPeriodEnd		; CheckPeriodEnd, bank $8F
-	jsl.l UpdateLineChange		; UpdateLineChange
+	jsl.l CheckLateGameSong		; CheckLateGameSong, bank $8F
+	jsl.l RestoreBenchEnergy		; RestoreBenchEnergy
 	jsl.l CheckInjury		; CheckInjury, bank $8F
 	jmp.w updatepwrplay
 .rtl:

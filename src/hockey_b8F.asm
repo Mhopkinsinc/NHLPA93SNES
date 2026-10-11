@@ -419,7 +419,7 @@ box:		;fill a $13 x 8 rectangle at printz position $FF,$B,2 with char $7FF (eras
 UpdateCwdExcite:		;called once per second. Track peak and running total of crowd
 		;   SNES: nothing on the SNES
 	rtl
-CheckPeriodEnd:		;called once per second. 3rd period: play tune $32 once at the random
+CheckLateGameSong:		;called once per second. 3rd period: play tune $32 once at the random
 		;   SNES: nothing on the SNES
 	rtl
 
