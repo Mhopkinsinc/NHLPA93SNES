@@ -11,9 +11,9 @@ assepen:		;asstab $A. player a3 should exit penalty area
 	sta.w pflags,x
 	ldy.w #$0010
 	lda.w pfteam,x
-	beq .one
+	beq .1
 	ldy.w #$0001
-.one:
+.1:
 	sty.b d0
 	lda.w PBnum
 	sec
@@ -24,10 +24,10 @@ assepen:		;asstab $A. player a3 should exit penalty area
 	lda.w #60
 	sta.b d0
 	lda.w pfteam,x
-	bne .y
+	bne .ypos
 	lda.w #-60
 	sta.b d0
-.y:
+.ypos:
 	lda.b d0
 	sta.w Ypos,x
 	lda.w #$0088
