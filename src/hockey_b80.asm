@@ -4909,13 +4909,13 @@ checkcx:		;d4 = obj. # * 2 for possible coll so check x range and distance for c
 		;   (weights + 140, elasticity evalue)
 	stx.b xsave
 	ldx.w #$0000
-.push:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0018
-	bne .push
+	bne .save
 	ldx.b xsave
 	sty.b a2		; a2 = Y; d0/d1 = relative velocity, d2/d3 = relative position
 	stz.b evalue
@@ -5193,20 +5193,19 @@ checkcx:		;d4 = obj. # * 2 for possible coll so check x range and distance for c
 .exit:
 	stx.b xsave
 	ldx.w #$0016
-.pop:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .pop
+	bpl .restore
 	ldx.b xsave
 	rtl
 .exit4:		;drop the saved Vx/Vy
 	pla
 	pla
 	bra .exit
-newcheck:		;start a new check sound. 93: one of 4 sounds $1C-$1F (92: one of 5 from SFXcheck = 18), never the last one again. Called from checkcx; FallDown branches here when the player who
-		;   fell did not have the puck
+newcheck:		;start a new check sound. Called from checkcx; FallDown branches here when the player who fell did not have the puck
 		;   SNES: check sound SFXcheck + random 0/1
 	lda.w seed+1
 	and.w #$0001
@@ -5301,10 +5300,8 @@ checkint:		;check for interference penalty. player a2 interferes with a3 or vice
 	lda.w #PenInt
 	sta.b d0
 	jmp.w AddPenalty
-FallDown:		;player a2 falls down, player a3 is the hitting player. 93 adds anim $13A0 in place of a fall for some players, check stats for the hitter, a third fall anim ($1524), and injuries
-		;   (setInjuryType) with a penalty. Called from checkint .ci, checkcheck .cc and Bcheck; also entered from setd0player
-		;   SNES: player a2 falls, X is the hitter. Stumble for some players, check stats, fall back/forward/third fall, injuries with a penalty and crowd
-		;   sounds
+FallDown:		;player a2 falls down, player a3 is the hitting player. Some players stumble instead of a fall; also counts check stats for the hitter, has a third fall anim, and injuries (setInjuryType) with a penalty. Called from checkint .ci, checkcheck .cc and Bcheck; also entered from setd0player
+		;   SNES: player a2 falls, X is the hitter. Stumble for some players, check stats, fall back/forward/third fall, injuries with a penalty and crowd sounds
 	ldy.b a2		; players only, not fighting
 	cpy.w #$0018
 	bcc .f1
@@ -5519,10 +5516,10 @@ FallDown:		;player a2 falls down, player a3 is the hitting player. 93 adds anim 
 	lda.w #SFXcrowdcheer
 	pha
 	lda.w pfteam,y
-	bne .play
+	bne .3
 	lda.w #SFXcrowdboo
 	sta.b $01,s
-.play:
+.3:
 	jsl.l sfx
 .rtl:
 	rtl
@@ -5530,23 +5527,23 @@ checkcheck:		;player is in contact look for various contact events. Runs .cc for
 		;   SNES: players in contact: .cc for X on a2, then for a2 on X. d4 = impact
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0014
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	jsl.l .cc
 	ldx.b a2
@@ -5556,21 +5553,21 @@ checkcheck:		;player is in contact look for various contact events. Runs .cc for
 	jsl.l .cc
 	stx.b xsave
 	ldx.w #$000E
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0012
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	ldx.b a3
 .rtl:
@@ -5615,13 +5612,13 @@ checkcheck:		;player is in contact look for various contact events. Runs .cc for
 	sta.b d0
 	lda.w attribute,x		; xflip: mirror the direction
 	bit.w #$0800
-	beq .n0
+	beq .0
 	lda.b d0
 	eor.w #$FFFF
 	inc a
 	and.w #$0007
 	sta.b d0
-.n0:		;check anim from .list by the direction to a2
+.0:		;check anim from .list by the direction to a2
 	asl.b d0
 	lda.w #.list
 	sta.b a0
@@ -5651,9 +5648,9 @@ checkcheck:		;player is in contact look for various contact events. Runs .cc for
 	sta.b d0
 	lda.w pflags,x
 	bit.w #pfjoycon
-	beq .n00
+	beq .00
 	asl.b d0
-.n00:
+.00:
 	lda.b d0
 	sec
 	sbc.w weight,x
@@ -5763,23 +5760,23 @@ checkfight:		;look for start of fight between players a2 & a3. Called from check
 .go:
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0014
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	ldy.w assnum+puckobj		; puck assignment pfaceoff: no fight
 	lda.w asslist+puckobj*4,y
@@ -5849,14 +5846,14 @@ checkfight:		;look for start of fight between players a2 & a3. Called from check
 	sbc.w Xpos,y
 	bmi .v3
 	bvc .flip
-	bra .o1
+	bra .1
 .v3:
-	bvc .o1
+	bvc .1
 .flip:
 	lda.b d1
 	eor.w #$0007
 	sta.b d1
-.o1:		;face each other
+.1:		;face each other
 	lda.b d1
 	sta.w facedir,x
 	eor.w #$0007
@@ -5873,7 +5870,7 @@ checkfight:		;look for start of fight between players a2 & a3. Called from check
 	sta.b d0
 	lda.w #$000B
 	sta.b d1
-.watch:		;the others watch the fight
+.0:		;the others watch the fight
 	lda.w pflags,x
 	and.w #pf2unav
 	ora.w pf2fight,x
@@ -5885,7 +5882,7 @@ checkfight:		;look for start of fight between players a2 & a3. Called from check
 	inx
 	inx
 	dec.b d1
-	bpl .watch
+	bpl .0
 	ldx.w #puckobj		; the puck: pf2fight, pnothing
 	lda.w #$0001
 	sta.w pf2fight+puckobj
@@ -5897,21 +5894,21 @@ checkfight:		;look for start of fight between players a2 & a3. Called from check
 .ex:
 	stx.b xsave
 	ldx.w #$000E
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0012
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	ldx.b a3
 .rtl:
@@ -5956,8 +5953,7 @@ checkfight:		;look for start of fight between players a2 & a3. Called from check
 	sta.w pf2aip,x
 	jmp.w SetSPA
 SetInst:		;d0 = fight rating a3 needs. Called twice from checkfight (a2/a3 swapped)
-		;   SNES: If fightagg of X >= d0, of a2 >= 2 and >= $10 - 2 * a2 checks, set pf2fight on both. Then 92 style: an instigator
-		;   penalty for a shoulder check
+		;   SNES: If fightagg of X >= d0, of a2 >= 2 and >= $10 - 2 * a2 checks, set pf2fight on both. Then an instigator penalty for a shoulder check
 	lda.w fightagg,x
 	cmp.b d0
 	bcc checkfight_rtl
@@ -6022,10 +6018,10 @@ SetInst:		;d0 = fight rating a3 needs. Called twice from checkfight (a2/a3 swapp
 	sta.b d0
 	stz.b a3
 	lda.w pfteam,x
-	beq .loop
+	beq .1
 	lda.w #$000C
 	sta.b a3
-.loop:
+.1:
 	ldx.b a3
 	cpx.b a4
 	beq .next
@@ -6046,13 +6042,13 @@ SetInst:		;d0 = fight rating a3 needs. Called twice from checkfight (a2/a3 swapp
 	inc.b a3
 	inc.b a3
 	dec.b d0
-	bpl .loop
+	bpl .1
 	ldx.b a4
 	stx.b a3
 	rtl
 
 org $80E13E
-updateanim:		;frame switch control on struct a3. Also called
+updateanim:		;frame switch control on struct a3. Also called from ScoutTeamStep
 		;   SNES: SPA = offset in SPAList; next frame when SPAcnt runs out (d7), loops or ends the animation
 	lda.w SPA,x		; no animation: clear pfalock, pf2aip
 	bne .ia
@@ -6100,7 +6096,7 @@ updateanim:		;frame switch control on struct a3. Also called
 	lda.b [a0],y
 	sta.b d2
 	lda.w SPAcnt,x		; SPAcnt negative: hold the frame
-	bmi .one
+	bmi .1
 	sec
 	sbc.b d7
 	sta.w SPAcnt,x
@@ -6117,25 +6113,25 @@ updateanim:		;frame switch control on struct a3. Also called
 	dey
 	dey
 	lda.b [a0],y
-	bpl .one
+	bpl .1
 	stz.b d0		; end: restart, clear pfalock/pf2aip; d1 bit 0 = looper, else SPA = 0
 	stz.w SPAnum,x
 	stz.w pf2aip,x
 	stz.w pfalock,x
 	lda.b d1
 	lsr a
-	bcs .one
+	bcs .1
 	stz.w SPA,x
-.one:		;SPAcnt = |delay|
+.1:		;SPAcnt = |delay|
 	ldy.b d0
 	iny
 	iny
 	lda.b [a0],y
 	bit.w #$8000
-	beq .zero
+	beq .0
 	eor.w #$FFFF
 	inc a
-.zero:
+.0:
 	sta.w SPAcnt,x
 .cframe:		;frame = new frame
 	lda.b d2
@@ -6179,10 +6175,10 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	sec
 	sbc.w #$FFCE
 	beq .ylmin
-	bmi .v2
+	bmi .vl
 	bvs .ylmin
 	bra .ok
-.v2:
+.vl:
 	bvs .ok
 .ylmin:
 	lda.w #$FFCE
@@ -6218,9 +6214,9 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	sbc.w #$FFF6
 	bmi .v3
 	bvs .up
-	bra .one
+	bra .1
 .v3:
-	bvs .one
+	bvs .1
 .up:
 	lda.b d2
 	sec
@@ -6231,23 +6227,23 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	beq .yslimd
 	bmi .v4
 	bvs .yslimd
-	bra .two
+	bra .2
 .v4:
-	bvs .two
+	bvs .2
 .yslimd:
 	lda.w #$FF39
 	sta.b d1
-	bra .two
-.one:
+	bra .2
+.1:
 	lda.b d0
 	sec
 	sbc.w #$000A
-	beq .twox
+	beq .2x
 	bmi .v5
 	bvc .down
-	bra .twox
+	bra .2x
 .v5:
-	bvc .twox
+	bvc .2x
 .down:
 	lda.b d2
 	sec
@@ -6257,17 +6253,17 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	sbc.w #$0100
 	bmi .v6
 	bvc .yslimu
-	bra .two
+	bra .2
 .v6:
-	bvc .two
+	bvc .2
 .yslimu:
 	lda.w #$0100
 	sta.b d1
-.two:		;Vpos += (target - Vpos) / 8 (at least 1)
+.2:		;Vpos += (target - Vpos) / 8 (at least 1)
 	lda.b d1
 	sec
 	sbc.w Vpos
-	beq .twox
+	beq .2x
 	lsr a
 	lsr a
 	lsr a
@@ -6276,13 +6272,13 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	ora.w #$E000
 .s2:
 	cmp.w #$0000
-	bne .v2b
+	bne .v2
 	inc a
-.v2b:
+.v2:
 	clc
 	adc.w Vpos
 	sta.w Vpos
-.twox:
+.2x:
 	lda.b d3		; |target - Hpos| > 40: scroll
 	sec
 	sbc.w Hpos
@@ -6291,9 +6287,9 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	sbc.w #$FFD8
 	bmi .v7
 	bvs .left
-	bra .three
+	bra .3
 .v7:
-	bvs .three
+	bvs .3
 .left:
 	lda.b d3
 	sec
@@ -6303,14 +6299,14 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	sbc.w #$FFC4
 	bmi .v8
 	bvs .xslimn
-	bra .four
+	bra .4
 .v8:
-	bvs .four
+	bvs .4
 .xslimn:
 	lda.w #$FFC4
 	sta.b d1
-	bra .four
-.three:
+	bra .4
+.3:
 	lda.b d0
 	sec
 	sbc.w #$0028
@@ -6327,16 +6323,16 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	sta.b d1
 	sec
 	sbc.w #$003C
-	beq .four
+	beq .4
 	bmi .v10
 	bvc .xslim
-	bra .four
+	bra .4
 .v10:
-	bvc .four
+	bvc .4
 .xslim:
 	lda.w #$003C
 	sta.b d1
-.four:		;Hpos += (target - Hpos) / 8 (at least 1)
+.4:		;Hpos += (target - Hpos) / 8 (at least 1)
 	lda.b d1
 	sec
 	sbc.w Hpos
@@ -6388,7 +6384,7 @@ startpause:		;set sfpz (startpause1 and startpause2 jump here)
 
 org $80F5EA
 DecodePW:		;translate char password in PassWord to variables used in game
-		;   SNES: translate the password in PassWord to game variables: PWtoBits, then ReadPassBits (ReadPassBits)
+		;   SNES: translate the password in PassWord to game variables: PWtoBits, then ReadPassBits
 	jsl.l PWtoBits
 	jml.l ReadPassBits
 PlayoffScreenOpening4:		;SNES: PlayoffScreen, then on to Opening4
