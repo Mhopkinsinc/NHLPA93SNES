@@ -3,28 +3,27 @@
 
 org $82F93C
 SetPA2:		;update animation for ref. Next frame/delay pair from the PenaltyList animation of RefPen. Also called from UpdatePA
-		;   SNES: A negative pair is the last one (RefStep = -1). RefCnt =
-		;   delay*8, then PushRef
+		;   SNES: a negative pair is the last one (RefStep = -1). RefCnt = delay*8, then PushRef
 	phx
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	lda.w #$0040		; d0 = $40 (clear the ref window) when RefStep is negative
 	sta.b d0
@@ -46,13 +45,13 @@ SetPA2:		;update animation for ref. Next frame/delay pair from the PenaltyList a
 	tax
 	lda.l PenaltyList,x
 	sta.b d0
-	bpl .zero
+	bpl .0
 	eor.w #$FFFF		; negative: last pair, RefStep = -1
 	inc a
 	sta.b d0
 	lda.w #$FFFF
 	sta.w RefStep
-.zero:
+.0:
 	lda.b d0		; RefCnt = delay * 8, d0 = frame
 	and.w #$00FF
 	asl a
@@ -68,21 +67,21 @@ SetPA2:		;update animation for ref. Next frame/delay pair from the PenaltyList a
 	jsl.l PushRef		; bank $8F
 	stx.b xsave
 	ldx.w #$0006
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000A
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	plx
 	rtl
