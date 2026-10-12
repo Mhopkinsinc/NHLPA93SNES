@@ -1,7 +1,3 @@
-; gfx/sprites_b8A: sprite frame sets (SpriteSetN, see FrameSetTable): header, frame table, pieces, 4bpp tiles.
-; Bank $8A. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $8A8000
 SpriteSet12:		;frame set 12 (includes SPFflip, SPFstumble, SPFhook): frames 532-605
 	dw 74		; frames
 	dw 504		; pieces
@@ -20,9 +16,9 @@ SpriteSet12:		;frame set 12 (includes SPFflip, SPFstumble, SPFhook): frames 532-
 	dw 466,469,473,476,479,482,488,491
 	dw 495,500,504
 .pieces:		;x, y, tile, attributes per piece
-	incbin "../../data/Sprites/set12.pieces"
+	incbin "../../../data/Sprites/set12.pieces"
 	assert .tiles-.pieces == 4*504
 .tiles:		;896 4bpp tiles (32 bytes each)
-	incbin "../../data/Sprites/set12.chr"
+	incbin "../../../data/Sprites/set12.chr"
 SpriteSet12End:
 	assert SpriteSet12End-SpriteSet12 == $880+896*32

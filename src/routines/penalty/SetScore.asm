@@ -1,7 +1,3 @@
-; Penalties, scoreboard, ticker, intermission.
-; Bank $8A. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $8AFE21
 SetScore:		;add to score for game in a0. After period 3 a game within one goal goes to OT (gsper 3) and asks for a highlight
 		;   SNES: one period of playoff game a0: random goals by ScoreOdds (.getscore); after period 3 a game within one
 		;   goal goes to overtime and asks for a highlight
