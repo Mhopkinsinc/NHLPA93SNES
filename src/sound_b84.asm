@@ -2,6 +2,6 @@
 ; Bank $84. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $84D630
-ScoutingReportText:		;ScoutingReportText (read from UpdateScoutingDisplay_go)
+ScoutingReportText:		;scouting report strings (read by UpdateScoutingDisplay)
 	incbin "../data/Text/ScoutingReportText.bin"
 ScoutingReportTextEnd:
