@@ -2,7 +2,7 @@
 ; Bank $87. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $87CE62
-DrawFrame:		;SNES: as DrawFrameHi (bank85_F000) for frames below $293 with 4-byte pieces (x, y signed bytes, tile, attributes); sprnodraw skips the upload; a full
+DrawFrame:		;SNES: as DrawFrameHi with 4-byte pieces (x, y signed bytes, tile, attributes); sprnodraw skips the upload; a full
 		;   cache shortens sprslotlife first
 	lda.b farptr+1
 	sta.b sprtileptr+1
@@ -38,9 +38,9 @@ DrawFrame:		;SNES: as DrawFrameHi (bank85_F000) for frames below $293 with 4-byt
 .piece:		;next piece; OAM full (128): done
 	lda.b sprcount
 	cmp.w #$0080
-	bne .pc
+	bne .data
 	jmp.w addframe_end
-.pc:
+.data:
 	lda.b sprframe
 	asl a
 	asl a
@@ -109,54 +109,54 @@ DrawFrame:		;SNES: as DrawFrameHi (bank85_F000) for frames below $293 with 4-byt
 	sta.b sprox
 	sec
 	sbc.w #$FFF9
-	bmi .v1
-	bvc .x2
-.off1:
+	bmi .xlov
+	bvc .xhi
+.xloout:
 	jmp.w .skip
-.v1:
-	bvc .off1
-.x2:
+.xlov:
+	bvc .xloout
+.xhi:
 	lda.b sprox
 	sec
 	sbc.w #$00FF
 	beq .sy
-	bmi .v2
+	bmi .xhiv
 	bvs .sy
-.off2:
+.xhiout:
 	jmp.w .skip
-.v2:
-	bvs .off2
+.xhiv:
+	bvs .xhiout
 .sy:
 	lda.b sprvflip
-	beq .y1
+	beq .ylo
 	lda.w #$FFF9
 	sec
 	sbc.b sproy
 	sta.b sproy
-.y1:
+.ylo:
 	lda.b spry
 	clc
 	adc.b sproy
 	sta.b sproy
 	sec
 	sbc.w #$FFF9
-	bmi .v3
-	bvc .y2
-.off3:
+	bmi .ylov
+	bvc .yhi
+.yloout:
 	jmp.w .skip
-.v3:
-	bvc .off3
-.y2:
+.ylov:
+	bvc .yloout
+.yhi:
 	lda.b sproy
 	sec
 	sbc.w #$00DF
 	beq .cache
-	bmi .v4
+	bmi .yhiv
 	bvs .cache
-.off4:
+.yhiout:
 	jmp.w .skip
-.v4:
-	bvs .off4
+.yhiv:
+	bvs .yhiout
 .cache:
 	lda.b sprframe
 	clc
@@ -293,61 +293,61 @@ DrawFrame:		;SNES: as DrawFrameHi (bank85_F000) for frames below $293 with 4-byt
 	sta.b sprox
 	sec
 	sbc.w #$FFF1
-	bmi .bv1
-	bvc .bx2
-.boff1:
+	bmi .bxlov
+	bvc .bxhi
+.bxloout:
 	jmp.w .skip
-.bv1:
-	bvc .boff1
-.bx2:
+.bxlov:
+	bvc .bxloout
+.bxhi:
 	lda.b sprox
 	sec
 	sbc.w #$00FF
 	beq .by
-	bmi .bv2
+	bmi .bxhiv
 	bvs .by
-.boff2:
+.bxhiout:
 	jmp.w .skip
-.bv2:
-	bvs .boff2
+.bxhiv:
+	bvs .bxhiout
 .by:
 	lda.b sprvflip
-	beq .by1
+	beq .bylo
 	lda.w #$FFF1
 	sec
 	sbc.b sproy
 	sta.b sproy
-.by1:
+.bylo:
 	lda.b spry
 	clc
 	adc.b sproy
 	sta.b sproy
 	sec
 	sbc.w #$FFF1
-	bmi .bv3
-	bvc .by2
-.boff3:
+	bmi .bylov
+	bvc .byhi
+.byloout:
 	jmp.w .skip
-.bv3:
-	bvc .boff3
-.by2:
+.bylov:
+	bvc .byloout
+.byhi:
 	lda.b sproy
 	sec
 	sbc.w #$00DF
 	beq .bcache
-	bmi .bv4
+	bmi .byhiv
 	bvs .bcache
-.boff4:
+.byhiout:
 	jmp.w .skip
-.bv4:
-	bvs .boff4
+.byhiv:
+	bvs .byhiout
 .bcache:
 	lda.b sprframe
 	clc
 	adc.b sprsetofs
 	cmp.w #$131D
-.hang3:
-	bcs .hang3
+.bhang1:
+	bcs .bhang1
 	asl a
 	asl a
 	tax
@@ -355,13 +355,13 @@ DrawFrame:		;SNES: as DrawFrameHi (bank85_F000) for frames below $293 with 4-byt
 	sec
 	sbc.l sprframetime,x
 	cmp.b sprslotlife
-	bcs .bfind
+	bcs .bnodraw
 	jmp.w .bhave
-.bfind:
+.bnodraw:
 	lda.b sprnodraw
-	beq .bfind2
+	beq .bfind
 	jmp.w addframe_end
-.bfind2:
+.bfind:
 	lda.b sprbigslot
 	inc a
 	and.w #$01FF
@@ -378,11 +378,11 @@ DrawFrame:		;SNES: as DrawFrameHi (bank85_F000) for frames below $293 with 4-byt
 .bchk:
 	and.w #$000F
 	cmp.w #$000F
-	beq .bfind2
+	beq .bfind
 	lda.b sprbigslot
 	and.w #$00F0
 	cmp.w #$00F0
-	beq .bfind2
+	beq .bfind
 	lda.b sprbigslot
 	asl a
 	tax
@@ -390,31 +390,31 @@ DrawFrame:		;SNES: as DrawFrameHi (bank85_F000) for frames below $293 with 4-byt
 	sec
 	sbc.w sprslottime,x
 	cmp.b sprslotlife
-	bcc .bfind2
+	bcc .bfind
 	lda.b sprclock
 	sec
 	sbc.w sprslottime+2,x
 	cmp.b sprslotlife
-	bcc .bfind2
+	bcc .bfind
 	lda.b sprclock
 	sec
 	sbc.w sprslottime+$20,x
 	cmp.b sprslotlife
-	bcc .bfind2
+	bcc .bfind
 	lda.b sprclock
 	sec
 	sbc.w sprslottime+$22,x
 	cmp.b sprslotlife
-	bcc .bfind2
+	bcc .bfind
 	txa
 	asl a
 	asl a
 	asl a
 	adc.w #$6000
 	ldx.b DMAListend
-.bhang:
+.bhang2:
 	cpx.w #$0571
-	bcs .bhang
+	bcs .bhang2
 	sta.w DMAList+dmavram,x
 	adc.w #$0100
 	sta.w DMAList+dmasize+dmavram,x
