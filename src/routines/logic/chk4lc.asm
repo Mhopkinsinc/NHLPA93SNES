@@ -1,5 +1,4 @@
-chk4lc:		;see if computer should call line change
-		;   SNES: should the computer call a line change? Then shoot the puck in (CompShoot)
+chk4lc:		;Should the computer call a line change? Then shoot the puck in
 	lda.w pucky
 	sta.b d0
 	lda.w pfgoal,x

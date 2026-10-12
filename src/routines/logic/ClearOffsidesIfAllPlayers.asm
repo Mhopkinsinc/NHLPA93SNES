@@ -1,5 +1,4 @@
-ClearOffsidesIfAllPlayers:		;a2 = team struct. Clears the team offsides flag (tmflags bit 4) once no skater on ice is past the blue line ($58, sign by pfgoal). Called twice from ChkOffsides
-		;   SNES: clear tmfoffside once no skater is past the blue line
+ClearOffsidesIfAllPlayers:		;Clear team a2's offsides flag once none of its skaters is past the blue line
 	ldy.b a2
 	lda.w tmflags,y		; tmfoffside
 	bit.w #tmfoffside

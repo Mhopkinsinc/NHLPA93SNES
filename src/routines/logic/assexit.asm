@@ -1,5 +1,4 @@
-assexit:		;exit current assignment on player a3
-		;   SNES: exit the current assignment of player X
+assexit:		;End player X's current assignment
 	lda.w assnum,x
 	inc a		; next assignment
 	and.w #$0007

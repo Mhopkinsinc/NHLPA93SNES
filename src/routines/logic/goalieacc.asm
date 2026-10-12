@@ -1,5 +1,4 @@
-goalieacc:		;goalie gets acc. in direction d0. Turns facedir one step toward d0 (92 set it directly)
-		;   SNES: turns facedir one step toward d0, then playeracc
+goalieacc:		;The goalie skates in direction d0, turning one step toward it
 	lda.w #SPAgready		; SPAgready (2)
 	sta.b d1
 	lda.b d0

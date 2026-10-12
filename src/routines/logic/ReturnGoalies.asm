@@ -1,5 +1,4 @@
-ReturnGoalies:		;if computer pulled goalie, look to see if computer should return him. Called from puckfaceoff
-		;   SNES: if the computer pulled its goalie, should he come back? Called from puckfaceoff
+ReturnGoalies:		;If the computer pulled its goalie, should he come back?
 	stz.b a2
 	lda.w #$0001
 	sta.b d0

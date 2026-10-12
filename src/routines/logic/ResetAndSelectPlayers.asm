@@ -1,5 +1,4 @@
-ResetAndSelectPlayers:		;c1playernum/c2playernum = -1, then changeplayer for each human team. Called from puckfaceoff2
-		;   SNES: c1playernum/c2playernum = -1, then changeplayer for each human team (d4 = 0, 2)
+ResetAndSelectPlayers:		;Clear the human controlled players, then give each human team its player again
 	lda.w #$FFFF
 	sta.w c1playernum
 	sta.w c2playernum

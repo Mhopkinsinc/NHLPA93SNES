@@ -1,5 +1,4 @@
-assfaceoff:		;asstab $16. players do nothing until faceoff is over
-		;   SNES: also starts the goal / period / mid-period music cues
+assfaceoff:		;Assignment: players wait until the face off is over. Also starts the music cues
 	lda.w pfalock,x
 	bne .rts
 	lda.w sflags

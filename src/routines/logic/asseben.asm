@@ -1,5 +1,4 @@
-asseben:		;asstab 9. player a3 should exit bench area
-		;   SNES: player X comes onto the ice from the bench door (SPAwallright), then assexit
+asseben:		;Assignment: player X comes onto the ice from the bench
 	lda.w pfalock,x
 	bne .rtl
 	lda.w pflags,x

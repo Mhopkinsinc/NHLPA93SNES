@@ -1,5 +1,5 @@
-assdefd:		;asstab 2. player a3 is defensive player on defense
-		;   SNES: defenseman on defense: stay between the furthest-up attacker and the goal, join the attack (adefo) when the puck is past the line
+assdefd:		;Assignment: a defenseman on defense stays between the furthest attacker and his goal, and joins the attack
+		;   when the puck is past the line
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rtl

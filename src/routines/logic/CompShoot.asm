@@ -1,5 +1,4 @@
-CompShoot:		;player a3 shoots (computer controlled player)
-		;   SNES: computer player X shoots. Pops the caller (addq #4,sp), temp2b = swing time, assignment ashoot
+CompShoot:		;Computer player X shoots
 	pla		; pop the caller
 	sep #$20
 	pla

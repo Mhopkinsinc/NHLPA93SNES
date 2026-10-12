@@ -1,4 +1,4 @@
-GoalieCount:		;SNES: d0 = goalies of team a2 (nibbles of its goalie weights word, team record +$A, until 0); hangs if a2 is not 0 or 2
+GoalieCount:		;d0 = the number of goalies on team a2
 	lda.b a2
 	tay
 	and.w #$FFFD

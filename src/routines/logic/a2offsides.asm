@@ -1,5 +1,4 @@
-a2offsides:		;player a2 touched the puck: offsides penalty if his team is flagged and the puck is past the blue line. Called from a2touchpuck
-		;   SNES: offsides if his team is flagged and the puck is past the blue line
+a2offsides:		;Offsides if the player's team is flagged and the puck is past the blue line
 	ldy.b a2
 	lda.w gmode
 	bit.w #gmoffs

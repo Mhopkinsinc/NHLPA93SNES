@@ -1,5 +1,4 @@
-restorepl:		;Restore old joy controlled player d1, give d0
-		;   SNES: release old joystick player d1, give d0 the joystick. A player in line change mode keeps control (d0 = d1)
+restorepl:		;Take the controller off player d1 and give it to player d0
 	stz.b a0
 	lda.b d1
 	bmi .spd

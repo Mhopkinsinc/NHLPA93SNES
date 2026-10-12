@@ -1,5 +1,4 @@
-setpads:		;copy info into pad cont so graphics knows which player/number.
-		;   SNES: d4 = pad index (-2 puck carrier, 0/2 controllers, 4 replay target): put SCnum of X in that nibble of PadControlBits
+setpads:		;Store which player a pad marker belongs to, so the graphics can show it
 	stx.b xsave
 	ldx.w #$0000
 .save:

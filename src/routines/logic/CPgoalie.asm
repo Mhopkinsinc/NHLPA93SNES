@@ -1,5 +1,4 @@
-CPgoalie:		;see if computer should pull his goalie. d1 = puck/faceoff y. Falls in from ReturnGoalies; also entered from ChkGoalies
-		;   SNES: should the computer pull its goalie? d1 = puck/faceoff y. 3rd period, behind by 2, under a minute
+CPgoalie:		;Should the computer pull its goalie? Late in the third period when behind by two. d1 = puck or face off y
 	lda.w gsp		; 3rd period only
 	cmp.w #$0002
 	bne .rtl

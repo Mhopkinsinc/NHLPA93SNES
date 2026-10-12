@@ -1,5 +1,4 @@
-pucknothing:		;asstab $1A. puck just slides along
-		;   SNES: puck just slides; stops spinning (puckunflip body)
+pucknothing:		;Assignment: the puck just slides and stops spinning
 	lda.w SPAnum+puckobj
 	cmp.w #$0008		; SPAnum 2*4..6*4: flip the face
 	bcc .k

@@ -1,4 +1,4 @@
-assshoot:		;asstab $12. assignment for computer shooting. Assignment ashoot ($12)
+assshoot:		;Assignment: computer shooting
 	lda.w pflags,x
 	bit.w #pfna		; pfna
 	beq .nna

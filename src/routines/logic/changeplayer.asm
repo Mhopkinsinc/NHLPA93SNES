@@ -1,4 +1,4 @@
-changeplayer:		;switch controller d4 (0/2) to the teammate nearest the puck, or sweep check if that is the current player
+changeplayer:		;Switch controller d4 to the teammate nearest the puck, or sweep check if that is already the player
 	stx.b xsave
 	ldx.w #$0000
 .save:

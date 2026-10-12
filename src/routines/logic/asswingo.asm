@@ -1,5 +1,4 @@
-asswingo:		;asstab 4. player a3 is winger on offense
-		;   SNES: wing on offence: pick a spot in the zone the puck is in (.dedata + random), awingd when the other team has the puck
+asswingo:		;Assignment: a wing on offense skates to a spot in the zone of the puck
 	lda.w pfalock,x
 	beq .run
 	jmp.w .rtl

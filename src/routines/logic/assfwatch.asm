@@ -1,5 +1,4 @@
-assfwatch:		;asstab $15. for player who is watching fight
-		;   SNES: for a player watching a fight: skate to a spot 80 pixels from the fight
+assfwatch:		;Assignment: a player watching a fight skates to a spot near it
 	lda.w pfalock,x
 	beq .joy
 	jmp.w .rts

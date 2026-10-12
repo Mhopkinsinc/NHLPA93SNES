@@ -1,5 +1,4 @@
-avdgoal:		;don't try to skate thru goal: if d0/d1 cords intersect thru goal then provide new d0/d1 cords. a3 = player
-		;   SNES: if the path d0/d1 crosses a goal line (y +-258) within 40 of the net, aim beside the net (x +-60) instead
+avdgoal:		;Do not skate through the goal: when the path to d0 / d1 crosses the net, aim beside it instead
 	stz.b tmp2
 	lda.w #-258		; goal line at y -258 ($FEFE) and 258 ($102)
 	jsl.l .ch1

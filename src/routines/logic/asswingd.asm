@@ -1,5 +1,4 @@
-asswingd:		;asstab 3. player a3 is wing on defense
-		;   SNES: wing on defence: cover his side between the puck and the goal; awingo when the team gets the puck
+asswingd:		;Assignment: a wing on defense covers his side between the puck and the goal
 	lda.w pfalock,x
 	beq .clk
 	jmp.w .rtl

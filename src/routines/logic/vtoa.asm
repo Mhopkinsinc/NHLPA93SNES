@@ -1,5 +1,4 @@
-vtoa:		;d0/d1 are x/y distances which are converted into direction 0-7 and returned in d0 (8 = no direction)
-		;   SNES: d0/d1 are x/y distances, returned in d0 as a direction 0-7 (8 = no direction)
+vtoa:		;d0 = the direction (0-7, 8 = none) of the x / y distances d0 / d1
 	lda.b d0
 	ora.b d1
 	beq .nodir		; no direction

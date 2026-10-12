@@ -1,4 +1,4 @@
-FightFall:		;X lost the fight: the a0 player gets PenFighting, maybe X is injured
+FightFall:		;Player X lost the fight: the other player gets a fighting penalty and X may be injured
 	lda.b a1+2		; push a1
 	pha
 	lda.b a1

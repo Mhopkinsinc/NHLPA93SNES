@@ -1,5 +1,4 @@
-noturn0:		;doplayeracc when the wanted direction needs no turn (.ftab entry 0). d0 = direction minus facedir, times 2
-		;   SNES: glide/stop/skate animation, then revplayeracc (noturn). d0 = direction - facedir
+noturn0:		;doplayeracc when the wanted direction needs no turn
 	lda.w #$0002		; d4 = 2, 6 skating backwards
 	sta.b d4
 	lda.w pfrev,x

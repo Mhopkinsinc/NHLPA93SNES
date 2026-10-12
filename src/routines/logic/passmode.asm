@@ -1,5 +1,4 @@
-passmode:		;dpad sets passdir until bbut changes
-		;   SNES: B held: a dpad direction sets passdir (d0 | 8) before dopass
+passmode:		;While the pass button is held, the pad sets the pass direction
 	lda.b d2
 	bit.w #$8000
 	bne dopass

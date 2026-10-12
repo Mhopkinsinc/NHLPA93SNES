@@ -1,5 +1,4 @@
-dopass:		;pass the puck in passdir, to the best teammate there if any.
-		;   SNES: the team mate nearest the passdir lane (or passdir), puck velocity, SPA, pfalock
+dopass:		;Pass the puck in the pass direction, to the best teammate there if any
 	stx.b xsave
 	ldx.w #$0000
 .save:

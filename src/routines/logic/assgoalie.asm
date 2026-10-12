@@ -1,6 +1,5 @@
-assgoalie:		;asstab $E. Player a3 is goalie. Also entered from assnearest
-		;   SNES: goalie X. Skate back to the crease, hold/pass the puck, cover a loose puck, follow the puck and lead it, saves
-		;   (GoalieSaveList), hug the post, rush a loose puck (agoalietopuck)
+assgoalie:		;Assignment: the goalie. Back to the crease, hold or pass the puck, follow and lead the puck, make saves,
+		;   hug the post and rush a loose puck
 	lda.w pfalock,x		; anim locked: nothing
 	beq .go
 	jmp.w .rtl

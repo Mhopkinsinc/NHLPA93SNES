@@ -1,5 +1,4 @@
-assstanley:		;asstab 8. player a3 skates with stanley cup overhead
-		;   SNES: skate to the side of the screen holding the Stanley Cup (SPAcup)
+assstanley:		;Assignment: skate around holding the Stanley Cup overhead
 	lda.w pfalock,x
 	bne .rtl
 	lda.w pflags,x

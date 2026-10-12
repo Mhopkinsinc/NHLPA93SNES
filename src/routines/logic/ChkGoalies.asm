@@ -1,5 +1,4 @@
-ChkGoalies:		;computer pulls goalie on delayed penalty. Called from periodicevents
-		;   SNES: computer pulls the goalie on a delayed penalty. Called from periodicevents
+ChkGoalies:		;The computer pulls its goalie on a delayed penalty
 	lda.w gmclock		; clock stopped
 	bne ChkGoalies_CPG_rtl
 	stz.b a2

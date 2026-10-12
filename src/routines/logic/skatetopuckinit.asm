@@ -1,4 +1,4 @@
-skatetopuckinit:		;d0/d1 = puck x/y plus half the high byte of its velocity. Called from skatetopuck and assnearest
+skatetopuckinit:		;d0 / d1 = where the puck will be soon
 	lda.w puckvx		; puckvx high byte / 2
 	xba
 	lsr a

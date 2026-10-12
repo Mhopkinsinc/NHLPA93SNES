@@ -1,4 +1,4 @@
-shotdiradj:		;If the opposing goalie covers the middle of the net, set passdir 2 or 6 to shoot at the open side, else 0. Skipped for joystick players (pfjoycon set)
+shotdiradj:		;Aim a computer shot at the open side when the goalie covers the middle of the net
 	lda.w pflags,x		; joystick player: skip
 	bit.w #pfjoycon
 	beq .go

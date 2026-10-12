@@ -1,5 +1,4 @@
-chk4shot:		;player a3 looks for shot (computer controlled)
-		;   SNES: computer player X looks for a shot. Called from asspuckc
+chk4shot:		;Computer player X looks for a shot
 	jsl.l chkpk
 	bne .npk
 	lda.w threat		; threat on the puck carrier

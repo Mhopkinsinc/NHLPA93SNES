@@ -1,5 +1,4 @@
-asscenterd:		;asstab 5. player a3 is center on defense
-		;   SNES: center on defense: halfway between the puck and his goal; acentero when the team gets the puck
+asscenterd:		;Assignment: the center on defense, halfway between the puck and his goal
 	lda.w gmclock
 	beq .go
 	jml.l assnothing

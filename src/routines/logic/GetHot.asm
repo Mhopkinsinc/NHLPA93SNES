@@ -1,5 +1,4 @@
-GetHot:		;push long address of structure to get hot spot from. Hot spot x/y returned in d0/d1. Reads a byte pair per frame from HotList
-		;   SNES: A = object index; d0/d1 = its hot spot x/y from HotList (a byte pair per frame)
+GetHot:		;d0 / d1 = the hot spot x / y of object A's current frame
 	phx
 	tay
 	stz.b d0

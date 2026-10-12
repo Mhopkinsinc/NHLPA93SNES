@@ -1,5 +1,4 @@
-dostop:		;player a3 stops. Entered from doplayeracc and noturn0
-		;   SNES: player X stops. Stop animation (and sound for the puck carrier) if fast, then StopNA
+dostop:		;Player X stops
 	lda.w Xvel,x
 	bit.w #$8000
 	beq .xabs

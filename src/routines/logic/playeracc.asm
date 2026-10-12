@@ -1,5 +1,4 @@
-playeracc:		;d2 = direction of acc
-		;   SNES: accelerate player X in direction d2 (dirtab8F, Wallsin/Wallcos, weight and legstr), cap at MaxSpeed; energy use
+playeracc:		;Accelerate player X in direction d2 by his weight and leg strength, up to his top speed; uses energy
 	asl.b d2
 	asl.b d2
 	ldx.b d2

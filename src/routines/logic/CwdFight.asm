@@ -1,4 +1,4 @@
-CwdFight:		;crowd reacts to a punch; push the hit player X back by the puncher (a0) strength
+CwdFight:		;The crowd reacts to a punch; the hit player X is pushed back by the puncher's strength
 	ldy.b a0
 	lda.b crowdlevel
 	clc

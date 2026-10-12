@@ -1,6 +1,4 @@
-chk4pass:		;player a3 looks for good pass (computer controlled)
-		;   SNES: computer player X looks for a good pass: a random team mate, onside, ahead of the blue line rule, no opponent in the lane; then dopass and
-		;   assexit
+chk4pass:		;Computer player X looks for a good pass: an onside teammate with no opponent in the lane
 	lda.w threat		; no threat: pass only now and then (spodds)
 	bne .dp0
 	lda.w #16

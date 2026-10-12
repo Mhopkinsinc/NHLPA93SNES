@@ -1,5 +1,4 @@
-fightinput:		;controller processing for fighting
-		;   SNES: pad input in a fight: dpad moves (playeracc), stay near the fight spot (xc1), B/A/Y punch (SPA $F82/$F50/$F0C)
+fightinput:		;Pad input in a fight: move and punch
 	lda.w temp3,x
 	ora.w Pencntdwn
 	bpl .go

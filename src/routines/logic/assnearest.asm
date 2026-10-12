@@ -1,5 +1,4 @@
-assnearest:		;asstab $11. this is a special assignment used for the player who is nearest the puck but doesn't have it. Assignment anearest ($11)
-		;   SNES: assignment for the player nearest the puck who does not have it
+assnearest:		;Assignment: the player nearest the puck who does not have it
 	lda.w pflags,x
 	bit.w #pfna		; pfna
 	beq .nna

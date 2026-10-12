@@ -1,5 +1,4 @@
-assdopen:		;asstab $D. add player a3 to penalty box
-		;   SNES: add player X to the penalty box (PBnum), position -1, frame 0
+assdopen:		;Assignment: put player X in the penalty box
 	lda.w pfalock,x
 	bne .rtl
 	lda.w #$0010

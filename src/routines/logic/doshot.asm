@@ -1,5 +1,4 @@
-doshot:		;stick is at puck so launch puck toward goal
-		;   SNES: stick is at the puck, launch it toward the goal
+doshot:		;The stick is at the puck: launch it toward the goal
 	stx.b xsave
 	ldx.w #$0000
 .save:		;movem d0-d7/a0-a3 to the stack

@@ -1,5 +1,4 @@
-SetShotMode:		;initiate shot by player a3
-		;   SNES: start a shot by player X: shot mode, direction to goal, shot animation
+SetShotMode:		;Start a shot by player X: shot mode, aim at the goal, shot animation
 	lda.w #$0008		; default shot direction: none
 	sta.w passdir
 	lda.w #sfssdir

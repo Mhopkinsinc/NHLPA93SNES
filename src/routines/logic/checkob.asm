@@ -1,5 +1,4 @@
-checkob:		;bring up little warning ref if a player on your team is over blue line. Called from doinput and asspuckc
-		;   SNES: bring up the little warning ref if a player on your team is over the blue line. Called from doinput and asspuckc
+checkob:		;Show the little warning referee when a teammate is over the blue line
 	lda.w gmode
 	bit.w #gmoffs		; offsides off: nothing to do
 	bne .offon

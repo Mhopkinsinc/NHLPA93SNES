@@ -1,4 +1,4 @@
-puckfaceoff2:		;asstab $1C. puckfaceoff2 : face off control logic and general setup for action
+puckfaceoff2:		;Assignment: the face off and the setup for play
 	lda.w pflags,x
 	bit.w #pfna
 	bne .first

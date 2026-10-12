@@ -1,4 +1,4 @@
-findpc_calc:		;d4 = goal line y, Y = puckcross entry offset
+findpc_calc:		;findpc for one goal line
 	lda.b d4		; d0 = line - pucky
 	sec
 	sbc.w pucky

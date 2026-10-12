@@ -1,4 +1,4 @@
-assfight:		;asstab $14. assfight : fighting logic for player X. The SNES drops the banner call and keeps the fighters inside x +-$6F
+assfight:		;Assignment: fighting
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rts

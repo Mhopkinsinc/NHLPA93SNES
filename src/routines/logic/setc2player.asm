@@ -1,5 +1,4 @@
-setc2player:		;restore old player and switch to new d0 player on cont. 2
-		;   SNES: same for controller 2
+setc2player:		;Give controller 2 to player d0
 	lda.b d0
 	cmp.w c2playernum
 	beq .rtl

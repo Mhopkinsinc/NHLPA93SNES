@@ -1,6 +1,4 @@
-asscentero:		;asstab 6. player a3 is center on offense
-		;   SNES: player X is the center on offense. Every aidef frames: acenterd when the other team has the puck, else a random spot in the
-		;   zone of the puck (.dedata), skateto with EvadePC
+asscentero:		;Assignment: the center on offense skates to a spot in the zone of the puck, avoiding the puck carrier
 	lda.w pfalock,x		; anim locked: nothing
 	beq .clk
 	jmp.w .rtl

@@ -1,5 +1,4 @@
-check4bench:		;check if player a3 should go to bench. Called from assbench
-		;   SNES: should player X go to the bench? Pops its return address when it takes over
+check4bench:		;Should player X go to the bench?
 	lda.w pflags,x
 	bit.w #pfjoycon|pf2pen		; joystick controlled, or penalty
 	bne .rts

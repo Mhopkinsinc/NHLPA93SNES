@@ -1,5 +1,4 @@
-holdplayer:		;abut press hold. a0 = the player this one is
-		;   SNES: Y pressed: hold. With impact, hold the last player who hit X (Acheck)
+holdplayer:		;Hold button: hold the player who last hit X
 	lda.w #SPAhook		; pfalock
 	sta.b d1
 	sta.w pfalock,x

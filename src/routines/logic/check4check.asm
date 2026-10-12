@@ -1,5 +1,4 @@
-check4check:		;look for good opportunity for checking opponent. Falls in from assnearest; also entered from assfwatch and asswingd
-		;   SNES: look for a good chance to check an opponent. Falls in from assnearest; also entered from assfwatch and asswingd
+check4check:		;Look for a good chance to check an opponent
 	lda.w #$0014
 	sec
 	sbc.w aggress,x

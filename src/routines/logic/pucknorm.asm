@@ -1,5 +1,4 @@
-pucknorm:		;asstab $18. assignment for puck most of the time. a3 = puck, d7 = elapse frames since last call
-		;   SNES: assignment for the puck most of the time. X = puck, d7 = elapsed frames
+pucknorm:		;Assignment: the puck most of the time
 	lda.w #pfna
 	trb.w pflags+puckobj		; pfna
 	beq .nna

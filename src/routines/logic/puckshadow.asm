@@ -1,5 +1,4 @@
-puckshadow:		;asstab $19. assignment for puck shadow. a3 = puck shadow (struct after the puck)
-		;   SNES: the shadow object follows the puck (frame $189); else parks it behind the goal
+puckshadow:		;Assignment: the puck shadow follows the puck
 	lda.w frame,x
 	cmp.w #$0189		; puck frame: shadow under the puck
 	bne .none

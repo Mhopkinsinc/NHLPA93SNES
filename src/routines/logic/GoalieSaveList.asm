@@ -1,2 +1,2 @@
-GoalieSaveList:		;save anims by index: glove 0/1, stack 2/3, stick 4/5
+GoalieSaveList:		;Goalie save animations: glove, stack and stick saves, each to both sides
 	dw SPAgglover,SPAgglovel,SPAgstackr,SPAgstackl,SPAgstickr,SPAgstickl

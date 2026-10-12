@@ -1,5 +1,4 @@
-CalcAngleOffset:		;d4 = cross product of goalie vector d0/d1 and post vector
-		;   SNES: d4 = (goalie vector d0/d1 x post vector d3/d4 from the puck) / d2
+CalcAngleOffset:		;d4 = the cross product of the goalie vector d0 / d1 and the post vector from the puck, scaled by d2
 	lda.b d3
 	sec
 	sbc.w puckx

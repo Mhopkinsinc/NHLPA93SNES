@@ -1,5 +1,4 @@
-assdefo:		;asstab 1. player a3 is defensive player on offense
-		;   SNES: defenceman on offence: hold the blue line on his side; adefd when offside, the puck goes back past the line or the other team has it
+assdefo:		;Assignment: a defenseman on offense holds the blue line on his side
 	lda.w pfalock,x
 	beq .clk
 	jmp.w .rtl

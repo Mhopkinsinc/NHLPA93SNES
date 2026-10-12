@@ -1,4 +1,4 @@
-Endfaceoff:		;drop the puck: pick the faceoff winner and send the puck off
+Endfaceoff:		;Drop the puck: pick the face off winner and send the puck off
 	lda.w seed+2		; puck on the ice sound
 	and.w #$0003
 	clc

@@ -1,4 +1,4 @@
-MaxSpeed:		;max speed^2 for each leg speed rating level 0-15. SNES ((n+20)*266)^2
+MaxSpeed:		;Top speed for each leg speed rating
 	dd (20*266)*(20*266)
 	dd (21*266)*(21*266)
 	dd (22*266)*(22*266)

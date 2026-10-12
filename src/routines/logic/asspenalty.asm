@@ -1,5 +1,4 @@
-asspenalty:		;asstab $C. player a3 should goto penalty box
-		;   SNES: player X skates to the penalty box (temp3/temp4 by PBnum), glides in, faces the ice (SPAwallright), then adopen
+asspenalty:		;Assignment: player X skates to the penalty box, glides in and faces the ice
 	lda.w pfalock,x
 	beq .na
 	jmp.w .rtl

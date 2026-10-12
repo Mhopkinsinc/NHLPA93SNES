@@ -1,4 +1,4 @@
-puckfaceoff:		;asstab $1B. puckfaceoff : this is where the action starts: period end checks, goalies, line change boxes, then pfaceoff2
+puckfaceoff:		;Assignment: the start of play. Period end checks, goalies and line changes, then the face off
 	lda.w pflags,x
 	bit.w #pfna
 	bne .first

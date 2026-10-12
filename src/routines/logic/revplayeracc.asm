@@ -1,4 +1,4 @@
-revplayeracc:		;SNES: playeracc with the direction d2 turned 180 degrees for a reversed player (pfrev)
+revplayeracc:		;playeracc for a player skating backwards
 	lda.w pfrev,x
 	beq .acc
 	lda.b d2

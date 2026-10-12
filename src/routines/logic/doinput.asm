@@ -1,5 +1,4 @@
-doinput:		;process controller input
-		;   SNES: controller input for player X. d0 = dpad, d1 = new buttons, d4 = controller 0/2
+doinput:		;Pad input for player X. d0 = pad directions, d1 = new buttons, d4 = controller
 	jsl.l setpads		; setpads; Start: pause
 	lda.b d1
 	bit.w #JOYSTART

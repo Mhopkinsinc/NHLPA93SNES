@@ -1,5 +1,4 @@
-lineinput:		;process input for line changes
-		;   SNES: line change input, d1 = new buttons: Y/B/A choose line choice 0-2 (lcfound); else skate with the dpad
+lineinput:		;Pad input while the line change box is open: choose a line, or skate
 	lda.b d1
 	pha
 	stz.b a2

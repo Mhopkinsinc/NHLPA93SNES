@@ -1,5 +1,4 @@
-skateto:		;a0 = extra routine for collision avoidance, d0/d1 = x/y cord to skate to, d7 = elapse frames
-		;   SNES: a skater near the target (sum of distances < 55) slows to 7/8
+skateto:		;Skate toward d0 / d1, with a routine in a0 for avoiding others; slow down near the target
 	lda.w position,x
 	beq .tick
 	lda.w pflags,x

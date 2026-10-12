@@ -1,5 +1,4 @@
-a2touchpuck:		;player a2 touches puck. Look for penalties/offsides/other junk. Called from pucknorm, puckstick and others
-		;   SNES: last touch, offsides, icing
+a2touchpuck:		;A player touches the puck: last touch, offsides and icing checks
 	ldy.b a2
 	lda.w Xpos,y
 	sta.w ltx		; ltx/lty/ltplayer

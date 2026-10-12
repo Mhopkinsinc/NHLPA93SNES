@@ -1,6 +1,4 @@
-passtoa0:		;pass puck to player a0
-		;   SNES: pass the puck from player a3 to player a0 (no pass count on the SNES): lead him by his velocity, solve the travel time d2
-		;   (sroot, divs16; 1-$18), then puckvz, the puck temp1/nopuck, the target temp3/temp4, puckvx/puckvy
+passtoa0:		;Pass the puck to player a0, leading him by his speed
 	jsl.l loadTeamStruct
 	lda.b a0
 	lsr a

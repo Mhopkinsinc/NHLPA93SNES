@@ -1,5 +1,4 @@
-assgoalietopuck:		;asstab $F. goalie skates out to a loose puck (inserted by assgoalie) while the puck moves toward him and the tmnear
-		;   stats allow it, else assexit
+assgoalietopuck:		;Assignment: the goalie skates out to a loose puck moving toward him, if allowed
 	lda.w pflags,x		; joystick controlled or clock stopped: assexit
 	and.w #pfjoycon
 	ora.w gmclock

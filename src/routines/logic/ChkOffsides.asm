@@ -1,5 +1,4 @@
-ChkOffsides:		;check for offsides penalty. a3 = puck. Flags the whole team (tmflags bit 4; 92 flagged each player). Called from pucknorm
-		;   SNES: flag a team offsides when the puck crosses its blue line. Called from pucknorm
+ChkOffsides:		;Flag a team offsides when the puck crosses its blue line
 	lda.w gmode
 	bit.w #gmoffs
 	beq .rtl

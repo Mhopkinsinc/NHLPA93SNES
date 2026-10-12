@@ -1,6 +1,5 @@
-doplayeracc:		;player a3 gets acc. in d0 dir
-		;   SNES: player X skates in direction d0 (0-7; 8 glides, 9 stops when moving); goalies use goalieacc. Sets pfrev to skate backwards in his own
-		;   zone, turns facedir/facefrac toward d0 (.ftab * d7, slower when fast), SPAturnl/SPAturnr or SPAglide/SPAglideback; revplayeracc when moving
+doplayeracc:		;Player X skates in direction d0 (or glides or stops), turning toward it and skating backwards
+		;   in his own zone
 	lda.w position,x
 	bne .skater
 	jml.l goalieacc

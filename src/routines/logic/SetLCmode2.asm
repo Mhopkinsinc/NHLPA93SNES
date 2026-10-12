@@ -1,5 +1,4 @@
-SetLCmode2:		;a2 = team struct for lc. Draw the lc box with one row per eligible line (A/B/C + line name). Also called from lineinput
-		;   SNES: draw the lc box, one row per eligible line (button letter + line name)
+SetLCmode2:		;Draw the line change box for team a2, one row per line it can change to
 	jsl.l setlccords
 	inc.b d0		; box size +1
 	inc.b d1

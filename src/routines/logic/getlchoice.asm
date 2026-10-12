@@ -1,4 +1,4 @@
-getlchoice:		;d0 = choice 0-2 of team a2 -> d0 = line 0-6 by the man advantage and tmline (.tab), -1 = none
+getlchoice:		;d0 = the line for line choice d0 of team a2, by the man advantage; -1 = none
 	stx.b xsave
 	ldx.w #$0000
 .save:

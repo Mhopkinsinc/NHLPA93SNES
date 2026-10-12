@@ -1,5 +1,4 @@
-AdjustFacingDirection:		;Turn facedir one step
-		;   SNES: turn facedir of goalie X one step toward d0, not past the sides of the net
+AdjustFacingDirection:		;Turn goalie X's facing one step toward d0, not past the sides of the net
 	lda.w facedir,x
 	sta.b d1
 	lda.b d0

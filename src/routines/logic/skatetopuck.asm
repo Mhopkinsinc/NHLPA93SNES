@@ -1,5 +1,4 @@
-skatetopuck:		;player a3 should skate to puck. d7 = elapse frames
-		;   SNES: player X skates to the puck. d7 = elapsed frames
+skatetopuck:		;Player X skates to the puck
 	jsl.l skatetopuckinit		; d0/d1 = puck spot
 	lda.w temp2,x
 	sec

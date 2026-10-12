@@ -1,5 +1,4 @@
-burst:		;cbut press check/speed. Also entered from check4check
-		;   SNES: check button: speed burst in the facing direction (costs energy), lock in SPAburst. Also entered from check4check
+burst:		;Check button: a speed burst in the facing direction, which costs energy
 	jsl.l getpde
 	lda.w OptLine		; line changes off: no energy cost
 	bne .0

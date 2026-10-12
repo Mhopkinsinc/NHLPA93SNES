@@ -1,5 +1,4 @@
-assfaceoffpl:		;asstab $17. assignment for players actually participating in faceoff
-		;   SNES: assignment for the players taking the faceoff
+assfaceoffpl:		;Assignment: the players taking the face off
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rts

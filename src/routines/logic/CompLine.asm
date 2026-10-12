@@ -1,5 +1,4 @@
-CompLine:		;find good line for comp to switch to. a2 = team, a1 = other team. Called from chk4lc and puckfaceoff
-		;   SNES: the computer team picks a line by the man advantage, the score late in the game and the line energies (getlinee)
+CompLine:		;The computer team picks a line by the man advantage, the score late in the game and the line energies
 	stx.b xsave
 	ldx.w #$0000
 .save:

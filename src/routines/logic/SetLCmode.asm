@@ -1,5 +1,4 @@
-SetLCmode:		;Initiate line change option if available (abut pressed by the puck carrier)
-		;   SNES: open the line change box for player X (abut of the puck carrier)
+SetLCmode:		;Open the line change box when the puck carrier's team asks for it
 	lda.w OptLine
 	bne .rtl
 	jsl.l loadTeamStruct		; loadTeamStruct: a2 = team of X

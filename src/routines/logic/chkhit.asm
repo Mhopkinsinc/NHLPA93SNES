@@ -1,5 +1,4 @@
-chkhit:		;part of fight to see if player is hit
-		;   SNES: part of the fight, is player X hit by opponent a0?
+chkhit:		;In a fight, is player X hit by player a0?
 	stx.b xsave
 	ldx.w #$0000
 .save:		;movem d0/a0-a3 to the stack

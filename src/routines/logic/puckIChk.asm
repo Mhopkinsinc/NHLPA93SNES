@@ -1,5 +1,4 @@
-puckIChk:		;check for icing of puck penalty. Called from pucknorm
-		;   SNES: sets ifcgl once the loose puck crosses the far goal line
+puckIChk:		;Watch for icing: the loose puck crossing the far goal line
 	lda.w iflags
 	bit.w #ifok		; ifok and not ifcgl, puck loose
 	beq .rtl

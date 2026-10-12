@@ -1,4 +1,4 @@
-chkpk2:		;Z set if player X is on the short-handed team (sf2pwrtm vs pfteam)
+chkpk2:		;Z set if player X is on the shorthanded team
 	lda.w pfteam,x
 	bne .team2
 	lda.w sflags

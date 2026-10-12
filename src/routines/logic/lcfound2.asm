@@ -1,5 +1,4 @@
-lcfound2:		;close lc box. Also called from lineinput
-		;   SNES: close the line change box (setlccords; the lower box clears sf3llcs), erase it unless the faceoff box is up, then printscores1
+lcfound2:		;Close the line change box and redraw the scoreboard
 	jsl.l setlccords
 	lda.w printy
 	sec

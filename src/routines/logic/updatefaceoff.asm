@@ -1,5 +1,4 @@
-updatefaceoff:		;a3 = puck. Drop animation frame from temp1; at 0 erases the faceoff box (92 did that in Endfaceoff). Entered from puckfaceoff2
-		;   SNES: X = puck. Drop animation frame from temp1; at 0 erases the faceoff box
+updatefaceoff:		;Step the puck drop animation; at its end erase the face off box
 	lda.w temp1,x
 	beq .erase
 	clc		; (temp1+6)/8 <= 2: drop frame 10-d0

@@ -1,5 +1,4 @@
-setlccords:		;set printx/y to cords for lc box on team a2
-		;   SNES: printx/printy for the line change box of team a2 (21 rows lower for the home team, flipped by gmdir); d0/d1 = Framer box size
+setlccords:		;printx / printy and the size of team a2's line change box
 	stz.b d0
 	lda.b a2
 	bne .0

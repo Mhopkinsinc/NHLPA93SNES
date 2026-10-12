@@ -1,5 +1,4 @@
-EvadePC:		;player a3 should avoid the puck carrier if he's on my team
-		;   SNES: within 40 of the puck carrier (after one frame of both velocities) d0 = direction away from him
+EvadePC:		;Near the puck carrier: d0 = the direction away from him
 	lda.w puckc
 	bmi .rtl
 	lda.w Xvel+1,x		; x after one frame, relative to the puck carrier

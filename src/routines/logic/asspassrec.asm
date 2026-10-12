@@ -1,5 +1,4 @@
-asspassrec:		;asstab $13. assignment for catching pass. Assignment apassrec ($13)
-		;   SNES: assignment for catching a pass
+asspassrec:		;Assignment: catching a pass
 	lda.w pfalock,x
 	bne .rts		; locked
 	lda.w gmclock		; clock stopped

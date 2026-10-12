@@ -1,5 +1,4 @@
-faceoffinput:		;controller processing for faceoff
-		;   SNES: faceoff player X: dpad into fodir1/fodir2, B pulls (SPAfaceoff)
+faceoffinput:		;Pad input for a player taking a face off
 	txa		; faceoff player only
 	asl a
 	asl a

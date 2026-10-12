@@ -1,5 +1,4 @@
-assbench:		;asstab $B. player a3 should goto bench
-		;   SNES: player X skates to the bench door and leaves; the new player (newpnum) comes on (setplayer)
+assbench:		;Assignment: player X skates to the bench door and leaves; the new player comes on
 	lda.w pfalock,x
 	beq .na
 	jmp.w .rtl

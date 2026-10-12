@@ -1,5 +1,4 @@
-clrplayer:		;take the joystick off player a3
-		;   SNES: take the joystick off player X (changeplayer)
+clrplayer:		;Take the controller off player X
 	lda.w pflags,x
 	bit.w #pfjoycon
 	beq asspenalty_rtl

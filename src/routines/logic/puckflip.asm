@@ -1,5 +1,4 @@
-puckflip:		;start puck spinning. a3 = puck, d0 bit 0 = flip. Called from checkgoal, wallcoll and others
-		;   SNES: start the puck spinning. d0 bit 0 = flip
+puckflip:		;Start the puck spinning
 	lda.b d0
 	and.w #$0001		; facedir of the puck ^= d0 bit 0, & 3
 	sta.b d0

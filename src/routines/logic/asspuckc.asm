@@ -1,5 +1,4 @@
-asspuckc:		;asstab $10. player a3 is puck handler
-		;   SNES: player X is the puck carrier: every aioff frames checkob, chk4lc, chk4shot, chk4pass; skate to a PuckcSpots spot with the .chkdir callback
+asspuckc:		;Assignment: the puck carrier. Checks for offsides, line changes, shots and passes, and skates to a good spot
 	txa		; not the carrier: assexit
 	lsr a
 	cmp.w puckc

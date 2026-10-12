@@ -1,5 +1,4 @@
-assscore:		;asstab 7. player a3 celebrates, if scoring player then do arm pump
-		;   SNES: player X celebrates, the scorer pumps his arm; velocities * 3/4 each frame, the carrier drops the puck (nopuck 1800)
+assscore:		;Assignment: celebrating a goal; the scorer pumps his arm
 	lda.w Xvel,x		; Xvel, Yvel *= $C0/256
 	sta.b mula
 	lda.w #$00C0

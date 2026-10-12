@@ -1,5 +1,4 @@
-assinsert:		;insert new assignment on player a3. d0 = assignment. Falls into assreplace
-		;   SNES: insert assignment d0 on player X. Falls into assreplace
+assinsert:		;Give player X assignment d0 on top of the current one
 	lda.w assnum,x		; assnum - 1
 	dec a
 	and.w #$0007

@@ -1,6 +1,4 @@
-Findhittype:		;look for type of swing (forhand or backhand)
-		;   SNES: swing type of player X for launch direction d0: A = 0 forehand (Z set), 1 backhand; .xflip when attribute bit $800 (x
-		;   flip)
+Findhittype:		;Swing type of player X for direction d0: forehand or backhand
 	lda.b d0
 	eor.w #$FFFF
 	inc a

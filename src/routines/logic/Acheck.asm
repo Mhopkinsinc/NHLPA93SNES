@@ -1,6 +1,4 @@
-Acheck:		;start hold (or hook if a0 is ahead) on player a0
-		;   SNES: player X holds a0: pfalock, SPAhook, or SPAHold when he has impact and a0 is not ahead. With pfgoal clear the bmi tests the pfgoal load, so
-		;   always SPAHold then
+Acheck:		;Player X holds or hooks player a0
 	ldy.b a0
 	lda.w #SPAhook
 	sta.b d1

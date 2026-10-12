@@ -1,4 +1,4 @@
-lcfound:		;d2 = line choice 0-2: getlchoice; loadTeamStruct, tmline, setpersonel, lcfound2
+lcfound:		;Change team a2 to the chosen line
 	ldx.b a3
 	ldy.b a2
 	lda.b d2
