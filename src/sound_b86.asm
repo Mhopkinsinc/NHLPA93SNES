@@ -53,7 +53,7 @@ BootSampleDir:		;DSP sample directory: per sample the APU address of its start a
 	dw SPCBOOTSAMPLES+$49A7,SPCBOOTSAMPLES+$5271		; sample $08: start, loop (offsets in bootsamples.brr)
 BootSampleDirEnd:
 	dw BOOTSAMPLESIZE, SPCBOOTSAMPLES		; block 4: the BRR samples
-BootSamples:		;BRR samples of the boot set (9-byte blocks), BootSamples-BootSamples
+BootSamples:		;BRR samples of the boot set (9-byte blocks)
 	incbin "../data/bootsamples.brr"
 BootSamplesEnd:
 	assert BootSamplesEnd-BootSamples == BOOTSAMPLESIZE
