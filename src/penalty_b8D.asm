@@ -2,9 +2,7 @@
 ; Bank $8D. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8D82F0
-GetLowestPen:		;92 name; 93 body differs (92 built a release-order PlList). a2 = team on the power play, a3 = shorthanded team. Return d0 = power play time left from the penalty box times.
-		;   Called from updatepwrplay
-		;   SNES: d0 = power play time left from the penalty box times
+GetLowestPen:		;a2 = team on the power play, a3 = shorthanded team. Return d0 = power play time left from the penalty box times. Called from updatepwrplay
 	stz.b d0
 	stz.b d3
 	lda.b a2
@@ -12,14 +10,14 @@ GetLowestPen:		;92 name; 93 body differs (92 built a release-order PlList). a2 =
 	lda.w #$001A
 .a:
 	sta.b a0
-.loop:
+.top:
 	ldy.b a0		; penalty box list of the power play team ($80 ends)
 	inc.b a0
 	lda.w tmboxlist,y
 	and.w #$00FF
 	sta.b d2
 	bit.w #$0080
-	bne .other
+	bne .t2
 	lda.b a2
 	beq .h0
 	lda.w #$0034
@@ -30,7 +28,7 @@ GetLowestPen:		;92 name; 93 body differs (92 built a release-order PlList). a2 =
 	lda.w tmpdst,y
 	sta.b d2
 	bit.w #$4000		; tmpdst bit 14: not timed
-	bne .loop
+	bne .top
 	lda.b d2
 	sec
 	sbc.b d3
@@ -40,8 +38,8 @@ GetLowestPen:		;92 name; 93 body differs (92 built a release-order PlList). a2 =
 	sta.b d0
 	lda.b d2
 	sta.b d3
-	bra .loop
-.other:
+	bra .top
+.t2:
 	ldy.b a3		; shorthanded team
 	lda.w tmap,y
 	cmp.w #6
@@ -55,7 +53,7 @@ GetLowestPen:		;92 name; 93 body differs (92 built a release-order PlList). a2 =
 	lda.w #$001A
 .b:
 	sta.b a0
-.loop2:
+.t3:
 	ldy.b a0
 	lda.w tmboxlist,y
 	inc.b a0
@@ -72,7 +70,7 @@ GetLowestPen:		;92 name; 93 body differs (92 built a release-order PlList). a2 =
 	tay
 	lda.w tmpdst,y
 	bit.w #$4000
-	bne .loop2
+	bne .t3
 	lda.b d0
 	sec
 	sbc.w tmpdst,y
@@ -195,13 +193,13 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	sta.w VisTeam
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.pushg:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pusha
+	bne .pushg
 	ldx.b xsave
 	jsl.l ClearTeamStats
 	jsl.l restoreteams
@@ -221,22 +219,22 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	sta.w gameclock
 	stx.b xsave
 	ldx.w #$0002
-.popa:
+.popg:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .popg
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha2:
+.pushg2:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pusha2
+	bne .pushg2
 	ldx.b xsave
 	ldy.b a0		; gsp, scores from the game
 	lda.w gsper,y
@@ -271,10 +269,10 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	stz.w Hpos
 	jsl.l ResetBench
 	stz.b a2
-	jsl.l .team
+	jsl.l .setteam
 	lda.w #$0002
 	sta.b a2
-	jsl.l .team
+	jsl.l .setteam
 	jsl.l resetplstuff
 	lda.w #11		; 12 players to their .postab spots
 	sta.b d0
@@ -314,10 +312,10 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	pha
 	lda.b vcount
 	sta.w oldvcount
-.zero:		;wait for the next frame
+.0:		;wait for the next frame
 	lda.b vcount		; the frame time steps as the game loop
 	cmp.w oldvcount
-	beq .zero
+	beq .0
 	tax
 	sec
 	sbc.w oldvcount
@@ -369,17 +367,17 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	pla
 	sta.b d7
 	lda.w gmclock
-	beq .one
+	beq .1
 	pla
 	sec
 	sbc.b d7
 	pha
 	bmi .endhl
-.one:
+.1:
 	jsl.l Readjoy12		; Start or A ends it
 	lda.b d1
 	bit.w #JOYSTART|JOYA
-	beq .zero
+	beq .0
 	lda.w tmscore		; tied: random goal
 	cmp.w tmscore+2
 	bne .endhl
@@ -391,52 +389,52 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	pla
 	stx.b xsave
 	ldx.w #$0002
-.popa3:
+.popg2:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa3
+	bpl .popg2
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.pushd1:
 	lda.b d1,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pushd
+	bne .pushd1
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha4:
+.pusha0:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pusha4
+	bne .pusha0
 	ldx.b xsave
-	jsl.l KillCrowd		; KillCrowd, bank $8F
+	jsl.l KillCrowd		; bank $8F
 	jsl.l sndqreset
 	stx.b xsave
 	ldx.w #$0002
-.popa4:
+.popa0:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa4
+	bpl .popa0
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0002
-.popd:
+.popd1:
 	pla
 	sta.b d1,x
 	dex
 	dex
-	bpl .popd
+	bpl .popd1
 	ldx.b xsave
 	ldy.b a0		; back into the game record
 	lda.w tmscore
@@ -465,42 +463,42 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	jsl.l Pmenu		; bank $8F: DisplayStats
 	stx.b xsave
 	ldx.w #$001A
-.popa5:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa5
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$001E
-.popd5:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd5
+	bpl .restore
 	ldx.b xsave
 	ldx.b a3
 	stx.b xsave
 	ldx.w #$0000
-.pushd6:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0020
-	bne .pushd6
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha6:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$001C
-	bne .pusha6
+	bne .savea
 	ldx.b xsave
 	ldy.b a0
 	lda.w #4		; gsper 4: tied after the highlight: again
@@ -522,26 +520,26 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	bit.w #JOYSTART
 	beq .exit
 .exit2:
-	lda.w #sf3sbut		; sf3sbut
+	lda.w #sf3sbut
 	tsb.w sflags3
 .exit:
 	stx.b xsave
 	ldx.w #$001A
-.popa7:
+.resta2:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa7
+	bpl .resta2
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$001E
-.popd7:
+.restore2:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd7
+	bpl .restore2
 	ldx.b xsave
 	ldx.b a3
 	rtl
@@ -552,7 +550,7 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 .nhl0:
 	jsl.l .ranres
 	bra .exit
-.team:		;SNES: team a2 for the highlight: energy, setpersonel, forcepldata, no last touches
+.setteam:		;SNES: team a2 for the highlight: energy, setpersonel, forcepldata, no last touches
 	jsl.l reenergizeteam
 	jsl.l setpersonel
 	jsl.l forcepldata
