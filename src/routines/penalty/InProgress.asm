@@ -1,7 +1,5 @@
-InProgress:		;ref in progress-- update graphics and stats and penalty information. Takes the last PenBuf entry: the first pass logs a penalty with minutes and sends the player to the box
-		;   later passes wait until he is off the ice and drop the entry. When PenBuf is empty, recount players and go to the face off. Entered from chkprogress
-		;   SNES: Takes the last PenBuf entry: the first pass logs a penalty with minutes and sends the player to the box, later passes
-		;   clear it; at the end coinsearch and the face off
+InProgress:		;The referee's work after a whistle: send each penalized player to the box, update the scoreboard and stats,
+		;   then recount the players and go to the face off
 	lda.w RefCnt		; animation in progress: exit
 	bmi .step
 	jmp.w .rtl

@@ -1,5 +1,4 @@
-ClearPenaltyBuffer:		;clear PenBuf. Also called from clockcont
-		;   SNES: clear the 32 words of the penalty list (PenBuf)
+ClearPenaltyBuffer:		;Clear the list of called penalties
 	lda.w #$001F
 	sta.b d0
 	lda.w #PenBuf

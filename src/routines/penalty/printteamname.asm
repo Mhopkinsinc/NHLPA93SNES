@@ -1,4 +1,4 @@
-printteamname:		;print the team name of team d3 (0 home) at printx/printy, then printy += 2
+printteamname:		;Print team d3's name, then move down two rows
 	lda.w printx
 	pha
 	lda.w tmdata		; tmdata of team d3

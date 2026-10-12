@@ -1,5 +1,4 @@
-ClrHor:		;revert the graphics back to vertical ice rink mode. Does not remap the fonts
-		;   SNES: revert to the vertical ice rink: clear sfhormode, Oldrow, SprSort, clear the text map, printscores1
+ClrHor:		;Switch back from the horizontal rink to the vertical ice rink
 	stx.b xsave
 	ldx.w #$0000
 .savea:

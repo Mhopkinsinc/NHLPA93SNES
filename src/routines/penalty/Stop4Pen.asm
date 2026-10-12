@@ -1,5 +1,4 @@
-Stop4Pen:		;a0 = penaltylist penalty +2. Stop the clock, set the face off spot from the penalty type, blow the whistle. Also entered from puckfaceoff+38
-		;   SNES: a0 = PenBuf entry +2. Stop the clock, set the face off spot from the penalty type, blow the whistle
+Stop4Pen:		;Stop play for a penalty: stop the clock, set the face off spot from the penalty type and blow the whistle
 	lda.w #$FFFF		; clock already stopped: skip the face off spot
 	tsb.w gmclock
 	beq .spot

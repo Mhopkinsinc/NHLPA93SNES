@@ -1,5 +1,5 @@
-PenGoalStuff:		;do this stuff after a goal. a1 = scored on team, a2 = scoring team. If the scoring team had more players on ice, the first scored on player in the box without a coincidental
-		;   penalty is released
+PenGoalStuff:		;After a goal on a power play, let the first player out of the box whose penalty is not coincidental.
+		;   a1 = team scored on, a2 = scoring team
 	stx.b xsave
 	ldx.w #$0000
 .save:

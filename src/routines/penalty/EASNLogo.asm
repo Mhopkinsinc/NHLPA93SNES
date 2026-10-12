@@ -1,5 +1,4 @@
-EASNLogo:		;Draw easn.map at x 1, y $19 on the vertical ice rink if no power play. Falls into DrawEASNMap
-		;   SNES: the EASN logo (7 x 2 words, EASNLogoMap) at x 1, y $19 of the rink map unless a power play is on
+EASNLogo:		;Draw the EASN logo on the rink unless a power play is on
 	lda.w sflags
 	bit.w #sf2pwrplay
 	bne .rtl

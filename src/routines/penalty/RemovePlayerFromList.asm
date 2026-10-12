@@ -1,6 +1,4 @@
-RemovePlayerFromList:		;remove the entry before a0 from a penalty box list by shifting the rest down (list ends with a negative byte). Return a0 = removed slot. Called from PenGoalStuff
-		;   ProcessPenaltyList
-		;   SNES: remove entry a0 from the penalty box list (tmboxlist) by shifting the rest down
+RemovePlayerFromList:		;Remove entry a0 from a penalty box list by moving the rest down
 	lda.w #$FFFF
 	sta.b d2
 .loop:

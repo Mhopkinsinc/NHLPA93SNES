@@ -1,4 +1,4 @@
-AddPenalty2:		;forced penalties like face off and game over. d0 = penalty, X = player or a player of the penalized team
+AddPenalty2:		;Call penalty d0 on player X without the checks; used for forced calls like face offs and game over
 	lda.w sfhormode		; horizontal rink: none
 	beq .go
 	jmp.w .rtl

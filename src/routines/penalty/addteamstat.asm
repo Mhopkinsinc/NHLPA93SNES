@@ -1,4 +1,4 @@
-addteamstat:		;add d0 to the team word stat at d1 (+2 for team 2, pfteam of X). inline in ChkShotStat
+addteamstat:		;Add d0 to a team stat for player X's team
 	ldy.b d1		; pfteam: team 2 word
 	lda.w pfteam,x
 	beq .add

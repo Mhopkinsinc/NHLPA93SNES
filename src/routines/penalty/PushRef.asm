@@ -1,5 +1,4 @@
-PushRef:		;tell vblank what to display. d0 = ref frame, $40 clears the window. The horizontal ref uses RefMap2
-		;   SNES: ref window frame d0 (RefsMap or RefsMapHor, 8 x 7 words) into textmap; d0 $40 erases the window and prefmes
+PushRef:		;Draw referee frame d0 in the referee window; frame $40 erases the window
 	phx
 	stx.b xsave
 	ldx.w #$0000

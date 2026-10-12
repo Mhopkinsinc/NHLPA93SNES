@@ -1,5 +1,4 @@
-NewTicker3:		;display ticker score for game d3 (a0 = gstruct entry), skip if d3 is negative. Called from chkprogress, Intermission and StartHL2
-		;   SNES: the ticker box for game d3: GameLabels round name, period, both teams with scores (TickerTeam)
+NewTicker3:		;Show the ticker box for game d3: round, period and both teams with their scores
 	lda.b d3
 	asl a
 	sta.b a0

@@ -1,5 +1,4 @@
-AdvanceStringPtr:		;Return a1 = string d0 of the String list a1
-		;   SNES: a1 = string d0 of the list [a1]
+AdvanceStringPtr:		;a1 = string d0 of the string list [a1]
 	bra .cnt
 .next:
 	lda.b a1

@@ -1,4 +1,4 @@
-TickerNext:		;SNES: next ticker game (restart at the last game of the round), NewTicker2
+TickerNext:		;Go to the next ticker game
 	lda.w TickerNum
 	bmi .last
 	ora.w gamenum

@@ -1,4 +1,4 @@
-PrintPerLabel:		;SNES: print the PerLabels entry for gsp
+PrintPerLabel:		;Print the label of the current period
 	lda.w gsp
 	sta.b d0
 	lda.w #PerLabels

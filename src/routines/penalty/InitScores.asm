@@ -1,5 +1,4 @@
-InitScores:		;initialize other games scores/period in playoffs. Called from StartGame
-		;   SNES: playoff rounds 0-1: random scores so far for the other games of the round (SetScore 1-3 times)
+InitScores:		;Playoffs: give the other games of the round random scores so far
 	lda.w OptPlayMode
 	beq .rtl
 	lda.w gamelevel

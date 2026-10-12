@@ -1,5 +1,4 @@
-PrintTeamNameAndScore:		;print the team name of team a2 at printx/printy, then its score as 2 digits at x $1C. Called twice from printscores1
-		;   SNES: team name of team a2 (d3 = home/away), then its score as 2 characters (blank tens)
+PrintTeamNameAndScore:		;Print team a2's name, then its score as two characters
 	jsl.l printteamname
 	lda.w #mesarea
 	sta.b a1

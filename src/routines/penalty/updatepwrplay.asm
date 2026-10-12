@@ -1,5 +1,4 @@
-updatepwrplay:		;show graphic and time remaining for power plays. Prints the time and the team on the power play
-		;   SNES: show the power play box: time left and the team on the power play
+updatepwrplay:		;Show the power play box: the time left and the team on the power play
 	stz.b a2		; a2 = home, a3 = away
 	lda.w #$0002
 	sta.b a3

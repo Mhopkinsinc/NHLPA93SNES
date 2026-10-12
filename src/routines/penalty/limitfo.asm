@@ -1,5 +1,4 @@
-limitfo:		;limit face off to 5-20 feet from walls of rink. Checks every player in PenBuf
-		;   SNES: keep the face off spot 65 from the blue line for every player in PenBuf
+limitfo:		;Keep the face off spot away from the blue line for every called penalty
 	stx.b xsave
 	ldx.w #$0000
 .save:

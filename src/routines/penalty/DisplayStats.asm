@@ -1,4 +1,4 @@
-DisplayStats:		;the STATS page of the pause menu: Shots, Power Play, Penalties, Body Checks, AttackZone for both teams
+DisplayStats:		;The STATS page of the pause menu: shots, power play, penalties, body checks and attack zone time for both teams
 	jsl.l printbigz
 	dw $000A		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$0B,$02,"STATS"

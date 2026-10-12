@@ -1,6 +1,5 @@
-prefmes:		;print message for penalty d0 (negative clears it). Vertical mode: framed under the ref. Horizontal mode: one centered line on row $B
-		;   SNES: print the message of penalty d0 (negative clears it). Vertical: framed under the ref at y $A, centred by its length; horizontal (sfhormode):
-		;   ClearPenaltyMessage, one centred line at x $11, y $B. Saves d0-d2, a1
+prefmes:		;Print the message for penalty d0, or clear it when negative: under the referee on the vertical rink,
+		;   one centered line on the horizontal rink
 	stx.b xsave
 	ldx.w #$0000
 .save:

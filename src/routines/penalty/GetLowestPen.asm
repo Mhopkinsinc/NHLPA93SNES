@@ -1,4 +1,4 @@
-GetLowestPen:		;a2 = team on the power play, a3 = shorthanded team. Return d0 = power play time left from the penalty box times. Called from updatepwrplay
+GetLowestPen:		;d0 = the power play time left, from the penalty box times. a2 = team on the power play, a3 = the shorthanded team
 	stz.b d0
 	stz.b d3
 	lda.b a2

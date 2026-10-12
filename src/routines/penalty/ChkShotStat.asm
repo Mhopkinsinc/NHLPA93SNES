@@ -1,5 +1,4 @@
-ChkShotStat:		;add to shot stat if a shot was taken
-		;   SNES: if a shot was taken (sf2shot, cleared here), add 1 to the shooting team tmshots
+ChkShotStat:		;If a shot was taken, add it to the shooting team's shots
 	lda.w #sf2shot
 	trb.w sflags
 	beq .rtl

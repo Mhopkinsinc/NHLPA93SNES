@@ -1,5 +1,4 @@
-linebar:		;draw the energy bar of line d0 for team a2 at printx/printy (bitmap from the bar map, 16 steps). Called from SetLCmode2
-		;   SNES: energy bar of line d0 (getlinee) as 5 small font characters
+linebar:		;Draw the energy bar of line d0
 	jsl.l getlinee
 	lda.w printa
 	pha

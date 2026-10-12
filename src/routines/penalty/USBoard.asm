@@ -1,5 +1,4 @@
-USBoard:		;update score board, including the players in the penalty box and their time remaining. Called from InProgress and SetHor
-		;   SNES: printscores1, then each team's penalty box players and their time (.dispen)
+USBoard:		;Update the scoreboard, with the players in the penalty box and their time left
 	stx.b xsave
 	ldx.w #$0000
 .save:

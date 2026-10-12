@@ -1,4 +1,4 @@
-StatsScreen:		;SNES: DisplayStats, then wait for A or 60 seconds
+StatsScreen:		;Show the game stats until A is pressed or a minute passes
 	jsl.l DisplayStats
 	lda.b vcount
 	pha

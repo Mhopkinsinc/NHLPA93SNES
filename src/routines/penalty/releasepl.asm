@@ -1,5 +1,4 @@
-releasepl:		;player's penalty time is up so let him out (if appropriate). a2 = team, d0 = player*2. Called from ProcessPenaltyList
-		;   SNES: player d0 leaves the penalty box: the next free object of team a2 comes on (tmap+1, priolist position), setplayer
+releasepl:		;Player d0's penalty time is up: let him out of the box and put him on the ice
 	stx.b xsave
 	ldx.w #$0000
 .save:

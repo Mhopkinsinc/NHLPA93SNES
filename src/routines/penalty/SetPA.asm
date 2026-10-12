@@ -1,5 +1,4 @@
-SetPA:		;start ref animation. d0 = animation (penalty number)
-		;   SNES: start the ref animation for penalty d0: prefmes, ShowGoalBox for a goal, penmsgtimer (60 in horizontal mode), then SetPA2
+SetPA:		;Start the referee animation for penalty d0 and show its message
 	lda.b d0		; RefPen = d0, RefStep = 0, prefmes
 	sta.w RefPen
 	stz.w RefStep

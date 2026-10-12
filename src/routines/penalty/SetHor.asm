@@ -1,5 +1,4 @@
-SetHor:		;switch graphics to horizontal ice rink graphics mode. Does not remap the fonts
-		;   SNES: switch to the horizontal rink (scoreboard screen): half puck speed, forceblack, sfhormode, StatsReport
+SetHor:		;Switch to the horizontal rink (the scoreboard screen)
 	stx.b xsave
 	ldx.w #$0000
 .save:

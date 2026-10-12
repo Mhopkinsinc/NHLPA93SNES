@@ -1,5 +1,4 @@
-NewTicker2:		;goto next ticker. Return d3 = game, or neg if none left. Falls into CheckGameTickerStatus
-		;   SNES: d3 = next ticker game (not the user game, no highlight coming, series not over)
+NewTicker2:		;d3 = the next game for the ticker, or negative when none is left
 	lda.w OptPlayMode
 	beq .rtl
 	lda.w TickerNum

@@ -1,4 +1,4 @@
-InitTicker:		;SNES: start the ticker at the last game of the round (GetShifter) unless one is running, then NewTicker2
+InitTicker:		;Start the score ticker for the other games of the round
 	lda.w TickerNum
 	bmi .last
 	ora.w gamenum

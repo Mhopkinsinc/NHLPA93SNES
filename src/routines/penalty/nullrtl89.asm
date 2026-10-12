@@ -1,2 +1,2 @@
-nullrtl89:		;does nothing (printscores1 calls it)
+nullrtl89:		;Does nothing
 	rtl

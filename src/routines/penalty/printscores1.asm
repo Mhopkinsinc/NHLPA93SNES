@@ -1,6 +1,5 @@
-printscores1:		;draw scoreboard. Vertical rink: period box and the score box (team names and scores). Horizontal rink (.sbscreen): period and both team logos with big scores. Called from
-		;   USBoard, Pausemode, lcfound2 and others
-		;   SNES: Vertical rink: period box and score box (team names and scores); horizontal rink (.sbscreen): period, team names, scores
+printscores1:		;Draw the scoreboard: the period and score boxes on the vertical rink, or the period, teams and scores on the
+		;   horizontal rink
 	stx.b xsave
 	ldx.w #$0000
 .save:

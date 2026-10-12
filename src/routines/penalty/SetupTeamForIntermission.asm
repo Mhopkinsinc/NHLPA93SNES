@@ -1,6 +1,5 @@
-SetupTeamForIntermission:		;reset the bench, then for each team refill energy and pick the starting line: Pw1 (3) for the team with more players on ice, PK1 (5) for the team with fewer
-		;   else 0. Called from Intermission
-		;   SNES: ResetBench; both teams re-energized, line 0 (3/5 when a team is a man short or up)
+SetupTeamForIntermission:		;Before a period: reset the bench, refill every player's energy and pick each team's starting line
+		;   (power play or penalty kill line when a team is a man up or short)
 	jsl.l ResetBench
 	stz.b a2
 	lda.w #$0002

@@ -1,7 +1,4 @@
-coinsearch:		;penalty-box part of InProgress. a2 = team. Clears tmpdst bit 5, counts players kept off the ice by penalties (coincidental
-		;   and bit 4 times do not count, at most 2) and sets tmap. Called twice from InProgress
-		;   SNES: Clears tmpdst bit $2000, counts the players kept off the ice by penalties (not coincidental, not injured, never below 4)
-		;   into tmap
+coinsearch:		;Count team a2's players kept off the ice by penalties (not coincidental ones) to set how many it has on the ice
 	lda.w #$0006		; d1 = 6 players, d0 = last roster word
 	sta.b d1
 	lda.w #$0032

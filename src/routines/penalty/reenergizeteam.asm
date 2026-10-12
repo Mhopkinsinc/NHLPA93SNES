@@ -1,5 +1,4 @@
-reenergizeteam:		;set all players to max energy on team a2. Also moves players marked -3 in tmpdst to the bench (-2). Called from SetupTeamForIntermission and StartHL2 .setteam
-		;   SNES: max energy for every player of team a2; TMPDOUT players go to the bench
+reenergizeteam:		;Give every player of team a2 full energy, and move players who were sent out to the bench
 	lda.w #$0032
 	sta.b d0
 .top:

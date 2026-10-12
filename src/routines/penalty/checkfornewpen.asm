@@ -1,5 +1,5 @@
-checkfornewpen:		;look for new penalty (entered thru addpenalty(2)). Stops play at once for penalties without minutes or when the guilty team has the puck, otherwise starts a
-		;   delayed penalty call
+checkfornewpen:		;Look for a new penalty call. Stops play at once when the penalty has no minutes or the guilty team has
+		;   the puck; otherwise it is a delayed call
 	lda.w sfhormode		; not in horizontal mode
 	beq .go
 	jmp.w .rtl

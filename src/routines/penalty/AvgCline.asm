@@ -1,5 +1,4 @@
-AvgCline:		;return d0 = average energy of current line on team a2
-		;   SNES: d0 = average energy of the current line of team a2
+AvgCline:		;d0 = the average energy of team a2's current line
 	stx.b xsave
 	ldx.w #$0000
 .save:

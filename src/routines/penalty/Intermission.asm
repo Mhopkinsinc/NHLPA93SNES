@@ -1,6 +1,4 @@
-Intermission:		;end of period junk (zamboni/stats). Opens the pause menu screen (item list by period, +5 in playoffs), shows the ticker scores of the other games, then the highlights.
-		;   Start on either pad cuts it short. Called from PeriodOver
-		;   SNES: the pause menu screen with the ticker scores of the other games (IntermissionTick), then the highlights
+Intermission:		;Between periods: the pause menu screen with the scores of the other games, then the highlights. Start cuts it short
 	jsl.l sndqreset
 	jsl.l SetupTeamForIntermission
 	lda.w #$0000

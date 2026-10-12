@@ -1,5 +1,4 @@
-PrintStringFromList:		;print string d0 of the String list a1 with printsmall
-		;   SNES: print string d0 of the list [a1]
+PrintStringFromList:		;Print string d0 of the string list [a1]
 	lda.b d0
 	bne .skip
 	jml.l print

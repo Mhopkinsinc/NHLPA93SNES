@@ -1,5 +1,4 @@
-AddPenalty:		;add penalty d0 (PenaltyList offset) for player X. Ignored while the clock is stopped, when penalties are off, or offsides when offsides
-		;   are off. Falls into AddPenalty2
+AddPenalty:		;Call penalty d0 on player X, unless the clock is stopped or penalties (or offsides) are turned off
 	lda.w gmclock		; clock stopped
 	bne .rtl
 	lda.b d0

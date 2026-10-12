@@ -1,5 +1,4 @@
-UpdatePA:		;animate ref in ref window. Reprints the horizontal penalty message line when penmsgtimer runs out
-		;   SNES: animate the ref (SetPA2 when RefCnt runs out); reprint the horizontal penalty message line when penmsgtimer runs out
+UpdatePA:		;Animate the referee, and reprint the penalty message line when its time runs out
 	lda.w RefCnt		; RefCnt negative: idle
 	bmi .rtl
 	sec

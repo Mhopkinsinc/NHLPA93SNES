@@ -1,5 +1,4 @@
-chkatop:		;attack time of possession stat update. Called once a second from updatepentime
-		;   SNES: tmATOP +1 for the team with the puck past the blue line ($58)
+chkatop:		;Once a second, add to the attack zone time of the team with the puck past the blue line
 	stz.b d1
 	lda.w pucky
 	sec

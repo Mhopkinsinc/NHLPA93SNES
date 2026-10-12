@@ -1,5 +1,4 @@
-UpdateScores:		;update ticker score values. Called from PeriodOver
-		;   SNES: update the ticker scores of the other playoff games (not gamenum, not over)
+UpdateScores:		;Update the ticker scores of the other playoff games
 	jsl.l GetShifter		; GetShifter: d1 = games - 1
 	lda.b d1
 	sta.w TickerNum

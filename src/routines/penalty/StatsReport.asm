@@ -1,5 +1,4 @@
-StatsReport:		;SNES: clear the text screen, send 28 rows of HorRinkMap (32 columns each) to vram $0418 and, 8 columns
-		;   in, to $0800, then USBoard
+StatsReport:		;Clear the text screen, draw the horizontal rink scoreboard background, then the scoreboard
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $FF,$00,$00

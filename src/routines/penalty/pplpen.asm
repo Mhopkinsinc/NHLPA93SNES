@@ -1,5 +1,4 @@
-pplpen:		;Print one penalty box line: player number and time remaining. a2 = team, d0 = roster offset (player*2). Only rows up to y $A are printed; printy += 1. Called from USBoard .dispen
-		;   SNES: player number and time left (rows up to y $A)
+pplpen:		;Print one penalty box line: player number and time left
 	lda.w printy
 	cmp.w #$000B
 	bcs USBoard_rtl

@@ -1,4 +1,4 @@
-IntermissionTick:		;SNES: during the intermission show the next ticker score every $150 frames; after the last one the highlights (DoHiLights). A = 0: go on
+IntermissionTick:		;During the intermission, show the next ticker score from time to time, then the highlights
 	lda.w demoflag
 	beq .rtl
 	lda.b vcount

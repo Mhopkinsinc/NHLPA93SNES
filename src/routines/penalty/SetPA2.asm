@@ -1,5 +1,4 @@
-SetPA2:		;update animation for ref. Next frame/delay pair from the PenaltyList animation of RefPen. Also called from UpdatePA
-		;   SNES: a negative pair is the last one (RefStep = -1). RefCnt = delay*8, then PushRef
+SetPA2:		;Step the referee animation to its next frame and delay
 	phx
 	stx.b xsave
 	ldx.w #$0000

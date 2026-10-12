@@ -1,5 +1,4 @@
-updatepentime:		;update the time remaining on all penalized players, once a second
-		;   SNES: once a second count down the penalty box times of both teams; release players whose time is up
+updatepentime:		;Once a second, count down the penalty box times of both teams and release players whose time is up
 	lda.w #$0020
 	trb.w sflags3
 	lda.w gmclock
