@@ -2,7 +2,7 @@
 ; Bank $80. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8083AB
-goalieacc:		;goalie gets acc. in direction d0. 93 turns facedir one step toward d0 (92 set it directly)
+goalieacc:		;goalie gets acc. in direction d0. Turns facedir one step toward d0 (92 set it directly)
 		;   SNES: turns facedir one step toward d0, then playeracc
 	lda.w #SPAgready		; SPAgready (2)
 	sta.b d1
@@ -2541,13 +2541,13 @@ findpc:		;find puck crossing lines: calculate when puck will cross goalline (if 
 		;   SNES: when and where will the puck cross each goal line
 	stx.b xsave
 	ldx.w #$0000
-.push:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0014
-	bne .push
+	bne .save
 	ldx.b xsave
 	lda.w #blueline+goalline		; top goal line (blueline+goalline)
 	sta.b d4
@@ -2559,12 +2559,12 @@ findpc:		;find puck crossing lines: calculate when puck will cross goalline (if 
 	jsl.l findpc_calc
 	stx.b xsave
 	ldx.w #$0012
-.pop:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .pop
+	bpl .restore
 	ldx.b xsave
 	rtl
 findpc_calc:		;d4 = goal line y, Y = puckcross entry offset
@@ -2776,12 +2776,12 @@ a2offsides:		;player a2 touched the puck: offsides penalty if his team is flagge
 	lda.w pucky
 	sta.b d0
 	lda.w pfgoal,y
-	bne .p0
+	bne .0
 	lda.b d0
 	eor.w #$FFFF
 	inc a
 	sta.b d0
-.p0:
+.0:
 	lda.b d0
 	sec
 	sbc.w #blueline		; blueline
@@ -2793,10 +2793,10 @@ a2offsides:		;player a2 touched the puck: offsides penalty if his team is flagge
 .team:
 	stz.b a0
 	lda.w pfteam,y
-	beq .t1
+	beq .1
 	lda.w #$0002
 	sta.b a0
-.t1:
+.1:
 	ldy.b a0
 	lda.w tmflags,y
 	bit.w #tmfoffside		; team flagged offsides
@@ -2817,8 +2817,8 @@ a2offsides:		;player a2 touched the puck: offsides penalty if his team is flagge
 	sty.b a2
 .rtl:
 	rtl
-GetHot:		;push long address of structure to get hot spot from. Hot spot x/y returned in d0/d1. 93 reads a byte pair per frame from HotList (92 framelist SprStrHot)
-		;   SNES: A = object index; d0/d1 = its hot spot x/y from HotList (bank84_F000, a byte pair per frame)
+GetHot:		;push long address of structure to get hot spot from. Hot spot x/y returned in d0/d1. Reads a byte pair per frame from HotList
+		;   SNES: A = object index; d0/d1 = its hot spot x/y from HotList (a byte pair per frame)
 	phx
 	tay
 	stz.b d0
@@ -2876,7 +2876,7 @@ GetHot:		;push long address of structure to get hot spot from. Hot spot x/y retu
 	plx
 	rtl
 puckIChk:		;check for icing of puck penalty. Called from pucknorm
-		;   SNES: Called from pucknorm
+		;   SNES: sets ifcgl once the loose puck crosses the far goal line
 	lda.w iflags
 	bit.w #ifok		; ifok and not ifcgl, puck loose
 	beq .rtl
@@ -2888,7 +2888,7 @@ puckIChk:		;check for icing of puck penalty. Called from pucknorm
 	sta.b d0
 	lda.w iflags
 	bit.w #ifdir
-	bne .up
+	bne .0
 	lda.w #-(blueline+goalline)
 	sec
 	sbc.w pucky
@@ -2900,7 +2900,7 @@ puckIChk:		;check for icing of puck penalty. Called from pucknorm
 	bvs .set
 .rtl:
 	rtl
-.up:
+.0:
 	lda.w #blueline+goalline
 	sec
 	sbc.w pucky
@@ -2914,7 +2914,7 @@ puckIChk:		;check for icing of puck penalty. Called from pucknorm
 	lda.w #ifcgl		; ifcgl
 	tsb.w iflags
 	rtl
-ChkOffsides:		;check for offsides penalty. a3 = puck. 93 flags the whole team (tmflags bit 4), 92 flagged each player (pf3oside). Called from pucknorm
+ChkOffsides:		;check for offsides penalty. a3 = puck. Flags the whole team (tmflags bit 4; 92 flagged each player). Called from pucknorm
 		;   SNES: flag a team offsides when the puck crosses its blue line. Called from pucknorm
 	lda.w gmode
 	bit.w #gmoffs
@@ -2963,18 +2963,18 @@ ChkOffsides:		;check for offsides penalty. a3 = puck. 93 flags the whole team (t
 	ldy.b a2
 	lda.w tmsort,y
 	sta.b a0
-.loop:
+.0:
 	ldy.b a0
 	lda.w position,y
-	bmi .n0
+	bmi .1
 	lda.b d0
 	sec
 	sbc.w Ypos,y
 	bmi .v3
 	bvs .set0
-	bra .n0
+	bra .1
 .v3:
-	bvs .n0
+	bvs .1
 .set0:
 	ldy.b a2
 	lda.w tmflags,y
@@ -2982,11 +2982,11 @@ ChkOffsides:		;check for offsides penalty. a3 = puck. 93 flags the whole team (t
 	sta.w tmflags,y
 .rtl:
 	rtl
-.n0:
+.1:
 	inc.b a0
 	inc.b a0
 	dec.b d2
-	bpl .loop
+	bpl .0
 	rtl
 .neg:		;bottom line
 	lda.b d0
@@ -3005,55 +3005,54 @@ ChkOffsides:		;check for offsides penalty. a3 = puck. 93 flags the whole team (t
 	sec
 	sbc.w OldYpos+puckobj
 	bmi .v5
-	bvs .t1
+	bvs .b2
 	bra .rtl
 .v5:
 	bvs .rtl
-.t1:
+.b2:
 	lda.b d0
 	sec
 	sbc.w #$000A		; -$A
 	sta.b d0
 	lda.w gmode
 	bit.w #gmdir
-	bne .t2
+	bne .t1
 	lda.b a2
 	ldy.b a1
 	sta.b a1
 	sty.b a2
-.t2:
+.t1:
 	lda.w #$0005
 	sta.b d2
 	ldy.b a2
 	lda.w tmsort,y
 	sta.b a0
-.loop2:
+.2:
 	ldy.b a0
 	lda.w position,y
-	bmi .n2
+	bmi .3
 	lda.b d0
 	sec
 	sbc.w Ypos,y
-	beq .n2
+	beq .3
 	bmi .v6
 	bvc .set2
-	bra .n2
+	bra .3
 .v6:
-	bvc .n2
+	bvc .3
 .set2:
 	ldy.b a2
 	lda.w tmflags,y
 	ora.w #tmfoffside
 	sta.w tmflags,y
 	rtl
-.n2:
+.3:
 	inc.b a0
 	inc.b a0
 	dec.b d2
-	bpl .loop2
+	bpl .2
 	rtl
 ClearOffsidesIfAllPlayers:		;a2 = team struct. Clears the team offsides flag (tmflags bit 4) once no skater on ice is past the blue line ($58, sign by pfgoal). Called twice from ChkOffsides
-
 		;   SNES: clear tmfoffside once no skater is past the blue line
 	ldy.b a2
 	lda.w tmflags,y		; tmfoffside
