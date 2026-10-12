@@ -98,7 +98,7 @@ fodir1		= $0132	; pull direction of the home center on the faceoff (dpad, negati
 fodir2		= $0134	; fodir2
 fodropx		= $0136	; faceoff box x (pixels). fodropx
 fodropy		= $0138	; faceoff box y. fodropy
-fofdata2	= $013A	; face off pull frame for the home ($013A) and visiting ($013E) center (assfaceoffp1). fofdata2
+fofdata2	= $013A	; face off pull frame for the home ($013A) and visiting ($013E) center (assfaceoffpl). fofdata2
 fofdata		= $0142	; frame/attribute of the faceoff ref (big faceoff sprites). fofdata
 fox		= $0146	; faceoff spot x. fox
 foy		= $0148	; faceoff spot y. foy
@@ -502,7 +502,7 @@ agoalie		= $0E	; agoalie
 agoalietopuck	= $0F	; assgoalietopuck (asstab $F)
 apassrec	= $13	; apassrec
 afaceoff	= $16	; afaceoff
-afaceoffpl	= $17	; afaceoffpl (assfaceoffp1)
+afaceoffpl	= $17	; afaceoffpl (assfaceoffpl)
 pnorm		= $18	; pnorm (pucknorm)
 pfaceoff2	= $1C	; pfaceoff2
 ; penalties

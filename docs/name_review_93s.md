@@ -39,7 +39,7 @@ Full every-line read per file: SNES-only names checked against 93G/92G, generic 
 - [x] src/hockey_b8D.asm
 - [x] src/hockey_b8E.asm
 - [x] src/hockey_b8F.asm
-- [ ] src/logic_b80.asm (lines 1-1256 done)
+- [ ] src/logic_b80.asm (lines 1-2439 done)
 - [x] src/logic_b82.asm
 - [x] src/logic_b83.asm
 - [x] src/logic_b86.asm

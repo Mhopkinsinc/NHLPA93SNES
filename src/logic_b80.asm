@@ -1322,23 +1322,23 @@ doshot:		;stick is at puck so launch puck toward goal
 		;   SNES: stick is at the puck, launch it toward the goal
 	stx.b xsave
 	ldx.w #$0000
-.pushd:		;movem d0-d7/a0-a3 to the stack
+.save:		;movem d0-d7/a0-a3 to the stack
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0020
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	jsl.l checkgoalp_CalcGoalShotDir
 	lda.w seed		; sound: wiff (one of 4)
@@ -1404,10 +1404,10 @@ doshot:		;stick is at puck so launch puck toward goal
 	lda.w #blueline+goalline
 	sta.b d1
 	lda.w pfgoal,x
-	bne .dir
+	bne .0
 	lda.w #-(blueline+goalline)
 	sta.b d1
-.dir:		;d0/d1 = shotsets[passdir] - puck, d2 = height; d3 = distance to the goal
+.0:		;d0/d1 = shotsets[passdir] - puck, d2 = height; d3 = distance to the goal
 	lda.w passdir
 	asl a
 	asl a
@@ -1448,9 +1448,9 @@ doshot:		;stick is at puck so launch puck toward goal
 	adc.b d0+2
 	sta.b d0+2
 	jsl.l sroot
-	bne .dist
+	bne .1
 	inc a
-.dist:
+.1:
 	sta.b d3
 	lda.w gmode
 	bit.w #gmhl		; gmhl: highlights are always perfect
@@ -1582,21 +1582,21 @@ doshot:		;stick is at puck so launch puck toward goal
 	jsl.l sfx
 	stx.b xsave
 	ldx.w #$000E
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$001E
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	ldx.b a3
 	lda.w #blueline+goalline		; puckvy sign toward the shooting goal
@@ -1824,12 +1824,12 @@ assfight:		;asstab $14. assfight : fighting logic for player X. The SNES drops t
 	sta.b d0
 	lda.w facedir,x
 	cmp.w #$0002
-	bne .push
+	bne .0
 	lda.b d0
 	sec
 	sbc.w #$0014
 	sta.b d0
-.push:
+.0:
 	lda.b d0
 	sec
 	sbc.w Xpos,x
@@ -1890,23 +1890,23 @@ chkhit:		;part of fight to see if player is hit
 		;   SNES: part of the fight, is player X hit by opponent a0?
 	stx.b xsave
 	ldx.w #$0000
-.pushd:		;movem d0/a0-a3 to the stack
+.save:		;movem d0/a0-a3 to the stack
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	ldy.b a0		; Y = opponent
 	lda.w frame,x
@@ -1936,21 +1936,21 @@ chkhit:		;part of fight to see if player is hit
 	bcs .ex
 	lda.w frame,x
 	cmp.w #SPFfight+6		; high punch frames
-	bne .h2
+	bne .1
 	jmp.w .hithigh
-.h2:
+.1:
 	cmp.w #SPFfight+6+5
-	bne .ne
+	bne .2
 	jmp.w .hithigh
-.ne:
+.2:
 	cmp.w #SPFfight+7		; low punch frames
-	bne .ne2
+	bne .3
 	jmp.w .hitlow
-.ne2:
+.3:
 	cmp.w #SPFfight+7+5
-	bne .g1
+	bne .4
 	jmp.w .hitlow
-.g1:
+.4:
 	cmp.w #SPFfight+4		; grab frames
 	beq .grab
 	cmp.w #SPFfight+4+5
@@ -1958,21 +1958,21 @@ chkhit:		;part of fight to see if player is hit
 .ex:		;movem the registers back (global: CwdFight/FightFall paths jump here)
 	stx.b xsave
 	ldx.w #$000E
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0002
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	ldx.b a3		; X = a3 again
 	rtl
@@ -2258,14 +2258,14 @@ assfwatch:		;asstab $15. for player who is watching fight
 	sec
 	sbc.b d3
 	bmi .v1
-	bvc .x0
-	bra .x1
+	bvc .cl1
+	bra .x0
 .v1:
-	bvc .x1
-.x0:
+	bvc .x0
+.cl1:
 	lda.b d3
 	sta.b d0
-.x1:
+.x0:
 	lda.b d3
 	eor.w #$FFFF
 	inc a
@@ -2273,16 +2273,16 @@ assfwatch:		;asstab $15. for player who is watching fight
 	lda.b d0
 	sec
 	sbc.b d3
-	beq .x2
+	beq .cl2
 	bmi .v2
-	bvs .x2
-	bra .x3
+	bvs .cl2
+	bra .x1
 .v2:
-	bvs .x3
-.x2:
+	bvs .x1
+.cl2:
 	lda.b d3
 	sta.b d0
-.x3:
+.x1:
 	lda.b d0
 	sta.w temp3,x
 	lda.w #$0050
@@ -2304,7 +2304,7 @@ assfwatch:		;asstab $15. for player who is watching fight
 	sta.b a0
 	lda.w #rtss>>16
 	sta.b a0+2
-	lda.w Xvel,x		; SNES: halve the velocity while watching
+	lda.w Xvel,x		; halve the velocity while watching
 	pha
 	asl a
 	pla
@@ -2366,7 +2366,7 @@ assexit:		;exit current assignment on player a3
 	ora.w #pfna		; pfna
 	sta.w pflags,x
 	rtl
-assfaceoffp1:		;asstab $17. assignment for players actually participating in faceoff
+assfaceoffpl:		;asstab $17. assignment for players actually participating in faceoff
 		;   SNES: assignment for the players taking the faceoff
 	lda.w pfalock,x
 	beq .go
@@ -2387,10 +2387,10 @@ assfaceoffp1:		;asstab $17. assignment for players actually participating in fac
 	lda.w #$0000
 	sta.b a0+2
 	lda.w pfteam,x
-	beq .frame
+	beq .0
 	lda.w #fofdata2+4
 	sta.b a0
-.frame:
+.0:
 	lda.w SPAnum,x		; frame = SPAnum/4 + 1, +3 for a righty
 	lsr a
 	lsr a

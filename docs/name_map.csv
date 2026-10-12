@@ -46,7 +46,7 @@ $8094CB,FightFall,CODE_8094CB,93G,,logic_b80
 $809595,assfwatch,,,asstab $15,logic_b80
 $8096A8,assfaceoff,,,asstab $16,logic_b80
 $8096F9,assexit,CODE_8096F9,93G,,logic_b80
-$80970D,assfaceoffp1,,,asstab $17,logic_b80
+$80970D,assfaceoffpl,,93G,"asstab $17; was assfaceoffp1 (93G assfaceoffpl)",logic_b80
 $8097A3,randomd0,CODE_8097A3,93G,,middle_b80
 $8097AC,pucknorm,,,asstab $18,logic_b80
 $80988A,findpc,CODE_80988A,93G,,logic_b80

@@ -529,7 +529,7 @@ asstab:		;SNES: the assignment routines (29 long pointers) that updateplayers ca
 	dd assfight		; 14
 	dd assfwatch		; 15
 	dd assfaceoff		; 16
-	dd assfaceoffp1		; 17
+	dd assfaceoffpl		; 17
 	dd pucknorm		; 18
 	dd puckshadow		; 19
 	dd pucknothing		; 1A

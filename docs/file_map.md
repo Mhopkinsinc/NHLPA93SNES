@@ -22,7 +22,7 @@ Regenerate the routine lists from the source if they drift; the old ~4 KB slice 
 ## src/logic_b80.asm
 
 - `$8083AB`: goalieacc, dostop, StopNA
-- `$8084E7`: MaxSpeed, check4bench, checkob, chk4lc, chk4shot, CompShoot, assnearest, check4check, burst, skatetopuck, Sweepcheck, chkpk, chkpk2, assshoot, SetShotMode, ShotMode, doshot, shotsets, asspassrec, assfight, chkhit, CwdFight, FightFall, assfwatch, assfaceoff, assexit, assfaceoffp1
+- `$8084E7`: MaxSpeed, check4bench, checkob, chk4lc, chk4shot, CompShoot, assnearest, check4check, burst, skatetopuck, Sweepcheck, chkpk, chkpk2, assshoot, SetShotMode, ShotMode, doshot, shotsets, asspassrec, assfight, chkhit, CwdFight, FightFall, assfwatch, assfaceoff, assexit, assfaceoffpl
 - `$8097AC`: pucknorm, findpc, findpc_calc
 - `$8099C7`: a2touchpuck, a2offsides, GetHot, puckIChk, ChkOffsides, ClearOffsidesIfAllPlayers
 - `$80A148`: setc1player, setc2player, restorepl
