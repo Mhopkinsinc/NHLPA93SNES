@@ -1,5 +1,4 @@
-waitxsr:		;special version of waitx for zamboni crossing
-		;   SNES: wait d0 frames or until a pad button (d1)
+waitxsr:		;Wait d0 frames or until a button in d1 is pressed (used while the zamboni crosses)
 	lda.b d0
 	pha
 .wait:

@@ -1,4 +1,4 @@
-divs16:		;SNES: signed 16 / 16 divide: A = mulres = mulb / mula (toward zero; also left in mula and mulb); uses mulsign, mulcnt
+divs16:		;Signed 16-bit divide: A = mulb / mula
 	stz.b mulsign
 	lda.b mula
 	bpl .mulapos

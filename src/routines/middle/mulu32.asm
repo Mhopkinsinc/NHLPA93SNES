@@ -1,4 +1,4 @@
-mulu32:		;SNES: 32-bit multiply with the 8x8 hardware multiplier: A = mulres (32-bit, low word) = mula * mulb (low 32 bits). C clear
+mulu32:		;Unsigned 32-bit multiply: mulres = mula * mulb
 	sep #$20
 	lda.b mula
 	sta.w WRMPYA

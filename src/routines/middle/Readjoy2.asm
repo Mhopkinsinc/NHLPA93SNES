@@ -1,5 +1,4 @@
-Readjoy2:		;read controller 2. Return d0 = direction (bit 0-3) and new button (bit 4-7) presses, d1 = new presses (all 8 bits), d2 = changed buttons (all 8), d3 = current held buttons (all
-		;   8)
+Readjoy2:		;Read pad 2: d0 = direction, d1 = new presses, d2 = changed buttons, d3 = buttons held
 	phx
 	ldx.w #$0002
 	jsl.l ReadJoy

@@ -1,5 +1,4 @@
-PushNumber:		;convert d0 into string format of base 10 number, no leading zeros. Return a1 = string
-		;   SNES: built down from the end of mesarea
+PushNumber:		;a1 = d0 as a decimal string, no leading zeros
 	lda.w #mesarea+30
 	sta.b a1
 	lda.w #mesarea>>16

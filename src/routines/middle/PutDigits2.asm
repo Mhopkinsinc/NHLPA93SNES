@@ -1,4 +1,4 @@
-PutDigits2:		;SNES: write the 2 digit number d0 (BCD byte, blank leading zero) as 2 characters at [a1], a1 += 2
+PutDigits2:		;Write the two digit number d0 as two characters at [a1], blank leading zero
 	lda.w #$2020		; blank, then the tens digit when d0 >= 10
 	sta.b tmp0
 	lda.b d0

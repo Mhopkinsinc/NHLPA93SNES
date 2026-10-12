@@ -1,5 +1,4 @@
-WeightedRandomSelect:		;d0 = number of word weights at nibblebuffer. Return d0 = random index, picked with those weights. Called from SetScore_getscore and UpdateTeamNameisplay
-		;   SNES: d0 = random index 0..d0-1 weighted by the words in nibblebuffer
+WeightedRandomSelect:		;d0 = a random index from 0 to d0-1, weighted by the words at nibblebuffer
 	lda.b d1+2
 	pha
 	lda.b d1

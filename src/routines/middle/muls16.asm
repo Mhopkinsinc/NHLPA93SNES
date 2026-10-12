@@ -1,4 +1,4 @@
-muls16:		;68k muls.w: A = mula*mulb (signed 16-bit result, also in mula/mulb/mulres); C clear. Signs folded around the unsigned mulu16
+muls16:		;Signed 16-bit multiply: A = mula * mulb
 	stz.b mula+2		; count the negative operands in mula+2
 	lda.b mula
 	bpl .bpos

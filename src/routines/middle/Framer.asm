@@ -1,4 +1,4 @@
-Framer:		;frame and fill (uses framer.map graphics and assums tiles are already located at framercset). d0/d1 = x/y size of rectangle, printx/y/m define top left corner to start at
+Framer:		;Draw a frame and fill it. d0 / d1 = width / height, printx / printy / printm = top left corner
 
 		;   SNES: a d0 x d1 box of FramerMap pieces at printx/printy
 	phx

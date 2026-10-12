@@ -1,5 +1,4 @@
-printbigz:		;see print big. String macro should follow the bsr/jsr to this routine. 93 keeps a1 (92 popped the return into a1)
-		;   SNES: printz for printbig: the string follows the jsl inline (length word counting itself); step the return address past it and go to printbig
+printbigz:		;printbig with the string following the call
 	lda.b $03,s		; farptr-style: a1 = the inline string after the caller
 	sta.b a1+2
 	lda.b $01,s

@@ -1,5 +1,4 @@
-PushTime:		;convert d0 into string format of minutes:seconds. Return a1 = string. 93 pads the minutes to 2 places with a space
-		;   SNES: mesarea string m:ss of the time d0 (seconds)
+PushTime:		;a1 = the time d0 (seconds) as a minutes:seconds string
 	lda.w #mesarea+30
 	sta.b a1
 	lda.w #mesarea>>16

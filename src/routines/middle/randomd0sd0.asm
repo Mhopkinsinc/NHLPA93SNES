@@ -1,4 +1,4 @@
-randomd0sd0:		;randomd0s with the range in d0: d0 = random -d0..+d0 (randomd0s in bank $80 takes A)
+randomd0sd0:		;randomd0s with the range in d0
 	lda.b d0
 	pha
 	asl.b d0

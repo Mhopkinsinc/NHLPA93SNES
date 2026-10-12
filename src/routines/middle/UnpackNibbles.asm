@@ -1,5 +1,4 @@
-UnpackNibbles:		;a0 = packed data, d0 = count. Unpacks d0 4-bit values (high nibble first) into words at nibblebuffer. Called from UpdateTeamNameisplay
-		;   SNES: d0 nibbles at [a0], high nibble first, to words at nibblebuffer; saves d0-d2, a0-a1
+UnpackNibbles:		;Unpack d0 4-bit values at [a0] (high nibble first) into words at nibblebuffer
 	stx.b xsave
 	ldx.w #$0000
 .save:

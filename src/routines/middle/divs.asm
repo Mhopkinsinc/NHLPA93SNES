@@ -1,4 +1,4 @@
-divs:		;68k divs: A = mulres = mulb (32-bit) / mula, signed 16-bit quotient. C clear
+divs:		;Signed divide: A = mulb (32-bit) / mula
 	stz.b mulsign		; mulsign = number of negative operands
 	lda.b mula
 	bpl .apos

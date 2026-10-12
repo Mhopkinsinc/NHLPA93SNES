@@ -1,5 +1,5 @@
-DecompressBytecode:		;unpack the stream at [tmp0] to unpackbuf (output pointer tmp1+1..+3, distance tmp2+2). The high nibble of each control byte picks the opcode:
-		;   $0-$1 copy n+1 bytes; $2 n+1 zeros; $3 next byte n+3 times; $4-$B copy from earlier output going up; $C-$F going down. Ends on $E0 $00
+DecompressBytecode:		;Unpack a compressed stream to unpackbuf. Each control byte picks a literal copy, a run of zeros or of one byte,
+		;   or a copy from earlier output
 	stz.b tmp1+1		; output pointer = $7F0000
 	lda.w #TestList>>16
 	sta.b tmp1+3

@@ -1,4 +1,4 @@
-divu16:		;68k divu.w: mulres = mulb / mula (16-bit), mulres+2 = remainder; A = mula = mulb = quotient. C clear
+divu16:		;Unsigned 16-bit divide: mulres = mulb / mula, with the remainder after the quotient
 	lda.b mula
 	sta.b mula+2
 	stz.b mula

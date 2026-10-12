@@ -1,4 +1,4 @@
-mulu:		;68k mulu.w: mulres (32-bit) = mula * mulb; mula/mulb also get the result. A byte factor uses the mode 7 multiplier (M7A/M7B)
+mulu:		;Unsigned multiply: mulres (32-bit) = mula * mulb
 	lda.b mula		; mula >= $80 needs mulb < $80
 	bmi .full
 	cmp.w #$0080

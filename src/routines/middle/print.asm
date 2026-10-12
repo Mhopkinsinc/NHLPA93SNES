@@ -1,6 +1,5 @@
-print:		;a1 = string macro, printx/y = x/y cordinate on map for printing, printm = map to print on, printa = attribute for characters. string \-$ab,$xx,$yy,'Sample!'\ : a = map number (1-3)
-		;   b = color/priority (0-3 = color fam, prio off),(4-7 = color fam, prio on), xx/yy = x/y cord to print at. '@' = char $7FF, '^' = skip a column
-		;   SNES: [a1] = string (length word, control bytes / text) into textmap at printx/printy; marks textdirtylo/hi. "@" = blank tile
+print:		;Print string [a1] into the text map at printx / printy. The string starts with its length word and may hold
+		;   control codes for position and color
 	lda.b [a1]
 	cmp.w #$0100
 .hang:		;string longer than 255: hang

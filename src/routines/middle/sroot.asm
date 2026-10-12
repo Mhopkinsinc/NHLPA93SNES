@@ -1,5 +1,4 @@
-sroot:		;Square Root, this returns (d0.L)^.5 in d0
-		;   SNES: binary search only (tmp0 = low, tmp1 = high)
+sroot:		;d0 = the square root of d0
 	stz.b tmp0
 	lda.w #$1000
 	sta.b tmp1

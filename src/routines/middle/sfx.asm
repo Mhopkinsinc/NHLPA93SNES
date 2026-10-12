@@ -1,5 +1,4 @@
-sfx:		;play sound effect number. One word passed on stack
-		;   SNES: play the sound number pushed before the jsl (it is pulled here). Dropped within 180 frames of sfxmutetime; remembered in lastsfx
+sfx:		;Play the sound effect number pushed before the call, unless sound effects are muted for now
 	pla		; return address +1 into jmlvector
 	inc a
 	sta.w jmlvector+1

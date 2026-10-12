@@ -1,5 +1,4 @@
-appstring:		;append string a1 to string a3
-		;   SNES: append string [a1] to the string [a3]
+appstring:		;Append string [a1] to string [a3]
 	lda.w #$0002
 	sta.b tmp0
 	lda.b [a3]

@@ -1,5 +1,4 @@
-ProcessInputWithRepeat:		;nodiag, then key repeat on d1-d3 from Readjoy1/2. A change (d2) resets the delay to 15 frames; while the same buttons stay held, every 4 frames return d1 = held
-		;   buttons (d3). Called from Pausemode, menus and IntermissionLoop
+ProcessInputWithRepeat:		;Read pads 1 and 2 with key repeat: a held button repeats after a delay. Used by the pause menu and menus
 	jsl.l nullrtl85
 	lda.b d3
 	beq .rtl

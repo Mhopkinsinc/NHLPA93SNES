@@ -1,4 +1,4 @@
-mulu16:		;SNES: 16-bit multiply: A = mula = mulb = mulres = low word of mula * mulb (mode 7 multiplier for a byte factor)
+mulu16:		;Unsigned 16-bit multiply: A = mula * mulb
 	lda.b mula
 	bmi .full
 	cmp.w #$0080

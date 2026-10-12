@@ -1,6 +1,4 @@
-PushNumberWidth:		;93: convert d0 into a d1 digit base 10 string, leading zeros as spaces (the last digit always shown). Return a1 = string at
-		;   PushWidthBuf
-		;   SNES: a1 = PushWidthBuf: d0 as a d1 digit decimal string, right aligned with leading spaces (the last digit always shown)
+PushNumberWidth:		;a1 = d0 as a d1 digit decimal string, right aligned with leading spaces
 	lda.w #PushWidthBuf
 	sta.b a1
 	lda.w #$0000

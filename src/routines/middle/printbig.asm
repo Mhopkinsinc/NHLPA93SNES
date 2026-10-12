@@ -1,6 +1,4 @@
-printbig:		;same as print, only use bigfont.map graphics. a1 = string macro, printx/y = x/y cordinate on map for printing, printm = map to print on, printa = attribute for characters. string
-		;   \-$ab,$xx,$yy,'Sample!'\ : a = map number (1-3), b = color/priority (0-3 = color fam, prio off),(4-7 = color fam, prio on), xx/yy = x/y cord to print at
-		;   SNES: print string [a1] in the big font (2 x 2 tiles, narrow characters 1 column) at printx/printy; control codes as print
+printbig:		;print with the big font (2 by 2 tiles per character)
 	phx
 	stx.b xsave
 	ldx.w #$0000

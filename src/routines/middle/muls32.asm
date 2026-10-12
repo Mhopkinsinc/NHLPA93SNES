@@ -1,4 +1,4 @@
-muls32:		;68k muls.w with a 32-bit result: A/mulres = low word, mulres+2 = high word of mula*mulb (signs folded around mulu)
+muls32:		;Signed multiply with a 32-bit result in mulres
 	stz.b mulneg		; mulneg = number of negative operands
 	lda.b mula
 	bpl .signb

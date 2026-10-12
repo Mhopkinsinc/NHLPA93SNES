@@ -1,5 +1,4 @@
-printz:		;see print. String macro should follow the bsr/jsr to this routine. Keeps a1
-		;   SNES: print the string that follows the jsl (length word counting itself, then control bytes / text), return after it. Keeps a1
+printz:		;print with the string following the call, returning after it. Keeps a1
 	lda.b a1+2
 	pha
 	lda.b a1

@@ -1,4 +1,4 @@
-randoma:		;randomd0 with A = range: returns A = random 0..range-1 (high word of random*range). C clear
+randoma:		;A = a random number from 0 to A-1
 	pha
 	jsl.l random
 	sta.b mula

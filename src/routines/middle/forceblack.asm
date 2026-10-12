@@ -1,5 +1,4 @@
-forceblack:		;fade all colors to black but don't upset palfadenew
-		;   SNES: no fade: default vblank/hblank handlers, sprite VRAM caches marked stale, wait a frame, empty DMAList
+forceblack:		;Turn the screen black: default interrupt handlers, mark the sprite tile caches stale and empty the transfer list
 	phx
 	lda.w #vb2_blank
 	sta.b vbint

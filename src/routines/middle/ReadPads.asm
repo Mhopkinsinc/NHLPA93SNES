@@ -1,4 +1,4 @@
-ReadPads:		;SNES: once per frame (padvcount) read the 4 auto-read pads into joypad1-4, padnew1-4 = new presses, padlast1-4 = buttons
+ReadPads:		;Once per frame, read the four pads: buttons held, new presses and last buttons
 	lda.b vcount		; once per frame
 	cmp.w padvcount
 	beq .new

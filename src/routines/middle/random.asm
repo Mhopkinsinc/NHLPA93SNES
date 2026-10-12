@@ -1,4 +1,4 @@
-random:		;randomd0 seed step: seed = seed*$BB40E62D+1 (32-bit LCG); returns A = seed+1 (middle bytes), rndb1/rndb2 set
+random:		;Step the random number seed and return a new random number
 	lda.w seed		; mula = seed (32-bit)
 	sta.b mula
 	lda.w seed+2
