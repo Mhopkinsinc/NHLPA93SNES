@@ -5,7 +5,7 @@ org $82FA01
 BitstoPW:		;convert passbits into password text
 		;   SNES: convert passbits into the 16 password characters (SuperDiv by PWrange)
 	ldx.w #$000F
-.zero:
+.char:
 	lda.w #PWrange		; PassWord[x] = passbits mod PWrange
 	sta.b d0
 	jsl.l SuperDiv
@@ -14,7 +14,7 @@ BitstoPW:		;convert passbits into password text
 	sta.w PassWord,x
 	rep #$30
 	dex
-	bpl .zero
+	bpl .char
 	rtl
 
 org $82FBA6
@@ -24,7 +24,7 @@ PWtoBits:		;convert password text into passbits
 		;   SNES: convert the password text into passbits (ClrPassBits, then SuperMult by PWrange and SuperAdd per character)
 	jsl.l ClrPassBits
 	ldx.w #$0000
-.zero:
+.char:
 	lda.w #PWrange		; passbits = passbits * PWrange + PassWord[x]
 	sta.b d0
 	jsl.l SuperMult		; bank $88 (passbits *= d0)
@@ -35,7 +35,7 @@ PWtoBits:		;convert password text into passbits
 	jsl.l SuperAdd		; bank $88 (passbits += d0)
 	inx
 	cpx.w #pwlength
-	bne .zero
+	bne .char
 	rtl
 ClrPassBits:		;clr the 5 words of bits at a3
 		;   SNES: clear passbits
@@ -52,13 +52,13 @@ PushBits:		;bits = bits * d1 + d0.
 		;   SNES: passbits = passbits * d1 + d0
 	stx.b xsave
 	ldx.w #$0000
-.push:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .push
+	bne .save
 	ldx.b xsave
 	lda.b d0		; d0 <-> d1
 	ldx.b d1
@@ -71,12 +71,12 @@ PushBits:		;bits = bits * d1 + d0.
 	jsl.l SuperAdd		; bank $88 (passbits += d0)
 	stx.b xsave
 	ldx.w #$0006
-.pop:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .pop
+	bpl .restore
 	ldx.b xsave
 	rtl
 BitMaskTable:		;SNES: the 16 bit masks 1 << n (read by the playoff bit code in bank $8B)
@@ -109,23 +109,23 @@ ContinuePlayoffs:		;SNES: after a game: EncodePW and PlayoffScreen; when the pla
 SaveRegsStartHL2:		;SNES: save d0-d7 and a0-a6 on the stack and go on to StartHL2 (it pulls them back)
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0020
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$001C
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	jml.l StartHL2		; bank $8D (pulls the saved registers)
 
