@@ -9,7 +9,7 @@ b86_sound_driver, b87_player_sprites, b88_title_playoffs, b89_replay_music, b8A_
 b8D_fonts, b8E_gameloop, b8F_frontend. The old `src/<module>_bXX.asm`, `src/frames.asm`, `src/main.asm` and `src/gfx/` are gone.
 Rules for new routines: SEGMENT_AGENT.md Layout note. Judgment calls: small tables of code modules stay in `routines/<module>/`
 (e.g. jdtab, dirtab, PenaltyList, linelist); text tables (GameLabels, PerLabels, ScoutLabels, PositionNames, RosterLineNames,
-AttribMenuSkater/Goalie) moved to `data/text/`; frames93 sprite animation tables are `data/frames/`; `unusedFFxx` fills merged
+AttribMenuSkater/Goalie) moved to `data/text/`; the sprite animation list and tables (SPAList and every SPA*_table) are one file, `data/frames93s.asm`; `unusedFFxx` fills merged
 into the routine before; `XxxEnd` end labels stay in their table's file; GameSamples (bank $81) runs into $82, so b82 starts at $82B86C.
 Next: the cleanup items below (93G inline comments, generic locals) now work per routine file.
 
