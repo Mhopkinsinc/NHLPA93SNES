@@ -1,4 +1,4 @@
-marktexthi:		;SNES: textdirtyhi = max(textdirtyhi, A)
+marktexthi:		;Raise the high end of the changed text map area to A
 	cmp.b textdirtyhi
 	bcc .rtl
 	sta.b textdirtyhi

@@ -1,4 +1,4 @@
-VBlank_Cram:		;vbint target (bank $88): DMAList, BG1 fine h-scroll Hscroll&7, BG1VOFS 0, CGRAM 0-127 from palbuffer; then VBlank_CramOnly every frame
+VBlank_Cram:		;Vblank: run the transfer list, set the scroll and send the palette, then switch to VBlank_CramOnly
 	sep #$20
 	lda.b #INIDISP_FBLANK
 	sta.w INIDISP

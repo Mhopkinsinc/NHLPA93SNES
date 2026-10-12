@@ -1,5 +1,4 @@
-KillCrowd:		;silence the crowd noise (psg). Called from Reset, SetupPauseScreen, ...
-		;   SNES: crowd volume $88 (silence) to the sound driver
+KillCrowd:		;Silence the crowd noise
 	lda.w #$0088
 	pha
 	jsl.l sfx8F

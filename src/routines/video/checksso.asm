@@ -1,5 +1,4 @@
-checksso:		;do graphics for sso structure: arrows for the two players when they are off screen.
-		;   SNES: falls into .ca for player 2
+checksso:		;Draw the arrows that show where the two players are when they are off screen
 	lda.w #2		; player 1: ffo 1, sso 0, SPFarrow
 	sta.b a0
 	stz.b a3

@@ -1,5 +1,4 @@
-DrawFrame:		;SNES: as DrawFrameHi with 4-byte pieces (x, y signed bytes, tile, attributes); sprnodraw skips the upload; a full
-		;   cache shortens sprslotlife first
+DrawFrame:		;Draw a sprite frame made of small pieces, as DrawFrameHi
 	lda.b farptr+1
 	sta.b sprtileptr+1
 	lda.b farptr

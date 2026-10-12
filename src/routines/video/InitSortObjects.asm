@@ -1,5 +1,5 @@
-InitSortObjects:		;SNES: clear the sort objects, then set the 4 sso arrows, the 5 ffo objects and the 16 sort objects from SsoInitTable, FfoInitTable and SortObjInitTable; then
-		;   SprSort
+InitSortObjects:		;Clear the sorted objects and set up the arrows, the rink scroll objects and the players from their start tables,
+		;   then sort them
 	ldx.w #$0000		; SortCords (all fields of the 16 objects)
 .clr:
 	stz.w Xpos,x

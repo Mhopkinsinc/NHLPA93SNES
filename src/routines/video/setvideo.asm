@@ -1,5 +1,5 @@
-setvideo:		;this is not vblank code but sets up ram for vblank transfers.
-		;   SNES: once per game frame, if vblank is idle (vb2 / vb2_blank): build the sprite table and the dma list, then hand VBlank_long to vbint
+setvideo:		;Once per game frame, when vblank is idle: build the sprite table and the transfer list for the next vblank.
+		;   Not vblank code itself
 	lda.b vbint		; vblank busy with a list: skip this frame
 	cmp.w #vb2
 	beq .go

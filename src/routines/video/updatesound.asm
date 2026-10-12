@@ -1,5 +1,4 @@
-updatesound:		;move the crowd noise volume (psg noise channel) toward crowdlevel.
-		;   SNES: move the crowd volume (asv) toward crowdlevel; send it to the sound driver when it changes (crowdvol)
+updatesound:		;Move the crowd noise volume toward crowdlevel and send it when it changes
 	ldy.b d7
 	lda.b crowdlevel		; target volume crowdlevel * 8 + $200 (max $CFF)
 	asl a

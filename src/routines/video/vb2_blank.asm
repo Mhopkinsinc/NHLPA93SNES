@@ -1,4 +1,4 @@
-vb2_blank:		;vbint target: vb2 with the screen held in forced blank. Resets hbint to HBdefault
+vb2_blank:		;Vblank: as vb2 with the screen held off
 	sep #$20
 	lda.b #INIDISP_FBLANK
 	sta.w INIDISP

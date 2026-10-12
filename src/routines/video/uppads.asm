@@ -1,6 +1,4 @@
-uppads:		;update the gloves object and the 4 pad objects, and queue new pad labels.
-		;   SNES: gloves object from glovecords, and the 4 pad objects from the PadControlBits nibbles ($E = stays, $F = hidden); padcont = label code (position <<
-		;   8 | rostnum)
+uppads:		;Update the gloves object and the pad objects, and queue new pad labels
 	ldy.w #$0008		; gloves (ffo 4): hidden unless glovecords
 	lda.w #$FFFF
 	sta.w ffoz,y

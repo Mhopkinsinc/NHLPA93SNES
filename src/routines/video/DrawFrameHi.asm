@@ -1,5 +1,5 @@
-DrawFrameHi:		;SNES: draw frame sprframe (6-byte pieces) of the frame set at [farptr] (sprsetofs = its first frame number) at sprx/spry: for each
-		;   piece an OAM entry, and the piece tiles to a free VRAM slot through DMAList when not cached
+DrawFrameHi:		;Draw a sprite frame at sprx / spry: one sprite per piece, uploading the piece tiles to free video memory
+		;   when they are not cached
 	lda.b sprnodraw
 	beq .go
 	jml.l addframe_end

@@ -1,5 +1,4 @@
-addframe:		;a3 = cords.l frame/oldframe VRsize VRchar. Project the object with find3d, then addframe2.
-		;   SNES: sprite frame sprframe at sprx/spry: find its frame set in FrameSetTable (sprsetofs), then DrawFrame; frames $293 and up (addframe_hi) and frame 0 are skipped
+addframe:		;Draw sprite frame sprframe at sprx / spry: find its frame set, then draw it
 	lda.b sprframe
 	cmp.w #$0293
 	bcc .sprframelt

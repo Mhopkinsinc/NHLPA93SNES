@@ -1,4 +1,4 @@
-ShowRinkRows:		;show_rink part: DMAList entries for the IceRinkMap rows that Vscroll brought on screen (Oldrow, vramrow)
+ShowRinkRows:		;Queue the rink map rows that the vertical scroll brought on screen
 	ldy.b DMAListend
 	lda.w Vscroll
 	clc

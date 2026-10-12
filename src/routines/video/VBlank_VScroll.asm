@@ -1,4 +1,4 @@
-VBlank_VScroll:		;vbint target (bank $88): BG1VOFS = d0, then DMAList; one shot, then vb2
+VBlank_VScroll:		;Vblank: set the vertical scroll and run the transfer list; once, then back to vb2
 	sep #$20
 	lda.b #INIDISP_FBLANK
 	sta.w INIDISP

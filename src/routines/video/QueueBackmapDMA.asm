@@ -1,4 +1,4 @@
-QueueBackmapDMA:		;SNES: DMAList entry for backmap ($800 bytes) to vram $400
+QueueBackmapDMA:		;Queue the background map for transfer to video memory
 	ldy.b DMAListend
 	lda.w #backmap
 	sta.w DMAList,y

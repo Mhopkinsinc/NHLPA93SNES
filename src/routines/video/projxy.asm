@@ -1,5 +1,4 @@
-projxy:		;SNES (addframe position math): rink d0/d1/d2 = x/y/z to screen: d0 = x - Hpos + 128, d1 = 112 - (y - Vpos + 1.5*z); d1 = OFFSCREEN when |x| or |y| > 144. Horizontal
-		;   rink: x = -y, y = x - 197
+projxy:		;Project a rink position (x, y, z) to screen coordinates; off screen when too far away
 	lda.w sfhormode
 	beq .nhor
 	lda.b d0

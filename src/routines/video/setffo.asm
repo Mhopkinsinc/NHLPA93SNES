@@ -1,5 +1,4 @@
-setffo:		;draw the 5 objects tied to icerink scrolling (pads ...). Called from setvideo.
-		;   SNES: uppads, then draw the 5 objects tied to rink scrolling (pads 0-2 with their 3 character label, gloves; pad 3 skipped)
+setffo:		;Update the pads, then draw the objects tied to rink scrolling (the pad labels and gloves)
 	jsl.l uppads
 	ldx.w #$0000
 .top:

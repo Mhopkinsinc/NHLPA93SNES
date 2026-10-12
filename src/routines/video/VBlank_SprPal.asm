@@ -1,4 +1,4 @@
-VBlank_SprPal:		;vbint target (banks $88/$8F): VBlank, plus CGRAM colors $A0-$BF (sprite palettes 2-3) from palbuffer; one shot, then vb2
+VBlank_SprPal:		;Vblank: as VBlank, plus the sprite palettes; once, then back to vb2
 	sep #$20
 	lda.b #INIDISP_FBLANK
 	sta.w INIDISP

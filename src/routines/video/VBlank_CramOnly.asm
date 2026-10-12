@@ -1,4 +1,4 @@
-VBlank_CramOnly:		;vbint target (stays installed): forced blank, CGRAM 0-127 from palbuffer each frame, then vb2_main
+VBlank_CramOnly:		;Vblank: send the palette every frame
 	sep #$20
 	lda.b #INIDISP_FBLANK
 	sta.w INIDISP

@@ -1,4 +1,4 @@
-SortObjInitTable:		;SNES: 16 x (Xpos, Ypos, Zpos, frame, attribute, radiusx, radiusy, assignment, pflags); objects 6-11 are team 2
+SortObjInitTable:		;Start positions, frames and assignments of the players
 	dw $0160,$00C0,$0000,$0001,$0000,$0008,$0004,$0000,$0000
 	dw $FF38,$FF9C,$0000,$0001,$0000,$0008,$0004,$0000,$0000
 	dw $FF38,$FFB0,$0000,$0001,$0000,$0008,$0004,$0000,$0000

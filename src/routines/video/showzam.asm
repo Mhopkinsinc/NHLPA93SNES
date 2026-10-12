@@ -1,5 +1,4 @@
-showzam:		;zamboni. Called from setvideo.
-		;   SNES: on the horizontal rink the zamboni sprite ($22D) moves with the time since vcountmark
+showzam:		;Draw the zamboni moving across the horizontal rink
 	lda.b vcount
 	ldy.b vcount+2
 	cmp.b vcount

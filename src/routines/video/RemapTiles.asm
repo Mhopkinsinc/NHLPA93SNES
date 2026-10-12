@@ -1,4 +1,4 @@
-RemapTiles:		;SNES: d0 4bpp tiles at [a0] to vram with each pixel value remapped through the 16-byte table [a1]
+RemapTiles:		;Copy tiles to video memory with each pixel color remapped through a table
 	lda.w #$000E
 	sta.b tmp2+1
 .tile:

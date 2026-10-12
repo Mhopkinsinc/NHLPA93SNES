@@ -1,5 +1,4 @@
-vb2:		;vblank used for palfades only no dmas (vbint target).
-		;   SNES: vblank for fades only, no dma. INIDISP from brightness, then vb2_main
+vb2:		;Vblank for palette fades only: set the brightness, no transfers
 	sep #$20
 	lda.b brightness
 	sta.w INIDISP

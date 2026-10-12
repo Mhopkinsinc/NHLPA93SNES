@@ -1,4 +1,4 @@
-unusedEnergyBar:		;SNES: no caller found: builds a 4-character energy bar of d0 (8 levels per character, tile base d1) in mesarea and moves printx back 11; does not print it
+unusedEnergyBar:		;Build an energy bar of d0 in the message area without printing it. Unused
 	stx.b xsave
 	ldx.w #$0000
 .save:

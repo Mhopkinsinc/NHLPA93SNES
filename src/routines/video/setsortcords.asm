@@ -1,5 +1,4 @@
-setsortcords:		;setup sort cord graphics: addframe for the 16 objects in OOlist order.
-		;   SNES: addframe for the 16 objects in OOlist order (hidden when Zpos < 0 or off the screen)
+setsortcords:		;Draw the sorted objects in display order, hiding ones that are off screen
 	lda.w #OOlist		; a4 = OOlist
 	sta.b a4
 .top:

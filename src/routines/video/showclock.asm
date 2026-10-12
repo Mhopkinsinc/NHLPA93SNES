@@ -1,5 +1,4 @@
-showclock:		;put the game clock in the dma list. Called from setvideo; returns unless dfclock is set.
-		;   SNES: the game clock m:ss at x 3, y $18 (horizontal rink: x $D, y 4; not when gsp = 4); not in replay
+showclock:		;Draw the game clock (not during a replay)
 	lda.w sflags
 	bit.w #sf2replay
 	beq .nosf2replay

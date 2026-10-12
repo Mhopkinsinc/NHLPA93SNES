@@ -1,5 +1,4 @@
-showcrowd:		;draw crowd sprites: up to 3 frames per PBnum nibble, then the two crowdframe frames.
-		;   SNES: up to 3 frames per PBnum nibble (penalty box), then the two crowdframe frames (not on the horizontal rink)
+showcrowd:		;Draw the crowd and penalty box sprites
 	stz.b a1
 	lda.w Hpos
 	sta.b d4

@@ -1,4 +1,4 @@
-ClearSprites:		;SNES: all 128 OAM entries off screen (y $E0), the high table clear; new sprite frame (sprclock), VRAM slot rotors restart
+ClearSprites:		;Move every sprite off screen and start a new sprite frame
 	clc
 	ldx.w #$0000
 	ldy.w #$0008

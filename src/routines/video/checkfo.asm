@@ -1,5 +1,4 @@
-checkfo:		;check for face off sprites. Called from setvideo. Falls into checkfo2
-		;   SNES: face off sprites: the three fofdata2 entries (frame, flags) at fodropx/fodropy, priority $30
+checkfo:		;Draw the face off sprites
 	lda.w sflags		; not in pause, face off only
 	bit.w #sfpz
 	bne .rtl

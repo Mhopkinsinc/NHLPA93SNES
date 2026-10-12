@@ -1,5 +1,4 @@
-VBlank:		;main vblank code for game play (vbint target, set by setupice).
-		;   SNES: forced blank, run DMAList (ch7), BG2 scroll from Hscroll/vramrow/Vscroll, OAM dma from Satt; one shot: sets vbint back to vb2
+VBlank:		;Main game play vblank: run the transfer list, set the rink scroll and send the sprite table
 	sep #$20
 	lda.b #INIDISP_FBLANK
 	sta.w INIDISP

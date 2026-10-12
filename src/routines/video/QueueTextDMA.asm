@@ -1,4 +1,4 @@
-QueueTextDMA:		;SNES: DMAList entry for the changed textmap words (textdirtylo..textdirtyhi) to vram
+QueueTextDMA:		;Queue the changed part of the text map for transfer to video memory
 	lda.b textdirtylo
 	bmi .rtl
 	ldy.b DMAListend

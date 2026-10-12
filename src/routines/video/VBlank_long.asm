@@ -1,2 +1,2 @@
-VBlank_long:		;vbint target (set by setvideo): jml into VBlank so it runs from the FastROM bank $80
+VBlank_long:		;Vblank entry that jumps into VBlank
 	jml.l VBlank

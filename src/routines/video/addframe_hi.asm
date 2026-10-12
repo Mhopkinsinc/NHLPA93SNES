@@ -1,5 +1,4 @@
-addframe_hi:		;SNES addframe path for sprframe >= $293: find the frame set in the table at FrameSetTable (sprframe -= set size, sprsetofs += set offset) and draw it (DrawFrameHi); lower
-		;   frames go to addframe_end
+addframe_hi:		;addframe for the high frame numbers: find the frame set and draw it with DrawFrameHi
 	lda.b sprframe
 	cmp.w #$0293
 	bcs .hi
