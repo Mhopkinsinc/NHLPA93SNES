@@ -31,7 +31,7 @@ ReplayMode:		;this is instant replay play-back control and display code.
 	lda.b tmp0
 	sta.w VMADDL
 	ldy.w #$0008
-.il:
+.iconrow:
 	lda.l IceRinkMap,x
 	ora.w #$2000
 	clc
@@ -40,7 +40,7 @@ ReplayMode:		;this is instant replay play-back control and display code.
 	inx
 	inx
 	dey
-	bne .il
+	bne .iconrow
 	lda.b tmp0
 	clc
 	adc.w #$0020
@@ -149,10 +149,10 @@ ReplayMode:		;this is instant replay play-back control and display code.
 	adc.w Hpos
 	sta.b d1
 	bit.w #$8000
-	beq .ax
+	beq .xabs
 	eor.w #$FFFF
 	inc a
-.ax:
+.xabs:
 	cmp.w #$0041		; x step within the screen
 	bcs .nox
 	lda.b d1
@@ -167,19 +167,19 @@ ReplayMode:		;this is instant replay play-back control and display code.
 	sec
 	sbc.w #$0100
 	beq .ylo
-	bmi .lt
+	bmi .yneg
 	bvs .ylo
 	bra .noy
-.lt:
+.yneg:
 	bvs .noy
 .ylo:
 	lda.b d1
 	sec
 	sbc.w #$FF39
-	bmi .lt2
+	bmi .yneg2
 	bvc .sety
 	bra .noy
-.lt2:
+.yneg2:
 	bvc .noy
 .sety:
 	lda.b d1
@@ -197,19 +197,19 @@ ReplayMode:		;this is instant replay play-back control and display code.
 .nomans:
 	lda.b d1		; A: switch play mode
 	bit.w #JOYA
-	beq .b00
+	beq .lr
 	lda.w sflags3
 	eor.w #sf3rmplay
 	sta.w sflags3
-.b00:
+.lr:
 	lda.b d1		; L/R: one frame back/on
 	bit.w #JOYL
-	bne .r1
+	bne .back1
 	bit.w #JOYR
-	bne .f2
+	bne .fwd1
 	lda.b d3		; Y held: rewind (one frame per vblank)
 	bit.w #abut
-	beq .f0
+	beq .step
 	jsl.l suba4		; bank $8F (one replay frame back)
 	jsl.l SprSort
 	lda.w #VBlank_long
@@ -217,7 +217,7 @@ ReplayMode:		;this is instant replay play-back control and display code.
 	cmp.b vbint
 	beq .wait
 	bra .vid
-.r1:		;L: one frame back
+.back1:		;L: one frame back
 	jsl.l suba4		; bank $8F (one replay frame back)
 .show:
 	jsl.l SprSort
@@ -227,19 +227,19 @@ ReplayMode:		;this is instant replay play-back control and display code.
 	sta.b d7
 	lda.w #sf3rmplay
 	trb.w sflags3
-.f0:		;B steps
+.step:		;B steps
 	lda.b d3		; B: step
 	bit.w #bbut
 	beq .pl
 	bit.w #abut		; Y+B: manual scroll off
-	beq .f1
+	beq .stepon
 	lda.w #sfscrl
 	trb.w sflags
 	jmp.w .top
-.f2:		;R: one frame on
+.fwd1:		;R: one frame on
 	jsl.l adda4		; bank $8F (one replay frame on)
 	bra .show
-.f1:
+.stepon:
 	jsl.l adda4		; bank $8F (one replay frame on)
 	jsl.l SprSort
 	jsl.l setvideo
@@ -323,7 +323,7 @@ GetPlayerRecord:		;SNES: a0 = roster record of player d0 of team a2 (tmdata: the
 MesAreaDone:		;SNES: end a string built in mesarea: length = a1 - mesarea, a1 = mesarea
 	lda.b a1
 	sec
-	sbc.w #$0191
+	sbc.w #mesarea
 	sta.w mesarea
 	lda.w #mesarea
 	sta.b a1
@@ -357,7 +357,7 @@ restoreteams:		;Put both teams' rosters on the bench
 	sta.w tmap,y
 	lda.w #$32
 	sta.b d0
-.pl:
+.0:
 	lda.b a2
 	beq .home
 	lda.w #$34
@@ -369,5 +369,5 @@ restoreteams:		;Put both teams' rosters on the bench
 	sta.w tmpdst,y
 	dec.b d0
 	dec.b d0
-	bpl .pl
+	bpl .0
 	rtl
