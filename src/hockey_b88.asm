@@ -913,21 +913,21 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	sta.b tmp1
 	jsl.l DecompressBytecode
 	ldx.w #$0000
-.tl:
+.treetiles:
 	lda.l TestList+$100,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$00C0
-	bne .tl
+	bne .treetiles
 	ldx.w #$0000
-.pl:
+.treepal:
 	lda.l TestList,x
 	sta.l palbuffer,x
 	inx
 	inx
 	cpx.w #$0100
-	bne .pl
+	bne .treepal
 	lda.w #SmallFontTiles		; SmallFontTiles twice: remapped with PixelRemap8F, then with PixelRemap83
 	sta.b tmp0
 	lda.w #SmallFontTiles>>16
@@ -966,13 +966,13 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	sta.b tmp1
 	jsl.l DecompressBytecode
 	ldx.w #$0000
-.tb:
+.blocktiles:
 	lda.l TestList,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$32A0
-	bne .tb
+	bne .blocktiles
 	lda.w #$0000		; clear textmap and backmap (128 x 32 map)
 	ldx.w #$1FFE
 .clr:
@@ -1087,7 +1087,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	asl a
 	tax
 	ldy.w #23
-.al:
+.arrowrow:
 	lda.b [tmp0]
 	sta.l textmap+$200,x
 	lda.b tmp0
@@ -1098,7 +1098,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	adc.w #$0100
 	tax
 	dey
-	bne .al
+	bne .arrowrow
 	bra .arrow
 .rtl:
 	rtl
@@ -1130,7 +1130,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	sta.b d4
 	beq .logo
 	stz.b a2
-.sc:
+.score:
 	lda.b [a0]
 	inc.b a0
 	and.w #$00FF
@@ -1145,7 +1145,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	sta.b a1
 	lda.w #mesarea>>16
 	sta.b a1+2
-	lda.w #5		; mesarea "<home wins>-<away wins>"
+	lda.w #5		; mesarea "<top team wins>-<bottom team wins>"
 	sta.w mesarea
 	ldx.b a2
 	lda.w gspotwins,x
@@ -1160,7 +1160,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	inc.b a2
 	inc.b a2
 	dec.b d4
-	bne .sc
+	bne .score
 .logo:		;the NHLPA logo: palette row 2, tiles at logochars, map at x 60, y 2
 	lda.w #NHLPALogo
 	sta.b tmp0
@@ -1168,12 +1168,12 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	sta.b tmp1
 	jsl.l DecompressBytecode
 	ldx.w #$001E		; logo palette to palette row 2
-.lp:
+.logopal:
 	lda.l TestList+$A0,x
 	sta.l palbuffer+$C0,x
 	dex
 	dex
-	bpl .lp
+	bpl .logopal
 	lda.w logochars		; logo tiles to vram logochars
 	asl a
 	asl a
@@ -1182,17 +1182,17 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	adc.w #$1000
 	sta.w VMADDL
 	ldx.w #$0000
-.lt:
+.logotiles:
 	lda.l TestList+$1A0,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$06A0
-	bne .lt
+	bne .logotiles
 	stz.b tmp1
-.lr:
+.logorow:
 	stz.b tmp0
-.lc:
+.logocol:
 	lda.b tmp1
 	sta.b mula
 	lda.w #8
@@ -1203,7 +1203,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	tax
 	lda.l TestList,x
 	adc.w logochars
-	ora.w #$1800		; palette 6, priority
+	ora.w #$1800		; palette 6
 	pha
 	lda.b tmp1
 	asl a
@@ -1221,11 +1221,11 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	inc.b tmp0
 	lda.b tmp0
 	cmp.w #8
-	bne .lc
+	bne .logocol
 	inc.b tmp1
 	lda.b tmp1
 	cmp.w #10
-	bne .lr
+	bne .logorow
 	jsl.l ClearSprites		; bank $8F: clear the sprite table
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
@@ -1431,10 +1431,10 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	cmp.w #$0250
 	beq .stop
 	cmp.w #$02A8
-	bne .loop
+	bne .again
 .stop:		;stop at the round columns
 	stz.b d3+2
-.loop:
+.again:
 	jmp.w .scroll
 .blink:		;BGR555 colours the user's team block blinks between (white, blue, white)
 	dw $7FFF,$7E10,$7FFF
@@ -1493,7 +1493,7 @@ PlayoffTreeSetup:		;playoff tree layout by gamelevel (offsets, then per level: s
 
 org $88FDB2
 SuperAdd:		;1 long (d0.L) added to the 5 words at a3.
-		;   SNES: passbits (8 words) += d0
+		;   SNES: passbits (8 words) += d0 (one word), the carry rippled up
 	phx
 	lda.w passbits
 	clc
