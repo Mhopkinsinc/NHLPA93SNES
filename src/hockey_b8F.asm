@@ -48,19 +48,19 @@ clockcont_0:		;end of period. Also entered from puckfaceoff+2E
 	jsl.l assinsert
 	lda.w gsp
 	cmp.w #$0002
-	bcs .gspge
-	jmp.w .join
-.gspge:
+	bcs .p3
+	jmp.w .notp3
+.p3:
 	lda.w #$0007
 	sta.b d0
 	ldx.w #$0000
 	stx.b a3
 	lda.w gamelevel
 	cmp.w #$0003
-	bne .gamelevelne
+	bne .winners
 	lda.b bosgames
 	cmp.w #$0007
-	beq .bosgameseq
+	beq .cup
 	lda.w gamenum
 	asl a
 	sta.b a0
@@ -68,61 +68,61 @@ clockcont_0:		;end of period. Also entered from puckfaceoff+2E
 	stz.b d3
 	lda.w gsflags,y
 	bit.w #$0001
-	beq .nogsflags
+	beq .nf
 	lda.w #$0010
 	sta.b d3
-.nogsflags:
+.nf:
 	lda.w tmscore
 	cmp.w tmscore+2
-	bpl .tmscorepos
+	bpl .ns1
 	lda.b d3
 	eor.w #$0010
 	sta.b d3
-.tmscorepos:
+.ns1:
 	lda.b a0
 	clc
 	adc.b d3
 	tay
 	lda.w gspotwins,y
 	cmp.w #$0003
-	bne .gamelevelne
-.bosgameseq:
+	bne .winners
+.cup:
 	lda.w #$0008
 	sta.b d0
 	lda.w #$000B
 	sta.b d2
-.loop:
+.cpu:
 	lda.w pflags,x
 	and.w #$FFF7
 	sta.w pflags,x
 	inx
 	inx
 	dec.b d2
-	bpl .loop
+	bpl .cpu
 	ldx.w #$0000
 	stx.b a3
-.gamelevelne:
+.winners:
 	lda.w #$0005
 	sta.b d2
 	lda.w tmscore
 	cmp.w tmscore+2
-	beq .join
-	bpl .loop2
+	beq .notp3
+	bpl .celeb
 	ldx.w #$000C
 	stx.b a3
-.loop2:
+.celeb:
 	lda.w position,x
-	beq .noposition
+	beq .next
 	jsl.l assinsert
 	lda.w #$0007
 	sta.b d0
-.noposition:
+.next:
 	inx
 	inx
 	stx.b a3
 	dec.b d2
-	bpl .loop2
-.loop3:
+	bpl .celeb
+.gameover:
 	jsl.l ClearPenaltyBuffer
 	lda.b crowdlevel
 	clc
@@ -133,7 +133,7 @@ clockcont_0:		;end of period. Also entered from puckfaceoff+2E
 	tsb.w gmode
 	lda.w tmscore
 	cmp.w tmscore+2
-	bmi .tmscoreneg
+	bmi .awaywon
 	stz.b crowdlevel
 	lda.w #$0003
 	sta.w cheercnt
@@ -141,17 +141,17 @@ clockcont_0:		;end of period. Also entered from puckfaceoff+2E
 	sec
 	sbc.w #$0096
 	sta.w cheervc
-.tmscoreneg:
+.awaywon:
 	lda.w #$0004
 	sta.b d0
 	jml.l AddPenalty2
-.join:
+.notp3:
 	lda.w gsp
 	cmp.w #$0003
-	bne .gspne
+	bne .perover
 	lda.w OptPlayMode
-	beq .loop3
-.gspne:
+	beq .gameover
+.perover:
 	lda.w #$0002
 	sta.b d0
 	jml.l AddPenalty2
@@ -204,7 +204,7 @@ suba4:		;a4 = address in replay buffer of current
 	bne .a4ne
 	lda.w sflags
 	bit.w #sfwrap
-	beq .nosfwrap
+	beq .end
 	lda.w #ReplayBufferEnd
 	sta.b a4
 	lda.w #ReplayBufferEnd>>16
@@ -234,7 +234,7 @@ suba4:		;a4 = address in replay buffer of current
 	lda.b a4+2
 	adc.w #$0000
 	sta.b a4+2
-.nosfwrap:
+.end:
 	jsl.l RestoreReplayFrame
 	stz.b d7
 	rtl
@@ -291,8 +291,7 @@ ResetPassWord:		;copy '-' char into password
 	rtl
 
 org $8FD5BF
-holdcheck:		;player a2 is in hold animation looking to hold opponent a3. Entered from checkcheck .cc for SPA $CB0 or $12DC. 93 adds the facing test, the puck carrier sflags
-		;   clear and the second hold anim, and rolls the penalty with checkagr
+holdcheck:		;player a2 is in hold animation looking to hold opponent a3. Entered from checkcheck .cc for SPA $CB0 or $12DC
 		;   SNES: player X holds a2 (SPAHold/SPAhook), both slow to the average speed; checkagr may call a holding/hooking penalty
 	lda.w pfalock,x
 	ora.w pf2fight,x
@@ -326,10 +325,10 @@ holdcheck:		;player a2 is in hold animation looking to hold opponent a3. Entered
 	lda.w puckc
 	asl a
 	cmp.b a3
-	bne .puckcne
+	bne .nopc
 	lda.w #$0008
 	trb.w sflags
-.puckcne:
+.nopc:
 	ldy.b a2
 	lda.w Xvel,x
 	clc
@@ -362,25 +361,25 @@ holdcheck:		;player a2 is in hold animation looking to hold opponent a3. Entered
 	sta.w pfalock,x
 	lda.w SPA,x
 	cmp.w #$0BFC
-	beq .SPAeq
+	beq .h2
 	lda.w #$1386
 	sta.b d1
-.SPAeq:
+.h2:
 	jsl.l SetSPA
 	jsl.l checkagr
 	lda.b d0
 	cmp.w #$0007
-	bcs .d0ge
+	bcs .ex
 	lda.w #$0024
 	sta.b d0
 	lda.w SPA,x
 	cmp.w #$0C2E
-	beq .SPAeq2
+	beq .pen
 	lda.w #$001E
 	sta.b d0
-.SPAeq2:
+.pen:
 	jsl.l AddPenalty
-.d0ge:
+.ex:
 	ldx.b a2
 	ldy.b a3
 	stx.b a3
@@ -391,7 +390,7 @@ holdcheck:		;player a2 is in hold animation looking to hold opponent a3. Entered
 	rtl
 
 org $8FDA75
-InitScoutDisplay:		;SNES: scouting report scroll state reset; a0 = $7F0000 (the text buffer)
+InitScoutDisplay:		;SNES: scouting report scroll state reset; a0 = TestList (the text buffer)
 	lda.w #$FFFF
 	sta.w VertLineScrolling
 	sta.w PlayerScrollCtr
@@ -424,7 +423,7 @@ CheckLateGameSong:		;called once per second. 3rd period: play tune $32 once at t
 	rtl
 
 org $8FDC0D
-ScoutingReport:		;93 pregame scouting report (92 drew ScoutMap and position check marks). Called from PeriodOver.
+ScoutingReport:		;pregame scouting report
 		;   SNES: the scouting report screen: EASN backdrop, both team blocks, ScoutLabels with both teams' ratings, Ron Barr and
 		;   the scrolling text until Start
 	jsl.l ClearTeamStats
@@ -844,7 +843,7 @@ PuckcSpots:		;asspuckc spots: x, y of spot d0 (6 + temp3, or position when offsi
 	dw 30,230
 
 org $8FE32B
-DefaultMenus:		;set default menu choices for beginning of game. Called once from Begin (jsr abs.l).
+DefaultMenus:		;set default menu choices for beginning of game. Called once from Begin.
 		;   SNES: the 7 options at $1600 from .tab; notdemo set
 	lda.w #$FFFF
 	sta.w notdemo
@@ -1510,7 +1509,7 @@ setpde:		;d1 = rostnum of player * 2, a2 = team struct
 .d0pos:
 	sta.w tmpde,y
 	rtl
-setoptions:		;options screen display and input. Called from PeriodOver .
+setoptions:		;options screen display and input. Called from PeriodOver.
 		;   SNES: the options screen: GameSetupMap backdrop, small font and Framer tiles (remapped), NHLPA logo, team blocks; Up/Down
 		;   picks a line (.nms), Left/Right changes it (.IncItem), Start goes to maketree; after $12C0 idle frames a demo with random teams
 	lda.w #vb2_blank
