@@ -2,16 +2,16 @@
 ; Bank $89. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $89FC8F
-CopyWords:		;SNES: copy d0 bytes (words) from [d2] to [d1]
+CopyWords:		;SNES: copy d0 bytes (words) from [d2] to [d1]; d0-d5 and X kept
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .pushd
+	bne .save
 	ldx.b xsave
 .copy:
 	lda.b [d2]
@@ -25,11 +25,11 @@ CopyWords:		;SNES: copy d0 bytes (words) from [d2] to [d1]
 	bne .copy
 	stx.b xsave
 	ldx.w #$000A
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	rtl
