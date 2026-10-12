@@ -258,7 +258,7 @@ PauseMenu:		;draw the menu (.Pmenu Pmenu), read the pad (.rjoy); up/down move ps
 	sta.b tmp0
 	lda.w #SmallFontTiles>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	stz.b a0
 	lda.w #unpackbuf>>16
 	sta.b a0+2

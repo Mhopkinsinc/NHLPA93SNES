@@ -474,7 +474,7 @@ ScoutingReport:		;93 pregame scouting report (92 drew ScoutMap and position chec
 	sta.b tmp0
 	lda.w #EASNMap>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	ldx.w #$03FE
 .loop2:
 	lda.l TestList,x
@@ -502,7 +502,7 @@ ScoutingReport:		;93 pregame scouting report (92 drew ScoutMap and position chec
 	sta.b tmp0
 	lda.w #TeamBlocksTiles>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	ldx.w #$0000
 .loop5:
 	lda.l TestList,x
@@ -515,7 +515,7 @@ ScoutingReport:		;93 pregame scouting report (92 drew ScoutMap and position chec
 	sta.b tmp0
 	lda.w #SmallFontTiles>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	ldx.w #$0000
 .loop6:
 	lda.l TestList,x
@@ -544,7 +544,7 @@ ScoutingReport:		;93 pregame scouting report (92 drew ScoutMap and position chec
 	sta.b tmp0
 	lda.w #RonBarrMap>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	sep #$20
 	stz.w CGADD
 	ldx.w #$0000
@@ -947,7 +947,7 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	sta.b tmp0
 	lda.w #SmallFontTiles>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	stz.b a0
 	lda.w #unpackbuf>>16
 	sta.b a0+2
@@ -977,7 +977,7 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	sta.b tmp0
 	lda.w #TeamBlocksTiles>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	ldx.w #$0000
 .loop2:
 	lda.l TestList,x
@@ -990,7 +990,7 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	sta.b tmp0
 	lda.w #EASNMap>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	ldx.w #$0000
 .loop3:
 	lda.l TestList+$400,x
@@ -1015,7 +1015,7 @@ TeamRoster:		;SNES Team Roster screen: the team block, each line's players and a
 	sta.b tmp0
 	lda.w #RonBarrMap>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	sep #$20
 	stz.w CGADD
 	ldx.w #$0000
@@ -1583,7 +1583,7 @@ setoptions:		;options screen display and input. Called from PeriodOver .
 	sta.b tmp0
 	lda.w #GameSetupMap>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	sep #$20
 	stz.w CGADD
 	ldx.w #$0000
@@ -1622,7 +1622,7 @@ setoptions:		;options screen display and input. Called from PeriodOver .
 	sta.b tmp0
 	lda.w #SmallFontTiles>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	lda.w #unpackbuf&$FFFF
 	sta.b a0
 	lda.w #unpackbuf>>16
@@ -1649,7 +1649,7 @@ setoptions:		;options screen display and input. Called from PeriodOver .
 	sta.b tmp0
 	lda.w #NHLPALogo>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	ldx.w #$0000
 .loop8:
 	lda.l TestList+$1A0,x
@@ -1662,7 +1662,7 @@ setoptions:		;options screen display and input. Called from PeriodOver .
 	sta.b tmp0
 	lda.w #TeamBlocksTiles>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	ldx.w #$0000
 .loop9:
 	lda.l TestList,x

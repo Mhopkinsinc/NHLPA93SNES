@@ -1642,7 +1642,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	sta.b tmp0
 	lda.w #IceRinkTiles>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	lda.w #$1000		; vram $1000
 	sta.w VMADDL
 	ldx.w #$0000
@@ -1657,7 +1657,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	sta.b tmp0
 	lda.w #FaceOffTiles>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	ldx.w #$0000
 .up2:
 	lda.l unpackbuf,x
@@ -1670,7 +1670,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	sta.b tmp0
 	lda.w #RinkLogoTiles>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	ldx.w #$0000
 .up3:
 	lda.l unpackbuf,x
@@ -1683,7 +1683,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	sta.b tmp0
 	lda.w #RefTilesHor>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	ldx.w #$0000
 .up4:
 	lda.l unpackbuf,x
@@ -1696,7 +1696,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	sta.b tmp0
 	lda.w #RefTiles>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	ldx.w #$0000
 .up5:
 	lda.l unpackbuf,x
@@ -1714,7 +1714,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	sta.b tmp0
 	lda.w #SmallFontTiles>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	stz.b a0		; sprite frame list from the $7F0000 data
 	lda.w #unpackbuf>>16
 	sta.b a0+2
@@ -1740,7 +1740,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	sta.b tmp0
 	lda.w #BigFontTiles>>16
 	sta.b tmp1
-	jsl.l DecompressGraphics
+	jsl.l DecompressBytecode
 	stz.b a0
 	lda.w #unpackbuf>>16
 	sta.b a0+2

@@ -210,7 +210,7 @@ Regenerate the routine lists from the source if they drift; the old ~4 KB slice 
 
 ## src/middle_b86.asm
 
-- `$86FA3E`: DecompressGraphics
+- `$86FA3E`: DecompressBytecode
 - `$86FC53`: ProcessInputWithRepeat
 
 ## src/hockey_b86.asm

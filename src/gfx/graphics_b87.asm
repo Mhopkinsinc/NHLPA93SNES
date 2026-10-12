@@ -2,7 +2,7 @@
 ; Bank $87. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $87C3A0
-EASNMap:		;EASN.map.jim: the EASN logo backdrop, packed (decompressor DecompressGraphics): a 32 x 16 map, then the tiles; unpacked by the scouting report and team roster screens
+EASNMap:		;EASN.map.jim: the EASN logo backdrop, packed (decompressor DecompressBytecode): a 32 x 16 map, then the tiles; unpacked by the scouting report and team roster screens
 	incbin "../../data/EASN.map.pak"
 FaceOffTiles:		;packed faceoff box tiles (55, FaceOff.map.jim tiles): setupice sends them to faceoffvrcset
 	incbin "../../data/FaceOff.chr.pak"

@@ -248,7 +248,7 @@ $85FF0E,getpzjoy,CODE_85FF0E,93G,,hockey_b85
 $85FF1E,PrintTeamNames,CODE_85FF1E,SNES,,hockey_b85
 $85FF96,nullrtl85,CODE_85FF96,,,hockey_b85
 $85FF97,ResetClock,CODE_85FF97,93G,,hockey_b85
-$86FA3E,DecompressGraphics,CODE_86FA3E,SNES,,middle_b86
+$86FA3E,DecompressBytecode,CODE_86FA3E,93G,was DecompressGraphics (matches 93G DecompressBytecode format),middle_b86
 $86FB96,RestoreBenchEnergy,CODE_86FB96,93G,93G renamed from UpdateLineChange,hockey_b86
 $86FBE1,StartSong6,CODE_86FBE1,SNES,,sound_b86
 $86FC05,StartSong7,CODE_86FC05,SNES,,sound_b86
