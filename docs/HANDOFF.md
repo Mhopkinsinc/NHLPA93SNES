@@ -73,3 +73,8 @@ Each `src/routines/<module>/*.asm` opens with one plain-English header comment o
 what the routine does, no `SNES:` second line, no ROM addresses or banks, no stray values. One commit per module folder, MATCH.
 - Done: all folders (main, stats, sound, video, middle, penalty, logic, hockey), 448 files.
 - Next: none. Inline comments inside the routines were not touched.
+
+### Follow-up check (2026-10-12)
+- Unused labels StartSong4, StartSong7, StartSong8, ContinuePlayoffs, unusedEnergyBar: no source references beyond their incsrc lines. Raw ROM search for their addresses as 16/24-bit values found only false hits (SPC700 driver bytes for StartSong7, `jmp Bcheck_rtl` for ContinuePlayoffs). "Unused" kept.
+- routines/logic: every routine body read; 24 headers corrected.
+- routines/hockey: 67 of the folder's routines read (sampled across sizes and topics, not all); 8 headers corrected. The rest of hockey was not body-checked.
