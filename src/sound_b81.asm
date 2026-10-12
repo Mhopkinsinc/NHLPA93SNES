@@ -26,7 +26,7 @@ GameSampleDir:		;DSP sample directory: per sample the APU address of its start a
 	dw SPCSAMPLES+$B034,SPCSAMPLES+$B814		; sample $12: start, loop (offsets in gamesamples.brr)
 GameSampleDirEnd:
 	dw GAMESAMPLESIZE, SPCSAMPLES		; block 2: the BRR samples to APU $2C50
-GameSamples:		;BRR samples (9-byte blocks), GameSamples-GameSamples
+GameSamples:		;BRR samples (9-byte blocks)
 	incbin "../data/gamesamples.brr"
 GameSamplesEnd:
 	dw $0000, SPCRESUME		; end block: length 0, start the driver at $0800
