@@ -1,4 +1,13 @@
-## Current state (name review)
+## Current state (file layout reorganization, 2026-10-12)
+
+Moving to the bank/routine layout: `src/banks/bXX_<name>.asm` (one per bank: `org` + includes in ROM order),
+`src/routines/<module>/<Routine>.asm` (one routine per file), `src/data/<category>/<Name>.asm`. Split mechanically with
+`tools/split_routines.py migrate <bank> <bankfile>`; every step builds MATCH.
+
+Migrated banks: $8C (b8C_skate_sprites).
+Not yet migrated: the remaining banks still live in the old `src/<module>_bXX.asm` / `src/gfx/*.asm` files.
+
+## Previous state (name review)
 
 Name review pass, one file per push; checklist in `docs/name_review_93s.md` (ticked = done). `src/logic_b80.asm` done (all 6060 lines). `src/hockey_b80.asm` done (all 6484 lines). Every file on the checklist is done. Local naming conventions used: register save/restore loops `.save`/`.restore` (d regs) and `.savea`/`.resta` (a regs); 93G local names where the routine matches (e.g. ScoutingReport `.pl/.same/.top/.upd`, setoptions `.nopo/.ii0/.ii1/.iil1/.2/.3/.4`, checkagr `.nojoy/.far`); copy loops named by what they copy (`.clrtext`, `.blocktiles`, `.ronpal`, ...). Rename history goes in `docs/name_map.csv` only. `src/hockey_b8F.asm` and `src/hockey_b88.asm` are done.
 

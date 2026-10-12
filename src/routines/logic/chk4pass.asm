@@ -1,7 +1,3 @@
-; Player logic and the assignments (asstab).
-; Bank $8C. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $8CFD83
 chk4pass:		;player a3 looks for good pass (computer controlled)
 		;   SNES: computer player X looks for a good pass: a random team mate, onside, ahead of the blue line rule, no opponent in the lane; then dopass and
 		;   assexit

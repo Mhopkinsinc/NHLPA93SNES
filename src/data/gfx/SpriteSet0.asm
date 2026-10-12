@@ -1,7 +1,3 @@
-; gfx/sprites_b8C: sprite frame sets (SpriteSetN, see FrameSetTable): header, frame table, pieces, 4bpp tiles.
-; Bank $8C. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $8C845A
 SpriteSet0:		;frame set 0 (SPFskatewp, SPFskate, SPFturnl, SPFturnr): frames 1-96
 	dw 96		; frames
 	dw 445		; pieces
@@ -23,9 +19,9 @@ SpriteSet0:		;frame set 0 (SPFskatewp, SPFskate, SPFturnl, SPFturnr): frames 1-9
 	dw 397,399,405,412,416,424,434,441
 	dw 445
 .pieces:		;x, y, tile, attributes per piece
-	incbin "../../data/Sprites/set00.pieces"
+	incbin "../../../data/Sprites/set00.pieces"
 	assert .tiles-.pieces == 4*445
 .tiles:		;896 4bpp tiles (32 bytes each)
-	incbin "../../data/Sprites/set00.chr"
+	incbin "../../../data/Sprites/set00.chr"
 SpriteSet0End:
 	assert SpriteSet0End-SpriteSet0 == $7C0+896*32

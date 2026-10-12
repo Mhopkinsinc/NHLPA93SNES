@@ -1,7 +1,3 @@
-; Vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
-; Bank $8C. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $8CFC1A
 checksso:		;do graphics for sso structure: arrows for the two players when they are off screen.
 		;   SNES: falls into .ca for player 2
 	lda.w #2		; player 1: ffo 1, sso 0, SPFarrow
