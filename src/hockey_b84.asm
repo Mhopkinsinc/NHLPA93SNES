@@ -5,23 +5,23 @@ org $84EA66
 ScoutPlayersRun:		;SNES scouting report: one frame of the two showcased players (home a2 = 0, away a2 = 2), then draw them
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0020
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$001C
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	lda.w #$0001		; d7 = 1 frame
 	sta.b d7
@@ -33,21 +33,21 @@ ScoutPlayersRun:		;SNES scouting report: one frame of the two showcased players 
 	jsl.l DrawScoutPlayers
 	stx.b xsave
 	ldx.w #$001A
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$001E
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	ldx.b a3
 	rtl
@@ -249,7 +249,7 @@ ScoutPlayerExit:		;SNES: the showcased player of team a2 skates off (EraseScoutN
 .rtl:
 	rtl
 ScoutNextPlayer:		;SNES: the next showcased player of team a2 from ScoutLineOrder (goalie: tmgoalie): start at x -40, pick his ScoutScripts entry from his ratings
-	jsl.l SetTeamColors		; SprSort
+	jsl.l SetTeamColors
 	ldy.b a2
 	lda.w tmflags,y
 	and.w #$FFFD
@@ -471,8 +471,9 @@ DrawScoutPlayer:		;SNES: addframe for object X at (Xpos + OldXpos - 144, Ypos - 
 
 org $84F532
 UpdateScoutingDisplay:		;called every frame by ScoutingReport. When ScoutingReportTimer runs out (at once if asv
-		;   SNES: ~ { } [ ] print
-		;   a team or goalie name
+		;   is set), print the next word of ScoutingReportText. PlayerScrollCtr = offset of the next word (negative: next paragraph),
+		;   DispAttribCtr = column
+		;   SNES: '~' '{' '}' '[' ']' print a team or goalie name
 	lda.w ScoutingReportTimer		; text finished ($7FFF)
 	sec
 	sbc.w #$1000
@@ -547,7 +548,7 @@ UpdateScoutingDisplay:		;called every frame by ScoutingReport. When ScoutingRepo
 	and.w #$00FF
 	cmp.w #'~'
 	bne .c2
-	jmp.w .arena
+	jmp.w .under
 .c2:
 	cmp.w #'{'
 	bne .c3
@@ -687,7 +688,7 @@ UpdateScoutingDisplay:		;called every frame by ScoutingReport. When ScoutingRepo
 	lda.w #TeamList>>16
 	sta.b a1+2
 	bra .tname
-.arena:		;~: the home team (Montreal for the All-Star teams)
+.under:		;~: the home team (Montreal for the All-Star teams)
 	lda.w #TeamList>>16
 	sta.b a1+2
 	lda.w tmdata
@@ -747,13 +748,13 @@ ScrollDisplayUp:		;next text line for UpdateScoutingDisplay (column 0). After li
 	dec.w VertLineScrolling
 	stx.b xsave
 	ldx.w #$0000
-.push:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .push
+	bne .save
 	ldx.b xsave
 	lda.w #$0007
 	sta.b d3
@@ -779,11 +780,11 @@ ScrollDisplayUp:		;next text line for UpdateScoutingDisplay (column 0). After li
 	bpl .loop
 	stx.b xsave
 	ldx.w #$000E
-.pop:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .pop
+	bpl .restore
 	ldx.b xsave
 	rtl
