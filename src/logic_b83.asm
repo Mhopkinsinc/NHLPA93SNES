@@ -2,15 +2,14 @@
 ; Bank $83. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $83FDFC
-assgoalietopuck:		;asstab $F. goalie skates out to a loose puck (inserted by
-		;   SNES: goalie skates out to a loose puck (inserted by assgoalie) while the puck moves toward him and the tmnear stats
-		;   allow it, else assexit
+assgoalietopuck:		;asstab $F. goalie skates out to a loose puck (inserted by assgoalie) while the puck moves toward him and the tmnear
+		;   stats allow it, else assexit
 	lda.w pflags,x		; joystick controlled or clock stopped: assexit
 	and.w #pfjoycon
 	ora.w gmclock
-	beq .chk
+	beq .ai
 	jml.l assexit
-.chk:
+.ai:
 	jsl.l check4bench
 	lda.w pflags,x
 	bit.w #pfna
@@ -29,14 +28,14 @@ assgoalietopuck:		;asstab $F. goalie skates out to a loose puck (inserted by
 	lsr a
 	clc
 	adc.w temp1,x
-	bpl .st
+	bpl .store
 	lda.w #$0000
-.st:
+.store:
 	sta.w temp1,x
 	lda.w puckc		; carried puck: assexit
-	bmi .pc
+	bmi .loose
 	jml.l assexit
-.pc:
+.loose:
 	lda.w puckvy		; puck moving away from my goal: assexit
 	sta.b tmp0
 	lda.w pfgoal,x
@@ -47,9 +46,9 @@ assgoalietopuck:		;asstab $F. goalie skates out to a loose puck (inserted by
 	sta.b tmp0
 .dir:
 	lda.b tmp0
-	bpl .tm
+	bpl .near
 	jml.l assexit
-.tm:
+.near:
 	stz.b a1		; tmnear of my team >= $E10 and of the other >= $640
 	lda.w #$0002
 	sta.b a2
@@ -64,9 +63,9 @@ assgoalietopuck:		;asstab $F. goalie skates out to a loose puck (inserted by
 	cmp.w #$0E10
 	lda.w tmnear+4,y
 	sbc.w #$0000
-	bcs .t1
+	bcs .other
 	jml.l assexit
-.t1:
+.other:
 	ldy.b a2
 	lda.w tmnear,y
 	cmp.w #$0640
