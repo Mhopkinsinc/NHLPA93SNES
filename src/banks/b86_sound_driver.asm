@@ -1,0 +1,21 @@
+; Bank $86: sound driver. Files in ROM order (docs/file_map.md).
+
+org $868000
+incsrc "../data/sound/BootSoundUpload.asm"
+incsrc "../data/sound/SPCDriver.asm"
+incsrc "../data/sound/BootInstruments.asm"
+incsrc "../data/sound/BootSampleDir.asm"
+incsrc "../data/sound/BootSamples.asm"
+incsrc "../routines/middle/DecompressBytecode.asm"
+incsrc "../routines/hockey/RestoreBenchEnergy.asm"
+incsrc "../routines/sound/StartSong6.asm"
+incsrc "../routines/sound/StartSong7.asm"
+incsrc "../routines/hockey/setteams.asm"
+incsrc "../routines/middle/ProcessInputWithRepeat.asm"
+incsrc "../routines/hockey/ScoutNamePos.asm"
+incsrc "../routines/hockey/GetPeriodTimeRemaining.asm"
+incsrc "../routines/hockey/GetPeriodTime.asm"
+incsrc "../routines/hockey/GetPeriodTime_timetab.asm"
+incsrc "../routines/logic/lcfound2.asm"
+incsrc "../routines/hockey/PickStartingGoalie.asm"
+incsrc "../routines/logic/assscore.asm"

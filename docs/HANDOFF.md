@@ -4,7 +4,7 @@ Moving to the bank/routine layout: `src/banks/bXX_<name>.asm` (one per bank: `or
 `src/routines/<module>/<Routine>.asm` (one routine per file), `src/data/<category>/<Name>.asm`. Split mechanically with
 `tools/split_routines.py migrate <bank> <bankfile>`; every step builds MATCH.
 
-Migrated banks: b8C_skate_sprites, b81_sfx, b82_sfx_rink, b83_teams, b84_scouting, b85_title_gfx.
+Migrated banks: b8C_skate_sprites, b81_sfx, b82_sfx_rink, b83_teams, b84_scouting, b85_title_gfx, b86_sound_driver.
 Not yet migrated: the remaining banks still live in the old `src/<module>_bXX.asm` / `src/gfx/*.asm` files.
 
 ## Previous state (name review)

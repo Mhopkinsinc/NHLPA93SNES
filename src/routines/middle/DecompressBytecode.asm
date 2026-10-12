@@ -1,7 +1,3 @@
-; Utilities (print, joypads, math, decompression).
-; Bank $86. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $86FA3E
 DecompressBytecode:		;unpack the stream at [tmp0] to unpackbuf (output pointer tmp1+1..+3, distance tmp2+2). The high nibble of each control byte picks the opcode:
 		;   $0-$1 copy n+1 bytes; $2 n+1 zeros; $3 next byte n+3 times; $4-$B copy from earlier output going up; $C-$F going down. Ends on $E0 $00
 	stz.b tmp1+1		; output pointer = $7F0000
@@ -217,25 +213,4 @@ DecompressBytecode:		;unpack the stream at [tmp0] to unpackbuf (output pointer t
 	tay
 	bra .revrun
 .end:
-	rtl
-
-org $86FC53
-ProcessInputWithRepeat:		;nodiag, then key repeat on d1-d3 from Readjoy1/2. A change (d2) resets the delay to 15 frames; while the same buttons stay held, every 4 frames return d1 = held
-		;   buttons (d3). Called from Pausemode, menus and IntermissionLoop
-	jsl.l nullrtl85
-	lda.b d3
-	beq .rtl
-	lda.b d2		; d2 = changed buttons
-	bne .chg
-	dec.w repeatdelay
-	bpl .rtl
-	lda.w #4
-	sta.w repeatdelay
-	lda.b d3
-	sta.b d1
-.rtl:
-	rtl
-.chg:
-	lda.w #15
-	sta.w repeatdelay
 	rtl
