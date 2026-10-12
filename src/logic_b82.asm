@@ -70,10 +70,10 @@ asscentero:		;asstab 6. player a3 is center on offense
 	lda.b d0
 	sec
 	sbc.w #$FFA8
-	bmi .v1
+	bmi .neg1
 	bvc .z1
 	bra .de2
-.v1:
+.neg1:
 	bvc .de2
 .z1:
 	lda.w #$0008
@@ -81,10 +81,10 @@ asscentero:		;asstab 6. player a3 is center on offense
 	lda.b d0
 	sec
 	sbc.w #$0058
-	bmi .v2
+	bmi .neg2
 	bvc .z2
 	bra .de2
-.v2:
+.neg2:
 	bvc .de2
 .z2:
 	ldy.b a2		; tmflags bit 4: stay in the middle zone
@@ -95,10 +95,10 @@ asscentero:		;asstab 6. player a3 is center on offense
 	lda.b d0
 	sec
 	sbc.w #$0108
-	bmi .v3
+	bmi .neg3
 	bvc .z3
 	bra .de2
-.v3:
+.neg3:
 	bvc .de2
 .z3:
 	lda.w #$0018
@@ -144,17 +144,17 @@ asscentero:		;asstab 6. player a3 is center on offense
 	lda.w temp4,x
 	sta.b d1
 	lda.w pfgoal,x
-	bne .zero
+	bne .0
 	lda.b d1
 	eor.w #$FFFF
 	inc a
 	sta.b d1
-.zero:
+.0:
 	lda.w #EvadePC		; skateto with the EvadePC callback
 	sta.b a0
 	lda.w #EvadePC>>16
 	sta.b a0+2
-	jml.l skateto		; bank $88 (d0/d1 = target, a0 = callback; EvadePC = EvadePC)
+	jml.l skateto		; bank $88 (d0/d1 = target, a0 = callback)
 .rtl:
 	rtl
 .dedata:		;per zone (x, random x range, y, random y range)
