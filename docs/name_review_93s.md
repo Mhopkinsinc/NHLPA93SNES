@@ -22,7 +22,7 @@ Full every-line read per file: SNES-only names checked against 93G/92G, generic 
 - [x] src/gfx/sprites_b89.asm
 - [x] src/gfx/sprites_b8A.asm
 - [x] src/gfx/sprites_b8B.asm
-- [ ] src/gfx/sprites_b8C.asm
+- [x] src/gfx/sprites_b8C.asm
 - [x] src/gfx/sprites_b8D.asm
 - [ ] src/gfx/sprites_b8E.asm
 - [ ] src/gfx/sprites_b8F.asm
