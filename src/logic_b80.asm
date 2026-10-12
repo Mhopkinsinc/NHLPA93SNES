@@ -85,7 +85,7 @@ dostop:		;player a3 stops. Entered from doplayeracc and noturn0
 .setspa:
 	jsl.l SetSPA
 StopNA:		;slow player a3 by 150 on each axis, no animation change. Falls in from dostop, also entered from goalieacc and others
-		;   SNES: slow player X by $70*d7 on each axis (150), no animation change
+		;   SNES: slow player X by $70*d7 on each axis, no animation change
 	lda.w #$0070		; $70 per frame
 	sta.b mula
 	lda.b d7
@@ -197,38 +197,38 @@ checkob:		;bring up little warning ref if a player on your team is over blue lin
 		;   SNES: bring up the little warning ref if a player on your team is over the blue line. Called from doinput and asspuckc
 	lda.w gmode
 	bit.w #gmoffs		; offsides off: nothing to do
-	bne .push
+	bne .offon
 	jmp.w .rts
-.push:		;movem d0-d1/a0 to the stack
+.offon:		;movem d0-d1/a0 to the stack
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	lda.w #$0005
 	sta.b d0
 	stz.b a0
 	cpx.w #$000C		; a0 = first object of the own team
-	bcc .side
+	bcc .0
 	lda.w #$000C
 	sta.b a0
-.side:		;d1 = blue line y ($5C), negated for the bottom goal
-	lda.w #$5C		; blue line y (93 $5C)
+.0:		;d1 = blue line y ($5C), negated for the bottom goal
+	lda.w #$5C		; blue line y
 	sta.b d1
 	lda.w pfgoal,x
 	bne .top
@@ -269,21 +269,21 @@ checkob:		;bring up little warning ref if a player on your team is over blue lin
 .ex:		;movem the registers back
 	stx.b xsave
 	ldx.w #$0002
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0006
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 .rts:
 	rtl
@@ -357,11 +357,11 @@ chk4lc:		;see if computer should call line change
 	lda.w #$0002
 	sta.b a1
 	lda.w pfteam,x
-	beq .teams
+	beq .0
 	stz.b a1
 	lda.w #$0002
 	sta.b a2
-.teams:		;a2 = own team, a1 = other team
+.0:		;a2 = own team, a1 = other team
 	jsl.l AvgCline
 	lda.b d0
 	cmp.w #$0C01		; average energy of the line still above $C00: no change
@@ -843,12 +843,12 @@ assnearest:		;asstab $11. this is a special assignment used for the player who i
 	adc.w #$00F4		; own goal mouth y $F4
 	sta.b d1
 	lda.w pfgoal,x
-	beq .half
+	beq .nd0
 	lda.b d1
 	sec
 	sbc.w #$01E8		; $1E8 = 2*$F4 for the top goal
 	sta.b d1
-.half:
+.nd0:
 	lda.b d0
 	pha
 	asl a		; asr #1
@@ -933,10 +933,10 @@ check4check:		;look for good opportunity for checking opponent. Falls in from as
 	sta.b d2
 	stz.b a0
 	cpx.w #$000C
-	bcs .loop
+	bcs .0
 	lda.w #$000C
 	sta.b a0
-.loop:		;each opponent within 30 pixels in the facing direction
+.0:		;each opponent within 30 pixels in the facing direction
 	ldy.b a0
 	lda.w position,y
 	beq .next
@@ -979,20 +979,20 @@ check4check:		;look for good opportunity for checking opponent. Falls in from as
 	inc.b a0
 	inc.b a0
 	dec.b d2
-	bpl .loop
+	bpl .0
 .rts:
 	rtl
 burst:		;cbut press check/speed. Also entered from check4check
 		;   SNES: check button: speed burst in the facing direction (costs energy), lock in SPAburst. Also entered from check4check
 	jsl.l getpde
 	lda.w OptLine		; line changes off: no energy cost
-	bne .spd
+	bne .0
 	lda.b d0
 	sec
 	sbc.w #$00CC		; $1000/20
 	sta.b d0
 	jsl.l setpde		; bank $8F
-.spd:		;speed = energy*$233/$10000
+.0:		;speed = energy*$233/$10000
 	lda.b d0
 	sta.b mula
 	lda.w #$0233
@@ -1176,7 +1176,7 @@ skatetopuck:		;player a3 should skate to puck. d7 = elapse frames
 .dy:
 	clc
 	adc.b tmp0
-	cmp.w #$0036		; close to the puck (SNES only): slow down, Xvel*7/8, Yvel*7/16
+	cmp.w #$0036		; close to the puck: slow down, Xvel*7/8, Yvel*7/16
 	bcs .acc
 	lda.w Xvel,x
 	sta.b mula
