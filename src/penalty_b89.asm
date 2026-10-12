@@ -7,23 +7,23 @@ printscores1:		;draw scoreboard. Vertical rink: period box and the score box (te
 		;   SNES: Vertical rink: period box and score box (team names and scores); horizontal rink (.sbscreen): period, team names, scores
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	lda.w sfhormode		; horizontal rink
 	beq .v
@@ -47,7 +47,7 @@ printscores1:		;draw scoreboard. Vertical rink: period box and the score box (te
 	lda.w #PerLabels>>16
 	sta.b a1+2
 	jsl.l PrintStringFromList		; bank $8F
-	jsl.l EASNLogo		; EASNLogo, bank $8D
+	jsl.l EASNLogo		; bank $8D
 	lda.w sflags3		; lower line change box is up
 	bit.w #sf3llcs
 	bne .ex
@@ -81,7 +81,7 @@ printscores1:		;draw scoreboard. Vertical rink: period box and the score box (te
 	stz.b a3
 	lda.w #2
 	sta.b a2
-.ends:		;SNES: one call for the team at each end of the rink (nullrtl89 does nothing)
+.ends:		;one call for the team at each end of the rink (nullrtl89 does nothing)
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$0F,$01
@@ -97,21 +97,21 @@ printscores1:		;draw scoreboard. Vertical rink: period box and the score box (te
 .ex:
 	stx.b xsave
 	ldx.w #$000E
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000A
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	ldx.b a3
 	rtl
@@ -145,7 +145,7 @@ printscores1:		;draw scoreboard. Vertical rink: period box and the score box (te
 	inc.b d3
 	jsl.l printteamname
 	bra .ex
-PrintPerLabel:		;SNES: print the PerLabels (PerLabels) entry for gsp
+PrintPerLabel:		;SNES: print the PerLabels entry for gsp
 	lda.w gsp
 	sta.b d0
 	lda.w #PerLabels

@@ -66,7 +66,7 @@ Full every-line read per file: SNES-only names checked against 93G/92G, generic 
 - [x] src/penalty_b82.asm
 - [x] src/penalty_b84.asm
 - [x] src/penalty_b88.asm
-- [ ] src/penalty_b89.asm
+- [x] src/penalty_b89.asm
 - [x] src/penalty_b8A.asm
 - [ ] src/penalty_b8D.asm
 - [ ] src/penalty_b8F.asm
