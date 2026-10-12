@@ -2203,7 +2203,7 @@ SetPlList:		;create list (PlList) of players who we want on the ice now
 	lda.w tmap,y		; tmap: players on ice
 	sta.b d4
 	bra .next
-.loop:
+.0:
 	ldy.b d4
 	lda.b [a0],y
 	and.w #$00FF
@@ -2235,10 +2235,10 @@ SetPlList:		;create list (PlList) of players who we want on the ice now
 	rep #$20
 .next:
 	dec.b d4
-	bpl .loop
+	bpl .0
 	lda.w #$0005
 	sta.b d4
-.loop2:		;is each wanted player available?
+.1:		;is each wanted player available?
 	ldy.b d4
 	lda.b [a4],y
 	and.w #$00FF
@@ -2309,7 +2309,7 @@ SetPlList:		;create list (PlList) of players who we want on the ice now
 .next1:
 	dec.b d4
 	bmi .rtl
-	jmp.w .loop2
+	jmp.w .1
 .rtl:
 	rtl
 .all:		;try every roster player, last first
@@ -2324,7 +2324,7 @@ SetPlList:		;create list (PlList) of players who we want on the ice now
 	jsl.l TryAddPlayerToList
 	beq .try
 	bra .next1
-TryAddPlayerToList:		;Split out of SetPlList. d0 = player number (1 based), d4 = PlList slot
+TryAddPlayerToList:		;used by SetPlList. d0 = player number (1 based), d4 = PlList slot
 		;   SNES: d0 = roster player (1 based), d4 = PlList slot. A = d1 = player if added, 0 (Z set) if not available
 	lda.b d0
 	sta.b d1
@@ -2395,9 +2395,9 @@ updatecrowdf:		;this is called every game loop with d7 = elapsed frames
 	sec
 	sbc.b d7
 	sta.b crowdlevel
-	bpl .cnt
+	bpl .0
 	stz.b crowdlevel
-.cnt:
+.0:
 	lda.b crowdcnt
 	sec
 	sbc.b d7
@@ -2407,10 +2407,10 @@ updatecrowdf:		;this is called every game loop with d7 = elapsed frames
 	lsr a
 	sta.b d0
 	cmp.w #$0080
-	bcc .lvl
+	bcc .1
 	lda.w #$007F
 	sta.b d0
-.lvl:
+.1:
 	lda.b d0
 	and.w #$0060		; %01100000
 	sta.b d0
@@ -2462,16 +2462,16 @@ updatecrowdf:		;this is called every game loop with d7 = elapsed frames
 	rtl
 PenaltyList:		;penalty number = word offset into this table. Used by AddPenalty, the penalty box and stats
 	dw $0000		; 0
-	dw .eop-PenaltyList		; $02 period over (92 value 2)
-	dw .eog-PenaltyList		; $04 game over (92 value 4)
-	dw .ghold-PenaltyList		; $06 (92 value $C)
-	dw .ghold-PenaltyList		; $08 (92 value $E)
-	dw .whistle-PenaltyList		; $0A whistle (92 value $26)
-	dw .ice-PenaltyList		; $0C icing (92 value 8)
-	dw .goal-PenaltyList		; $0E goal (92 value 6)
-	dw .offsides-PenaltyList		; $10 offsides (92 value $A)
+	dw .eop-PenaltyList		; $02 period over
+	dw .eog-PenaltyList		; $04 game over
+	dw .faceoff-PenaltyList		; $06 out of play
+	dw .faceoff-PenaltyList		; $08 goalie holding
+	dw .whistle-PenaltyList		; $0A whistle
+	dw .ice-PenaltyList		; $0C icing
+	dw .goal-PenaltyList		; $0E goal
+	dw .offsides-PenaltyList		; $10 offsides
 	dw .rough2-PenaltyList		; $12 roughing, slow down time $A
-	dw .p14-PenaltyList		; $14 93 only, no text
+	dw .p14-PenaltyList		; $14 no text
 	dw .charge-PenaltyList		; $16 charging
 	dw .slash-PenaltyList		; $18 slashing
 	dw .rough-PenaltyList		; $1A roughing
@@ -2481,50 +2481,50 @@ PenaltyList:		;penalty number = word offset into this table. Used by AddPenalty,
 	dw .int-PenaltyList		; $22 interference
 	dw .hold-PenaltyList		; $24 holding
 	dw .fight-PenaltyList		; $26 fighting
-	dw .fight2-PenaltyList		; $28 fighting * (93 only)
+	dw .fight2-PenaltyList		; $28 fighting *
 	dw .inst-PenaltyList		; $2A fight instigator
-	dw .delay-PenaltyList		; $2C delay (92 value $24)
+	dw .delay-PenaltyList		; $2C delay
 ;format: dw $ttmm (tt = slow down time in half secs, mm = penalty min.); string (length word counting itself, text)
 ;then dw $ffdd,... (ff = frame, dd = delay; negative ends)
-.eop:		;period over (92 value 2)
+.eop:		;period over
 	dw $0100
 	dw 13
 	db "Period Over"
 	dw -$0510
-.eog:		;game over (92 value 4)
+.eog:		;game over
 	dw $0100
 	dw 11
 	db "Game Over"
 	dw $0510,-$4030
-.goal:		;goal (92 value 6)
+.goal:		;goal
 	dw $0100
 	dw 2
 	dw $050A,-$4010
-.p14:		;93 only, no text
+.p14:		;no text
 	dw $0100
 	dw 2
 	dw $0510,-$4018
-.ice:		;icing (92 value 8)
+.ice:		;icing
 	dw $0100
 	dw 7
 	db "Icing"
 	dw $0002,$0101,-$0206
-.offsides:		;offsides (92 value $A)
+.offsides:		;offsides
 	dw $0100
 	dw 10
 	db "Off-side"
 	dw $0002,$0301,-$040F
-.ghold:		;(92 value $C)
+.faceoff:		;face off (PenOOP, PenGhold)
 	dw $0100
 	dw 10
 	db "Face Off"
 	dw -$050A
-.delay:		;delay (92 value $24)
+.delay:		;delay
 	dw $0000
 	dw 9
 	db "Penalty"
 	dw $0003,$0301,-$040F
-.whistle:		;whistle (92 value $26)
+.whistle:		;whistle
 	dw $0000
 	dw 2
 	dw -$050A
@@ -2578,7 +2578,7 @@ PenaltyList:		;penalty number = word offset into this table. Used by AddPenalty,
 	dw 10
 	db "Fighting"
 	dw $0004,$0D01,$0E01,$0D01,$0E01,$0D01,$0E01,$0D01,$0E01,-$0101
-.fight2:		;fighting * (93 only)
+.fight2:		;fighting *
 	dw $2805
 	dw 12
 	db "Fighting *"
@@ -2610,7 +2610,7 @@ updatereplay:		;called every frame to save replay events, d7 = elapsed frames
 .rec:
 	lda.w sflags
 	bit.w #sf2drec		; sf2drec: keep overwriting the same frame
-	bne .save
+	bne .frame
 	lda.w ReplayBufferPtr		; next record (113 bytes)
 	clc
 	adc.w #$0071
@@ -2619,17 +2619,17 @@ updatereplay:		;called every frame to save replay events, d7 = elapsed frames
 	inc.w ReplayBufferPtr+2
 .wrap:
 	cmp.w #ReplayBufferEnd&$FFFF
-	bne .save
+	bne .frame
 	lda.w ReplayBufferPtr+2
 	cmp.w #ReplayBufferEnd>>16
-	bne .save
+	bne .frame
 	lda.w #sfwrap		; wrapped: sfwrap, back to the start
 	tsb.w sflags
 	lda.w #ReplayBufferStart&$FFFF
 	sta.w ReplayBufferPtr
 	lda.w #ReplayBufferStart>>16
 	sta.w ReplayBufferPtr+2
-.save:
+.frame:
 	lda.w ReplayBufferPtr
 	sta.b a0
 	lda.w ReplayBufferPtr+2
@@ -2638,7 +2638,7 @@ updatereplay:		;called every frame to save replay events, d7 = elapsed frames
 	sta.b d2
 	ldx.w #$0000
 	ldy.w #$0001
-.obj:		;16 objects: x (12 bits) and y (12 bits), frame and flip bits
+.top:		;16 objects: x (12 bits) and y (12 bits), frame and flip bits
 	lda.w #$0000
 	sta.b [a0]
 	sta.b [a0],y
@@ -2670,7 +2670,7 @@ updatereplay:		;called every frame to save replay events, d7 = elapsed frames
 	inx
 	inx
 	dec.b d2
-	bpl .obj
+	bpl .top
 	lda.w #$0005
 	sta.b d2
 	ldx.w #$0000
@@ -2682,15 +2682,15 @@ updatereplay:		;called every frame to save replay events, d7 = elapsed frames
 	sta.b [a0]
 	inc.b a0
 	lda.w position,x
-	bpl .p1
+	bpl .n0
 	lda.w #$FFFF
-.p1:
+.n0:
 	and.w #$000F
 	sta.b [a0]
 	lda.w position+2,x
-	bpl .p2
+	bpl .n1
 	lda.w #$FFFF
-.p2:
+.n1:
 	asl a
 	asl a
 	asl a
@@ -3261,8 +3261,7 @@ updateplayers:		;animation, velocity, position, input and the assignment for eve
 	sta.w carriedy
 .rtl:
 	rtl
-checkcoll:		;d2 = new x cord, d3 = new y cord, a3 = struct of object. Check wall collision (around the hot spot and the end of the stick) and player collisions, then move a3 in the OOlist
-		;   sort order by its y. If a player collision set collflag, restore the old x/y instead. 93 no longer clears Wallcos/Wallsin first. Called from updateplayers
+checkcoll:		;d2 = new x cord, d3 = new y cord, a3 = struct of object. Check wall collision (around the hot spot and the end of the stick) and player collisions, then move a3 in the OOlist sort order by its y. If a player collision set collflag, restore the old x/y instead. Does not clear Wallcos/Wallsin first. Called from updateplayers
 		;   SNES: d2/d3 = new x/y of object X. Wall collision (hot spot, end of the stick), player collision, then keep OOlist sorted
 	stz.b collflag		; collflag = 0
 	lda.w sfhormode		; horizontal: exg d2,d3
@@ -3397,7 +3396,7 @@ checkcoll:		;d2 = new x cord, d3 = new y cord, a3 = struct of object. Check wall
 .sort:
 	lda.w OOlistpos,x		; move up/down OOlist by y
 	sta.b d1
-.up:
+.2:
 	ldy.b d1
 	cpy.w #$000F
 	beq .cl2
@@ -3427,12 +3426,12 @@ checkcoll:		;d2 = new x cord, d3 = new y cord, a3 = struct of object. Check wall
 	sta.w OOlist+1,y
 	rep #$30
 	inc.b d1
-	bra .up
+	bra .2
 .cl2:
 	lda.w OOlistpos,x
 	beq .ex2
 	sta.b d1
-.dn:
+.3:
 	ldy.b d1
 	lda.w OOlist-1,y
 	and.w #$00FF
@@ -3459,7 +3458,7 @@ checkcoll:		;d2 = new x cord, d3 = new y cord, a3 = struct of object. Check wall
 	sta.w OOlist-1,y
 	rep #$30
 	dec.b d1
-	bne .dn
+	bne .3
 .ex2:
 	lda.b d3
 	sta.w Ylist,x
