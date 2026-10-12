@@ -2,7 +2,7 @@
 ; Bank $84. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $848000
-SpriteSet9:		;frame set 9 (SNES sprite frames; the frames come from Sprites.anim)
+SpriteSet9:		;frame set 9: frames 406-461
 	dw 56		; frames
 	dw 365		; pieces
 	dw 640		; tiles
