@@ -2,7 +2,7 @@
 ; Bank $85. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $85FBB9
-DrawFrameHi:		;SNES: draw frame sprframe ($293 and up, 6-byte pieces) of the frame set at [farptr] (sprsetofs = its first frame number) at sprx/spry: for each
+DrawFrameHi:		;SNES: draw frame sprframe (6-byte pieces) of the frame set at [farptr] (sprsetofs = its first frame number) at sprx/spry: for each
 		;   piece an OAM entry, and the piece tiles to a free VRAM slot through DMAList when not cached
 	lda.b sprnodraw
 	beq .go
@@ -37,9 +37,9 @@ DrawFrameHi:		;SNES: draw frame sprframe ($293 and up, 6-byte pieces) of the fra
 .piece:		;next piece; OAM full (128): done
 	lda.b sprcount
 	cmp.w #$0080
-	bne .pc
+	bne .data
 	jml.l addframe_end
-.pc:		;sprox/sproy = piece x/y + sprx/spry, sprtile, sprpal, sprpattr from the 6-byte piece
+.data:		;sprox/sproy = piece x/y + sprx/spry, sprtile, sprpal, sprpattr from the 6-byte piece
 	lda.b sprframe
 	asl a
 	asl a
@@ -106,44 +106,44 @@ DrawFrameHi:		;SNES: draw frame sprframe ($293 and up, 6-byte pieces) of the fra
 	sta.b sprox
 	sec
 	sbc.w #$FFF9
-	bmi .v1
-	bvc .x2
-.off1:
+	bmi .xlov
+	bvc .xhi
+.xloout:
 	jmp.w .skip
-.v1:
-	bvc .off1
-.x2:
+.xlov:
+	bvc .xloout
+.xhi:
 	lda.b sprox
 	sec
 	sbc.w #$00FF
-	beq .y1
-	bmi .v2
-	bvs .y1
-.off2:
+	beq .ylo
+	bmi .xhiv
+	bvs .ylo
+.xhiout:
 	jmp.w .skip
-.v2:
-	bvs .off2
-.y1:
+.xhiv:
+	bvs .xhiout
+.ylo:
 	lda.b sproy
 	sec
 	sbc.w #$FFF9
-	bmi .v3
-	bvc .y2
-.off3:
+	bmi .ylov
+	bvc .yhi
+.yloout:
 	jmp.w .skip
-.v3:
-	bvc .off3
-.y2:
+.ylov:
+	bvc .yloout
+.yhi:
 	lda.b sproy
 	sec
 	sbc.w #$00DF
 	beq .cache
-	bmi .v4
+	bmi .yhiv
 	bvs .cache
-.off4:
+.yhiout:
 	jmp.w .skip
-.v4:
-	bvs .off4
+.yhiv:
+	bvs .yhiout
 .cache:		;cached and still fresh: reuse its slot
 	lda.b sprframe
 	clc
@@ -272,51 +272,51 @@ DrawFrameHi:		;SNES: draw frame sprframe ($293 and up, 6-byte pieces) of the fra
 	sta.b sprox
 	sec
 	sbc.w #$FFF1
-	bmi .bv1
-	bvc .bx2
-.boff1:
+	bmi .bxlov
+	bvc .bxhi
+.bxloout:
 	jmp.w .skip
-.bv1:
-	bvc .boff1
-.bx2:
+.bxlov:
+	bvc .bxloout
+.bxhi:
 	lda.b sprox
 	sec
 	sbc.w #$00FF
-	beq .by1
-	bmi .bv2
-	bvs .by1
-.boff2:
+	beq .bylo
+	bmi .bxhiv
+	bvs .bylo
+.bxhiout:
 	jmp.w .skip
-.bv2:
-	bvs .boff2
-.by1:
+.bxhiv:
+	bvs .bxhiout
+.bylo:
 	lda.b sproy
 	sec
 	sbc.w #$FFF1
-	bmi .bv3
-	bvc .by2
-.boff3:
+	bmi .bylov
+	bvc .byhi
+.byloout:
 	jmp.w .skip
-.bv3:
-	bvc .boff3
-.by2:
+.bylov:
+	bvc .byloout
+.byhi:
 	lda.b sproy
 	sec
 	sbc.w #$00DF
 	beq .bcache
-	bmi .bv4
+	bmi .byhiv
 	bvs .bcache
-.boff4:
+.byhiout:
 	jmp.w .skip
-.bv4:
-	bvs .boff4
+.byhiv:
+	bvs .byhiout
 .bcache:
 	lda.b sprframe
 	clc
 	adc.b sprsetofs
 	cmp.w #$131D
-.hang3:
-	bcs .hang3
+.bhang1:
+	bcs .bhang1
 	asl a
 	asl a
 	tax
@@ -371,9 +371,9 @@ DrawFrameHi:		;SNES: draw frame sprframe ($293 and up, 6-byte pieces) of the fra
 	asl a
 	adc.w #$6000
 	ldx.b DMAListend
-.hang4:
+.bhang2:
 	cpx.w #$0571
-	bcs .hang4
+	bcs .bhang2
 	sta.w DMAList+dmavram,x
 	adc.w #$0100
 	sta.w DMAList+dmasize+dmavram,x
