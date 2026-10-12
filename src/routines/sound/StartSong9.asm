@@ -1,4 +1,4 @@
-StartSong9:		;SNES: start song 9 (the playoff screen music, PlayoffScreen) unless it plays: the boot sound set (SPCBootUpload), then driver command 1
+StartSong9:		;Start the playoff screen music unless it is already playing
 	lda.w cursong
 	cmp.w #9
 	beq .rtl

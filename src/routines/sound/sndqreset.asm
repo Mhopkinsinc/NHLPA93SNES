@@ -1,4 +1,4 @@
-sndqreset:		;SNES: empty the sound command queue and the music cue
+sndqreset:		;Empty the sound command queue and stop the music cue
 	lda.w #$0001		; sndlock while the queue is reset; cuetimer = 0
 	sta.b sndlock
 	stz.w cursong

@@ -1,4 +1,4 @@
-SPCUpload:		;SNES: send the upload stream at [sndptr] to the SPC700 boot ROM (IPL protocol on APUIO0-3): blocks of length, APU address, data; NMI off while it runs
+SPCUpload:		;Send an upload stream (blocks of length, address and data) to the sound processor's boot loader, with NMI off
 	stz.w cursong
 	sep #$20
 	stz.w NMITIMEN		; NMI off; vbactive; queue empty; APUIO0 = $F8

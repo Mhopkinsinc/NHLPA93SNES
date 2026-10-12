@@ -1,4 +1,4 @@
-StartSong4:		;SNES: start music cue 4 (no caller found) unless it plays: the in-game sound set, then MusicCue with 7; cuetimer = its length
+StartSong4:		;Start music cue 4 unless it is already playing. Unused
 	lda.w cursong
 	cmp.w #$0004
 	beq .rtl

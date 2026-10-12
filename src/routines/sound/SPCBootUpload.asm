@@ -1,4 +1,4 @@
-SPCBootUpload:		;SNES: wait for the queue and a vblank, then send the boot stream at BootSoundUpload (driver and its samples, sndbank 2)
+SPCBootUpload:		;Wait for the sound queue to empty, then upload the sound driver and its boot samples
 	phy
 	phx
 	pha

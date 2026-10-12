@@ -1,4 +1,4 @@
-StartSong1:		;SNES: start music cue 1 (home goal) unless it plays: the in-game sound set, then MusicCue with 4; cuetimer = its length
+StartSong1:		;Start the home goal music unless it is already playing
 	lda.w cursong
 	cmp.w #$0001
 	beq .rtl

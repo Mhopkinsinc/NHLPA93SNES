@@ -1,4 +1,4 @@
-StartSong6:		;SNES: start song 6 (the title screen music, from TitleScreen and setoptions) unless it plays: the boot sound set (SPCBootUpload), then driver command 3
+StartSong6:		;Start the title screen music unless it is already playing
 	lda.w cursong
 	cmp.w #6
 	beq .rtl

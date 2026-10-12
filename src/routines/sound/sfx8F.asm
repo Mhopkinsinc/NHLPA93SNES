@@ -1,5 +1,4 @@
-sfx8F:		;SNES: bank $8F copy of sfx: queue the sound pushed before the jsl (0 = none) unless within 180 frames of sfxmutetime; no lastsfx; returns through jmlvector. Also sends the
-		;   crowd volume (KillCrowd, updatesound)
+sfx8F:		;Queue the sound number pushed before the call, unless sound effects are muted for now. Also sends the crowd volume
 	pla		; return address +1 into jmlvector
 	inc a
 	sta.w jmlvector+1

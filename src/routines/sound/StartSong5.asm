@@ -1,4 +1,4 @@
-StartSong5:		;SNES: start music cue 5 (mid-period) unless it plays: the in-game sound set, then MusicCue with 8; cuetimer = its length
+StartSong5:		;Start the mid-period music unless it is already playing
 	lda.w cursong
 	cmp.w #$0005
 	beq .rtl

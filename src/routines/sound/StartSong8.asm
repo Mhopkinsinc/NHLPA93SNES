@@ -1,4 +1,4 @@
-StartSong8:		;SNES: start song 8 (no caller found) unless it plays: the boot sound set (SPCBootUpload), then driver command 9
+StartSong8:		;Start song 8 unless it is already playing. Unused
 	lda.w cursong
 	cmp.w #8
 	beq .rtl

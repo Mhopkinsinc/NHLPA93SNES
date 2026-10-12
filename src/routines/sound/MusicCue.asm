@@ -1,4 +1,4 @@
-MusicCue:		;SNES: send driver command A (a music cue): the sound queue becomes just A (sndqueue, out 0, in 2), under sndlock
+MusicCue:		;Play music cue A: the sound queue is cleared to just this command
 	pha
 	lda.w #$0001
 	sta.b sndlock

@@ -1,4 +1,5 @@
-QueueSound:		;SNES: queue sound command A (sfx/song number) for the SPC. Dropped while a music cue runs; sounds below $A2 need the in-game set (SPCGameUpload first)
+QueueSound:		;Queue sound A for the sound driver. Dropped while a music cue plays; loads the in-game sound set first
+		;   when a game sound needs it
 	phx		; cuetimer running: drop it
 	ldx.w cuetimer
 	bne .exit

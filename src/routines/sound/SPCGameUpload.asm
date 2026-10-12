@@ -1,4 +1,4 @@
-SPCGameUpload:		;SNES: wait for the queue and 6 frames, then send the in-game sample set GameSoundUpload (sndbank 1)
+SPCGameUpload:		;Wait for the sound queue to empty, then upload the in-game sample set
 	phy
 	phx
 	pha

@@ -1,4 +1,4 @@
-StartSong7:		;SNES: start song 7 (driver command 2); no caller found
+StartSong7:		;Start song 7 unless it is already playing. Unused
 	lda.w cursong
 	cmp.w #7
 	beq .rtl

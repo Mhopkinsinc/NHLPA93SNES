@@ -1,5 +1,5 @@
-p_music_vblank:		;vblank sound handler: every other frame send the next queued sound command (sndqueue) to APUIO0 and a counter to
-		;   APUIO1; waits out sndsettle after a sample upload
+p_music_vblank:		;Vblank sound handler: every other frame, send the next queued sound command to the sound driver.
+		;   Waits a little after a sample upload
 	lda.w sndsettle		; wait after the sample upload
 	bne .settle
 	sep #$30
