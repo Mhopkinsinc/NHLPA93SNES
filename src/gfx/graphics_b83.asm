@@ -8,7 +8,7 @@ SmallFontTiles:		;packed small font tiles (100 4bpp tiles, the print font of Sma
 SmallFontTilesEnd:
 
 org $83CCCB
-IceRinkMap:		;the vertical rink tile map: 48 x 85 words (8160 bytes, data/IceRink.snesmap). Rows go to vram as Vpos scrolls; IceRinkMap
+IceRinkMap:		;the vertical rink tile map: 48 x 85 words (8160 bytes, data/IceRink.snesmap). Rows go to vram as Vpos scrolls (ShowRinkRows)
 	incbin "../../data/IceRink.snesmap"
 IceRinkMapEnd:
 	assert IceRinkMapEnd-IceRinkMap == 48*85*2
