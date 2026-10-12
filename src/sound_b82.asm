@@ -2,7 +2,7 @@
 ; Bank $82. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $82B86C
-SPAList:		;SPAList
+SPAList:		;sprite animation pointer list
 	dw 0		; (SPA 0 = no animation)
 
 org $82FA1A
@@ -21,19 +21,19 @@ SPCBootUpload:		;SNES: wait for the queue and a vblank, then send the boot strea
 	phy
 	phx
 	pha
-.wait:		;brightness: keep the screen dark unless fully on
+.dark:		;keep the screen dark unless fully on
 	lda.b brightness
 	cmp.w #$000F
-	beq .wq
+	beq .qwait
 	stz.b brightness
-.wq:
+.qwait:
 	lda.b sndqin
 	cmp.b sndqout
-	bne .wait
+	bne .dark
 	lda.b vcount
-.vb:
+.vblank:
 	cmp.b vcount
-	beq .vb
+	beq .vblank
 	lda.w #$0001		; sndbank 2, no song
 	sta.b sndlock
 	lda.w #$0002
@@ -51,27 +51,27 @@ SPCBootUpload:		;SNES: wait for the queue and a vblank, then send the boot strea
 	lda.b vcount
 	inc a
 	inc a
-.vb2:		;wait 2 frames
+.frames:		;wait 2 frames
 	cmp.b vcount
-	bne .vb2
+	bne .frames
 	pla
 	plx
 	ply
 	rtl
-SPCGameUpload:		;SNES: wait for the queue and 6 frames, then send the in-game sample set GameSoundUpload (GameSoundUpload, sndbank 1)
+SPCGameUpload:		;SNES: wait for the queue and 6 frames, then send the in-game sample set GameSoundUpload (sndbank 1)
 	phy
 	phx
 	pha
-.wq:
+.qwait:
 	lda.b sndqin
 	cmp.b sndqout
-	bne .wq
+	bne .qwait
 	lda.b vcount
 	clc
 	adc.w #$0006
-.vb:
+.vblank:
 	cmp.b vcount
-	bne .vb
+	bne .vblank
 	lda.w #$0001		; sndbank 1, no song
 	sta.b sndlock
 	sta.w sndbank
@@ -127,11 +127,11 @@ SPCUpload:		;SNES: send the upload stream at [sndptr] to the SPC700 boot ROM (IP
 	xba
 	lda.b [sndptr],y
 	iny
-	bpl .b2
+	bpl .byte2
 	ldy.w #$0000
 	inc.b sndptr+2
-	jmp.w .b2
-.b2:
+	jmp.w .byte2
+.byte2:
 	xba
 	jmp.w .ack
 .ack:
@@ -172,12 +172,12 @@ SPCUpload:		;SNES: send the upload stream at [sndptr] to the SPC700 boot ROM (IP
 	sta.w APUIO2
 	iny
 	iny
-	bpl .go
+	bpl .more
 	tya
 	and.w #$7FFF
 	tay
 	inc.b sndptr+2
-.go:
+.more:
 	sep #$20
 	cpx.w #$0001		; APUIO1 = 1 if more data (length > 0)
 	lda.b #$00
@@ -186,10 +186,10 @@ SPCUpload:		;SNES: send the upload stream at [sndptr] to the SPC700 boot ROM (IP
 	adc.b #$7F
 	pla
 	sta.w APUIO0
-	jmp.w .wait
-.wait:
+	jmp.w .blkack
+.blkack:
 	cmp.w APUIO0
-	bne .wait
+	bne .blkack
 	bvc .done		; V set: more blocks
 	jmp.w .next
 .done:		;last block (length 0): the driver runs
@@ -200,7 +200,7 @@ SPCUpload:		;SNES: send the upload stream at [sndptr] to the SPC700 boot ROM (IP
 QueueSound:		;SNES: queue sound command A (sfx/song number) for the SPC. Dropped while a music cue runs; sounds below $A2 need the in-game set (SPCGameUpload first)
 	phx		; cuetimer running: drop it
 	ldx.w cuetimer
-	bne .ex
+	bne .exit
 	phy
 	pha
 	ldx.w #$0001
@@ -221,6 +221,6 @@ QueueSound:		;SNES: queue sound command A (sfx/song number) for the SPC. Dropped
 	sta.b sndqin
 	stz.b sndlock
 	ply
-.ex:
+.exit:
 	plx
 	rtl
