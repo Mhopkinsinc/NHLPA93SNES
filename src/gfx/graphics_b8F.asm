@@ -22,26 +22,26 @@ BigFontMap:		;bigfont.map: big font tiles of each character: 76 top-row words, t
 	dw $0479,$047A,$047B,$047C,$047D,$047E,$047F,$0480
 	dw $0481,$0482,$0483,$0484,$0485,$0486,$0487,$0488
 	dw $0489,$048A,$048B,$048C,$0442,$048D,$048E,$048F
-unusedEnergyBar:		;SNES: no caller found: a 4-character energy bar of d0 (8 levels per character) printed at printx-11, palette by d1
+unusedEnergyBar:		;SNES: no caller found: builds a 4-character energy bar of d0 (8 levels per character, tile base d1) in mesarea and moves printx back 11; does not print it
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.loop:
+.savea:
 	lda.b a1,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .loop
+	bne .savea
 	ldx.b xsave
 	lda.w #$2000
 	sta.w printa
@@ -54,33 +54,33 @@ unusedEnergyBar:		;SNES: no caller found: a 4-character energy bar of d0 (8 leve
 	lsr a
 	lsr a
 	cmp.w #$0020
-	bcc .lt
+	bcc .cap
 	lda.w #$001F
-.lt:
+.cap:
 	sta.b d0
 	ldy.w #$0002
 	lda.w #$0006
 	sta.w mesarea
 	lda.w #$0003
 	sta.b d3
-.loop2:
+.char:
 	lda.w #$FFFF
 	sta.b d2
 	lda.b d0
-	bmi .d0neg
+	bmi .level
 	sta.b d2
 	cmp.w #$0008
-	bcc .d0neg
+	bcc .level
 	lda.w #$0007
 	sta.b d2
-.d0neg:
+.level:
 	lda.b d2
 	sec
 	adc.b d1
 	and.w #$00FF
-	bne .nonzero
+	bne .tile
 	lda.w #$0020
-.nonzero:
+.tile:
 	sta.w mesarea,y
 	iny
 	lda.b d0
@@ -88,7 +88,7 @@ unusedEnergyBar:		;SNES: no caller found: a 4-character energy bar of d0 (8 leve
 	sbc.w #$0008
 	sta.b d0
 	dec.b d3
-	bpl .loop2
+	bpl .char
 	lda.b d1
 	beq .nod1
 	lda.w #$0C00
@@ -121,21 +121,21 @@ unusedEnergyBar:		;SNES: no caller found: a 4-character energy bar of d0 (8 leve
 	trb.w printa
 	stx.b xsave
 	ldx.w #$0002
-.loop3:
+.resta:
 	pla
 	sta.b a1,x
 	dex
 	dex
-	bpl .loop3
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000E
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	rtl
 
