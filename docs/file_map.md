@@ -36,7 +36,7 @@ Regenerate the routine lists from the source if they drift; the old ~4 KB slice 
 - `$80DF3F`: doinput, faceoffinput, holdplayer, setpads
 - `$80F391`: setlccords
 - `$80F45B`: asspuckc
-- `$80F6AD`: assgoalie, ClampYPosition, AdjustFacingDirection, GoalieSaveList, checkgoalp_CalcGoalShotDir, CalcAngleOffset
+- `$80F6AD`: assgoalie, ClampYPosition, AdjustFacingDirection, GoalieSaveList, shotdiradj, CalcAngleOffset
 
 ## src/middle_b80.asm
 

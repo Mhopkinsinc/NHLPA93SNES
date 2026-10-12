@@ -51,7 +51,7 @@ ends before the compressed block at $80ED38 (now in bank80_F000).
 
 $80ED38-$80FFFF  ROM $06D38-$07FFF: RonBarrMap (packed), adda43 (hockey93_02), setlccords, startpause, ReadPads,
 asspuckc (logic93_3), SuperDiv, randomd0s, assgoalie, ClampYPosition, AdjustFacingDirection, GoalieSaveList (logic93_3),
-checkgoalp_CalcGoalShotDir, CalcAngleOffset (logic93_1), reenergizeteam (penalty93_2), the internal header and the vectors.
+shotdiradj, CalcAngleOffset (logic93_1), reenergizeteam (penalty93_2), the internal header and the vectors.
 Starts at RonBarrMap (boundary moved from $80F008).
 
 ## bank81_8000 (org $818000)

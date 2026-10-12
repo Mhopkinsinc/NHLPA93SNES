@@ -1340,7 +1340,7 @@ doshot:		;stick is at puck so launch puck toward goal
 	cpx.w #$0010
 	bne .savea
 	ldx.b xsave
-	jsl.l checkgoalp_CalcGoalShotDir
+	jsl.l shotdiradj
 	lda.w seed		; sound: wiff (one of 4)
 	and.w #$0003
 	clc
@@ -2460,11 +2460,11 @@ pucknorm:		;asstab $18. assignment for puck most of the time. a3 = puck, d7 = el
 	sec
 	sbc.b d7
 	sta.w temp1+puckobj
-	bpl .c0
+	bpl .0
 	adc.w #$0005
 	sta.w temp1+puckobj
 	jsl.l findpc
-.c0:		;puck carried: pull it a quarter of the way to the carrier hot spot
+.0:		;puck carried: pull it a quarter of the way to the carrier hot spot
 	lda.w puckc		; puck carrier
 	bmi .nothandled
 	asl a
@@ -2741,14 +2741,14 @@ a2touchpuck:		;player a2 touches puck. Look for penalties/offsides/other junk. C
 	lda.w pucky
 	sta.b d0
 	lda.w pfgoal,y
-	beq .zero
+	beq .0
 	lda.w #ifdir		; ifdir
 	tsb.w iflags
 	lda.b d0
 	eor.w #$FFFF
 	inc a
 	sta.b d0
-.zero:
+.0:
 	lda.b d0
 	bmi .rtl
 	lda.w tmap		; own team not short-handed?
@@ -2756,12 +2756,12 @@ a2touchpuck:		;player a2 touches puck. Look for penalties/offsides/other junk. C
 	sbc.w tmap+2
 	sta.b d0
 	lda.w pfteam,y
-	beq .men
+	beq .1
 	lda.b d0
 	eor.w #$FFFF
 	inc a
 	sta.b d0
-.men:
+.1:
 	lda.b d0
 	bmi .rtl
 	lda.w #ifok		; ifok
@@ -2834,7 +2834,7 @@ GetHot:		;push long address of structure to get hot spot from. Hot spot x/y retu
 	bmi .ex
 	asl a
 	tax
-	lda.l HotList,x		; HotList x (bank $84)
+	lda.l HotList,x		; HotList x
 	and.w #$00FF
 	bit.w #$0080
 	beq .hx
@@ -3158,8 +3158,8 @@ restorepl:		;Restore old joy controlled player d1, give d0
 	rtl
 
 org $80A52A
-pucknothing:		;asstab $1A. puck just slides along. Rev A listing labels this puckunflip
-		;   SNES: puckunflip ( / ): puck just slides; stop spinning
+pucknothing:		;asstab $1A. puck just slides along
+		;   SNES: puck just slides; stops spinning (puckunflip body)
 	lda.w SPAnum+puckobj
 	cmp.w #$0008		; SPAnum 2*4..6*4: flip the face
 	bcc .k
@@ -3184,13 +3184,13 @@ puckfaceoff:		;asstab $1B. puckfaceoff : this is where the action starts: period
 	and.w #~pfna&$FFFF
 	sta.w pflags,x
 	lda.w gameclock		; clock out: PeriodOver
-	bne .g6
-	jml.l PeriodOver		; bank $8D
-.g6:
+	bne .endper
+	jml.l PeriodOver
+.endper:
 	lda.w gmode
 	bit.w #gmendper
 	beq .ot
-	jml.l PeriodOver		; bank $8D
+	jml.l PeriodOver
 .ot:
 	lda.w gsp		; overtime and not tied: clockcont_0
 	cmp.w #$0003
@@ -3198,7 +3198,7 @@ puckfaceoff:		;asstab $1B. puckfaceoff : this is where the action starts: period
 	lda.w tmscore
 	cmp.w tmscore+2
 	beq .npo
-	jml.l clockcont_0		; bank $8F
+	jml.l clockcont_0
 .npo:
 	lda.w gmode
 	bit.w #gmpendel		; gmpendel: Stop4Pen
@@ -3257,9 +3257,9 @@ puckfaceoff:		;asstab $1B. puckfaceoff : this is where the action starts: period
 	beq .rtl
 	cmp.w cont2team
 	beq .rtl
-	jsl.l CompLine		; bank $8F
+	jsl.l CompLine
 	jsl.l setpersonel
-	jml.l printscores1		; bank $89
+	jml.l printscores1
 .slc:		;controlled player d0 gets the line change box
 	ldy.b a3
 	sty.b a2
@@ -3373,17 +3373,17 @@ puckfaceoff:		;asstab $1B. puckfaceoff : this is where the action starts: period
 	bit.w #pf2lcm		; still in lc mode: lcfound with choice 0
 	beq .pop
 	stz.b d2
-	jsl.l lcfound		; bank $8F
+	jsl.l lcfound
 	jsl.l SetLCmode2
 .pop:
 	plx
 	stx.b a3
 	rtl
-SetLCmode:		;Initiate line change option if available (abut
+SetLCmode:		;Initiate line change option if available (abut pressed by the puck carrier)
 		;   SNES: open the line change box for player X (abut of the puck carrier)
 	lda.w OptLine
 	bne .rtl
-	jsl.l loadTeamStruct		; loadTeamStruct: a2 = team of X, bank $8F
+	jsl.l loadTeamStruct		; loadTeamStruct: a2 = team of X
 	ldy.b a2
 	lda.w tmflags,y
 	bit.w #tmflc		; tmflc: team already in lc mode
@@ -3405,7 +3405,7 @@ SetLCmode:		;Initiate line change option if available (abut
 	jmp.w SetLCmode2
 .rtl:
 	rtl
-SetLCmode2:		;a2 = team struct for lc. Draw the lc box with
+SetLCmode2:		;a2 = team struct for lc. Draw the lc box with one row per eligible line (A/B/C + line name). Also called from lineinput
 		;   SNES: draw the lc box, one row per eligible line (button letter + line name)
 	jsl.l setlccords
 	inc.b d0		; box size +1
@@ -3414,7 +3414,7 @@ SetLCmode2:		;a2 = team struct for lc. Draw the lc box with
 	sta.b d2
 	lda.b fobox		; faceoff box up: do not clear
 	bne .cords
-	jsl.l eraser		; bank $8D (d0/d1 size, d2 tile)
+	jsl.l eraser		; d0/d1 size, d2 tile
 .cords:
 	jsl.l setlccords
 	lda.w printy		; lower half of the screen?
@@ -3430,10 +3430,10 @@ SetLCmode2:		;a2 = team struct for lc. Draw the lc box with
 	tsb.w sflags3
 	bra .frame
 .box:
-	jsl.l box		; bank $8F
+	jsl.l box
 	jsl.l setlccords
 .frame:
-	jsl.l Framer		; bank $8F (d0/d1 size)
+	jsl.l Framer		; d0/d1 size
 	dec.w printy		; printy -= 2, printx += 1
 	dec.w printy
 	inc.w printx
@@ -3446,7 +3446,7 @@ SetLCmode2:		;a2 = team struct for lc. Draw the lc box with
 	sta.w printx
 	lda.b d4
 	sta.b d0
-	jsl.l getlchoice		; bank $8A
+	jsl.l getlchoice
 	lda.b d0
 	bmi .next
 	ldy.b a2
@@ -3476,14 +3476,14 @@ SetLCmode2:		;a2 = team struct for lc. Draw the lc box with
 	jsl.l print
 	lda.b d0
 	pha
-	lda.w #linelist		; linelist (bank $8F)
+	lda.w #linelist		; linelist
 	sta.b a1
 	lda.w #linelist>>16
 	sta.b a1+2
-	jsl.l PrintStringFromList		; bank $8F
+	jsl.l PrintStringFromList
 	pla
 	sta.b d0
-	jsl.l linebar		; bank $8F
+	jsl.l linebar
 .up:
 	dec.w printy
 .next:
@@ -3494,7 +3494,7 @@ SetLCmode2:		;a2 = team struct for lc. Draw the lc box with
 	adc.w #$0005
 	sta.w printx
 	ldy.b a2
-	lda.w #TeamList>>16		; team name: [tmdata] + its offsets (bank $83)
+	lda.w #TeamList>>16		; team name: [tmdata] + its offsets
 	sta.b a1+2
 	lda.w tmdata,y
 	sta.b a1
@@ -3519,23 +3519,23 @@ puckfaceoff2:		;asstab $1C. puckfaceoff2 : face off control logic and general se
 	sta.w pflags,x
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0020
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$001C
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	lda.b crowdlevel		; limit crowd level
 	cmp.w #$0258
@@ -3611,7 +3611,7 @@ puckfaceoff2:		;asstab $1C. puckfaceoff2 : face off control logic and general se
 	stz.b a3
 	lda.w #$000B
 	sta.b d2
-.loop:		;each player: assignment and faceoff position
+.l0:		;each player: assignment and faceoff position
 	ldx.b a3
 	lda.w #$FF10		; Xpos = -240, off the screen
 	sta.w Xpos,x
@@ -3627,7 +3627,7 @@ puckfaceoff2:		;asstab $1C. puckfaceoff2 : face off control logic and general se
 	sta.b d0
 	lda.b d1
 	cmp.w #$0004
-	bne .d1ne
+	bne .l1
 	stz.b a2		; center: team touches = him only
 	lda.w pfteam,x
 	beq .tm
@@ -3646,7 +3646,7 @@ puckfaceoff2:		;asstab $1C. puckfaceoff2 : face off control logic and general se
 	sta.w tmflags,y
 	lda.w #afaceoffpl		; afaceoffpl
 	sta.b d0
-.d1ne:
+.l1:
 	jsl.l assinsert
 .goalie1:
 	lda.w tmap		; d4 = (6-tmap)*8: .apl row
@@ -3783,7 +3783,7 @@ puckfaceoff2:		;asstab $1C. puckfaceoff2 : face off control logic and general se
 	inc.b a3
 	dec.b d2
 	bmi .done
-	jmp.w .loop
+	jmp.w .l0
 .done:
 	jsl.l SprSort		; SprSort
 	pla
@@ -3791,7 +3791,7 @@ puckfaceoff2:		;asstab $1C. puckfaceoff2 : face off control logic and general se
 	pla
 	sta.b a3+2
 	ldx.b a3
-	jsl.l ResetAndSelectPlayers		; bank $8F
+	jsl.l ResetAndSelectPlayers
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$00,$00
@@ -3883,7 +3883,7 @@ puckfaceoff2:		;asstab $1C. puckfaceoff2 : face off control logic and general se
 	sta.b d0
 	lda.w #$0003
 	sta.b d1
-	jsl.l Framer		; bank $8F (d0/d1 size)
+	jsl.l Framer		; d0/d1 size
 	lda.w tmline
 	sta.b d0
 	lda.w tmline+2
@@ -3899,11 +3899,11 @@ puckfaceoff2:		;asstab $1C. puckfaceoff2 : face off control logic and general se
 	inc.w printx
 	dec.w printy
 	dec.w printy
-	lda.w #linelist		; linelist (bank $8F)
+	lda.w #linelist		; linelist
 	sta.b a1
 	lda.w #linelist>>16
 	sta.b a1+2
-	jsl.l PrintStringFromList		; bank $8F
+	jsl.l PrintStringFromList
 	inc.w printx
 	inc.w printx
 	inc.w printx
@@ -3914,7 +3914,7 @@ puckfaceoff2:		;asstab $1C. puckfaceoff2 : face off control logic and general se
 	sta.b a1
 	lda.w #linelist>>16
 	sta.b a1+2
-	jsl.l PrintStringFromList		; bank $8F
+	jsl.l PrintStringFromList
 .nol:		;time for the puck drop: 180-299 frames
 	lda.w #$0078
 	jsl.l randoma
@@ -3946,21 +3946,21 @@ puckfaceoff2:		;asstab $1C. puckfaceoff2 : face off control logic and general se
 	sta.w fodir2
 	stx.b xsave
 	ldx.w #$001A
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$001E
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	ldx.b a3
 	rtl
@@ -4051,7 +4051,7 @@ updatefaceoff:		;a3 = puck. Drop animation frame from temp1; at 0 erases the fac
 	sta.b d1
 	lda.w blankchar
 	sta.b d2
-	jml.l eraser		; bank $8D (d0/d1 size, d2 tile)
+	jml.l eraser		; d0/d1 size, d2 tile
 Endfaceoff:		;drop the puck: pick the faceoff winner and send the puck off
 	lda.w seed+2		; puck on the ice sound
 	and.w #$0003
@@ -4166,7 +4166,7 @@ Endfaceoff:		;drop the puck: pick the faceoff winner and send the puck off
 	jmp.w assreplace
 .ftab:		;faceoff strength by pull frame
 	db 0,8,16,0,8,16
-dirtab:		;x,y speed for each direction 0-7 (92 runspeed 200, diagonal 141)
+dirtab:		;x,y speed for each direction 0-7
 	dw 0,200, 141,141, 200,0, 141,-141
 	dw 0,-200, -141,-141, -200,0, -141,141
 
@@ -4174,23 +4174,23 @@ org $80AE9D
 changeplayer:		;switch controller d4 (0/2) to the teammate nearest the puck, or sweep check if that is the current player
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$001C
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	lda.w puckvy		; puck + velocity/256 (lead the puck)
 	xba
@@ -4294,21 +4294,21 @@ changeplayer:		;switch controller d4 (0/2) to the teammate nearest the puck, or 
 .ex:
 	stx.b xsave
 	ldx.w #$0006
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$001A
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	rtl
 vtoa:		;d0/d1 are x/y distances which are converted into direction 0-7 and returned in d0 (8 = no direction)
@@ -4318,34 +4318,34 @@ vtoa:		;d0/d1 are x/y distances which are converted into direction 0-7 and retur
 	beq .nodir		; no direction
 	stz.b d0+2
 	lda.b d0
-	bpl .yabs
+	bpl .0
 	eor.w #$FFFF
 	inc a
 	sta.b d0
 	inc.b d0+2
-.yabs:
+.0:
 	lda.b d1
-	bpl .b2
+	bpl .1
 	eor.w #$FFFF
 	inc a
 	sta.b d1
 	inc.b d0+2
 	inc.b d0+2
-.b2:
+.1:
 	lda.b d1		; bit 2: |dx| <= 2|dy|
 	asl a
 	cmp.b d0
-	bcc .b3
+	bcc .2
 	lda.w #$0004
 	tsb.b d0+2
-.b3:
+.2:
 	lda.b d0		; bit 3: |dy| <= 2|dx|
 	asl a
 	cmp.b d1
-	bcc .look
+	bcc .3
 	lda.w #$0008
 	tsb.b d0+2
-.look:
+.3:
 	phx
 	ldx.b d0+2
 	lda.l .dt,x
@@ -4499,12 +4499,12 @@ CPgoalie:		;see if computer should pull his goalie. d1 = puck/faceoff y. Falls i
 	lda.w tmsort,y
 	tay
 	lda.w pfgoal,y		; own half of the faceoff/puck
-	bne .side
+	bne .0
 	lda.b d1
 	eor.w #$FFFF
 	inc a
 	sta.b d1
-.side:
+.0:
 	lda.b d1
 	bmi .rtl
 	ldy.b a2
@@ -4536,13 +4536,13 @@ doinput:		;process controller input
 	jsl.l setpads		; setpads; Start: pause
 	lda.b d1
 	bit.w #JOYSTART
-	beq .nostart
+	beq .0
 	lda.b d4
 	bne .pause2
-	jml.l startpause1		; bank $8F
+	jml.l startpause1
 .pause2:
 	jml.l startpause2
-.nostart:
+.0:
 	lda.w sfhormode		; horizontal mode: dpad +90 degrees
 	beq .nhor
 	lda.b d0
@@ -4561,7 +4561,7 @@ doinput:		;process controller input
 	lda.w pflags,x		; line change interface
 	bit.w #pf2lcm
 	beq .nolcm
-	jml.l lineinput		; bank $8A
+	jml.l lineinput
 .nolcm:
 	bit.w #pfjoycon		; not joystick controlled: exit
 	bne .joy
@@ -4573,7 +4573,7 @@ doinput:		;process controller input
 .nolock:
 	lda.w pf2fight,x
 	beq .nofight
-	jml.l fightinput		; bank $8F
+	jml.l fightinput
 .nofight:
 	lda.w puckc		; carrier?
 	sta.b d5
@@ -4597,7 +4597,7 @@ doinput:		;process controller input
 	beq .acc
 	jmp.w burst
 .acc:
-	jml.l doplayeracc		; bank $8F
+	jml.l doplayeracc
 .ispc:		;player is the puck carrier
 	jsl.l checkob		; goalie with pf2aip: exit
 	lda.w position,x
@@ -4608,7 +4608,7 @@ doinput:		;process controller input
 	lda.w sflags
 	bit.w #sfspdir
 	beq .nopass
-	jml.l passmode		; bank $8F
+	jml.l passmode
 .nopass:
 	bit.w #sfssdir
 	beq .noshot
@@ -4631,7 +4631,7 @@ doinput:		;process controller input
 	beq .acc2
 	jmp.w SetShotMode
 .acc2:
-	jml.l doplayeracc		; bank $8F
+	jml.l doplayeracc
 .lc:
 	lda.w lcplayer		; lcplayer $FFFF -> $FFFE
 	cmp.w #$FFFF
@@ -4696,25 +4696,25 @@ faceoffinput:		;controller processing for faceoff
 	lda.w #$0000
 	sta.b a0+2
 	lda.w pfgoal,x
-	beq .store
+	beq .2
 	lda.w #fodir2
 	sta.b a0
 	lda.w #$0000
 	sta.b a0+2
-.store:
+.2:
 	lda.b d0
 	sta.b [a0]
 	lda.w pf2aip,x		; pf2aip set: already pulling
 	bne .rtl
 	lda.b d1
 	bit.w #bbut
-	beq .nob
+	beq .1
 	lda.w #SPAfaceoff
 	sta.b d1
 	lda.w #$0001
 	sta.w pf2aip,x
 	jmp.w SetSPA
-.nob:
+.1:
 	lda.w #SPAfaceoffr
 	sta.b d1
 	jmp.w SetSPA
@@ -4733,18 +4733,18 @@ holdplayer:		;abut press hold. a0 = the player this one is
 	asl a
 	sta.b d0
 	sta.b a0
-	jml.l Acheck		; bank $8F
+	jml.l Acheck
 setpads:		;copy info into pad cont so graphics knows which player/number.
 		;   SNES: d4 = pad index (-2 puck carrier, 0/2 controllers, 4 replay target): put SCnum of X in that nibble of PadControlBits
 	stx.b xsave
 	ldx.w #$0000
-.push:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .push
+	bne .save
 	ldx.b xsave
 	lda.w #$0002		; d0 = (2 + d4) * 2 = nibble shift
 	clc
@@ -4781,12 +4781,12 @@ setpads:		;copy info into pad cont so graphics knows which player/number.
 	sta.w PadControlBits
 	stx.b xsave
 	ldx.w #$0006
-.pop:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .pop
+	bpl .restore
 	ldx.b xsave
 	rtl
 
@@ -4795,9 +4795,9 @@ setlccords:		;set printx/y to cords for lc box on team a2
 		;   SNES: printx/printy for the line change box of team a2 (21 rows lower for the home team, flipped by gmdir); d0/d1 = Framer box size
 	stz.b d0
 	lda.b a2
-	bne .pr
+	bne .0
 	inc.b d0
-.pr:
+.0:
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$13,$01
@@ -4812,12 +4812,12 @@ setlccords:		;set printx/y to cords for lc box on team a2
 	sta.b mula
 	lda.b d0
 	sta.b mulb
-	jsl.l mulu16		; bank $8D: mulu, A = mula*mulb
+	jsl.l mulu16		; mulu, A = mula*mulb
 	adc.w printy
 	sta.w printy
 	lda.w #$0002		; getlchoice 2: no third choice: 2 rows
 	sta.b d0
-	jsl.l getlchoice		; bank $8A (d0 = possible line, -1 = none)
+	jsl.l getlchoice		; d0 = possible line, -1 = none
 	lda.w #$0006
 	sta.b d1
 	lda.b d0
@@ -4831,8 +4831,7 @@ setlccords:		;set printx/y to cords for lc box on team a2
 
 org $80F45B
 asspuckc:		;asstab $10. player a3 is puck handler
-		;   SNES: player X is the puck carrier: every aioff frames checkob, chk4lc, chk4shot, chk4pass; skate to a postab spot (bank $8F) with
-		;   .chkdir
+		;   SNES: player X is the puck carrier: every aioff frames checkob, chk4lc, chk4shot, chk4pass; skate to a PuckcSpots spot with the .chkdir callback
 	txa		; not the carrier: assexit
 	lsr a
 	cmp.w puckc
@@ -4845,7 +4844,7 @@ asspuckc:		;asstab $10. player a3 is puck handler
 .clk:
 	lda.w gmclock		; clock stopped: assnothing
 	beq .go
-	jml.l assnothing		; bank $8F
+	jml.l assnothing
 .go:
 	lda.w pflags,x		; joystick controlled: assexit
 	bit.w #pfjoycon
@@ -4877,7 +4876,7 @@ asspuckc:		;asstab $10. player a3 is puck handler
 	jsl.l checkob
 	jsl.l chk4lc
 	jsl.l chk4shot
-	jsl.l chk4pass		; bank $8C
+	jsl.l chk4pass
 .nodec:		;d0 = 6 + temp3 (random spot), or position when offsides
 	lda.w #$0006
 	clc
@@ -4918,7 +4917,7 @@ asspuckc:		;asstab $10. player a3 is puck handler
 	sta.b a0
 	lda.w #.chkdir>>16
 	sta.b a0+2
-	jml.l skateto		; bank $88 (d0/d1 = target, a0 = callback)
+	jml.l skateto		; d0/d1 = target, a0 = callback
 .rtl:
 	rtl
 .chkdir:		;skateto callback. d0 = direction; turn away from an opponent within 20 of where the puck will be (threat = count)
@@ -5043,18 +5042,18 @@ assgoalie:		;asstab $E. Player a3 is goalie. Also entered from assnearest
 .nna:
 	lda.w Xpos,x		; outside the crease area: skate back
 	bit.w #$8000
-	beq .ax
+	beq .crx
 	eor.w #$FFFF
 	inc a
-.ax:
+.crx:
 	cmp.w #$0035
 	bcs .skate
 	lda.w Ypos,x
 	bit.w #$8000
-	beq .ay
+	beq .cry
 	eor.w #$FFFF
 	inc a
-.ay:
+.cry:
 	cmp.w #$010F
 	bcs .skate
 	cmp.w #$00D3
@@ -5067,10 +5066,10 @@ assgoalie:		;asstab $E. Player a3 is goalie. Also entered from assnearest
 	lda.w #$0004
 	sta.b d0
 	lda.w Xpos,x
-	bpl .zero
+	bpl .0
 	lda.w #$FFFC
 	sta.b d0
-.zero:
+.0:
 	lda.w #$00E4
 	sta.b d1
 	lda.w pfgoal,x
@@ -5078,7 +5077,7 @@ assgoalie:		;asstab $E. Player a3 is goalie. Also entered from assnearest
 	lda.w #$FF1C
 	sta.b d1
 .sk:
-	jml.l skateto		; bank $88 (d0/d1 = target, a0 = callback)
+	jml.l skateto		; d0/d1 = target, a0 = callback
 .noskate:
 	lda.w pf2aip,x		; pf2aip: nothing
 	beq .gready
@@ -5222,7 +5221,7 @@ assgoalie:		;asstab $E. Player a3 is goalie. Also entered from assnearest
 	bpl .tl
 	lda.w #$0001		; threat = 1, chk4pass
 	sta.w threat
-	jsl.l chk4pass		; bank $8C
+	jsl.l chk4pass
 	bra .de1
 .cover:		;cover a loose puck at the crease
 	lda.w temp4,x
@@ -5506,9 +5505,9 @@ assgoalie:		;asstab $E. Player a3 is goalie. Also entered from assnearest
 	jmp.w .de8
 .aip:
 	lda.w pf2aip,x
-	beq .save
+	beq .saveanim
 	jmp.w .de8
-.save:		;pick the save anim: glove side by the direction, stick when low and slow, stack
+.saveanim:		;pick the save anim: glove side by the direction, stick when low and slow, stack
 	inc.w pf2aip,x
 	lda.b [a0]
 	sec
@@ -5691,7 +5690,7 @@ assgoalie:		;asstab $E. Player a3 is goalie. Also entered from assnearest
 	bmi .v8
 	bvc .stop
 .acc:
-	jml.l playeracc		; bank $8F
+	jml.l playeracc
 .v8:
 	bvc .acc
 .stop:
@@ -5761,22 +5760,22 @@ assgoalie:		;asstab $E. Player a3 is goalie. Also entered from assnearest
 	sta.b tmp0
 .dir2:
 	lda.b tmp0
-	bpl .ax2
+	bpl .toward
 	jmp.w .de5
-.ax2:
+.toward:
 	lda.w puckvx
 	bit.w #$8000
-	beq .axs
+	beq .ax
 	eor.w #$FFFF
 	inc a
-.axs:
+.ax:
 	sta.b d0
 	lda.w puckvy
 	bit.w #$8000
-	beq .ay2
+	beq .ay
 	eor.w #$FFFF
 	inc a
-.ay2:
+.ay:
 	sta.b d1
 	lda.b d1
 	cmp.b d0
@@ -5790,9 +5789,9 @@ ClampYPosition:		;d1 = y clamped to +-$103, minus goal line d3. d0 = 0 if X has 
 	lda.w puckc
 	sta.b d2
 	cmp.w SCnum,x
-	bne .zero
+	bne .0
 	stz.b d0
-.zero:
+.0:
 	lda.b d1
 	sec
 	sbc.w #$0103
@@ -5884,9 +5883,7 @@ AdjustFacingDirection:		;Turn facedir one step
 	rtl
 GoalieSaveList:		;save anims by index: glove 0/1, stack 2/3, stick 4/5
 	dw SPAgglover,SPAgglovel,SPAgstackr,SPAgstackl,SPAgstickr,SPAgstickl
-checkgoalp_CalcGoalShotDir:		;kept: 92 checkgoalp is the goal/net collision in hockey93_04. 93 only. If the opposing goalie
-		;   SNES: if the opposing goalie covers the middle of the net, passdir 2 or 6 to shoot at the open side, else 0.
-		;   Skipped for joystick players
+shotdiradj:		;If the opposing goalie covers the middle of the net, set passdir 2 or 6 to shoot at the open side, else 0. Skipped for joystick players (pfjoycon set)
 	lda.w pflags,x		; joystick player: skip
 	bit.w #pfjoycon
 	beq .go
