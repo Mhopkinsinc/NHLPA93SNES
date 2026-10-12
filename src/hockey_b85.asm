@@ -2,7 +2,7 @@
 ; Bank $85. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $85D5A4
-GetShifter:		;/GetShifter: d1 = number of games - 1, d2 = first bit of WinBits for the playoff gamelevel
+GetShifter:		;d1 = number of games - 1, d2 = first bit of WinBits for the playoff gamelevel
 	lda.w #-16
 	sta.b d2
 	lda.w #16
@@ -30,31 +30,31 @@ getpzjoy:		;read the joystick of the pad that paused (sfpj: Readjoy2, else Readj
 PrintTeamNames:		;SNES: regular season: HomeTeam/VisTeam from the options; print both team names (DrawTeamBlocks), then setteams
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0020
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	lda.w OptPlayMode		; OptPlayMode 0: teams from the options
-	bne .pr
+	bne .print
 	lda.w OptTeam1
 	sta.w HomeTeam
 	lda.w OptTeam2
 	sta.w VisTeam
-.pr:
+.print:
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BE,$02,$01
@@ -70,21 +70,21 @@ PrintTeamNames:		;SNES: regular season: HomeTeam/VisTeam from the options; print
 	jsl.l setteams
 	stx.b xsave
 	ldx.w #$000A
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$001E
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	rtl
 nullrtl85:		;does nothing
@@ -95,12 +95,12 @@ ResetClock:		;set period length and stop clock
 	lda.w gsp		; gsp >= 3 (overtime) and OptPlayMode 0: 600 seconds
 	sec
 	sbc.w #$0003
-	bmi .v1
-	bvc .ot
+	bmi .neg
+	bvc .overtime
 	bra .set
-.v1:
+.neg:
 	bvc .set
-.ot:
+.overtime:
 	lda.w OptPlayMode
 	bne .set
 	lda.w #600
