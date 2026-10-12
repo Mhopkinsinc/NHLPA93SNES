@@ -4,16 +4,16 @@
 org $888548
 noturn0:		;doplayeracc when the wanted direction needs no turn (.ftab entry 0). d0 = direction minus facedir, times 2
 		;   SNES: glide/stop/skate animation, then revplayeracc (noturn). d0 = direction - facedir
-	lda.w #$0002		; d4 (here d2) = 2, 6 skating backwards
+	lda.w #$0002		; d4 = 2, 6 skating backwards
 	sta.b d4
 	lda.w pfrev,x
-	beq .zero
+	beq .0
 	lda.w #$0006
 	sta.b d4
 	lda.b d0
 	eor.w #$0008
 	sta.b d0
-.zero:
+.0:
 	lda.b d0
 	beq .nochg
 	lda.w Xvel,x		; moving: stop if the direction is more than 90 degrees off
@@ -81,7 +81,7 @@ noturn0:		;doplayeracc when the wanted direction needs no turn (.ftab entry 0). 
 
 org $88FBA6
 assdefd:		;asstab 2. player a3 is defensive player on defense
-		;   SNES: defenceman on defence: stay between the furthest-up attacker and the goal, join the attack (adefo) when the puck is past the line
+		;   SNES: defenseman on defense: stay between the furthest-up attacker and the goal, join the attack (adefo) when the puck is past the line
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rtl
@@ -154,11 +154,11 @@ assdefd:		;asstab 2. player a3 is defensive player on defense
 	sec
 	sbc.w #$58
 	bmi .lt
-	bvc .ge
+	bvc .pastline
 	bra .de0
 .lt:
 	bvc .de0
-.ge:
+.pastline:
 	ldy.b a2
 	lda.w tmflags,y
 	bit.w #tmfoffside
@@ -351,13 +351,13 @@ assdefd:		;asstab 2. player a3 is defensive player on defense
 
 org $88FDD0
 skateto:		;a0 = extra routine for collision avoidance, d0/d1 = x/y cord to skate to, d7 = elapse frames
-		;   SNES: a0 = collision avoidance routine, d0/d1 = x/y to skate to, d7 = frames. SNES: a skater near the target (sum of distances < 55) slows to 7/8
+		;   SNES: a skater near the target (sum of distances < 55) slows to 7/8
 	lda.w position,x
-	beq .t2
+	beq .tick
 	lda.w pflags,x
 	and.w #$8000
 	ora.w sfhormode
-	bne .t2
+	bne .tick
 	lda.b d0
 	bit.w #$8000
 	beq .ax
@@ -365,7 +365,7 @@ skateto:		;a0 = extra routine for collision avoidance, d0/d1 = x/y cord to skate
 	inc a
 .ax:
 	cmp.w #$0088
-	bcs .t2
+	bcs .tick
 	lda.w Xpos,x
 	sec
 	sbc.b d0
@@ -386,7 +386,7 @@ skateto:		;a0 = extra routine for collision avoidance, d0/d1 = x/y cord to skate
 	clc
 	adc.b tmp0
 	cmp.w #55
-	bcs .t2
+	bcs .tick
 	lda.w Xvel,x
 	sta.b mula
 	lda.w #7
@@ -411,7 +411,7 @@ skateto:		;a0 = extra routine for collision avoidance, d0/d1 = x/y cord to skate
 	lsr.b mulres+2
 	ror a
 	sta.w Yvel,x
-.t2:		;every 12/60 second
+.tick:		;every 12/60 second
 	lda.w temp2,x
 	sec
 	sbc.b d7

@@ -1,6 +1,6 @@
 ## Current state (name review)
 
-Name review pass, one file per push; checklist in `docs/name_review_93s.md` (ticked = done). Remaining: `src/frames.asm`, `src/hockey_b80.asm`, `src/hockey_b84.asm`, `src/hockey_b88.asm`, `src/hockey_b8D.asm`, `src/hockey_b8F.asm`, `src/logic_b80.asm`, `src/logic_b88.asm`, `src/logic_b8F.asm`, `src/penalty_b80.asm`, `src/penalty_b8D.asm`, `src/penalty_b8F.asm`, `src/teamdata_b83.asm`, `src/video_b80.asm`. Local naming conventions used: register save/restore loops `.save`/`.restore` (d regs) and `.savea`/`.resta` (a regs); 93G local names where the routine matches. Rename history goes in `docs/name_map.csv` only.
+Name review pass, one file per push; checklist in `docs/name_review_93s.md` (ticked = done). Remaining: `src/frames.asm`, `src/hockey_b80.asm`, `src/hockey_b84.asm`, `src/hockey_b88.asm`, `src/hockey_b8D.asm`, `src/hockey_b8F.asm`, `src/logic_b80.asm`, `src/logic_b8F.asm`, `src/penalty_b80.asm`, `src/penalty_b8D.asm`, `src/penalty_b8F.asm`, `src/teamdata_b83.asm`, `src/video_b80.asm`. Local naming conventions used: register save/restore loops `.save`/`.restore` (d regs) and `.savea`/`.resta` (a regs); 93G local names where the routine matches. Rename history goes in `docs/name_map.csv` only.
 
 # Setup handoff (2026-10-09)
 
