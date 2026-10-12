@@ -8,10 +8,10 @@ lcfound2:		;close lc box. Also called from lineinput
 	lda.w printy
 	sec
 	sbc.w #15
-	bmi .v1
+	bmi .neg
 	bvc .low
 	bra .nollcm
-.v1:
+.neg:
 	bvc .nollcm
 .low:
 	lda.w #sf3llcs
@@ -21,14 +21,14 @@ lcfound2:		;close lc box. Also called from lineinput
 	lda.w blankchar
 	sta.b d2
 	lda.b fobox
-	bne .ps
+	bne .print
 	jsl.l eraser		; bank $8D
-.ps:
+.print:
 	jml.l printscores1
 
 org $86FD86
 assscore:		;asstab 7. player a3 celebrates, if scoring player then do arm pump
-		;   SNES: player X celebrates, the scorer pumps his arm. SNES: velocities * 3/4 each frame, the carrier drops the puck (nopuck 1800)
+		;   SNES: player X celebrates, the scorer pumps his arm; velocities * 3/4 each frame, the carrier drops the puck (nopuck 1800)
 	lda.w Xvel,x		; Xvel, Yvel *= $C0/256
 	sta.b mula
 	lda.w #$00C0
@@ -59,17 +59,17 @@ assscore:		;asstab 7. player a3 celebrates, if scoring player then do arm pump
 	beq .nna
 	and.w #~pfna&$FFFF
 	sta.w pflags,x
-	jsl.l .one
+	jsl.l .1
 	stz.w temp2,x
 	lda.w #$0008
 	sta.w temp2b,x
 	lda.w #90
 	sta.w temp3,x
 	lda.w Hpos
-	bpl .zero
+	bpl .0
 	lda.w #-90
 	sta.w temp3,x
-.zero:
+.0:
 	lda.w Vpos
 	sta.w temp4,x
 .nna:
@@ -97,7 +97,7 @@ assscore:		;asstab 7. player a3 celebrates, if scoring player then do arm pump
 	sta.b d1
 .nopump:
 	jsl.l SetSPA
-.one:		;temp1 = random 120
+.1:		;temp1 = random 120
 	lda.w #120
 	jsl.l randoma
 	sta.w temp1,x
