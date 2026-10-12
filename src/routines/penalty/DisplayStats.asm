@@ -1,7 +1,3 @@
-; Penalties, scoreboard, ticker, intermission.
-; Bank $84. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $84FAE3
 DisplayStats:		;the STATS page of the pause menu: Shots, Power Play, Penalties, Body Checks, AttackZone for both teams
 	jsl.l printbigz
 	dw $000A		; printz inline string: length (counts itself), then control bytes / text
@@ -119,5 +115,3 @@ DisplayStats:		;the STATS page of the pause menu: Shots, Power Play, Penalties, 
 	adc.w printx
 	sta.w printx
 	jml.l print
-DisplayStats_sslist:		;stat, second stat (-1 = none)
-	dw tmshots,-1, tmPwrGoals,tmPwrPlays, tmPenalties,tmPenmin, tmchecks,-1, -1,-1

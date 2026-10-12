@@ -1,7 +1,3 @@
-; Vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
-; Bank $84. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $84F816
 InitSortObjects:		;SNES: clear the sort objects, then set the 4 sso arrows, the 5 ffo objects and the 16 sort objects from SsoInitTable, FfoInitTable and SortObjInitTable; then
 		;   SprSort
 	ldx.w #$0000		; SortCords (all fields of the 16 objects)
@@ -140,31 +136,3 @@ InitSortObjects:		;SNES: clear the sort objects, then set the 4 sso arrows, the 
 	jmp.w .obj
 .sort:
 	jml.l SprSort
-SsoInitTable:		;SNES: 4 x (ssox, ssoy, ssoframe, ssoattr)
-	dw $0000,$0000,$0000,$0000
-	dw $0000,$0000,$0000,$0000
-	dw $0040,$FFA4,$0000,$8000
-	dw $FFC0,$FFA4,$0000,$8000
-FfoInitTable:		;SNES: 5 x (ffox, ffoy, ffoz, ffoframe, ffoattr)
-	dw $0000,$0000,$FFFF,$0188,$0000
-	dw $0000,$0000,$FFFF,$0186,$0000
-	dw $0000,$0000,$FFFF,$0187,$0000
-	dw $0000,$0000,$0000,$0000,$0000
-	dw $0000,$0000,$FFFF,$0161,$0000
-SortObjInitTable:		;SNES: 16 x (Xpos, Ypos, Zpos, frame, attribute, radiusx, radiusy, assignment, pflags); objects 6-11 are team 2
-	dw $0160,$00C0,$0000,$0001,$0000,$0008,$0004,$0000,$0000
-	dw $FF38,$FF9C,$0000,$0001,$0000,$0008,$0004,$0000,$0000
-	dw $FF38,$FFB0,$0000,$0001,$0000,$0008,$0004,$0000,$0000
-	dw $FF38,$FFC4,$0000,$0001,$0000,$0008,$0004,$0000,$0000
-	dw $FF38,$FFD8,$0000,$0001,$0000,$0008,$0004,$0000,$0000
-	dw $FF38,$FFEC,$0000,$0001,$0000,$0008,$0004,$0000,$0000
-	dw $00C0,$00C0,$0000,$0001,$0001,$0008,$0004,$0000,$0000
-	dw $FF38,$0028,$0000,$0001,$0001,$0008,$0004,$0000,$0000
-	dw $FF38,$003C,$0000,$0001,$0001,$0008,$0004,$0000,$0000
-	dw $FF38,$0050,$0000,$0001,$0001,$0008,$0004,$0000,$0000
-	dw $FF38,$0064,$0000,$0001,$0001,$0008,$0004,$0000,$0000
-	dw $FF38,$0078,$0000,$0001,$0001,$0008,$0004,$0000,$0000
-	dw $0000,$010C,$0000,$0194,$0000,$0014,$0006,$0000,$0000
-	dw $0000,$FEF4,$0000,$0195,$0000,$0014,$0006,$0000,$0000
-	dw $0000,$0000,$0000,$018A,$0000,$0005,$0005,$0018,$0001
-	dw $0000,$0000,$0000,$0189,$0000,$0003,$0003,$0019,$0000
