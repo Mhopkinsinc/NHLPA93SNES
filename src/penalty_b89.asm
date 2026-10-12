@@ -125,14 +125,14 @@ printscores1:		;draw scoreboard. Vertical rink: period box and the score box (te
 	db $BF,$17,$04
 	lda.w tmscore		; home score in big font
 	sta.b d0
-	jsl.l pushnumber		; bank $8F
+	jsl.l PushNumber		; bank $8F
 	jsl.l printbig		; bank $8B
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$07,$04
 	lda.w tmscore+2		; away score
 	sta.b d0
-	jsl.l pushnumber		; bank $8F
+	jsl.l PushNumber		; bank $8F
 	jsl.l printbig		; bank $8B
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text

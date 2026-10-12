@@ -272,7 +272,7 @@ AttribWeight:		;140 + 8 * rating lb
 	asl a
 	adc.w #140
 	sta.b d0
-	jsl.l pushnumber		; bank $8F
+	jsl.l PushNumber		; bank $8F
 	jsl.l print
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text

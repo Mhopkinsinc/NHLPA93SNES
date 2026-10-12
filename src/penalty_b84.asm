@@ -62,7 +62,7 @@ DisplayStats:		;the STATS page of the pause menu: Shots, Power Play, Penalties, 
 	tay
 	lda.w $0000,y		; stat word of team a2 (absolute address +$0000,y)
 	sta.b d0
-	jsl.l pushnumber		; bank $8F
+	jsl.l PushNumber		; bank $8F
 	lda.b [a0]
 	inc.b a0
 	inc.b a0
@@ -85,7 +85,7 @@ DisplayStats:		;the STATS page of the pause menu: Shots, Power Play, Penalties, 
 	tay
 	lda.w $0000,y
 	sta.b d0
-	jsl.l pushnumber		; bank $8F
+	jsl.l PushNumber		; bank $8F
 	jsl.l appstring		; bank $8F
 	lda.b a3
 	sta.b a1

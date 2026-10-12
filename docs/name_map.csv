@@ -346,7 +346,7 @@ $8F83A7,PushRef,CODE_8F83A7,93G,,penalty_b8F
 $8F84B5,SetHor,CODE_8F84B5,93G,,penalty_b8F
 $8F852E,USBoard,CODE_8F852E,93G,,penalty_b8F
 $8F85FA,pplpen,CODE_8F85FA,93G,,penalty_b8F
-$8F8682,pushnumber,CODE_8F8682,93G,,middle_b8F
+$8F8682,PushNumber,CODE_8F8682,93G,was pushnumber (93G PushNumber),middle_b8F
 $8F86B6,Intermission,CODE_8F86B6,93G,from PeriodOver,penalty_b8F
 $8F873F,InitTicker,CODE_8F873F,SNES,,penalty_b8F
 $8F8757,StatsScreen,CODE_8F8757,SNES,pause menu,penalty_b8F

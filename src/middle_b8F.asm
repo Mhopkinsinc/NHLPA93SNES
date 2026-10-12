@@ -2,13 +2,14 @@
 ; Bank $8F. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8F8682
-pushnumber:		;mesarea string of the decimal number d0 (built backward from $1AF)
+PushNumber:		;convert d0 into string format of base 10 number, no leading zeros. Return a1 = string
+		;   SNES: built down from the end of mesarea
 	lda.w #mesarea+30
 	sta.b a1
 	lda.w #mesarea>>16
 	sta.b a1+2
 	lda.b d0
-.loop:
+.0:
 	sta.b mulb
 	lda.w #$000A
 	sta.b mula
@@ -20,7 +21,7 @@ pushnumber:		;mesarea string of the decimal number d0 (built backward from $1AF)
 	sta.b [a1]
 	rep #$30
 	lda.b mulres
-	bne .loop
+	bne .0
 	dec.b a1
 	dec.b a1
 	lda.w #$01AF
@@ -39,7 +40,7 @@ appstring:		;append string a1 to string a3
 .loop:
 	lda.b tmp0
 	cmp.b [a1]
-	beq .tmp0eq
+	beq .done
 	tay
 	lda.b [a1],y
 	ldy.b tmp1
@@ -47,7 +48,7 @@ appstring:		;append string a1 to string a3
 	inc.b tmp0
 	inc.b tmp1
 	bra .loop
-.tmp0eq:
+.done:
 	lda.b tmp1
 	sta.b [a3]
 	rtl
@@ -90,13 +91,13 @@ PushTime:		;convert d0 into string format of minutes:seconds. Return a1 = string
 	sta.b [a1]
 	rep #$30
 	lda.b mulres
-	beq .nomulres
+	beq .noz
 	dec.b a1
 	sep #$20
 	adc.b #$30
 	sta.b [a1]
 	rep #$30
-.nomulres:
+.noz:
 	dec.b a1
 	dec.b a1
 	lda.w #$01AF
@@ -110,7 +111,7 @@ waitxsr:		;special version of waitx for zamboni crossing
 		;   SNES: wait d0 frames or until a pad button (d1)
 	lda.b d0
 	pha
-.loop:
+.wait:
 	jsl.l Readjoy1
 	lda.b d1
 	bne .exit
@@ -119,14 +120,14 @@ waitxsr:		;special version of waitx for zamboni crossing
 	bne .exit
 	jsl.l setvideo
 	lda.b vcount
-.loop2:
+.vb:
 	cmp.b vcount
-	beq .loop2
+	beq .vb
 	jsl.l ReadPads
 	pla
 	dec a
 	pha
-	bpl .loop
+	bpl .wait
 .exit:
 	pla
 	rtl
@@ -145,19 +146,19 @@ Framer:		;frame and fill (uses framer.map graphics and assums tiles are already 
 	lda.b d0
 	sta.b tmp2
 	ldx.w #$0000
-	jsl.l .piece
+	jsl.l .setter
 	dec.b tmp2
 	dec.b tmp2
-.loop:
+.top:
 	ldx.w #$0002
-	jsl.l .piece
+	jsl.l .setter
 	dec.b tmp2
-	bne .loop
+	bne .top
 	ldx.w #$0004
-	jsl.l .piece
+	jsl.l .setter
 	dec.b d1
 	dec.b d1
-.loop2:
+.row:
 	lda.b tmp0
 	sta.w printx
 	inc.w printy
@@ -166,36 +167,36 @@ Framer:		;frame and fill (uses framer.map graphics and assums tiles are already 
 	dec a
 	sta.b tmp2
 	ldx.w #$0006
-	jsl.l .piece
-.loop3:
+	jsl.l .setter
+.mid:
 	ldx.w #$0008
-	jsl.l .piece
+	jsl.l .setter
 	dec.b tmp2
-	bne .loop3
+	bne .mid
 	ldx.w #$000A
-	jsl.l .piece
+	jsl.l .setter
 	dec.b d1
-	bne .loop2
+	bne .row
 	lda.b tmp0
 	sta.w printx
 	inc.w printy
 	dec.b d0
 	dec.b d0
 	ldx.w #$000C
-	jsl.l .piece
-.loop4:
+	jsl.l .setter
+.bot:
 	ldx.w #$000E
-	jsl.l .piece
+	jsl.l .setter
 	dec.b d0
-	bne .loop4
+	bne .bot
 	ldx.w #$0010
-	jsl.l .piece
+	jsl.l .setter
 	lda.b tmp0
 	sta.w printx
 	inc.w printy
 	plx
 	rtl
-.piece:		;one FramerMap piece (X = piece * 2) at printx/printy, printx + 1
+.setter:		;one FramerMap piece (X = piece * 2) at printx/printy, printx + 1
 	lda.l FramerMap,x
 	clc
 	adc.w Framercset
@@ -219,13 +220,13 @@ Framer:		;frame and fill (uses framer.map graphics and assums tiles are already 
 	txa
 	lsr a
 	cmp.b textdirtylo
-	bcs .ge
+	bcs .lo
 	sta.b textdirtylo
-.ge:
+.lo:
 	cmp.b textdirtyhi
-	bcc .rtl
+	bcc .hi
 	sta.b textdirtyhi
-.rtl:
+.hi:
 	rtl
 
 org $8FE316
@@ -245,7 +246,7 @@ randomd0sd0:		;randomd0s with the range in d0: d0 = random -d0..+d0 (randomd0s i
 
 org $8FE404
 forceblack:		;fade all colors to black but don't upset palfadenew
-		;   SNES: role: the default vblank/IRQ handlers, the sprite VRAM caches reset, wait a frame, empty DMAList
+		;   SNES: no fade: default vblank/hblank handlers, sprite VRAM caches marked stale, wait a frame, empty DMAList
 	phx
 	lda.w #vb2_blank
 	sta.b vbint
@@ -257,23 +258,23 @@ forceblack:		;fade all colors to black but don't upset palfadenew
 	sec
 	sbc.w #$003C
 	ldx.w #$0000
-.loop:
+.frametime:
 	sta.l sprframetime,x
 	inx
 	inx
 	cpx.w #$4C74
-	bne .loop
+	bne .frametime
 	ldx.w #$0000
-.loop2:
+.slottime:
 	sta.w sprslottime,x
 	inx
 	inx
 	cpx.w #$0400
-	bne .loop2
+	bne .slottime
 	pla
-.loop3:
+.vb:
 	cmp.b vcount
-	beq .loop3
+	beq .vb
 	stz.b DMAListend
 	plx
 	rtl
@@ -297,7 +298,7 @@ PushNumberWidth:		;93: convert d0 into a d1 digit base 10 string, leading zeros 
 	sta.w PushWidthBuf+6
 	sta.w PushWidthBuf+8
 	lda.b d0
-.loop:
+.dig:
 	sta.b mulb
 	lda.w #$000A
 	sta.b mula
@@ -309,7 +310,7 @@ PushNumberWidth:		;93: convert d0 into a d1 digit base 10 string, leading zeros 
 	sta.w PushWidthBuf,y
 	rep #$20
 	lda.b mulres
-	bne .loop
+	bne .dig
 	rtl
 
 org $8FFB8B
@@ -339,20 +340,20 @@ divs16:		;SNES: signed 16 / 16 divide: A = mulres = mulb / mula (toward zero; al
 	cmp.b mula
 	lda.w #$0000
 	sbc.b mula+2
-	bcc .lt
+	bcc .next
 	lda.b mulb
 	sbc.b mula
 	sta.b mulb
 	inc.b mulres
-.lt:
+.next:
 	dec.b mulcnt
 	bne .loop
 	lsr.b mulsign
-	bcc .lt2
+	bcc .pos
 	lda.w #$0000
 	sbc.b mulres
 	sta.b mulres
-.lt2:
+.pos:
 	lda.b mulres
 	sta.b mula
 	sta.b mulb

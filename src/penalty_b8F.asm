@@ -633,7 +633,7 @@ TickerTeam:		;SNES: ticker line: team d0 name (TeamList record) and score d1, on
 	sta.w printx
 	lda.b d1
 	sta.b d0
-	jsl.l pushnumber
+	jsl.l PushNumber
 	jml.l print
 GameLabels:		;SNES GameLabels (GameLabels): the ticker round names by playoff game (EASN Hockey Night for the regular season)
 	dw 19
