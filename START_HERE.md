@@ -45,7 +45,7 @@ their addresses (`python3 tools/gen_file_map.py` regenerates it); `docs/name_map
 1. `git pull --ff-only`, `./build.sh` (MATCH), `python3 tools/scan_cleanup.py` for what is left (raw addresses, generic labels, noise comments).
 2. Read the `Cleanup progress` section of `docs/HANDOFF.md`: it says what is done and what is next.
 3. Work one file (or one file group) at a time. Rebuild after every logical change; it must print MATCH. If not, fix or revert before moving on.
-4. Names: 93G first, then 92G, then a name from what the code does (`SEGMENT_AGENT.md` naming rules). Rename across the whole repo at once.
+4. Names: follow the lineage and style rules in the `Current rules` section of `SEGMENT_AGENT.md` (92G root, child matching parent takes the parent name, clash rule, fix earliest then propagate). Rename across the whole repo at once.
    Keep operand sizes explicit (`lda.b name` / `lda.w name` / `lda.l name`, `lda.w #label>>16`) so asar emits the same bytes.
 5. Adding a routine (splitting one out, or naming code that was data): put it in a new file `src/routines/<module>/<Routine>.asm`
    (data: `src/data/<category>/<Name>.asm`) and add its `incsrc` line to the bank file at its exact ROM position. Never add an `org`
