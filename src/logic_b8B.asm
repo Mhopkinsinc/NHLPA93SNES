@@ -5,19 +5,19 @@ org $8BFE47
 asswingo:		;asstab 4. player a3 is winger on offense
 		;   SNES: wing on offence: pick a spot in the zone the puck is in (.dedata + random), awingd when the other team has the puck
 	lda.w pfalock,x
-	beq .go
+	beq .run
 	jmp.w .rtl
-.go:
+.run:
 	lda.w gmclock
-	beq .gm
-	jml.l assnothing		; bank $8F
-.gm:
+	beq .notclock
+	jml.l assnothing
+.notclock:
 	jsl.l check4bench
 	lda.w pflags,x
 	bit.w #$0008
-	beq .chk
+	beq .notjoy
 	jmp.w .rtl
-.chk:
+.notjoy:
 	bit.w #$0002
 	beq .nna
 	and.w #$FFFD
@@ -33,9 +33,9 @@ asswingo:		;asstab 4. player a3 is winger on offense
 	sec
 	sbc.b d7
 	sta.w temp1,x
-	bmi .new
+	bmi .reload
 	jmp.w .nodec
-.new:
+.reload:
 	clc
 	adc.w aidef,x
 	bpl .t1
@@ -66,9 +66,9 @@ asswingo:		;asstab 4. player a3 is winger on offense
 	lsr a
 	lsr a
 	bit.w #$0200
-	beq .v
+	beq .vy
 	ora.w #$FC00
-.v:
+.vy:
 	clc
 	adc.b d0
 	sta.b d3
@@ -160,16 +160,16 @@ asswingo:		;asstab 4. player a3 is winger on offense
 	sta.b d0
 	lda.w position,x
 	cmp.w #5
-	beq .one
+	beq .1
 	lda.b d0
 	eor.w #$FFFF
 	inc a
 	sta.b d0
-.one:
+.1:
 	lda.w temp4,x
 	sta.b d1
 	lda.w pfgoal,x
-	bne .up
+	bne .0
 	lda.b d0
 	eor.w #$FFFF
 	inc a
@@ -178,7 +178,7 @@ asswingo:		;asstab 4. player a3 is winger on offense
 	eor.w #$FFFF
 	inc a
 	sta.b d1
-.up:
+.0:
 	lda.w #EvadePC		; avoid the puck carrier (EvadePC)
 	sta.b a0
 	lda.w #EvadePC>>16
@@ -193,7 +193,7 @@ asswingo:		;asstab 4. player a3 is winger on offense
 	dw 80,30,250,20		; past the goal line
 
 org $8BFFD3
-skatetopuckinit:		;93 split from 92 skatetopuck: d0/d1 = puck x/y plus half the high byte of its velocity. Called from skatetopuck and assnearest
+skatetopuckinit:		;d0/d1 = puck x/y plus half the high byte of its velocity. Called from skatetopuck and assnearest
 	lda.w puckvx		; puckvx high byte / 2
 	xba
 	lsr a
