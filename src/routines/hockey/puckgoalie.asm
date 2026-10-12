@@ -1,4 +1,5 @@
-puckgoalie:		;The puck hits goalie a2: a save or not, by his save ratings
+puckgoalie:		;The puck hits goalie a2: a save or not, by his save ratings. A hard shot from the blue line area may
+		;   slip through; a slow loose puck is held
 	lda.w gmode
 	bit.w #gmhl		; gmhl
 	beq .go

@@ -1,4 +1,4 @@
-ResetClock:		;Set the period length and stop the clock
+ResetClock:		;Set the period length and stop the clock; regular season overtime is ten minutes
 	jsl.l GetPeriodTime
 	lda.w gsp		; gsp >= 3 (overtime) and OptPlayMode 0: 600 seconds
 	sec

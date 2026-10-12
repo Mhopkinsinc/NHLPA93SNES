@@ -1,4 +1,4 @@
-wallcollb:		;Object X hits a wall: the puck may go over the glass, else it bounces
+wallcollb:		;Object X hits a wall: the puck may go over the glass and out of play (a stoppage), else it bounces
 	cpx.w #$001C		; not the puck: wallcoll
 	beq .puck
 	jmp.w wallcoll

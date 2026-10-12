@@ -1,4 +1,5 @@
-SetInst:		;Start a fight between X and a2 when both are aggressive enough, with an instigator penalty
+SetInst:		;Start a fight between X and a2 when both are aggressive enough; if X was shoulder checking, an
+		;   instigator penalty goes to one of his teammates
 	lda.w fightagg,x
 	cmp.b d0
 	bcc checkfight_rtl

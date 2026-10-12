@@ -1,5 +1,5 @@
 Gameloop:		;Main game loop: wait for a frame, run the clock, music and crowd, one frame of game logic, the demo,
-		;   line changes and pause
+		;   a penalty on a goalie carrying the puck far from his net, line changes and pause
 	lda.b vcount		; wait for the next frame
 	cmp.w oldvcount
 	beq Gameloop

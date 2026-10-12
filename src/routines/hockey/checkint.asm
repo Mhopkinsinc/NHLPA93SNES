@@ -1,4 +1,4 @@
-checkint:		;Interference penalty check between a goalie and another player
+checkint:		;A goalie and another player collide: the skater falls, and a hard hit may draw an interference penalty
 	lda.b d0+2		; a2 and a3 swapped for the second call
 	pha
 	lda.b d0
