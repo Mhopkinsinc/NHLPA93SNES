@@ -19,7 +19,7 @@ GetPlayerCount:		;d0 = players on team a2 (records until a length word of 2)
 	adc.b a0
 	sta.b a0
 	stz.b d0
-.loop:
+.count:
 	inc.b d0
 	lda.b [a0]
 	clc
@@ -28,7 +28,7 @@ GetPlayerCount:		;d0 = players on team a2 (records until a length word of 2)
 	sta.b a0
 	lda.b [a0]
 	cmp.w #$0002
-	bne .loop
+	bne .count
 	pla
 	sta.b a0
 	pla
