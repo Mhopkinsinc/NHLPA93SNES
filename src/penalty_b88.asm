@@ -3,26 +3,26 @@
 
 org $888405
 getlinee:		;d0 = line number, a2 = team struct. Return d0 = energy level of this line
-		;   SNES: Returns d0 = average energy (tmpde) of the skaters of that line (priolist priolist picks the positions)
+		;   SNES: Returns d0 = average energy (tmpde) of the skaters of that line (priolist picks the positions)
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.saved:
 	lda.b d3,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pushd
+	bne .saved
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	ldy.b a2
 	lda.w tmdata,y
@@ -42,7 +42,7 @@ getlinee:		;d0 = line number, a2 = team struct. Return d0 = energy level of this
 	sta.b a1
 	stz.b mulb
 	stz.b mula
-	lda.w #priolist		; a0 = priolist (priolist)
+	lda.w #priolist		; a0 = priolist
 	sta.b a0
 	lda.w #priolist>>16
 	sta.b a0+2
@@ -62,9 +62,9 @@ getlinee:		;d0 = line number, a2 = team struct. Return d0 = energy level of this
 	sta.b d3
 	inc.b mula
 	lda.b a2
-	beq .home
+	beq .addhome
 	lda.w #$0034
-.home:
+.addhome:
 	adc.b d3
 	tay
 	lda.w tmpde-2,y
@@ -77,20 +77,20 @@ getlinee:		;d0 = line number, a2 = team struct. Return d0 = energy level of this
 	sta.b d0
 	stx.b xsave
 	ldx.w #$0006
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0006
-.popd:
+.restd:
 	pla
 	sta.b d3,x
 	dex
 	dex
-	bpl .popd
+	bpl .restd
 	ldx.b xsave
 	rtl
