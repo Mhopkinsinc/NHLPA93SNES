@@ -2,7 +2,7 @@
 ; Bank $88. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8884A9
-WritePassBits:		;transfer game variables to the password bits at a3. without the checksum.
+WritePassBits:		;transfer game variables to the password bits at a3, without the checksum.
 		;   SNES: playoff state into passbits (PushBits with each range), then the 9-bit checksum of the values (d7) with range 512
 	jsl.l ClrPassBits
 	stz.b d7
@@ -41,7 +41,7 @@ WritePassBits:		;transfer game variables to the password bits at a3. without the
 	lda.w #7
 	sta.b d2
 	stz.b a1
-.gs:		;the 8 series scores, range 5
+.0:		;the 8 series scores, range 5
 	ldy.b a1
 	lda.w gspotwins,y
 	sta.b d0
@@ -53,7 +53,7 @@ WritePassBits:		;transfer game variables to the password bits at a3. without the
 	inc.b a1
 	inc.b a1
 	dec.b d2
-	bpl .gs
+	bpl .0
 	lda.b d7		; checksum
 	and.w #$01FF
 	sta.b d0
@@ -69,7 +69,7 @@ WritePassBits:		;transfer game variables to the password bits at a3. without the
 	jml.l PushBits
 
 org $8885F7
-PWprint:		;print pass word (from PassWord
+PWprint:		;print pass word
 		;   SNES: print the 16 password characters (PassWord through PasstoText) at printx/printy, unless PassWord bit 7 hides it
 	lda.w PassWord
 	bit.w #$0080
@@ -78,23 +78,23 @@ PWprint:		;print pass word (from PassWord
 .show:
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	lda.w #PasstoText		; a2 = PasstoText
 	sta.b a2
@@ -131,21 +131,21 @@ PWprint:		;print pass word (from PassWord
 	jsl.l print
 	stx.b xsave
 	ldx.w #$000A
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0006
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 .rtl:
 	rtl
@@ -350,7 +350,7 @@ GetPassWord:		;bring up password screen and get input
 	sta.b d0
 	lda.w #5
 	sta.b d1
-	jsl.l Framer		; Framer 17 x 5, bank $8F (d0 x d1)
+	jsl.l Framer		; bank $8F (d0 x d1)
 	lda.w #PasswordText
 	sta.b a1
 	lda.w #PasswordText>>16
@@ -617,7 +617,7 @@ PasswordText:		;"Password" at 2, 14, "Press Start" at 10, 24, then print at 21, 
 	db $FF,2,14,"Password",$FF,10,24,"Press Start",$FF,21,14
 	dw 3
 	db 0
-TitleScreen:		;bring up title screen and credits. Called from PeriodOver.
+TitleScreen:		;bring up title screen and credits
 		;   SNES: Title1Map backdrop, StartSong6, then the Credits scroll up 6 rows at a time; Start leaves
 	lda.w #$0198		; the blank tile and the small font above the title tiles
 	sta.w blankchar
@@ -704,7 +704,7 @@ TitleScreen:		;bring up title screen and credits. Called from PeriodOver.
 	stz.w VMDATAL
 	dex
 	bne .zero
-	lda.w #SmallFontTiles		; SmallFontTiles, remapped with the table at PixelRemap8F
+	lda.w #SmallFontTiles		; remapped with PixelRemap8F
 	sta.b tmp0
 	lda.w #SmallFontTiles>>16
 	sta.b tmp1
@@ -729,7 +729,7 @@ TitleScreen:		;bring up title screen and credits. Called from PeriodOver.
 	sta.b a0
 	lda.w #Credits>>16
 	sta.b a0+2
-	lda.w #textmap		; DMAList: textmap ($7E6E74) $1000 bytes to vram 0 each frame
+	lda.w #textmap		; DMAList: textmap $1000 bytes to vram 0 each frame
 	sta.w DMAList
 	lda.w #textmap>>16
 	sta.w DMAList+dmabank
@@ -960,7 +960,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	lda.w #$0064
 	sta.b d0
 	jsl.l RemapTiles		; bank $8F: remap the 4bpp pixels ([a0] data, [a1] table, d0 tiles)
-	lda.w #TeamBlocksTiles		; TeamBlocksTiles
+	lda.w #TeamBlocksTiles
 	sta.b tmp0
 	lda.w #TeamBlocksTiles>>16
 	sta.b tmp1
@@ -1447,15 +1447,15 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	sta.b d3+2
 	jmp.w .move
 PlayoffTreeSetup:		;playoff tree layout by gamelevel (offsets, then per level: slots, arrows, scroll limits, scores)
-	dw .skip-PlayoffTreeSetup,.skip2-PlayoffTreeSetup,.skip3-PlayoffTreeSetup,.skip4-PlayoffTreeSetup,.skip5-PlayoffTreeSetup
-.skip:		;gamelevel 0: 16 team slots (x, y)
+	dw .lvl0-PlayoffTreeSetup,.lvl1-PlayoffTreeSetup,.lvl2-PlayoffTreeSetup,.lvl3-PlayoffTreeSetup,.lvl4-PlayoffTreeSetup
+.lvl0:		;gamelevel 0: 16 team slots (x, y)
 	db 16
 	db 49,2,49,5,49,8,49,11,49,14,49,17,49,20,49,23
 	db 70,2,70,5,70,8,70,11,70,14,70,17,70,20,70,23
 	db 0,58,1,59,10,68,11,69,$FF		; arrows (graphics, x), $FF
 	db 48,48		; Hscroll min, max (x8)
 	db 8,52,4,52,10,52,16,52,22,73,4,73,10,73,16,73,22		; series scores (x, y)
-.skip2:		;gamelevel 1: 24 team slots (x, y)
+.lvl1:		;gamelevel 1: 24 team slots (x, y)
 	db 24
 	db 38,2,38,5,38,8,38,11,38,14,38,17,38,20,38,23
 	db 81,2,81,5,81,8,81,11,81,14,81,17,81,20,81,23
@@ -1463,7 +1463,7 @@ PlayoffTreeSetup:		;playoff tree layout by gamelevel (offsets, then per level: s
 	db 0,47,1,48,2,58,3,59,8,68,9,69,10,79,11,80,$FF		; arrows (graphics, x), $FF
 	db 33,63		; Hscroll min, max (x8)
 	db 4,52,8,52,18,73,8,73,18		; series scores (x, y)
-.skip3:		;gamelevel 2: 28 team slots (x, y)
+.lvl2:		;gamelevel 2: 28 team slots (x, y)
 	db 28
 	db 27,2,27,5,27,8,27,11,27,14,27,17,27,20,27,23
 	db 92,2,92,5,92,8,92,11,92,14,92,17,92,20,92,23
@@ -1472,7 +1472,7 @@ PlayoffTreeSetup:		;playoff tree layout by gamelevel (offsets, then per level: s
 	db 0,36,1,37,2,47,3,48,4,58,5,59,6,68,7,69,8,79,9,80,10,90,11,91,$FF		; arrows (graphics, x), $FF
 	db 22,74		; Hscroll min, max (x8)
 	db 2,52,13,73,13		; series scores (x, y)
-.skip4:		;gamelevel 3: 30 team slots (x, y)
+.lvl3:		;gamelevel 3: 30 team slots (x, y)
 	db 30
 	db 16,2,16,5,16,8,16,11,16,14,16,17,16,20,16,23
 	db 103,2,103,5,103,8,103,11,103,14,103,17,103,20,103,23
@@ -1481,7 +1481,7 @@ PlayoffTreeSetup:		;playoff tree layout by gamelevel (offsets, then per level: s
 	db 0,25,1,26,2,36,3,37,4,47,5,48,5,58,6,69,6,79,7,80,8,90,9,91,10,101,11,102,$FF		; arrows (graphics, x), $FF
 	db 11,85		; Hscroll min, max (x8)
 	db 1,62,23		; series scores (x, y)
-.skip5:		;gamelevel 4: 31 team slots (x, y)
+.lvl4:		;gamelevel 4: 31 team slots (x, y)
 	db 31
 	db 16,2,16,5,16,8,16,11,16,14,16,17,16,20,16,23
 	db 103,2,103,5,103,8,103,11,103,14,103,17,103,20,103,23
