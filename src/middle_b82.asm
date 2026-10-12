@@ -2,15 +2,15 @@
 ; Bank $82. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $82FCDB
-muls32:		;68k muls.w with a 32-bit result: A/mulres = low word, mulres+2 = high word of mula*mulb (signs folded around mulu mulu)
+muls32:		;68k muls.w with a 32-bit result: A/mulres = low word, mulres+2 = high word of mula*mulb (signs folded around mulu)
 	stz.b mulneg		; mulneg = number of negative operands
 	lda.b mula
-	bpl .b
+	bpl .signb
 	eor.w #$FFFF
 	inc a
 	sta.b mula
 	inc.b mulneg
-.b:
+.signb:
 	lda.b mulb
 	bpl .mul
 	eor.w #$FFFF
@@ -50,7 +50,7 @@ printbigz:		;see print big. String macro should follow the bsr/jsr to this routi
 	sta.b $01,s
 	jml.l printbig		; bank $8B: print the inline string
 appendz:		;see appstring. String macro should follow the bsr/jsr to this routine
-		;   SNES: like printbigz, for appstring appstring (append an inline string)
+		;   SNES: like printbigz, for appstring (append an inline string)
 	lda.b $03,s
 	sta.b a1+2
 	lda.b $01,s
