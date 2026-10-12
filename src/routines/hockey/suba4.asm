@@ -1,5 +1,4 @@
-suba4:		;a4 = address in replay buffer of current
-		;   SNES: replay a4 one frame back (wrap at ReplayBufferStart unless sfwrap), RestoreReplayFrame; d7 = 0 at the end
+suba4:		;Move the replay one frame back
 	lda.b a4
 	cmp.w #ReplayBufferStart
 	bne .a4ne

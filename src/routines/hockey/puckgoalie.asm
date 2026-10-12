@@ -1,5 +1,4 @@
-puckgoalie:		;puck hits goalie a2. a3 = puck, d0/d1 = goalie - puck x/y
-		;   SNES: puck (X) hits goalie a2. d0/d1 = goalie - puck x/y. Save odds from the four save ratings, no frame odds table
+puckgoalie:		;The puck hits goalie a2: a save or not, by his save ratings
 	lda.w gmode
 	bit.w #gmhl		; gmhl
 	beq .go

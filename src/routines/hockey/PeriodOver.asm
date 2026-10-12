@@ -1,5 +1,4 @@
-PeriodOver:		;what to do if period over. Branched to from puckfaceoff when the clock runs out.
-		;   SNES: next period (gmdir flips); overtime only for a tied playoff game; gsp 4 = game over (GameOver), else StartPer
+PeriodOver:		;End of a period: the next period, overtime for a tied playoff game, or game over
 	jsl.l forceblack
 	inc.w gsp		; next period
 	lda.w gmode

@@ -1,4 +1,4 @@
-ScoutScripts:		;SNES: the showcase animation scripts: 8 offsets, then (SPA, facedir) steps; a negative facedir prints the name (and flips), 0 ends
+ScoutScripts:		;The scouting report animation scripts: animation and facing steps
 	dw .s0-ScoutScripts,.s1-ScoutScripts,.s2-ScoutScripts,.s3-ScoutScripts,.s4-ScoutScripts,.s5-ScoutScripts,.s6-ScoutScripts,.s7-ScoutScripts
 .s0:	dw SPAgready2,3,SPAgready2,4,SPAgready2,5,SPAgready2,-4,SPAgglover,4,SPAgready2,4,SPAgglovel,4,SPAgready2,4,0
 .s5:	dw SPAgready2,3,SPAgready2,4,SPAgready2,5,SPAgready2,-4,SPAgglovel,4,SPAgready2,4,SPAgready2,4,0

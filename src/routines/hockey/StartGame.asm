@@ -1,5 +1,4 @@
-StartGame:		;reset game state for a new game, then start the first period
-		;   SNES: reset the game state (gmode, offsides option, team stats, scores, gsp), restoreteams, then on to the period start
+StartGame:		;Reset the game state for a new game, then start the first period
 	stz.w gmode
 	lda.w OptPen		; OptPen 1: offsides on
 	cmp.w #1

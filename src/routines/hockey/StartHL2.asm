@@ -1,6 +1,4 @@
-StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied game is replayed (beq StartHL2)
-		;   SNES: play the highlight of playoff game a0: "Highlight from game:", then 1-3 minutes of that game with its score; Start
-		;   or A ends it, a tie gets a random winner
+StartHL2:		;Play the highlight of playoff game a0 with its score; Start or A ends it, and a tie gets a random winner
 	lda.w sflags3		; Start pressed before: no more highlights
 	bit.w #sf3sbut
 	beq .go

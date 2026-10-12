@@ -1,7 +1,4 @@
-setInjuryType:		;sets period injury. a2 = player injured, a3 = player checking. Marks a2 unavailable, pumps up the crowd, plays sfx $D, locks the scroll on a2, sets TempPlOffset (pnum, bit
-		;   15 set for the away team) and puts $FFFD (injured for the period) in a2's tmpdst. Called from FallDown and from chkhit .fall
-		;   SNES: player a2 is injured: pflags bit $1000, crowdlevel + $12C, sfx $8C, the scroll locked on him (xc1/yc1, sflags $40), TempPlOffset
-		;   = pnum (| $8000 for the visitors), his tmpdst = $FFFD (out for the period)
+setInjuryType:		;Player a2 is injured for the period: the crowd reacts, the view locks on him and the injury box gets his name
 	ldy.b a2
 	lda.w pflags,y
 	ora.w #$1000

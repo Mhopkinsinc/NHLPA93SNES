@@ -1,5 +1,4 @@
-DefaultMenus:		;set default menu choices for beginning of game. Called once from Begin.
-		;   SNES: the 7 options at $1600 from .tab; notdemo set
+DefaultMenus:		;Set the default menu choices at power on
 	lda.w #$FFFF
 	sta.w notdemo
 	lda.w #OptPlayMode

@@ -1,4 +1,4 @@
-ScoutNextPlayer:		;SNES: the next showcased player of team a2 from ScoutLineOrder (goalie: tmgoalie): start at x -40, pick his ScoutScripts entry from his ratings
+ScoutNextPlayer:		;The next player of team a2 to show on the scouting report, with an animation picked from his ratings
 	jsl.l SetTeamColors
 	ldy.b a2
 	lda.w tmflags,y

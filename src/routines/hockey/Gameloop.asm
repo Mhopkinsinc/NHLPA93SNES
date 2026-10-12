@@ -1,6 +1,5 @@
-Gameloop:		;main loop for game
-		;   SNES: wait for a new frame, time steps from d7, clock, music cue timers, crowd cheers, DoGameFrame, demoread, goalie
-		;   puck-handling penalty, line change end, Pausemode
+Gameloop:		;Main game loop: wait for a frame, run the clock, music and crowd, one frame of game logic, the demo,
+		;   line changes and pause
 	lda.b vcount		; wait for the next frame
 	cmp.w oldvcount
 	beq Gameloop

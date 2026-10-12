@@ -1,5 +1,4 @@
-updateanim:		;frame switch control on struct a3. Also called from ScoutTeamStep
-		;   SNES: SPA = offset in SPAList; next frame when SPAcnt runs out (d7), loops or ends the animation
+updateanim:		;Step object X's sprite animation, looping or ending it
 	lda.w SPA,x		; no animation: clear pfalock, pf2aip
 	bne .ia
 	stz.w pf2aip,x

@@ -1,5 +1,4 @@
-restoreteams:		;Put both teams' rosters on the bench
-		;   SNES: both rosters to the bench: tmap 6, every tmpdst -2
+restoreteams:		;Put both teams' players on the bench
 	stz.b a2
 	jsl.l .r
 	lda.w #$0002

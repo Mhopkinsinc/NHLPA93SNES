@@ -1,5 +1,4 @@
-ReadPassBits:		;translate the password bits at a3 (5 words) to the playoff variables.
-		;   SNES: passbits back into the playoff state (SuperDiv by each range, the reverse of WritePassBits); a bad 9-bit checksum sets postarts -1
+ReadPassBits:		;Turn the password bits back into the playoff state; a bad checksum marks the password invalid
 	lda.w #512		; checksum first (range 512)
 	sta.b d0
 	jsl.l SuperDiv

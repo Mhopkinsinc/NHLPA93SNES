@@ -1,6 +1,5 @@
-setoptions:		;options screen display and input. Called from PeriodOver.
-		;   SNES: the options screen: GameSetupMap backdrop, small font and Framer tiles (remapped), NHLPA logo, team blocks; Up/Down
-		;   picks a line (.nms), Left/Right changes it (.IncItem), Start goes to maketree; after $12C0 idle frames a demo with random teams
+setoptions:		;The options screen: up and down pick a line, left and right change it, Start goes on;
+		;   left idle, a demo game starts with random teams
 	lda.w #vb2_blank
 	sta.b vbint
 	lda.w #HBdefault

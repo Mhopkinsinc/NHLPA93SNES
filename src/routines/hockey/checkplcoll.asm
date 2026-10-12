@@ -1,5 +1,4 @@
-checkplcoll:		;d2/d3 = x/y cords, a3 = struct. Walk up and down the OOlist from a3 and call checkcx for each object within $10 in y. Called from checkcoll
-		;   SNES: d2/d3 = x/y, X = object. Walk up and down the OOlist from X and call checkcx for each object within 14 in y
+checkplcoll:		;Check object X against the objects near it in y
 	lda.w pflags,x
 	bit.w #pf2npc
 	beq .pl

@@ -1,5 +1,4 @@
-PauseExit:		;restore graphics and return from pause mode
-		;   SNES: restore textmap (textsave), sflags and the rink, printscores1, setvideo
+PauseExit:		;Restore the screen and leave pause mode
 	stz.w cuetimer
 	stz.w crowdvol
 	jsl.l forceblack

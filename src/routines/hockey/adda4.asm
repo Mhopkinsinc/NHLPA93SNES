@@ -1,5 +1,4 @@
-adda4:		;a4 = address in replay buffer of current
-		;   SNES: replay a4 one frame on unless it reaches ReplayBufferPtr; d7 = 0 at the end
+adda4:		;Move the replay one frame forward
 	stz.b d7
 	lda.w sflags
 	bit.w #sf2drec

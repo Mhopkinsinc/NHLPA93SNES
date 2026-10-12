@@ -1,4 +1,4 @@
-GetPadTeam:		;SNES: a2 = team of the controller that paused (cont1team/cont2team by sfpj)
+GetPadTeam:		;a2 = the team of the controller that paused
 	stz.b a2
 	lda.w cont1team
 	beq .rtl

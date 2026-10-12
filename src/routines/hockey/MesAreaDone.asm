@@ -1,4 +1,4 @@
-MesAreaDone:		;SNES: end a string built in mesarea: length = a1 - mesarea, a1 = mesarea
+MesAreaDone:		;End a string built in mesarea and set a1 to it
 	lda.b a1
 	sec
 	sbc.w #mesarea

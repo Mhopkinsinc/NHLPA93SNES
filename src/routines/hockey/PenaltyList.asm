@@ -1,4 +1,4 @@
-PenaltyList:		;penalty number = word offset into this table. Used by AddPenalty, the penalty box and stats
+PenaltyList:		;The penalties, by penalty number
 	dw $0000		; 0
 	dw .eop-PenaltyList		; $02 period over
 	dw .eog-PenaltyList		; $04 game over

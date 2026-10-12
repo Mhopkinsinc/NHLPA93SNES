@@ -1,5 +1,4 @@
-setd0player:		;give control of player d0 to a controller if his team is controlled
-		;   SNES: give player d0 to the controller of his team (setc1player/setc2player) unless a controller has him already
+setd0player:		;Give player d0 to his team's controller, unless a controller already has him
 	lda.b d0
 	cmp.w c1playernum
 	beq .rtl

@@ -1,5 +1,4 @@
-updatecrowdf:		;this is called every game loop with d7 = elapsed frames
-		;   SNES: every game loop (d7 = elapsed frames): crowd level decay and the crowd animation frame
+updatecrowdf:		;Every game loop: let the crowd level fade and step the crowd animation
 	lda.b crowdlevel
 	sec
 	sbc.w #$015E		; 350

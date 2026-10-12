@@ -1,5 +1,4 @@
-GetPlayerNumInitial:		;a1 = mesarea "NN F. Last" (FormatPlayerNumInitial) for player
-		;   SNES: a1 = the name of player TempPlOffset (PlayerShortName; bit 15 = the visitors); saves d0, a2
+GetPlayerNumInitial:		;a1 = the number, first initial and last name of player TempPlOffset
 	lda.b d0+2
 	pha
 	lda.b d0

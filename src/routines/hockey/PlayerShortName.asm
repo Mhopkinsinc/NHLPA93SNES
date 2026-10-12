@@ -1,4 +1,4 @@
-PlayerShortName:		;SNES: mesarea = "<number> <first initial>. <last name>" of roster player d0 (team a2)
+PlayerShortName:		;mesarea = the number, first initial and last name of roster player d0 of team a2
 	stx.b xsave
 	ldx.w #$0000
 .save:

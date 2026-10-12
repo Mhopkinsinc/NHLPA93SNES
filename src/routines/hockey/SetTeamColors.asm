@@ -1,4 +1,4 @@
-SetTeamColors:		;convert both teams' Genesis colors (team data +2) to SNES colors in palbuffer (BG and sprite halves)
+SetTeamColors:		;Convert both teams' colors into the palette buffer
 	phx
 	phy
 	ldx.w #$0000

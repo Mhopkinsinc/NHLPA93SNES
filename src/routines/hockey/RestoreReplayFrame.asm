@@ -1,6 +1,4 @@
-RestoreReplayFrame:		;a4 = current replay frame address to convert into normal
-		;   SNES: replay frame record [a4] back into the objects (x, y 12 bits, frame, flip bits), rostnum/position pairs, puck and
-		;   shadow z, lastsfx, d7 = frame delay, PadControlBits, crowdframe, glovecords, PBnum, Hpos/Vpos (not when sfscrl)
+RestoreReplayFrame:		;Put one recorded replay frame back into the objects, the puck and the screen
 	stx.b xsave
 	ldx.w #$0000
 .save:

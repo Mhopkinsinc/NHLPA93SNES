@@ -1,5 +1,4 @@
-StartPer:		;start a period: reset stack, rink and clock, face off, run the game loop
-		;   SNES: reset the stack, rink and clock, faceoff at centre ice, music cue timers, replay reset; then Gameloop
+StartPer:		;Start a period: reset the rink and clock, face off at center ice, then the game loop
 	lda.w #$1FFF		; reset the stack
 	tcs
 	jsl.l Readjoy1

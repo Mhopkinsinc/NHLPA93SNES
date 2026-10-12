@@ -1,5 +1,4 @@
-ResetClock:		;set period length and stop clock
-		;   SNES: set the period length (GetPeriodTime; regular season overtime is 10:00) and stop the clock
+ResetClock:		;Set the period length and stop the clock
 	jsl.l GetPeriodTime
 	lda.w gsp		; gsp >= 3 (overtime) and OptPlayMode 0: 600 seconds
 	sec

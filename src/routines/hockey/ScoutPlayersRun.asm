@@ -1,4 +1,4 @@
-ScoutPlayersRun:		;SNES scouting report: one frame of the two showcased players (home a2 = 0, away a2 = 2), then draw them
+ScoutPlayersRun:		;One frame of the two players shown on the scouting report
 	stx.b xsave
 	ldx.w #$0000
 .save:

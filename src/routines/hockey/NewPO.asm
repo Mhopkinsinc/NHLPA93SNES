@@ -1,5 +1,4 @@
-NewPO:		;new playoff generates tree with same team 1.
-		;   SNES: new playoffs with the same team 1: random postarts whose playoffseats hold OptTeam1 (all-star teams count as team 23), clear the series, then maketree
+NewPO:		;Start new playoffs with the same team 1 and build the tree
 	lda.w #32		; d0 = random 0-31
 	sta.b d0
 	jsl.l randomd0

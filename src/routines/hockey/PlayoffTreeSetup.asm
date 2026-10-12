@@ -1,4 +1,4 @@
-PlayoffTreeSetup:		;playoff tree layout by gamelevel (offsets, then per level: slots, arrows, scroll limits, scores)
+PlayoffTreeSetup:		;The playoff tree layout for each round
 	dw .lvl0-PlayoffTreeSetup,.lvl1-PlayoffTreeSetup,.lvl2-PlayoffTreeSetup,.lvl3-PlayoffTreeSetup,.lvl4-PlayoffTreeSetup
 .lvl0:		;gamelevel 0: 16 team slots (x, y)
 	db 16

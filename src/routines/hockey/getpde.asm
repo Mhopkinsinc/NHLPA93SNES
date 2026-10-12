@@ -1,5 +1,4 @@
-getpde:		;get player a3's energy level into d0. Return a2 = his team struct, d1 = pnum*2
-		;   SNES: d0 = energy of player X (tmpde of its team, entry pnum)
+getpde:		;d0 = the energy of player X
 	lda.w pfteam,x
 	beq .0
 	lda.w #$0002		; a2 = 2: away team

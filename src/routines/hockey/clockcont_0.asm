@@ -1,5 +1,4 @@
-clockcont_0:		;end of period. Also entered from puckfaceoff+2E
-		;   SNES: puck pucknorm; third period winners celebrate (assscore, the Stanley Cup in the final), the game clock stops
+clockcont_0:		;End of a period: in the third period the winners celebrate (with the Stanley Cup after the final), and the clock stops
 	ldx.w #$001C
 	stx.b a3
 	lda.w #$18

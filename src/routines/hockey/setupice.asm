@@ -1,5 +1,4 @@
-setupice:		;set all variables, send non purgeable graphics, build sprite frame lists for ice rink.
-		;   SNES: set all variables, send the rink and text graphics to vram, palettes, video mode, team colors
+setupice:		;Set up the rink: the variables, the rink and text graphics, the palettes and the video mode
 	jsl.l forceblack		; setvram role
 	lda.w #$0207		; vram tile bases of the text layer
 	sta.w faceoffvrcset

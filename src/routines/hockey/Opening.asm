@@ -1,4 +1,3 @@
-Opening:		;title screen, then into Opening2. Jumped to from Begin
-		;   SNES: TitleScreen, then Restart
+Opening:		;The title screen, then a fresh start
 	jsl.l TitleScreen
 	jml.l Restart

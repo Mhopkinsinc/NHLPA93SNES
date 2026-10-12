@@ -1,5 +1,4 @@
-setplayercolors:		;copy in correct color data for each team. Called from setupice, setupice_highlight, StartHL2
-		;   SNES: team colors into palbuffer, then the whole palette to CGRAM
+setplayercolors:		;Set both teams' colors and send the palette
 	stz.w ffoframe+6		; pad 3 frame = 0
 	stz.w colorflag1
 	stz.w colorflag2

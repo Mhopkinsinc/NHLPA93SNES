@@ -1,5 +1,4 @@
-CheckInjury:		;called once per second. Count down InjCntDown, act on it at zero
-		;   SNES: once a second: count InjCntDown down; at zero ShowInjuryBox
+CheckInjury:		;Once a second, count down to the next injury and show it when the count reaches zero
 	dec.w InjCntDown
 	bne .rtl
 	jmp.w ShowInjuryBox

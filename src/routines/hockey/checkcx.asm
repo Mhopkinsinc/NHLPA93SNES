@@ -1,7 +1,4 @@
-checkcx:		;d4 = obj. # * 2 for possible coll so check x range and distance for coll. d2 = x, d5 = delta y, a3 = moving object. Opposing players add impact and run newcheck, checkint
-		;   checkcheck and checkfight; then momentum moves from a3 to a2. Called from checkplcoll
-		;   SNES: Y = object near X. Opposing players add impact and run newcheck, checkint, checkcheck and checkfight; then momentum moves from X to a2
-		;   (weights + 140, elasticity evalue)
+checkcx:		;Collision of object X with a nearby object: checks, interference and fights, then the momentum passes between them
 	stx.b xsave
 	ldx.w #$0000
 .save:

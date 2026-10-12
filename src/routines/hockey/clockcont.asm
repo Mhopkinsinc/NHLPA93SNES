@@ -1,5 +1,4 @@
-clockcont:		;monitor period clock and initiate various clock activated events
-		;   SNES: clock at 0: freezewindow, then clockcont_0
+clockcont:		;When the clock runs out, freeze the view and end the period
 	lda.w gmclock
 	ora.w gameclock
 	bne .rtl

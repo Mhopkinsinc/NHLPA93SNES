@@ -1,5 +1,4 @@
-checkwindow:		;set hpos and vpos according to how screen should follow puck
-		;   SNES: set Hpos/Vpos so the screen follows the puck (or xc1/yc1 when sfslock)
+checkwindow:		;Move the view so the screen follows the puck
 	lda.w yc1
 	sta.b d2
 	lda.w xc1

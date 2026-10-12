@@ -1,5 +1,4 @@
-freezewindow:		;lock scrolling to current position
-		;   SNES: lock scrolling at the current position
+freezewindow:		;Lock the view at its current position
 	lda.w Vpos		; yc1 = Vpos, xc1 = Hpos, sfslock
 	sta.w yc1
 	lda.w Hpos

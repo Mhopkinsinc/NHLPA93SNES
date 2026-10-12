@@ -1,5 +1,4 @@
-GetPeriodTimeRemaining:		;return d0 = (gsp << 14 | PerTimeTotal) - gameclock. Called from Goal (ScoreSum entry) and InProgress
-		;   SNES: d0 = (gsp << 14 | PerTimeTotal) - gameclock (Goal and InProgress log it)
+GetPeriodTimeRemaining:		;d0 = the period and the time into it, for the goal and penalty logs
 	lda.w gsp		; gsp in bits 14-15
 	xba
 	and.w #$FF00

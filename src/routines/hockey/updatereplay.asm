@@ -1,5 +1,4 @@
-updatereplay:		;called every frame to save replay events, d7 = elapsed frames
-		;   SNES: save this frame into the replay buffer (positions, frames, players, puck, sound, pads, crowd, gloves, box, scroll)
+updatereplay:		;Save this frame into the replay buffer
 	lda.w gmode
 	bit.w #gmhl		; gmhl: no recording
 	beq .rec

@@ -1,6 +1,4 @@
-SuperDiv:		;5 words at a3 divided by 1 word (d0).
-		;   SNES: passbits (128 bits) / d0: quotient in passbits, remainder in d0. Shift-subtract over 128 bits with the divisor in mula+0..+16 and the remainder in
-		;   mulres+0..+14
+SuperDiv:		;password bits /= d0, with the remainder in d0
 	phx		; remainder = passbits, divisor = d0 << 128
 	ldx.w #$000E
 .init:

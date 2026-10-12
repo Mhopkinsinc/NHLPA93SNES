@@ -1,5 +1,4 @@
-RestoreBenchEnergy:		;called once per second. Restore energy for players on the bench
-		;   SNES: once a second with line changes on, players on the bench (TMPDBENCH) regain 10 energy up to $1000, both teams
+RestoreBenchEnergy:		;Once a second with line changes on, players on the bench get some energy back
 	lda.w OptLine
 	bne .x
 	stz.b a2		; home team, then the away team

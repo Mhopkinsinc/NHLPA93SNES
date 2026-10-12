@@ -1,5 +1,4 @@
-Pausemode:		;game is in pause mode now. Save textmap, stop the sound, horizontal screen, PAUSE title and frame, PauseMenu until it returns 0
-		;   then PauseExit
+Pausemode:		;Pause mode: save the screen, stop the sound, show the pause menu until it is left, then restore
 	phx
 	ldx.w #$07FE
 .save:		;textsave = textmap

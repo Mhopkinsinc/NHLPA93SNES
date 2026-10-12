@@ -1,5 +1,4 @@
-checkcheck:		;player is in contact look for various contact events. Runs .cc for a3 on a2, then for a2 on a3. d4 = impact. Called from checkcx
-		;   SNES: players in contact: .cc for X on a2, then for a2 on X. d4 = impact
+checkcheck:		;Two players are in contact: check what happens each way
 	stx.b xsave
 	ldx.w #$0000
 .save:

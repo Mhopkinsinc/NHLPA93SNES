@@ -1,5 +1,4 @@
-demoread:		;monitor joystick if in demo mode (called every game loop)
-		;   SNES: in demo mode (no controller team), Start pauses and any other button ends the demo
+demoread:		;In the demo, Start pauses and any other button ends it
 	lda.w cont1team		; a controller team: not a demo
 	ora.w cont2team
 	bne .rtl

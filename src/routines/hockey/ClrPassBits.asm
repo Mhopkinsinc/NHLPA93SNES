@@ -1,5 +1,4 @@
-ClrPassBits:		;clr the 5 words of bits at a3
-		;   SNES: clear passbits
+ClrPassBits:		;Clear the password bits
 	stz.w passbits
 	stz.w passbits+2
 	stz.w passbits+4

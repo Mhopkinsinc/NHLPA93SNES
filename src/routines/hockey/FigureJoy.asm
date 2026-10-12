@@ -1,6 +1,4 @@
-FigureJoy:		;set cont1team/cont2team appropriately. Called from maketree and UpdateTeamNameisplay.
-		;   SNES: in the playoffs from the po team's game (gamenum, OptTeam2, HomeTeam/VisTeam) and pojoy; else from OptPlayers. Not after the
-		;   demo (notdemo = 0)
+FigureJoy:		;Set which team each controller plays
 	stz.w cont1team
 	stz.w cont2team
 	lda.w notdemo		; after the demo: no controller teams

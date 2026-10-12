@@ -1,5 +1,4 @@
-resetplstuff:		;reset team variables/and players on both teams. Called from puckfaceoff2 and StartHL2
-		;   SNES: reset team variables and the players on both teams
+resetplstuff:		;Reset the team variables and the players on both teams
 	stx.b xsave
 	ldx.w #$0000
 .save:

@@ -1,4 +1,4 @@
-SetTeamColors_team:		;one team: tmp0 = team data, tmp2+1 = palbuffer offset
+SetTeamColors_team:		;Convert one team's colors into the palette buffer
 	ldy.w #$0002		; team data + word at +2: palette
 	lda.b [tmp0],y
 	clc

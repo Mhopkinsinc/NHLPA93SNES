@@ -1,5 +1,4 @@
-ResolveGames:		;compute winners and losers for playoff matchups. Called from EncodePW
-		;   SNES: the played game's score into its gstruct, wins for all series of the round; when the round is over (or single games) WinBits and gamelevel move on
+ResolveGames:		;Record the played playoff game and the series wins; when the round is over, move on to the next round
 	lda.w gamenum
 	asl a
 	sta.b d0

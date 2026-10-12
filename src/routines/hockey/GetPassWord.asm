@@ -1,6 +1,4 @@
-GetPassWord:		;bring up password screen and get input
-		;   SNES: the password screen on the game setup backdrop: pick characters from the PasstoText grid; Start decodes it (DecodePW), a bad one
-		;   offers retry or the setup screen
+GetPassWord:		;The password screen: pick characters from the grid, Start checks the password; a bad one offers a retry
 	lda.w #$0080		; show the password again
 	trb.w PassWord
 	jsl.l Readjoy12

@@ -1,5 +1,4 @@
-periodicevents:		;called every time thru game loop with d7 = elapsed frames
-		;   SNES: every game loop; once a second (lldisp) the slower checks
+periodicevents:		;Run every game loop; the slower checks once a second
 	jsl.l PenaltyManager		; PenaltyManager
 	jsl.l updatecrowdf		; updatecrowdf
 	jsl.l updatesound		; updatesound

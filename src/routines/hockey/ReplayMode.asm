@@ -1,6 +1,4 @@
-ReplayMode:		;this is instant replay play-back control and display code.
-		;   SNES: replay icon, rewind to the first frame; dpad scrolls, A plays/stops, Y
-		;   rewinds, B steps (slow motion), L/R one frame, Start leaves
+ReplayMode:		;Instant replay: rewind, play, stop, slow motion and single frame steps, with the pad scrolling the view
 	stz.b DMAListend
 	stz.b crowdlevel
 	lda.w #sf2replay		; sf2replay: replay on

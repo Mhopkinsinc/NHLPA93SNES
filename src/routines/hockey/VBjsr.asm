@@ -1,5 +1,4 @@
-VBjsr:		;Vertical blank interrupt, jumps through the vbint RAM vector
-		;   SNES: NMI: ack RDNMI, skip if vbactive, else "rts" into the vbint handler
+VBjsr:		;NMI: jump through the vblank handler vector
 	rep #$30
 	pha
 	lda.w RDNMI

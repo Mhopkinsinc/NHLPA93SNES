@@ -1,4 +1,4 @@
-GetPlayerRecord:		;SNES: a0 = roster record of player d0 of team a2 (tmdata: the player data, then name length + 8 bytes per player; does it inline)
+GetPlayerRecord:		;a0 = the roster record of player d0 of team a2
 	lda.w #TeamList>>16
 	sta.b a0+2
 	ldy.b a2

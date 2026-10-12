@@ -1,5 +1,4 @@
-BitstoPW:		;convert passbits into password text
-		;   SNES: convert passbits into the 16 password characters (SuperDiv by PWrange)
+BitstoPW:		;Turn the password bits into the password characters
 	ldx.w #$000F
 .char:
 	lda.w #PWrange		; PassWord[x] = passbits mod PWrange

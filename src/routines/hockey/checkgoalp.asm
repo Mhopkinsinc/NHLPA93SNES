@@ -1,5 +1,4 @@
-checkgoalp:		;check for player a3 collision with goal/net a2. Entered from checkgoal
-		;   SNES: player X collision with the goal/net a2 (oval, radius x 32, y 11). CheckBump, then wallcoll with the normal
+checkgoalp:		;Player X runs into the goal a2
 	lda.w pflags,x
 	bit.w #pf2npc
 	beq .npc

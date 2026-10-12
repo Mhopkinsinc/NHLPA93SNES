@@ -1,5 +1,4 @@
-Restart:		;SNES: restart from scratch: native mode, stack, DP and DB 0, InitPPU, clear low RAM and the sprite VRAM cache, vbint vb2, hbint HBdefault,
-		;   setoptions, then PlayoffScreenOpening4
+Restart:		;Restart from scratch: reset the hardware and RAM, set the default handlers and options, then the playoff screen
 	sei		; interrupts off, native mode
 	clc
 	xce

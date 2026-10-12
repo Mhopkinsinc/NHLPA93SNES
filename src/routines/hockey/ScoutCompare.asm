@@ -1,4 +1,4 @@
-ScoutCompare:		;SNES: print the scouting ratings of team [a0] (nibbles of .sr, against [a2] for the advantages) down the screen
+ScoutCompare:		;Print the scouting ratings of team [a0], marking where it has the edge over [a2]
 	ldy.w #$0004
 	lda.b [a0],y
 	xba

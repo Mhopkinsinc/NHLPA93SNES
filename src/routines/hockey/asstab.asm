@@ -1,4 +1,4 @@
-asstab:		;SNES: the assignment routines (29 long pointers) that updateplayers calls through jmlvector; numbers as asstab
+asstab:		;The assignment routines that updateplayers calls, by assignment number
 	dd rtss		; 0
 	dd assdefo		; 1
 	dd assdefd		; 2

@@ -1,5 +1,4 @@
-SetPlList:		;create list (PlList) of players who we want on the ice now
-		;   SNES: make PlList, the players we want on the ice now (team a2)
+SetPlList:		;Make the list of the players team a2 wants on the ice now
 	lda.w #PlList
 	sta.b a4
 	lda.w #PlList>>16

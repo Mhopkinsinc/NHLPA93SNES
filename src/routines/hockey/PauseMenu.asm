@@ -1,5 +1,5 @@
-PauseMenu:		;draw the menu (Pmenu), read the pad (PauseReadJoy); up/down move psitem (5 items), Start leaves, else the .jump handler of the item.
-		;   Returns A = 0 to leave, 1 to redraw
+PauseMenu:		;Draw the pause menu and read the pad: up and down move, Start leaves, else run the chosen item.
+		;   A = 0 to leave, 1 to redraw
 	stz.w psitem
 .gj:
 	jsl.l Pmenu

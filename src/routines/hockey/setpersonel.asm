@@ -1,5 +1,4 @@
-setpersonel:		;this will set personel on team a2 according to team a2's registers
-		;   SNES: set the personel of team a2 from SetPlList: keep the players already on the ice, place the rest
+setpersonel:		;Put team a2's wanted players on the ice, keeping the ones already there
 	stx.b xsave
 	ldx.w #$0000
 .save:

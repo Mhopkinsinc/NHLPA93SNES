@@ -1,6 +1,4 @@
-ShowGoalBox:		;goal box. Closes both line change boxes, then printbig "GOAL!" (or "HAT TRICK!")
-		;   SNES: close both line change boxes (lcfound2), Framer at x $B, y 2 (5, 7 or 8 tall by the
-		;   assists), printbig "GOAL!" or "HAT TRICK!" (the scorer's third goal, tmgoals), the scorer and "Assist by:" names from the last ScoreSum entry; saves d0-d2, a0-a4, ends with X = a3
+ShowGoalBox:		;The goal box: "GOAL!" or "HAT TRICK!" with the scorer and the assists
 	stx.b xsave
 	ldx.w #$0000
 .save:

@@ -1,5 +1,4 @@
-TitleScreen:		;bring up title screen and credits
-		;   SNES: Title1Map backdrop, StartSong6, then the Credits scroll up 6 rows at a time; Start leaves
+TitleScreen:		;The title screen with its music and the scrolling credits; Start leaves
 	lda.w #$0198		; the blank tile and the small font above the title tiles
 	sta.w blankchar
 	inc a

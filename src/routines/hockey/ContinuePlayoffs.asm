@@ -1,5 +1,4 @@
-ContinuePlayoffs:		;continue playoffs: read the playoff state back from the password bits, rebuild the tree.
-		;   SNES: no caller found
+ContinuePlayoffs:		;Continue the playoffs: read the playoff state back from the password bits and rebuild the tree. Unused
 	stx.b xsave
 	ldx.w #$0000
 .save:

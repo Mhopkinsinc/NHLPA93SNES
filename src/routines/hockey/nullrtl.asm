@@ -1,2 +1,2 @@
-nullrtl:		;does nothing (setupice calls it)
+nullrtl:		;Does nothing
 	rtl

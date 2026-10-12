@@ -1,4 +1,4 @@
-sublist:		;substitution lists by position: word offsets from sublist, then roster slots (line * 8 + position); -1 ends
+sublist:		;The substitution lists by position
 	dw .defl-sublist		; goalie
 	dw .defl-sublist		; LD
 	dw .defr-sublist		; RD

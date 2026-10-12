@@ -1,5 +1,4 @@
-holdcheck:		;player a2 is in hold animation looking to hold opponent a3. Entered from checkcheck .cc for SPA $CB0 or $12DC
-		;   SNES: player X holds a2 (SPAHold/SPAhook), both slow to the average speed; checkagr may call a holding/hooking penalty
+holdcheck:		;Player X holds or hooks a2: both slow down, and a holding or hooking penalty may be called
 	lda.w pfalock,x
 	ora.w pf2fight,x
 	beq .nopf2fight

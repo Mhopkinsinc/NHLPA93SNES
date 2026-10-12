@@ -1,5 +1,4 @@
-forcepldata:		;no skating on/off force players to correct data (for faceoffs only)
-		;   SNES: a2 = team. No skating on/off: force the players to their new positions (faceoffs only)
+forcepldata:		;Face offs: move team a2's players straight to their new positions
 	stx.b xsave
 	ldx.w #$0000
 .save:

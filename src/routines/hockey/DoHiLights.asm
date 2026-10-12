@@ -1,5 +1,4 @@
-DoHiLights:		;hilites logic: search for hilite game and show hilite. Called from Intermission
-		;   SNES: in the playoffs play the highlight of each game of the round that asks for one (gsfhl, StartHL2)
+DoHiLights:		;Playoffs: play the highlight of each game of the round that has one
 	lda.w OptPlayMode
 	beq .rtl
 	jsl.l GetShifter

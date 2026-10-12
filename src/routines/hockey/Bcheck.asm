@@ -1,7 +1,4 @@
-Bcheck:		;player a2 is in SPA $B44 and a3 is the other player. Entered from checkcheck .cc. If OptPen is 0 and a2 is joystick controlled, a2 needs randomd0($10 + a2 checking rating - a3
-		;   legstr) >= $C. If a3 is within 1 direction of where a2 faces, a3 falls and checkagr may call penalty $20 on a2. Sets collflag to -1
-		;   SNES: a2 checks a3 with SPA $B44: if a3 is in front (within one direction) he falls; checkagr may call a penalty $20 (charging) on
-		;   a2
+Bcheck:		;Player a2 body checks a3: a3 falls if he is in front, and a charging penalty may be called on a2
 	ldy.b a2
 	lda.w pfalock,x
 	beq .pos

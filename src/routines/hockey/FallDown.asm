@@ -1,5 +1,5 @@
-FallDown:		;player a2 falls down, player a3 is the hitting player. Some players stumble instead of a fall; also counts check stats for the hitter, has a third fall anim, and injuries (setInjuryType) with a penalty. Called from checkint .ci, checkcheck .cc and Bcheck; also entered from setd0player
-		;   SNES: player a2 falls, X is the hitter. Stumble for some players, check stats, fall back/forward/third fall, injuries with a penalty and crowd sounds
+FallDown:		;Player a2 falls (or stumbles) from a hit by X: check stats, the fall animation, maybe an injury with a penalty,
+		;   and the crowd
 	ldy.b a2		; players only, not fighting
 	cpy.w #$0018
 	bcc .f1

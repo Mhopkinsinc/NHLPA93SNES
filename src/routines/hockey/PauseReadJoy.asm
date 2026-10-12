@@ -1,4 +1,4 @@
-PauseReadJoy:		;wait for a vblank and a new button (not L/R); in demo mode with no controller team the pause ends after pausetimer frames (sets Start)
+PauseReadJoy:		;Wait for a new button press; in the demo the pause ends by itself
 	jsl.l IntermissionTick
 	bne .force
 	jsl.l setvideo

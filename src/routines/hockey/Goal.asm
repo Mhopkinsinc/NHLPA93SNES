@@ -1,6 +1,4 @@
-Goal:		;puck in goal. a3 = puck. Entered from checkgoal
-		;   SNES: puck in the goal. Score +1 for the scoring team (a2, a1 = the other team), siren, ScoreSum entry, goal counts, PenGoalStuff, printscores1, ascore
-		;   for the scorers, puck into the net, siren SPA and PenGoal
+Goal:		;The puck is in the goal: add the score, sound the siren, log it, update the scoreboard and start the celebration
 	lda.w gmclock		; clock stopped: no goal
 	beq .go
 	jmp.w .rtl

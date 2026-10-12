@@ -1,5 +1,4 @@
-checkcoll:		;d2 = new x cord, d3 = new y cord, a3 = struct of object. Check wall collision (around the hot spot and the end of the stick) and player collisions, then move a3 in the OOlist sort order by its y. If a player collision set collflag, restore the old x/y instead. Does not clear Wallcos/Wallsin first. Called from updateplayers
-		;   SNES: d2/d3 = new x/y of object X. Wall collision (hot spot, end of the stick), player collision, then keep OOlist sorted
+checkcoll:		;Move object X to its new x / y (d2 / d3), checking wall and player collisions and keeping the objects sorted
 	stz.b collflag		; collflag = 0
 	lda.w sfhormode		; horizontal: exg d2,d3
 	beq .nhor1

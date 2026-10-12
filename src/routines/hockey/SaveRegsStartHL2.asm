@@ -1,4 +1,4 @@
-SaveRegsStartHL2:		;SNES: save d0-d7 and a0-a6 on the stack and go on to StartHL2 (it pulls them back)
+SaveRegsStartHL2:		;Save the registers and go on to StartHL2
 	stx.b xsave
 	ldx.w #$0000
 .save:

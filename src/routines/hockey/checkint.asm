@@ -1,5 +1,4 @@
-checkint:		;check for interference penalty. player a2 interferes with a3 or vice-versa; goalie is only player who cause an interference call. Called from checkcx
-		;   SNES: goalie a2 against a3 and the other way round
+checkint:		;Interference penalty check between a goalie and another player
 	lda.b d0+2		; a2 and a3 swapped for the second call
 	pha
 	lda.b d0

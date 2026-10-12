@@ -1,4 +1,4 @@
-getpzjoy:		;read the joystick of the pad that paused (sfpj: Readjoy2, else Readjoy1)
+getpzjoy:		;Read the pad of the controller that paused
 	lda.w sflags
 	bit.w #sfpj
 	beq .p1

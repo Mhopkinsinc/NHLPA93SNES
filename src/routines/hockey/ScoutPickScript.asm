@@ -1,4 +1,4 @@
-ScoutPickScript:		;SNES: rating nibble d1 against the next (minimum, script) pair at [a1]: the highest qualifying rating picks tmPenmin
+ScoutPickScript:		;Pick the scouting report animation of a player's best qualifying rating
 	lda.b [a1]
 	and.w #$00FF
 	sta.b tmp0

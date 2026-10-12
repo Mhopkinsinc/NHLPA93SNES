@@ -1,4 +1,3 @@
-DecodePW:		;translate char password in PassWord to variables used in game
-		;   SNES: translate the password in PassWord to game variables: PWtoBits, then ReadPassBits
+DecodePW:		;Turn the password into the playoff state
 	jsl.l PWtoBits
 	jml.l ReadPassBits

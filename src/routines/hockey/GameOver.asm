@@ -1,5 +1,4 @@
-GameOver:		;SNES: after a game: EncodePW and PlayoffScreen; when the playoffs go on with a user game (OptPlayMode 1, gamenum set) DecodePW the new password and maketree
-		;   (sf3alttree picks the path); else back to Restart
+GameOver:		;After a game: the password and the playoff screen; on to the user's next playoff game, or back to the start
 	jsl.l EncodePW
 	jsl.l PlayoffScreen		; font tile bases, the playoff tree
 	lda.w OptPlayMode		; not continuing playoffs, or no user game: Restart

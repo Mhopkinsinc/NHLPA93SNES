@@ -1,5 +1,4 @@
-SuperAdd:		;1 long (d0.L) added to the 5 words at a3.
-		;   SNES: passbits (8 words) += d0 (one word), the carry rippled up
+SuperAdd:		;password bits += d0
 	phx
 	lda.w passbits
 	clc

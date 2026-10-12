@@ -1,5 +1,4 @@
-SetInst:		;d0 = fight rating a3 needs. Called twice from checkfight (a2/a3 swapped)
-		;   SNES: If fightagg of X >= d0, of a2 >= 2 and >= $10 - 2 * a2 checks, set pf2fight on both. Then an instigator penalty for a shoulder check
+SetInst:		;Start a fight between X and a2 when both are aggressive enough, with an instigator penalty
 	lda.w fightagg,x
 	cmp.b d0
 	bcc checkfight_rtl

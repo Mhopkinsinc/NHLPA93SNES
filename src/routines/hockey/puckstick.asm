@@ -1,5 +1,4 @@
-puckstick:		;puck collides with stick
-		;   SNES: puck hits the stick of player a2. d0 = distance^2 (from checkpuckcoll_ccx)
+puckstick:		;The puck hits player a2's stick
 	ldy.b a2
 	lda.w position,y
 	bne .0

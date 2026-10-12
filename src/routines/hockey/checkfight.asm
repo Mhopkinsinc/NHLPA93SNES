@@ -1,6 +1,4 @@
-checkfight:		;look for start of fight between players a2 & a3. Called from checkcx
-		;   SNES: start of a fight between a2 and X. Both impact >= 10, no anim lock, no penalty, no goalie, clock running, no highlight, the puck not
-		;   fighting or on a faceoff. SetInst both ways with d0 = 10 + max(0, 40 - ChkCnt)/4
+checkfight:		;Look for the start of a fight between a2 and X after a hard hit
 	ldy.b a2
 	lda.w impact,x
 	sec

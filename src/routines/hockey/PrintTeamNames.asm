@@ -1,4 +1,4 @@
-PrintTeamNames:		;SNES: regular season: HomeTeam/VisTeam from the options; print both team names (DrawTeamBlocks), then setteams
+PrintTeamNames:		;Print both team names, then set up the teams
 	stx.b xsave
 	ldx.w #$0000
 .save:

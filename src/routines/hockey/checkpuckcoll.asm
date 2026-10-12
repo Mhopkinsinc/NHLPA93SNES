@@ -1,5 +1,4 @@
-checkpuckcoll:		;look for puck coll with players. a3 = puck. Entered from pucknorm
-		;   SNES: puck collision with the players within 22 in y (OOlist up and down from the puck)
+checkpuckcoll:		;Puck collision with the players near it
 	lda.w Zpos+puckobj		; puck feet in the air (Zpos > 16): no collision
 	sec
 	sbc.w #$0010

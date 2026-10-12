@@ -1,5 +1,4 @@
-ScrollDisplayUp:		;next text line for UpdateScoutingDisplay (column 0). After line 7, move the text box up
-		;   SNES: next text line (column 0); after line 7 move the text box up one row (CopyWords copies 8 textmap rows)
+ScrollDisplayUp:		;The next line of the scouting report text; scroll the text box up when it is full
 	stz.w DispAttribCtr
 	inc.w VertLineScrolling
 	lda.w VertLineScrolling

@@ -1,5 +1,4 @@
-makepde:		;pass d0 as value to be scaled by player a0's energy level
-		;   SNES: d0 = rating A (on entry) scaled by the energy of player a0: A*energy/$1000
+makepde:		;d0 = rating A scaled by player a0's energy
 	pha
 	stx.b xsave
 	ldx.w #$0000

@@ -1,5 +1,4 @@
-SuperMult:		;1 word (d0) multiplied by the 5 words at a3.
-		;   SNES: passbits (8 words) *= d0, by shift and add (mulres..mulres+15 hold the shifted copy)
+SuperMult:		;password bits *= d0
 	phx
 	ldx.w #$000E
 .copy:

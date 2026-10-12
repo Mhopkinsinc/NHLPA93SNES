@@ -1,5 +1,4 @@
-setteams:		;use hometeam/visteam to set team structures. Falls in from clearTeamStats.
-		;   SNES: with InitTeamStructure: use HomeTeam/VisTeam to set the team structs (tmsort, tmteam, tmdata from TeamList). Falls in from ClearTeamStats
+setteams:		;Set up both team structures from the home and visiting teams
 	stz.w tmsort		; home: tmsort 0, away: tmsort $0C
 	lda.w #$000C
 	sta.w tmsort+2

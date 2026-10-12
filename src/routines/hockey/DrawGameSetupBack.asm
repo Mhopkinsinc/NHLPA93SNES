@@ -1,4 +1,4 @@
-DrawGameSetupBack:		;SNES: game setup screen backdrop: textmap blank, GameSetupMap to backmap (priority off), the NHLPA logo map (NHLPALogo, 8 x 10) into textmap at x 12-19, y 0-9
+DrawGameSetupBack:		;Draw the game setup screen backdrop with the NHLPA logo
 	lda.w blankchar
 	ldx.w #$07FE
 .clr:

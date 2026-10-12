@@ -1,4 +1,4 @@
-DrawScoutPlayers:		;SNES: addframe for the two showcased players (objects 0 and 6)
+DrawScoutPlayers:		;Draw the two players shown on the scouting report
 	ldx.w #$0000
 	stx.b a3
 	jsl.l DrawScoutPlayer

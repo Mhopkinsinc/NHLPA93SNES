@@ -1,5 +1,4 @@
 puckglue:		;Player a2 takes the puck
-		;   SNES: ends in setd0player
 	lda.w seed+2		; pickup sound (one of 4)
 	and.w #$0003
 	clc

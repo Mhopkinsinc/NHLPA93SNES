@@ -1,6 +1,4 @@
-ScoutingReport:		;pregame scouting report
-		;   SNES: the scouting report screen: EASN backdrop, both team blocks, ScoutLabels with both teams' ratings, Ron Barr and
-		;   the scrolling text until Start
+ScoutingReport:		;The scouting report screen: both teams, their ratings and the scrolling commentary until Start
 	jsl.l ClearTeamStats
 	jsl.l forceblack
 	jsl.l InitPPU

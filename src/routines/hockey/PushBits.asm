@@ -1,5 +1,4 @@
-PushBits:		;bits = bits * d1 + d0.
-		;   SNES: passbits = passbits * d1 + d0
+PushBits:		;password bits = password bits * d1 + d0
 	stx.b xsave
 	ldx.w #$0000
 .save:

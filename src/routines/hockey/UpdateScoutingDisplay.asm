@@ -1,7 +1,5 @@
-UpdateScoutingDisplay:		;called every frame by ScoutingReport. When ScoutingReportTimer runs out (at once if asv
-		;   is set), print the next word of ScoutingReportText. PlayerScrollCtr = offset of the next word (negative: next paragraph),
-		;   DispAttribCtr = column
-		;   SNES: '~' '{' '}' '[' ']' print a team or goalie name
+UpdateScoutingDisplay:		;Every frame of the scouting report: print the next word of the commentary when its timer runs out,
+		;   filling in team and goalie names
 	lda.w ScoutingReportTimer		; text finished ($7FFF)
 	sec
 	sbc.w #$1000

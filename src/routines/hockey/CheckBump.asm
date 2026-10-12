@@ -1,6 +1,4 @@
-CheckBump:		;supply minimum separation velocity for coll with walls/goal/net. a2 = goal, a3 = player. Called from checkgoalp
-		;   SNES: goalie X against the net a2 with the puck near (1 in 32): if moving faster than $2000, bump the net (Xvel/Yvel / 4), stop and call
-		;   PenGhold
+CheckBump:		;Goalie X pushed against the net with the puck near: if he is moving fast, bump the net and stop him
 	stx.b xsave
 	ldx.w #$0000
 .save:

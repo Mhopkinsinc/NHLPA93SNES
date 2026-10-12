@@ -1,4 +1,4 @@
-Pmenu:		;the 5 pause menu items (.mlist, game-over list when gsp = 4), item psitem highlighted
+Pmenu:		;Draw the pause menu items with the current one highlighted
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$06,$0D

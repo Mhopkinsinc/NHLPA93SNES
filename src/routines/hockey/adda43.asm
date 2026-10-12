@@ -1,5 +1,4 @@
-adda43:		;a4 += replaysize, wrapping from replayend to replaystart
-		;   SNES: a4 += replaysize, wrapping from ReplayBufferEnd to ReplayBufferStart
+adda43:		;Step a4 to the next replay frame, wrapping around the replay buffer
 	lda.b a4
 	clc
 	adc.w #replaysize

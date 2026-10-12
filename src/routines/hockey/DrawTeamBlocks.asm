@@ -1,5 +1,4 @@
-DrawTeamBlocks:		;draw team block d1 (team*2) from TeamBlocks.map at printx/printy
-		;   SNES: the 9 x 2 TeamBlocksMap block of team d1 into textmap at printx/printy (scorechars, printa)
+DrawTeamBlocks:		;Draw team d1's name block at printx / printy
 	lda.b a2
 	pha
 	phx

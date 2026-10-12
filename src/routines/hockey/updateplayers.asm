@@ -1,4 +1,4 @@
-updateplayers:		;animation, velocity, position, input and the assignment for every sort object
+updateplayers:		;Animation, speed, position, input and assignment for every object
 	ldx.w #$0016		; 12 players
 .spd:		;pspeed = max($1000, (|Xvel|+|Yvel|)*5/4) for the 12 players
 	lda.w Xvel,x

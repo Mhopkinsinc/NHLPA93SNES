@@ -1,5 +1,4 @@
-WritePassBits:		;transfer game variables to the password bits at a3, without the checksum.
-		;   SNES: playoff state into passbits (PushBits with each range), then the 9-bit checksum of the values (d7) with range 512
+WritePassBits:		;Turn the playoff state into the password bits, with a checksum
 	jsl.l ClrPassBits
 	stz.b d7
 	lda.w postarts		; PushBits ranges: postarts 32, bosgames 8, gamelevel 4, potreeteam 16, pojoy 4, WinBits $4000

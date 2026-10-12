@@ -1,5 +1,5 @@
-PickStartingGoalie:		;SNES: tmgoalie of team a2 = 0 (FigureJoy); a computer team in the later playoff rounds (gamelevel >= 2, line changes on) picks the goalie by its scouting
-		;   report (UnpackNibbles, WeightedRandomSelect)
+PickStartingGoalie:		;Pick team a2's starting goalie; computer teams in the later playoff rounds pick one at random by the
+		;   scouting report weights
 	stx.b xsave
 	ldx.w #$0000
 .save:

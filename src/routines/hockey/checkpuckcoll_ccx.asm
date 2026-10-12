@@ -1,4 +1,4 @@
-checkpuckcoll_ccx:		;d4 = object index: stick (puckstick), body (puckbody) or goalie (puckgoalie) contact
+checkpuckcoll_ccx:		;Puck contact with a player's stick, body or the goalie
 	stx.b xsave
 	ldx.w #$0000
 .save:

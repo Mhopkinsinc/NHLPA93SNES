@@ -1,5 +1,4 @@
-GetPlayerName:		;a1 = mesarea "NN First Last" (getname) for player TempPlOffset (bit 15 set: away team)
-		;   SNES: mesarea = number and name of player TempPlOffset (bit 15: away team) via PlayerNumName
+GetPlayerName:		;mesarea = the number and name of player TempPlOffset
 	stx.b xsave
 	ldx.w #$0000
 .save:

@@ -1,4 +1,4 @@
-EraseScoutName:		;SNES: blank the 11 x 2 showcased player name area (ScoutNamePos, eraser)
+EraseScoutName:		;Blank the name of the player shown on the scouting report
 	jsl.l ScoutNamePos
 	lda.w #$000B
 	sta.b d0

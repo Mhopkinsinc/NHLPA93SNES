@@ -1,6 +1,4 @@
-checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 = x/y. Called from checkwallcoll
-		;   SNES: collision with the goal/net. a2 = goal object, X = object, d2/d3 = x/y. Not the puck: checkgoalp. Puck in the goal area: over the top
-		;   (Zvel), through the mouth (Goal), off a post (deflect) or off the side/back (wallcoll)
+checkgoal:		;Collision with the goal: over the top, into the net for a goal, off a post or off the side and back
 	lda.w Zpos,x		; Zpos > 13 (goal height): over the goal
 	sec
 	sbc.w #$000D

@@ -1,4 +1,4 @@
-InitScoutDisplay:		;SNES: scouting report scroll state reset; a0 = TestList (the text buffer)
+InitScoutDisplay:		;Reset the scouting report text scroll
 	lda.w #$FFFF
 	sta.w VertLineScrolling
 	sta.w PlayerScrollCtr

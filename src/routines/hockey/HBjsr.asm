@@ -1,4 +1,4 @@
-HBjsr:		;SNES: IRQ vector: if TIMEUP set, "rts" into hbint; else HBdefault
+HBjsr:		;IRQ vector: jump through hbint when the timer fired
 	rep #$30
 	pha
 	phx

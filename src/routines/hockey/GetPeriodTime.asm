@@ -1,5 +1,4 @@
-GetPeriodTime:		;return d0 = period length in seconds for the period length option
-		;   SNES: d0 = period length in seconds for OptPerlen
+GetPeriodTime:		;d0 = the period length in seconds for the period length option
 	phx
 	lda.w OptPerlen
 	asl a

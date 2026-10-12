@@ -1,5 +1,4 @@
-ScoutTeamStep:		;SNES: step the showcased player of team a2: a new team (tmteam changed) picks its goalie and restarts the order (ScoutPlayerExit); skating out to the side
-		;   (tmflags bit 1) ends at x 40 (ScoutNextPlayer); else the next script step (SPA, facedir) every 9 frames, then print his number and name
+ScoutTeamStep:		;Step team a2's player on the scouting report through his animation, then print his number and name
 	ldy.b a2
 	lda.w tmteam,y		; team changed?
 	sta.b d0

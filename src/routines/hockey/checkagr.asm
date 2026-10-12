@@ -1,6 +1,5 @@
-checkagr:		;penalty roll for player a3. Range = (20 - byte $73) * 13, doubled for a joystick player, halved within $28 of the puck in x and y. Return d0 = randomd0 of that range; the callers
-		;   call a penalty when it is small. Called from checkcheck .cc, holdcheck and Bcheck
-		;   SNES: range = (20 - GGSleft,x) * 16 for player X (x2 joystick controlled, /2 near the puck): small values call a penalty
+checkagr:		;Penalty roll for player X: small results call a penalty. Joystick players are judged less often, players
+		;   near the puck more often
 	lda.w #$0014
 	sec
 	sbc.w GGSleft,x

@@ -1,5 +1,4 @@
-ResetBench:		;remove all players from penalty box/ put all players on their own bench
-		;   SNES: empty the penalty boxes / put all players on their own bench. PBnum = players left in the box, home*16 + visitors
+ResetBench:		;Empty the penalty boxes and put every player on his own bench
 	stz.w PBnum
 	lda.w #$0010		; home: +$10 per player
 	sta.b d1

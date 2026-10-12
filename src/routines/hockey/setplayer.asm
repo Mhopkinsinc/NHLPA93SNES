@@ -1,5 +1,4 @@
-setplayer:		;bring player onto the ice and set his stats
-		;   SNES: bring roster player d3 (in d3 = $5F) onto the ice as object X and set his stats from the roster record plus the bonuses
+setplayer:		;Bring roster player d3 onto the ice as object X and set his stats
 	phx
 	phy
 	lda.w pflags,x		; clear pf2inj

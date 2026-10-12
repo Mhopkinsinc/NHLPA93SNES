@@ -1,2 +1,2 @@
-BRKHalt:		;SNES: BRK vector: hang
+BRKHalt:		;BRK vector: hang
 	bra BRKHalt

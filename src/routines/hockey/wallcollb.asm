@@ -1,5 +1,4 @@
-wallcollb:		;check for puck over wall. a3 = object, d0/d1 = cos/sin of the wall. Called from checkwallcoll
-		;   SNES: object X hits a wall (d0/d1 = cos/sin). The puck may go over the glass; otherwise wallcoll
+wallcollb:		;Object X hits a wall: the puck may go over the glass, else it bounces
 	cpx.w #$001C		; not the puck: wallcoll
 	beq .puck
 	jmp.w wallcoll

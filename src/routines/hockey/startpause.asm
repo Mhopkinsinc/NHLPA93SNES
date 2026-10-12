@@ -1,4 +1,4 @@
-startpause:		;set sfpz (startpause1 and startpause2 jump here)
+startpause:		;Start a pause
 	lda.w #sfpz
 	tsb.w sflags
 	rtl

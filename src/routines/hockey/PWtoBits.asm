@@ -1,5 +1,4 @@
-PWtoBits:		;convert password text into passbits
-		;   SNES: convert the password text into passbits (ClrPassBits, then SuperMult by PWrange and SuperAdd per character)
+PWtoBits:		;Turn the password characters into the password bits
 	jsl.l ClrPassBits
 	ldx.w #$0000
 .char:

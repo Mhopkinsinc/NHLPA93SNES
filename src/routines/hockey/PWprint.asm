@@ -1,5 +1,4 @@
-PWprint:		;print pass word
-		;   SNES: print the 16 password characters (PassWord through PasstoText) at printx/printy, unless PassWord bit 7 hides it
+PWprint:		;Print the password, unless it is hidden
 	lda.w PassWord
 	bit.w #$0080
 	beq .show

@@ -1,5 +1,4 @@
-checkwallcoll:		;d2/d3 = x/y to test, a3 = object, wcradiusx/wcradiusy = radius. Called from checkcoll
-		;   SNES: d2/d3 = x/y, object X, wcradiusx/y. Corner circles, goals, then side and end boards
+checkwallcoll:		;Collision of object X with the corners, the goals and the boards
 	lda.w #$012A		; d3 = $12A - wcradiusy, d2 = $88 - wcradiusx; corner centers 64 in
 	sec
 	sbc.w wcradiusy

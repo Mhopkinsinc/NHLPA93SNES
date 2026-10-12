@@ -1,5 +1,4 @@
-setpde:		;d1 = rostnum of player * 2, a2 = team struct
-		;   SNES: tmpde of player d1 (team a2) = d0 (not below 0)
+setpde:		;Set the energy of player d1 of team a2 to d0
 	lda.b a2
 	beq .home
 	lda.w #$0034

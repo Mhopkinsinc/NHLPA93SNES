@@ -1,4 +1,4 @@
-PauseResume:		;pause menu item 0, Resume Game: A or Start leaves
+PauseResume:		;Pause menu Resume Game: A or Start leaves
 	lda.b d1
 	bit.w #JOYSTART|cbut
 	bne PauseLeave

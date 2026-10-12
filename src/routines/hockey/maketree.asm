@@ -1,5 +1,4 @@
-maketree:		;make playoff tree (potree) from playoffseats/winbits.
-		;   SNES: potree from playoffseats (postarts) and WinBits; reset the games of this round (.sett), then FigureJoy
+maketree:		;Build the playoff tree from the seeds and the series wins, then set the controllers
 	stx.b xsave
 	ldx.w #$0000
 .save:

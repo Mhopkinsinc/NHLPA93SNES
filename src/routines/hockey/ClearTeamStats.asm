@@ -1,4 +1,4 @@
-ClearTeamStats:		;SNES: clear the team stats $13B2-$157D except tmgoalie, empty both penalty box lists, then on at setteams
+ClearTeamStats:		;Clear the team stats (but the goalie choice) and both penalty box lists, then set up the teams
 	lda.w tmgoalie		; keep tmgoalie (2 words)
 	pha
 	lda.w tmgoalie+2

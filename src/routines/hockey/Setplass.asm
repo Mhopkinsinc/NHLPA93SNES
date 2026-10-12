@@ -1,5 +1,4 @@
-Setplass:		;set players (a3) initial assignment
-		;   SNES: set the initial assignment of player X from its position
+Setplass:		;Set player X's first assignment from his position
 	lda.w position,x
 	sta.b d0
 	bmi .rtl		; no position: no assignment

@@ -1,5 +1,4 @@
-wallcoll:		;d0 = cosine, d1 = sine of angle of incidence with wall, a3 = object. Called from checkgoal, checkgoalp, wallcollb
-		;   SNES: d0/d1 = cos/sin of the wall; bounce object X: puck loses speed, flips, sound; players sound on a hard hit
+wallcoll:		;Bounce object X off a wall: the puck loses speed and spins; a hard hit makes a sound
 	lda.b d0		; Wallcos/Wallsin
 	sta.w Wallcos,x
 	lda.b d1

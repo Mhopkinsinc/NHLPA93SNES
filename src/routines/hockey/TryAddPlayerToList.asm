@@ -1,5 +1,4 @@
-TryAddPlayerToList:		;used by SetPlList. d0 = player number (1 based), d4 = PlList slot
-		;   SNES: d0 = roster player (1 based), d4 = PlList slot. A = d1 = player if added, 0 (Z set) if not available
+TryAddPlayerToList:		;Add roster player d0 to slot d4 of the list of players wanted on the ice, if he is available
 	lda.b d0
 	sta.b d1
 	dec.b d0

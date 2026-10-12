@@ -1,6 +1,4 @@
-ShowInjuryBox:		;injury box "Injury to:" player TempPlOffset (set by setInjuryType)
-		;   SNES: "Injury to:" the player TempPlOffset (GetPlayerNumInitial), "Out for period", or "the game" when pf2fight of the puck is set.
-		;   Jumped to by CheckInjury; saves d0-d2, a0-a4, ends with X = a3
+ShowInjuryBox:		;The injury box: the injured player and whether he is out for the period or the game
 	stx.b xsave
 	ldx.w #$0000
 .save:

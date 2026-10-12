@@ -1,6 +1,4 @@
-PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOver and Opening2.
-		;   SNES: set the font tile bases; in playoff mode draw the tree (PlayoffTreeSetup by gamelevel: team
-		;   blocks, arrows, series scores) with the NHLPA logo, PWprint; scroll with left/right until Start
+PlayoffScreen:		;In playoff mode, the playoff tree screen with the password; left and right scroll, Start leaves
 	lda.w #6		; tile bases: small font 6, big font +100, score/team blocks +100, NHLPA logo +405
 	sta.w smallfontchars
 	clc

@@ -1,5 +1,4 @@
-puckbody:		;puck hits player a2. a3 = puck, d0 = distance^2 (from checkpuckcoll .ccx)
-		;   SNES: puck (X) hits player a2. d0 = distance^2. A fast high puck knocks a2 down (FallDown), a slower one plays SPAcatch
+puckbody:		;The puck hits player a2: a fast high puck knocks him down, a slower one is caught
 	lda.w Zpos,x		; puck above 8: always a hit
 	sec
 	sbc.w #$0008

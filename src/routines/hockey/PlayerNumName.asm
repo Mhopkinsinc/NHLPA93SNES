@@ -1,4 +1,4 @@
-PlayerNumName:		;SNES: mesarea = "<uniform number> <name>" of the roster player d0 (team a2), like the Pausemode .gnum digits. Returns X = mesarea
+PlayerNumName:		;mesarea = the uniform number and name of roster player d0 of team a2
 	stx.b xsave
 	ldx.w #$0000
 .save:

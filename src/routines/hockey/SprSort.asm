@@ -1,5 +1,4 @@
-SprSort:		;sort objects in struct SortObj and set corresponding tables for keeping them sorted later
-		;   SNES: sort the objects by y (x in horizontal mode) into OOlist/OOlistpos
+SprSort:		;Sort the objects by screen position for drawing
 	phx
 	phy
 	stx.b xsave
