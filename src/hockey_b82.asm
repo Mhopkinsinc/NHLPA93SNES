@@ -27,12 +27,12 @@ PWtoBits:		;convert password text into passbits
 .char:
 	lda.w #PWrange		; passbits = passbits * PWrange + PassWord[x]
 	sta.b d0
-	jsl.l SuperMult		; bank $88 (passbits *= d0)
+	jsl.l SuperMult		; passbits *= d0
 	lda.w PassWord,x
 	and.w #$00FF
 	sta.b d0
 	stz.b d0+2
-	jsl.l SuperAdd		; bank $88 (passbits += d0)
+	jsl.l SuperAdd		; passbits += d0
 	inx
 	cpx.w #pwlength
 	bne .char
@@ -64,11 +64,11 @@ PushBits:		;bits = bits * d1 + d0.
 	ldx.b d1
 	sta.b d1
 	stx.b d0
-	jsl.l SuperMult		; bank $88 (passbits *= d0)
+	jsl.l SuperMult		; passbits *= d0
 	stz.b d0+2
 	lda.b d1
 	sta.b d0
-	jsl.l SuperAdd		; bank $88 (passbits += d0)
+	jsl.l SuperAdd		; passbits += d0
 	stx.b xsave
 	ldx.w #$0006
 .restore:
@@ -84,8 +84,8 @@ BitMaskTable:		;SNES: the 16 bit masks 1 << n (read by the playoff bit code in b
 	dw $0100,$0200,$0400,$0800,$1000,$2000,$4000,$8000
 GameOver:		;SNES: after a game: EncodePW and PlayoffScreen; when the playoffs go on with a user game (OptPlayMode 1, gamenum set) DecodePW the new password and maketree
 		;   (sf3alttree picks the path); else back to Restart
-	jsl.l EncodePW		; bank $88
-	jsl.l PlayoffScreen		; bank $88 (font tile bases, the playoff tree)
+	jsl.l EncodePW
+	jsl.l PlayoffScreen		; font tile bases, the playoff tree
 	lda.w OptPlayMode		; not continuing playoffs, or no user game: Restart
 	cmp.w #$0001
 	beq .po
@@ -99,13 +99,13 @@ GameOver:		;SNES: after a game: EncodePW and PlayoffScreen; when the playoffs go
 	and.w #$7F7F
 	sta.w PassWord
 	jsl.l DecodePW
-	jsl.l maketree		; bank $8D
+	jsl.l maketree
 	lda.w #sf3alttree		; sf3alttree: Opening4 after the font bases
 	trb.w sflags3
 	beq .tree
 	jml.l PlayoffScreenOpening4
 .tree:
-	jml.l Opening4		; bank $8B
+	jml.l Opening4
 SaveRegsStartHL2:		;SNES: save d0-d7 and a0-a6 on the stack and go on to StartHL2 (it pulls them back)
 	stx.b xsave
 	ldx.w #$0000
@@ -127,7 +127,7 @@ SaveRegsStartHL2:		;SNES: save d0-d7 and a0-a6 on the stack and go on to StartHL
 	cpx.w #$001C
 	bne .savea
 	ldx.b xsave
-	jml.l StartHL2		; bank $8D (pulls the saved registers)
+	jml.l StartHL2		; pulls the saved registers
 
 org $82FDB5
 startpause2:		;pause intiated by cont 2

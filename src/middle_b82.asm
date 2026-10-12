@@ -18,7 +18,7 @@ muls32:		;68k muls.w with a 32-bit result: A/mulres = low word, mulres+2 = high 
 	sta.b mulb
 	inc.b mulneg
 .mul:
-	jsl.l mulu		; bank $88, mulres = mula*mulb
+	jsl.l mulu		; mulres = mula*mulb
 	lsr.b mulneg		; odd: negate the 32-bit result
 	bcc .rtl
 	lda.w #$0000
@@ -48,7 +48,7 @@ printbigz:		;see print big. String macro should follow the bsr/jsr to this routi
 	clc
 	adc.b $01,s
 	sta.b $01,s
-	jml.l printbig		; bank $8B: print the inline string
+	jml.l printbig		; print the inline string
 appendz:		;see appstring. String macro should follow the bsr/jsr to this routine
 		;   SNES: like printbigz, for appstring (append an inline string)
 	lda.b $03,s
@@ -60,4 +60,4 @@ appendz:		;see appstring. String macro should follow the bsr/jsr to this routine
 	clc
 	adc.b $01,s
 	sta.b $01,s
-	jml.l appstring		; bank $8F
+	jml.l appstring

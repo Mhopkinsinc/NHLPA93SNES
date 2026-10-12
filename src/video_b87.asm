@@ -185,7 +185,7 @@ DrawFrame:		;SNES: as DrawFrameHi with 4-byte pieces (x, y signed bytes, tile, a
 	lda.b sprslotlife
 	cmp.w #$0005
 	bcs .shorten
-	jml.l addframe_full		; bank $8F: VRAM sprite cache full
+	jml.l addframe_full		; VRAM sprite cache full
 .shorten:
 	dec.b sprslotlife
 	lda.b sprslot
@@ -371,7 +371,7 @@ DrawFrame:		;SNES: as DrawFrameHi with 4-byte pieces (x, y signed bytes, tile, a
 	lda.b sprslotlife
 	cmp.w #$0005
 	bcs .bshorten
-	jml.l addframe_full		; bank $8F: VRAM sprite cache full
+	jml.l addframe_full		; VRAM sprite cache full
 .bshorten:
 	dec.b sprslotlife
 	lda.b sprbigslot

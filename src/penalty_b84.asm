@@ -15,7 +15,7 @@ DisplayStats:		;the STATS page of the pause menu: Shots, Power Play, Penalties, 
 	sta.b d1
 	lda.w smallfontchars
 	sta.b d2
-	jsl.l eraser		; bank $8D
+	jsl.l eraser
 	jsl.l printz
 	dw $000B		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$0D,$06,"      "
@@ -62,7 +62,7 @@ DisplayStats:		;the STATS page of the pause menu: Shots, Power Play, Penalties, 
 	tay
 	lda.w $0000,y		; stat word of team a2 (absolute address +$0000,y)
 	sta.b d0
-	jsl.l PushNumber		; bank $8F
+	jsl.l PushNumber
 	lda.b [a0]
 	inc.b a0
 	inc.b a0
@@ -75,7 +75,7 @@ DisplayStats:		;the STATS page of the pause menu: Shots, Power Play, Penalties, 
 	sta.b a3+2
 	lda.w #$0002
 	sta.b [a3]
-	jsl.l appstring		; bank $8F
+	jsl.l appstring
 	jsl.l appendz
 	dw $0003		; printz inline string: length (counts itself), then control bytes / text
 	db "/"
@@ -85,8 +85,8 @@ DisplayStats:		;the STATS page of the pause menu: Shots, Power Play, Penalties, 
 	tay
 	lda.w $0000,y
 	sta.b d0
-	jsl.l PushNumber		; bank $8F
-	jsl.l appstring		; bank $8F
+	jsl.l PushNumber
+	jsl.l appstring
 	lda.b a3
 	sta.b a1
 	lda.b a3+2
@@ -109,7 +109,7 @@ DisplayStats:		;the STATS page of the pause menu: Shots, Power Play, Penalties, 
 	ldy.b a2
 	lda.w tmATOP,y
 	sta.b d0
-	jsl.l PushTime		; bank $8F (d0 = time)
+	jsl.l PushTime		; d0 = time
 	lda.b [a1]
 	inc a
 	lsr a

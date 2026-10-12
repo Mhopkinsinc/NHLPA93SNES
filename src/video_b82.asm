@@ -50,7 +50,7 @@ revplayeracc:		;SNES: playeracc with the direction d2 turned 180 degrees for a r
 	eor.w #$0004
 	sta.b d2
 .acc:
-	jml.l playeracc		; bank $8F
+	jml.l playeracc
 marktexthi:		;SNES: textdirtyhi = max(textdirtyhi, A)
 	cmp.b textdirtyhi
 	bcc .rtl

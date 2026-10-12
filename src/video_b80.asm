@@ -43,7 +43,7 @@ vb2_main:		;common vblank tail: vcount, sound tick (p_music_vblank), brightness 
 	bne .tick
 	inc.b vcount+2
 .tick:
-	jsl.l p_music_vblank		; bank $89 (sound tick)
+	jsl.l p_music_vblank		; sound tick
 	stz.b hcount		; clear the IRQ count every frame
 	lda.b fadeout
 	beq .fadein
@@ -392,7 +392,7 @@ setvideo:		;this is not vblank code but sets up ram for vblank transfers.
 	stz.b brightness
 	inc.b fadein
 .go:		;clear the sprite table
-	jsl.l ClearSprites		; bank $8F: clear the sprite table (all sprites off screen)
+	jsl.l ClearSprites		; clear the sprite table (all sprites off screen)
 	stx.b xsave
 	ldx.w #$0000
 .savea:
@@ -405,15 +405,15 @@ setvideo:		;this is not vblank code but sets up ram for vblank transfers.
 	ldx.b xsave
 	jsl.l show_rink
 	jsl.l checkfo
-	jsl.l checksso		; bank $8C
+	jsl.l checksso
 	jsl.l setsortcords
 	jsl.l setffo
-	jsl.l showclock		; bank $8F
-	jsl.l showzam		; bank $8F (elapsed time from vcountmark)
-	jsl.l showcrowd		; bank $88
-	jsl.l showref		; bank $8B (clears sf2refref)
-	jsl.l ShowRinkRows		; bank $8F: queue the rink map rows for Vscroll
-	jsl.l QueueTextDMA		; bank $8F: queue the changed textmap words (textdirtylo/hi)
+	jsl.l showclock
+	jsl.l showzam		; elapsed time from vcountmark
+	jsl.l showcrowd
+	jsl.l showref		; clears sf2refref
+	jsl.l ShowRinkRows		; queue the rink map rows for Vscroll
+	jsl.l QueueTextDMA		; queue the changed textmap words (textdirtylo/hi)
 	lda.w #VBlank_long		; VBlank sends it all next vblank
 	sta.b vbint
 	stx.b xsave
@@ -473,7 +473,7 @@ checkfo:		;check for face off sprites. Called from setvideo. Falls into checkfo2
 	sta.b sprflag
 .add:
 	phx
-	jsl.l addframe		; bank $8F (sprframe at sprx/spry)
+	jsl.l addframe		; sprframe at sprx/spry
 	plx
 	inx
 	inx
@@ -521,7 +521,7 @@ setsortcords:		;setup sort cord graphics: addframe for the 16 objects in OOlist 
 	lda.w #$8000
 	sta.b sprflag
 .add:
-	jsl.l addframe		; bank $8F (sprframe at sprx/spry)
+	jsl.l addframe		; sprframe at sprx/spry
 .next:
 	inc.b a4
 	lda.b a4
@@ -626,7 +626,7 @@ setffo:		;draw the 5 objects tied to icerink scrolling (pads ...). Called from s
 	and.w #$1000
 	sta.b sprvflip
 	phx
-	jsl.l addframe		; bank $8F (sprframe at sprx/spry)
+	jsl.l addframe		; sprframe at sprx/spry
 	plx
 	cpx.w #$0006		; gloves: no label
 	bcc .label
@@ -698,7 +698,7 @@ setffo:		;draw the 5 objects tied to icerink scrolling (pads ...). Called from s
 	adc.w #$000A
 	sta.b spry
 	phx
-	jsl.l addframe		; bank $8F (sprframe at sprx/spry)
+	jsl.l addframe		; sprframe at sprx/spry
 	plx
 	inc.b d0
 	inc.b d0

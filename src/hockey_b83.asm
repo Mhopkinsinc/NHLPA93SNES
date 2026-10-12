@@ -33,7 +33,7 @@ PlayerNumName:		;SNES: mesarea = "<uniform number> <name>" of the roster player 
 	cpx.w #$0004
 	bne .savea
 	ldx.b xsave
-	jsl.l GetPlayerRecord		; bank $89
+	jsl.l GetPlayerRecord
 	stx.b xsave
 	ldx.w #$0000
 .pushrec:
@@ -74,7 +74,7 @@ PlayerNumName:		;SNES: mesarea = "<uniform number> <name>" of the roster player 
 	dex
 	bpl .poprec
 	ldx.b xsave
-	jsl.l appstring		; bank $8F
+	jsl.l appstring
 	lda.w #mesarea
 	sta.b a1
 	lda.w #$0000
@@ -126,12 +126,12 @@ Pausemode:		;game is in pause mode now. Save textmap, stop the sound, horizontal
 	pha
 	lda.w sflags
 	pha
-	jsl.l forceblack		; bank $8F
+	jsl.l forceblack
 	lda.w #999		; Oldrow = 999, SetHor, setvideo
 	sta.w Oldrow
-	jsl.l SetHor		; bank $8F
+	jsl.l SetHor
 	jsl.l setvideo
-	jsl.l KillCrowd		; bank $8F
+	jsl.l KillCrowd
 .top:		;draw the pause screen
 	jsl.l printbigz		; big PAUSE title and the menu frame (22 x 7)
 	dw $000A		; printz inline string: length (counts itself), then control bytes / text
@@ -143,16 +143,16 @@ Pausemode:		;game is in pause mode now. Save textmap, stop the sound, horizontal
 	sta.b d0
 	lda.w #$0007
 	sta.b d1
-	jsl.l Framer		; bank $8F (d0 x d1)
-	jsl.l printscores1		; bank $89
+	jsl.l Framer		; d0 x d1
+	jsl.l printscores1
 	jsl.l PauseMenu		; nonzero: draw again
 	bne .top
-	jml.l PauseExit		; bank $8F
+	jml.l PauseExit
 PauseMenu:		;draw the menu (Pmenu), read the pad (PauseReadJoy); up/down move psitem (5 items), Start leaves, else the .jump handler of the item.
 		;   Returns A = 0 to leave, 1 to redraw
 	stz.w psitem
 .gj:
-	jsl.l Pmenu		; bank $8F
+	jsl.l Pmenu
 	jsl.l PauseReadJoy
 	lda.b d1		; Start: leave
 	bit.w #JOYSTART
@@ -194,7 +194,7 @@ PauseMenu:		;draw the menu (Pmenu), read the pad (PauseReadJoy); up/down move ps
 	lda.b d1
 	bit.w #cbut
 	beq .gj
-	jsl.l forceblack		; bank $8F
+	jsl.l forceblack
 	jsl.l sndqreset
 	lda.b d7
 	pha
@@ -202,7 +202,7 @@ PauseMenu:		;draw the menu (Pmenu), read the pad (PauseReadJoy); up/down move ps
 	dec a
 	dec a
 	sta.w vcountmark+2
-	jsl.l ReplayMode		; bank $89
+	jsl.l ReplayMode
 	pla
 	sta.b d7
 .redraw:		;return 1: draw the pause screen again
@@ -214,8 +214,8 @@ PauseMenu:		;draw the menu (Pmenu), read the pad (PauseReadJoy); up/down move ps
 	bne .sr1
 	jmp.w .gj
 .sr1:
-	jsl.l StatsScreen		; bank $8F
-	jsl.l StatsReport		; bank $8F
+	jsl.l StatsScreen
+	jsl.l StatsReport
 	bra .redraw
 .ros:		;SNES Team Roster: show the roster, then rebuild the game screen (bg registers, palette, small font tiles, SetHor)
 	lda.b d1
@@ -223,9 +223,9 @@ PauseMenu:		;draw the menu (Pmenu), read the pad (PauseReadJoy); up/down move ps
 	bne .ros1
 	jmp.w .gj
 .ros1:
-	jsl.l TeamRoster		; bank $8F
+	jsl.l TeamRoster
 	jsl.l sndqreset
-	jsl.l forceblack		; bank $8F
+	jsl.l forceblack
 	sep #$20
 	lda.b #$00
 	sta.w BG1SC
@@ -268,7 +268,7 @@ PauseMenu:		;draw the menu (Pmenu), read the pad (PauseReadJoy); up/down move ps
 	sta.b a1+2
 	lda.w #$0064
 	sta.b d0
-	jsl.l RemapTiles		; bank $8F: remap the 4bpp pixels of the unpacked tiles ([a0] data, [a1] table, d0 tiles)
+	jsl.l RemapTiles		; remap the 4bpp pixels of the unpacked tiles ([a0] data, [a1] table, d0 tiles)
 	lda.w #FramerTiles
 	sta.b a0
 	lda.w #FramerTiles>>16
@@ -279,20 +279,20 @@ PauseMenu:		;draw the menu (Pmenu), read the pad (PauseReadJoy); up/down move ps
 	sta.b a1+2
 	lda.w #$0004
 	sta.b d0
-	jsl.l RemapTiles		; bank $8F: remap the 4bpp pixels of the unpacked tiles ([a0] data, [a1] table, d0 tiles)
+	jsl.l RemapTiles		; remap the 4bpp pixels of the unpacked tiles ([a0] data, [a1] table, d0 tiles)
 	lda.b sprclock
 	adc.w #$003C
 	sta.b sprclock
 	lda.w #$FFFF
 	sta.b textdirtylo
 	stz.b textdirtyhi
-	jsl.l SetHor		; bank $8F
+	jsl.l SetHor
 	jsl.l setvideo
 	jmp.w .redraw
 .go:		;Goalie: left/right change tmgoalie (0, 1, none), then Setpersonel
-	jsl.l GetPadTeam		; bank $8F
-	jsl.l GoalieCount		; bank $8F
-	jsl.l GetPadTeam		; bank $8F
+	jsl.l GetPadTeam
+	jsl.l GoalieCount
+	jsl.l GetPadTeam
 	ldy.b a2		; A or right: next goalie; left: previous; d0 = number of goalies
 	lda.b d1
 	bit.w #cbut|JOYRIGHT
@@ -326,7 +326,7 @@ PauseMenu:		;draw the menu (Pmenu), read the pad (PauseReadJoy); up/down move ps
 .jump:		;Resume Game, Instant Replay, Stats Report, Goalie, Team Roster
 	dd PauseResume,.rm,.sr,.go,.ros
 PauseReadJoy:		;wait for a vblank and a new button (not L/R); in demo mode with no controller team the pause ends after pausetimer frames (sets Start)
-	jsl.l IntermissionTick		; bank $8F
+	jsl.l IntermissionTick
 	bne .force
 	jsl.l setvideo
 	lda.b vcount
@@ -378,7 +378,7 @@ Restart:		;SNES: restart from scratch: native mode, stack, DP and DB 0, InitPPU,
 	pha
 	plb
 	rep #$30
-	jsl.l InitPPU		; bank $8D
+	jsl.l InitPPU
 	ldx.w #$0000
 .clr:
 	stz.b vcount,x
@@ -412,5 +412,5 @@ Restart:		;SNES: restart from scratch: native mode, stack, DP and DB 0, InitPPU,
 	sta.b vbint
 	lda.w #HBdefault
 	sta.b hbint
-	jsl.l setoptions		; bank $8F
+	jsl.l setoptions
 	jml.l PlayoffScreenOpening4

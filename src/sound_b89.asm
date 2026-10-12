@@ -78,7 +78,7 @@ StartSong1:		;SNES: start music cue 1 (home goal) unless it plays: the in-game s
 	jsl.l SPCGameUpload
 .cmd:
 	lda.w #$0004
-	jsl.l MusicCue		; bank $8F: driver command A (music cue)
+	jsl.l MusicCue		; driver command A (music cue)
 	lda.w #$0001
 	sta.w cursong
 	lda.w #$0240
@@ -96,7 +96,7 @@ StartSong2:		;SNES: start music cue 2 (period start) unless it plays: the in-gam
 	jsl.l SPCGameUpload
 .cmd:
 	lda.w #$0005
-	jsl.l MusicCue		; bank $8F: driver command A (music cue)
+	jsl.l MusicCue		; driver command A (music cue)
 	lda.w #$0002
 	sta.w cursong
 	lda.w #$01CE
@@ -114,7 +114,7 @@ StartSong3:		;SNES: start music cue 3 (third period, Gameloop by p3cue) unless i
 	jsl.l SPCGameUpload
 .cmd:
 	lda.w #$0006
-	jsl.l MusicCue		; bank $8F: driver command A (music cue)
+	jsl.l MusicCue		; driver command A (music cue)
 	lda.w #$0003
 	sta.w cursong
 	lda.w #$0474
@@ -132,7 +132,7 @@ StartSong4:		;SNES: start music cue 4 (no caller found) unless it plays: the in-
 	jsl.l SPCGameUpload
 .cmd:
 	lda.w #$0007
-	jsl.l MusicCue		; bank $8F: driver command A (music cue)
+	jsl.l MusicCue		; driver command A (music cue)
 	lda.w #$0004
 	sta.w cursong
 	lda.w #$022E
@@ -150,7 +150,7 @@ StartSong5:		;SNES: start music cue 5 (mid-period) unless it plays: the in-game 
 	jsl.l SPCGameUpload
 .cmd:
 	lda.w #$0008
-	jsl.l MusicCue		; bank $8F: driver command A (music cue)
+	jsl.l MusicCue		; driver command A (music cue)
 	lda.w #$0005
 	sta.w cursong
 	lda.w #$041A

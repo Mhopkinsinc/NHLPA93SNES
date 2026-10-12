@@ -241,7 +241,7 @@ ScoutTeamStep:		;SNES: step the showcased player of team a2: a new team (tmteam 
 	sta.b a1
 	jml.l print
 ScoutPlayerExit:		;SNES: the showcased player of team a2 skates off (EraseScoutName, tmflags bit 1)
-	jsl.l EraseScoutName		; bank $89
+	jsl.l EraseScoutName
 	ldy.b a2
 	lda.w tmflags,y
 	ora.w #$0002
@@ -467,7 +467,7 @@ DrawScoutPlayer:		;SNES: addframe for object X at (Xpos + OldXpos - 144, Ypos - 
 	lda.w #$8000
 	sta.b sprflag
 .add:
-	jml.l addframe		; bank $8F
+	jml.l addframe
 
 org $84F532
 UpdateScoutingDisplay:		;called every frame by ScoutingReport. When ScoutingReportTimer runs out (at once if asv
@@ -771,7 +771,7 @@ ScrollDisplayUp:		;next text line for UpdateScoutingDisplay (column 0). After li
 	sta.b d2
 	lda.b d1+2
 	sta.b d2+2
-	jsl.l CopyWords		; bank $89: copy a textmap row
+	jsl.l CopyWords		; copy a textmap row
 	lda.b d2
 	sta.b d1
 	lda.b d2+2

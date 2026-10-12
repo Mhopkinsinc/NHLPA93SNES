@@ -91,7 +91,7 @@ ReplayMode:		;this is instant replay play-back control and display code.
 	lda.w #$0000
 	pha
 .rwd:		;rewind to the first frame, counting the frames
-	jsl.l suba4		; bank $8F (one replay frame back)
+	jsl.l suba4		; one replay frame back
 	pla
 	inc a
 	pha
@@ -103,7 +103,7 @@ ReplayMode:		;this is instant replay play-back control and display code.
 .fwd:		;then forward to the middle
 	lda.b $01,s
 	beq .go
-	jsl.l adda4		; bank $8F (one replay frame on)
+	jsl.l adda4		; one replay frame on
 	pla
 	dec a
 	pha
@@ -210,7 +210,7 @@ ReplayMode:		;this is instant replay play-back control and display code.
 	lda.b d3		; Y held: rewind (one frame per vblank)
 	bit.w #abut
 	beq .step
-	jsl.l suba4		; bank $8F (one replay frame back)
+	jsl.l suba4		; one replay frame back
 	jsl.l SprSort
 	lda.w #VBlank_long
 .wait:
@@ -218,7 +218,7 @@ ReplayMode:		;this is instant replay play-back control and display code.
 	beq .wait
 	bra .vid
 .back1:		;L: one frame back
-	jsl.l suba4		; bank $8F (one replay frame back)
+	jsl.l suba4		; one replay frame back
 .show:
 	jsl.l SprSort
 .vid:
@@ -237,10 +237,10 @@ ReplayMode:		;this is instant replay play-back control and display code.
 	trb.w sflags
 	jmp.w .top
 .fwd1:		;R: one frame on
-	jsl.l adda4		; bank $8F (one replay frame on)
+	jsl.l adda4		; one replay frame on
 	bra .show
 .stepon:
-	jsl.l adda4		; bank $8F (one replay frame on)
+	jsl.l adda4		; one replay frame on
 	jsl.l SprSort
 	jsl.l setvideo
 	asl.b d7
@@ -251,7 +251,7 @@ ReplayMode:		;this is instant replay play-back control and display code.
 	bit.w #sf3rmplay
 	beq .noplay
 	stz.w lastsfx		; lastsfx = 0: play the frame's sound
-	jsl.l adda4		; bank $8F (one replay frame on)
+	jsl.l adda4		; one replay frame on
 	lda.w lastsfx
 	beq .nosfx
 	pha
@@ -265,7 +265,7 @@ ReplayMode:		;this is instant replay play-back control and display code.
 	bne .exit
 	jmp.w .top
 .exit:
-	jsl.l forceblack		; bank $8F
+	jsl.l forceblack
 	lda.w #$F000
 	tsb.w PadControlBits
 	lda.w #sfscrl
@@ -282,7 +282,7 @@ ReplayMode:		;this is instant replay play-back control and display code.
 	sta.w Vpos
 	lda.w #sf2replay
 	trb.w sflags
-	jsl.l SetHor		; bank $8F
+	jsl.l SetHor
 	jsl.l setvideo
 	stz.b textdirtylo
 	lda.w #$03FF
@@ -298,7 +298,7 @@ EraseScoutName:		;SNES: blank the 11 x 2 showcased player name area (ScoutNamePo
 	sta.b d1
 	lda.w blankchar
 	sta.b d2
-	jml.l eraser		; bank $8D
+	jml.l eraser
 GetPlayerRecord:		;SNES: a0 = roster record of player d0 of team a2 (tmdata: the player data, then name length + 8 bytes per player; does it inline)
 	lda.w #TeamList>>16
 	sta.b a0+2
@@ -342,9 +342,9 @@ StartGame:		;reset game state for a new game, then start the first period
 	stz.w gsp
 	stz.w ChkCnt
 	jsl.l restoreteams
-	jsl.l InitScores		; bank $8F
+	jsl.l InitScores
 	jsl.l UpdateScores
-	jml.l StartPer		; bank $8D: on to the period start
+	jml.l StartPer		; on to the period start
 restoreteams:		;Put both teams' rosters on the bench
 		;   SNES: both rosters to the bench: tmap 6, every tmpdst -2
 	stz.b a2

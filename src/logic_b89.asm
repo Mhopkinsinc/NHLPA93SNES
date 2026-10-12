@@ -63,7 +63,7 @@ asswingd:		;asstab 3. player a3 is wing on defense
 .clk:
 	lda.w gmclock
 	beq .bench
-	jml.l assnothing		; bank $8F
+	jml.l assnothing
 .bench:
 	jsl.l check4bench
 	lda.w pflags,x

@@ -176,7 +176,7 @@ AttribStatus:		;Roster column: status. Player d0's word at $66(a2)
 	sta.b a1+2
 	lda.w #StatusTextTbl
 	sta.b a1
-	jml.l PrintStringFromList		; bank $8F (d0 = index, [a1] = list)
+	jml.l PrintStringFromList		; d0 = index, [a1] = list
 .pen:
 	lda.b d0
 	bit.w #TMPDINJ
@@ -186,7 +186,7 @@ AttribStatus:		;Roster column: status. Player d0's word at $66(a2)
 	sta.b d1
 	and.w #$0FFF
 	sta.b d0
-	jsl.l PushTime		; bank $8F (d0 = time)
+	jsl.l PushTime		; d0 = time
 	jsl.l print
 	lda.w #$0004
 	sta.b d0
@@ -200,7 +200,7 @@ AttribStatus:		;Roster column: status. Player d0's word at $66(a2)
 	sta.b a1+2
 	lda.w #StatusTextTbl
 	sta.b a1
-	jml.l PrintStringFromList		; bank $8F (d0 = index, [a1] = list)
+	jml.l PrintStringFromList		; d0 = index, [a1] = list
 StatusTextTbl:		;AttribStatus strings
 	%String("Ice   ")
 	%String("Bench ")
@@ -239,7 +239,7 @@ AttribRating:		;Sum d0 of d1/15 ratings as a percentage
 	sta.b mula
 	lda.b d0
 	sta.b mulb
-	jsl.l mulu		; bank $88, mulres = mula*mulb
+	jsl.l mulu		; mulres = mula*mulb
 	lda.b d1
 	sta.b mula
 	jsl.l divu
@@ -247,7 +247,7 @@ AttribRating:		;Sum d0 of d1/15 ratings as a percentage
 AttribPrintPct:		;print d0 4 wide plus padding
 	lda.w #$0004
 	sta.b d1
-	jsl.l PushNumberWidth		; bank $8F
+	jsl.l PushNumberWidth
 	jsl.l print
 	jsl.l printz
 	dw $0004		; printz inline string: length (counts itself), then control bytes / text
@@ -261,7 +261,7 @@ AttribHanded:		;Roster column: handedness. Bit 0 of the sum
 	sta.b a1+2
 	lda.w #HandedTextTbl
 	sta.b a1
-	jml.l PrintStringFromList		; bank $8F (d0 = index, [a1] = list)
+	jml.l PrintStringFromList		; d0 = index, [a1] = list
 HandedTextTbl:		;AttribHanded strings
 	%String("Right ")
 	%String("Left  ")
@@ -272,7 +272,7 @@ AttribWeight:		;140 + 8 * rating lb
 	asl a
 	adc.w #140
 	sta.b d0
-	jsl.l PushNumber		; bank $8F
+	jsl.l PushNumber
 	jsl.l print
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text

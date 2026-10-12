@@ -185,7 +185,7 @@ assdefo:		;asstab 1. player a3 is defensive player on offense
 .clk:
 	lda.w gmclock
 	beq .bench
-	jml.l assnothing		; bank $8F
+	jml.l assnothing
 .bench:
 	jsl.l check4bench
 	lda.w pflags,x

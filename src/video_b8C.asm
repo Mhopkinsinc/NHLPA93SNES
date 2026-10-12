@@ -153,7 +153,7 @@ checksso:		;do graphics for sso structure: arrows for the two players when they 
 	lda.w ssoattr,x
 	and.w #$1000
 	sta.b sprvflip
-	jml.l addframe		; bank $8F
+	jml.l addframe
 .tab:		;x spot, y spot, frame add, flip bits per direction (.xspot 116, .yspot 100)
 	dw 0,100,0,$0000
 	dw 116,100,1,$0000

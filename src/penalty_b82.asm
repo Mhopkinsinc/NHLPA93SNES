@@ -64,7 +64,7 @@ SetPA2:		;update animation for ref. Next frame/delay pair from the PenaltyList a
 	and.w #$00FF
 	sta.b d0
 .pr:
-	jsl.l PushRef		; bank $8F
+	jsl.l PushRef
 	stx.b xsave
 	ldx.w #$0006
 .resta:
@@ -102,7 +102,7 @@ UpdateScores:		;update ticker score values. Called from PeriodOver
 	sta.w gsflags,y
 	bit.w #gsfso
 	bne .next
-	jsl.l SetScore		; bank $8A
+	jsl.l SetScore
 .next:
 	dec.b a0
 	dec.b a0

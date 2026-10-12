@@ -157,8 +157,8 @@ EncodePW:		;after playoff game compute winners and password if needed. Called fr
 .po:
 	lda.w #$0001
 	sta.w OptPlayMode
-	jsl.l ResolveGames		; bank $8B
-	jsl.l maketree		; bank $8D
+	jsl.l ResolveGames
+	jsl.l maketree
 	lda.w gamelevel		; finished playoffs
 	cmp.w #$0004
 	beq .userwon
@@ -195,11 +195,11 @@ EncodePW:		;after playoff game compute winners and password if needed. Called fr
 	dey
 	dey
 	bpl .cp
-	jsl.l ReadPassBits		; bank $8B
+	jsl.l ReadPassBits
 .tree:
-	jml.l maketree		; bank $8D
+	jml.l maketree
 .userwon:
-	jsl.l ResetPassWord		; bank $8F
+	jsl.l ResetPassWord
 .userfailed:
 	lda.w #$0080		; PassWord bit 7: no password
 	tsb.w PassWord
@@ -308,7 +308,7 @@ DrawGameSetupBack:		;SNES: game setup screen backdrop: textmap blank, GameSetupM
 	sta.b mula
 	lda.w #$0008
 	sta.b mulb
-	jsl.l mulu16		; bank $8D: 16-bit multiply
+	jsl.l mulu16		; 16-bit multiply
 	adc.b tmp0
 	asl a		; logo map word + logochars
 	tax
@@ -342,7 +342,7 @@ GetPassWord:		;bring up password screen and get input
 	jsl.l DrawGameSetupBack
 	jsl.l ReadPads
 	jsl.l Readjoy12
-	jsl.l ClearSprites		; bank $8F: clear the sprite table
+	jsl.l ClearSprites		; clear the sprite table
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $FE,$01,$12
@@ -350,7 +350,7 @@ GetPassWord:		;bring up password screen and get input
 	sta.b d0
 	lda.w #5
 	sta.b d1
-	jsl.l Framer		; bank $8F (d0 x d1)
+	jsl.l Framer		; d0 x d1
 	lda.w #PasswordText
 	sta.b a1
 	lda.w #PasswordText>>16
@@ -407,7 +407,7 @@ GetPassWord:		;bring up password screen and get input
 	stz.b d5
 	jsl.l .setd4		; cursor at character 0, frame around grid character 0
 	jsl.l .setd5
-	jsl.l Framer		; bank $8F (d0 x d1)
+	jsl.l Framer		; d0 x d1
 .topx:
 	jsl.l printz
 	dw $0013		; printz inline string: length (counts itself), then control bytes / text
@@ -427,8 +427,8 @@ GetPassWord:		;bring up password screen and get input
 .wait:		;wait for the next vblank
 	cmp.b vbint
 	beq .wait
-	jsl.l QueueTextDMA		; bank $8F: queue the changed textmap words
-	jsl.l QueueBackmapDMA		; bank $8F
+	jsl.l QueueTextDMA		; queue the changed textmap words
+	jsl.l QueueBackmapDMA
 	lda.w #VBlank_SprPal
 	sta.b vbint
 .pad:
@@ -520,7 +520,7 @@ GetPassWord:		;bring up password screen and get input
 	pla
 	sta.b d5
 	jsl.l .setd5
-	jsl.l Framer		; bank $8F (d0 x d1)
+	jsl.l Framer		; d0 x d1
 	lda.w #PassWord
 	sta.b a0
 	lda.w #$0000
@@ -583,8 +583,8 @@ GetPassWord:		;bring up password screen and get input
 .wait2:
 	cmp.b vbint
 	beq .wait2
-	jsl.l QueueTextDMA		; bank $8F: queue the changed textmap words
-	jsl.l QueueBackmapDMA		; bank $8F
+	jsl.l QueueTextDMA		; queue the changed textmap words
+	jsl.l QueueBackmapDMA
 	lda.w #VBlank_SprPal
 	sta.b vbint
 .notok:
@@ -611,7 +611,7 @@ GetPassWord:		;bring up password screen and get input
 .setup:		;Y: back to the setup screen (new playoffs)
 	lda.w #2
 	sta.w OptPlayMode
-	jml.l Restart		; bank $83: the setup screens
+	jml.l Restart		; the setup screens
 PasswordText:		;"Password" at 2, 14, "Press Start" at 10, 24, then print at 21, 14; then an empty string ends it
 	dw 30
 	db $FF,2,14,"Password",$FF,10,24,"Press Start",$FF,21,14
@@ -625,8 +625,8 @@ TitleScreen:		;bring up title screen and credits
 	sta.w smallfontchars
 	stz.w charofs
 	stz.w charofs2
-	jsl.l forceblack		; bank $8F
-	jsl.l InitPPU		; bank $8D: PPU registers off/clear
+	jsl.l forceblack
+	jsl.l InitPPU		; PPU registers off/clear
 	sep #$20
 	cli
 	lda.w RDNMI
@@ -719,7 +719,7 @@ TitleScreen:		;bring up title screen and credits
 	sta.b a1+2
 	lda.w #$0064
 	sta.b d0
-	jsl.l RemapTiles		; bank $8F: remap the 4bpp pixels ([a0] data, [a1] table, d0 tiles)
+	jsl.l RemapTiles		; remap the 4bpp pixels ([a0] data, [a1] table, d0 tiles)
 	jsl.l StartSong6
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
@@ -816,7 +816,7 @@ TitleScreen:		;bring up title screen and credits
 	asl a
 	asl a
 	sta.b d1
-	jsl.l QueueTextDMA		; bank $8F: queue the changed textmap words
+	jsl.l QueueTextDMA		; queue the changed textmap words
 .top5:		;scroll 6*8 lines
 	lda.b d0
 	inc a
@@ -894,7 +894,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	bne .po
 	jmp.w .rtl
 .po:
-	jsl.l forceblack		; bank $8F
+	jsl.l forceblack
 	sep #$20
 	lda.b #BGMODE_1
 	sta.w BGMODE
@@ -943,7 +943,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	sta.b a1+2
 	lda.w #$0064
 	sta.b d0
-	jsl.l RemapTiles		; bank $8F: remap the 4bpp pixels ([a0] data, [a1] table, d0 tiles)
+	jsl.l RemapTiles		; remap the 4bpp pixels ([a0] data, [a1] table, d0 tiles)
 	lda.w #SmallFontTiles
 	sta.b tmp0
 	lda.w #SmallFontTiles>>16
@@ -959,7 +959,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	sta.b a1+2
 	lda.w #$0064
 	sta.b d0
-	jsl.l RemapTiles		; bank $8F: remap the 4bpp pixels ([a0] data, [a1] table, d0 tiles)
+	jsl.l RemapTiles		; remap the 4bpp pixels ([a0] data, [a1] table, d0 tiles)
 	lda.w #TeamBlocksTiles
 	sta.b tmp0
 	lda.w #TeamBlocksTiles>>16
@@ -1021,7 +1021,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 .other:
 	lda.w #36		; 36 bytes per TeamBlocksMap entry
 	sta.b mulb
-	jsl.l mulu16		; bank $8D: 16-bit multiply
+	jsl.l mulu16		; 16-bit multiply
 	tay
 	lda.w #TeamBlocksMap
 	sta.b a2
@@ -1197,7 +1197,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	sta.b mula
 	lda.w #8
 	sta.b mulb
-	jsl.l mulu16		; bank $8D: 16-bit multiply
+	jsl.l mulu16		; 16-bit multiply
 	adc.b tmp0
 	asl a
 	tax
@@ -1226,7 +1226,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	lda.b tmp1
 	cmp.w #10
 	bne .logorow
-	jsl.l ClearSprites		; bank $8F: clear the sprite table
+	jsl.l ClearSprites		; clear the sprite table
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $EF,"8d"
@@ -1242,7 +1242,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	lda.w BigFontChars		; blank the top and bottom rows with big font tile 0
 	ora.w #$1000
 	sta.b d2
-	jsl.l eraser		; bank $8D (d0 x d1, tile d2)
+	jsl.l eraser		; d0 x d1, tile d2
 	stz.w printx
 	lda.w #104
 	sta.w printy
@@ -1253,7 +1253,7 @@ PlayoffScreen:		;bring up playoff screen if in playoff mode. Called from GameOve
 	lda.w BigFontChars
 	ora.w #$1000
 	sta.b d2
-	jsl.l eraser		; bank $8D (d0 x d1, tile d2)
+	jsl.l eraser		; d0 x d1, tile d2
 	jsl.l StartSong9		; keep the music going
 .scroll:		;clamp Hscroll, queue the 128-column map window, wait a frame
 	lda.w Hscroll

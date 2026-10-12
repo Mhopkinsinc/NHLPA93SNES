@@ -11,7 +11,7 @@ asscentero:		;asstab 6. player a3 is center on offense
 .clk:
 	lda.w gmclock		; clock stopped: assnothing
 	beq .go
-	jml.l assnothing		; bank $8F
+	jml.l assnothing
 .go:
 	jsl.l check4bench
 	lda.w pflags,x		; joystick controlled: nothing
@@ -154,7 +154,7 @@ asscentero:		;asstab 6. player a3 is center on offense
 	sta.b a0
 	lda.w #EvadePC>>16
 	sta.b a0+2
-	jml.l skateto		; bank $88 (d0/d1 = target, a0 = callback)
+	jml.l skateto		; d0/d1 = target, a0 = callback
 .rtl:
 	rtl
 .dedata:		;per zone (x, random x range, y, random y range)

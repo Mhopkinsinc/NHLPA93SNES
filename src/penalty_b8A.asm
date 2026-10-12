@@ -167,7 +167,7 @@ SetScore:		;add to score for game in a0. After period 3 a game within one goal g
 	sta.w nibblebuffer+6
 	lda.w #4		; 4 weights
 	sta.b d0
-	jml.l WeightedRandomSelect		; bank $8F (d0 weights in nibblebuffer)
+	jml.l WeightedRandomSelect		; d0 weights in nibblebuffer
 .sctab:		;weights for 0, 1, 2, 3 goals by ScoreOdds row
 	dw $2B,$1E,$17,$04
 	dw $27,$20,$18,$05

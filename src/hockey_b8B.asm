@@ -62,7 +62,7 @@ NewPO:		;new playoff generates tree with same team 1.
 	dec.b d0
 	bpl .cg
 .tree:
-	jml.l maketree		; bank $8D
+	jml.l maketree
 FigureJoy:		;set cont1team/cont2team appropriately. Called from maketree and UpdateTeamNameisplay.
 		;   SNES: in the playoffs from the po team's game (gamenum, OptTeam2, HomeTeam/VisTeam) and pojoy; else from OptPlayers. Not after the
 		;   demo (notdemo = 0)
@@ -174,7 +174,7 @@ Opening:		;title screen, then into Opening2. Jumped to from Begin
 	jsl.l TitleScreen
 	jml.l Restart
 Opening4:		;SNES: ScoutingReport, then StartGame
-	jsl.l ScoutingReport		; bank $8F
+	jsl.l ScoutingReport
 	jml.l StartGame
 ReadPassBits:		;translate the password bits at a3 (5 words) to the playoff variables.
 		;   SNES: passbits back into the playoff state (SuperDiv by each range, the reverse of WritePassBits); a bad 9-bit checksum sets postarts -1
@@ -422,7 +422,7 @@ ResolveGames:		;compute winners and losers for playoff matchups. Called from Enc
 	sta.w WinBits
 	lda.b d3
 	sta.b mulb
-	jsl.l mulu16		; bank $8D: 16-bit multiply
+	jsl.l mulu16		; 16-bit multiply
 	tsb.w WinBits
 	inc.w gamelevel
 .rtl:
@@ -464,7 +464,7 @@ ResolveGames:		;compute winners and losers for playoff matchups. Called from Enc
 	sta.w WinBits
 	lda.b d3
 	sta.b mulb
-	jsl.l mulu16		; bank $8D: 16-bit multiply
+	jsl.l mulu16		; 16-bit multiply
 	tsb.w WinBits
 	inc.w gamelevel
 	rtl

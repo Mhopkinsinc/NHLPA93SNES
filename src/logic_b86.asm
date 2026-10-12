@@ -22,7 +22,7 @@ lcfound2:		;close lc box. Also called from lineinput
 	sta.b d2
 	lda.b fobox
 	bne .print
-	jsl.l eraser		; bank $8D
+	jsl.l eraser
 .print:
 	jml.l printscores1
 

@@ -88,7 +88,7 @@ assdefd:		;asstab 2. player a3 is defensive player on defense
 .go:
 	lda.w gmclock
 	beq .gm
-	jml.l assnothing		; bank $8F
+	jml.l assnothing
 .gm:
 	jsl.l check4bench
 	lda.w pflags,x
@@ -421,7 +421,7 @@ skateto:		;a0 = extra routine for collision avoidance, d0/d1 = x/y cord to skate
 .go:
 	adc.w #11
 	sta.w temp2,x
-	jsl.l avdgoal		; bank $8D
+	jsl.l avdgoal
 	lda.w #13
 	sta.b d0+2
 	lda.b d0
@@ -545,7 +545,7 @@ skateto:		;a0 = extra routine for collision avoidance, d0/d1 = x/y cord to skate
 .ex:
 	lda.w temp2b,x
 	sta.b d0
-	jml.l doplayeracc		; bank $8F
+	jml.l doplayeracc
 unusedFF88:		;unused, $FF fill to the end of the bank
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF

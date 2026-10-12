@@ -60,13 +60,13 @@ PrintTeamNames:		;SNES: regular season: HomeTeam/VisTeam from the options; print
 	db $BE,$02,$01
 	lda.w VisTeam
 	sta.b d1
-	jsl.l DrawTeamBlocks		; bank $8D: print team d1 name
+	jsl.l DrawTeamBlocks		; print team d1 name
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BE,$15,$01
 	lda.w HomeTeam
 	sta.b d1
-	jsl.l DrawTeamBlocks		; bank $8D: print team d1 name
+	jsl.l DrawTeamBlocks		; print team d1 name
 	jsl.l setteams
 	stx.b xsave
 	ldx.w #$000A

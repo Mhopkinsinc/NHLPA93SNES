@@ -90,7 +90,7 @@ StopNA:		;slow player a3 by 150 on each axis, no animation change. Falls in from
 	sta.b mula
 	lda.b d7
 	sta.b mulb
-	jsl.l mulu16		; bank $8D: mulu, mulres = mula*mulb
+	jsl.l mulu16		; mulu, mulres = mula*mulb
 	lda.w Xvel,x
 	bpl .xp
 	clc
@@ -296,7 +296,7 @@ checkob:		;bring up little warning ref if a player on your team is over blue lin
 .dref:
 	lda.w RefCnt		; ref idle? then bring him up
 	bpl .ex
-	jsl.l PushRef		; bank $8F
+	jsl.l PushRef
 	bra .ex
 .top:
 	lda.b d1
@@ -366,9 +366,9 @@ chk4lc:		;see if computer should call line change
 	lda.b d0
 	cmp.w #$0C01		; average energy of the line still above $C00: no change
 	bcs .rts
-	jsl.l CompLine		; bank $8F
+	jsl.l CompLine
 	jsl.l setpersonel
-	jsl.l printscores1		; bank $89
+	jsl.l printscores1
 	jmp.w CompShoot
 .rts:
 	rtl
@@ -804,7 +804,7 @@ assnearest:		;asstab $11. this is a special assignment used for the player who i
 .clk:
 	lda.w gmclock
 	beq .joy
-	jml.l assnothing		; bank $8F
+	jml.l assnothing
 .joy:
 	lda.w pflags,x
 	bit.w #pfjoycon
@@ -828,7 +828,7 @@ assnearest:		;asstab $11. this is a special assignment used for the player who i
 .clr:
 	stz.w temp3,x
 .mid:		;skate to halfway between the puck spot and the own goal mouth (0,+-$F4)
-	jsl.l skatetopuckinit		; bank $8B (d0/d1 = puck spot)
+	jsl.l skatetopuckinit		; d0/d1 = puck spot
 	lda.b d1
 	pha
 	lda.b d0
@@ -905,7 +905,7 @@ assnearest:		;asstab $11. this is a special assignment used for the player who i
 	sta.b a0
 	lda.w #rtss>>16
 	sta.b a0+2
-	jsl.l skateto		; bank $88 (d0/d1 = spot, [a0] = arrival routine)
+	jsl.l skateto		; d0/d1 = spot, [a0] = arrival routine
 	jmp.w check4check
 .topuck:
 	jsl.l skatetopuck
@@ -974,7 +974,7 @@ check4check:		;look for good opportunity for checking opponent. Falls in from as
 	and.w #$0003
 	sta.b d0
 	bne burst
-	jml.l Acheck		; bank $8F
+	jml.l Acheck
 .next:
 	inc.b a0
 	inc.b a0
@@ -991,13 +991,13 @@ burst:		;cbut press check/speed. Also entered from check4check
 	sec
 	sbc.w #$00CC		; $1000/20
 	sta.b d0
-	jsl.l setpde		; bank $8F
+	jsl.l setpde
 .0:		;speed = energy*$233/$10000
 	lda.b d0
 	sta.b mula
 	lda.w #$0233
 	sta.b mulb
-	jsl.l mulu		; bank $88, mulres = mula*mulb
+	jsl.l mulu		; mulres = mula*mulb
 	lda.b mulres+2
 	sta.b mulb
 	pha
@@ -1044,7 +1044,7 @@ burst:		;cbut press check/speed. Also entered from check4check
 	jmp.w SetSPA
 skatetopuck:		;player a3 should skate to puck. d7 = elapse frames
 		;   SNES: player X skates to the puck. d7 = elapsed frames
-	jsl.l skatetopuckinit		; bank $8B (d0/d1 = puck spot)
+	jsl.l skatetopuckinit		; d0/d1 = puck spot
 	lda.w temp2,x
 	sec
 	sbc.b d7
@@ -1054,7 +1054,7 @@ skatetopuck:		;player a3 should skate to puck. d7 = elapse frames
 .aim:		;every 10 frames: aim at the puck (avoid the goal), maybe sweep check
 	adc.w #$0009		; +10
 	sta.w temp2,x
-	jsl.l avdgoal		; bank $8D
+	jsl.l avdgoal
 	lda.b d1
 	pha
 	lda.b d0
@@ -1205,7 +1205,7 @@ skatetopuck:		;player a3 should skate to puck. d7 = elapse frames
 	ror a
 	sta.w Yvel,x
 .acc:
-	jml.l doplayeracc		; bank $8F (d0 = direction)
+	jml.l doplayeracc		; d0 = direction
 Sweepcheck:		;start sweep check on player a3
 		;   SNES: start a sweep check on player X
 	lda.w #SPAsweepchk		; SPAsweepchk $B44, pfalock
@@ -1281,7 +1281,7 @@ SetShotMode:		;initiate shot by player a3
 	sta.w passspeed
 	lda.w #SPAshotf		; SPAshotf $81C
 	sta.b d1
-	jsl.l Findhittype		; bank $8F (Z = forehand)
+	jsl.l Findhittype		; Z = forehand
 	beq .ck1
 	lda.w #SPAshotb		; SPAshotb $94E
 	sta.b d1
@@ -1388,10 +1388,10 @@ doshot:		;stick is at puck so launch puck toward goal
 	sta.b mulb
 	lda.w passspeed
 	sta.b mula
-	jsl.l mulu16		; bank $8D: mulu, mulres = mula*mulb
+	jsl.l mulu16		; mulu, mulres = mula*mulb
 	lda.w #$2570
 	sta.b mula
-	jsl.l mulu		; bank $88, mulres = mula*mulb
+	jsl.l mulu		; mulres = mula*mulb
 	lda.b mulres+2
 	sta.w passspeed
 	lda.w #$FFFF		; puck loose
@@ -1477,7 +1477,7 @@ doshot:		;stick is at puck so launch puck toward goal
 	sta.b mulb
 	lda.b d3
 	sta.b mula
-	jsl.l mulu16		; bank $8D: mulu, mulres = mula*mulb
+	jsl.l mulu16		; mulu, mulres = mula*mulb
 	lsr a
 	lsr a
 	lsr a
@@ -1513,7 +1513,7 @@ doshot:		;stick is at puck so launch puck toward goal
 	bpl .am
 	lsr.b d0
 .am:
-	jsl.l randomd0sd0		; bank $8F: randomd0s on d0
+	jsl.l randomd0sd0		; randomd0s on d0
 	lda.b $05,s
 	adc.b d0
 	sta.b $05,s
@@ -1554,10 +1554,10 @@ doshot:		;stick is at puck so launch puck toward goal
 	sta.b mulb
 	lda.w passspeed
 	sta.b mula
-	jsl.l mulu16		; bank $8D: mulu, mulres = mula*mulb
+	jsl.l mulu16		; mulu, mulres = mula*mulb
 	lda.w #$0044
 	sta.b mula
-	jsl.l mulu		; bank $88, mulres = mula*mulb
+	jsl.l mulu		; mulres = mula*mulb
 	lda.b d3
 	sta.b mula
 	jsl.l divu
@@ -1567,7 +1567,7 @@ doshot:		;stick is at puck so launch puck toward goal
 	sta.b mula
 	lda.b d3
 	sta.b mulb
-	jsl.l mulu		; bank $88, mulres = mula*mulb
+	jsl.l mulu		; mulres = mula*mulb
 	lda.w passspeed
 	sta.b mula
 	jsl.l divu
@@ -1629,7 +1629,7 @@ asspassrec:		;asstab $13. assignment for catching pass. Assignment apassrec ($13
 	bne .rts		; locked
 	lda.w gmclock		; clock stopped
 	beq .joy
-	jml.l assnothing		; bank $8F
+	jml.l assnothing
 .joy:
 	lda.w pflags,x
 	bit.w #pfjoycon		; joystick controlled
@@ -1666,7 +1666,7 @@ assfight:		;asstab $14. assfight : fighting logic for player X. The SNES drops t
 .go:
 	lda.w Pencntdwn		; fight over
 	bpl .chkna
-	jml.l assnothing		; bank $8F
+	jml.l assnothing
 .chkna:
 	lda.w pflags,x
 	bit.w #pfna
@@ -1679,7 +1679,7 @@ assfight:		;asstab $14. assfight : fighting logic for player X. The SNES drops t
 	sta.b mula
 	lda.b d0
 	sta.b mulb
-	jsl.l mulu16		; bank $8D: mulu, mulres = mula*mulb
+	jsl.l mulu16		; mulu, mulres = mula*mulb
 	xba
 	and.w #$00FF
 	lsr a
@@ -2077,7 +2077,7 @@ CwdFight:		;crowd reacts to a punch; push the hit player X back by the puncher (
 	sta.b mulb
 	lda.w #$01F4
 	sta.b mula
-	jsl.l mulu16		; bank $8D: mulu, mulres = mula*mulb
+	jsl.l mulu16		; mulu, mulres = mula*mulb
 	sta.b d0
 	lda.w facedir,x
 	cmp.w #$0002		; push the other way when facing right
@@ -2316,7 +2316,7 @@ assfwatch:		;asstab $15. for player who is watching fight
 	pla
 	ror a
 	sta.w Yvel,x
-	jsl.l skateto		; bank $88 (d0/d1 = spot, [a0] = arrival routine)
+	jsl.l skateto		; d0/d1 = spot, [a0] = arrival routine
 	jmp.w check4check
 .rts:
 	rtl
@@ -2334,7 +2334,7 @@ assfaceoff:		;asstab $16. players do nothing until faceoff is over
 	sta.b sndlock
 	stz.b sndqin
 	stz.b sndqout
-	jsl.l StartSong1		; bank $89: home goal music cue
+	jsl.l StartSong1		; home goal music cue
 .per:
 	lda.w percue		; period start music cue
 	beq .mid
@@ -2343,7 +2343,7 @@ assfaceoff:		;asstab $16. players do nothing until faceoff is over
 	sta.b sndlock
 	stz.b sndqin
 	stz.b sndqout
-	jsl.l StartSong2		; bank $89: period start music cue
+	jsl.l StartSong2		; period start music cue
 .mid:
 	lda.w cuetimer		; no cue playing, clock >= 60 and past midpercue: mid-period cue
 	bne .rts
@@ -2353,7 +2353,7 @@ assfaceoff:		;asstab $16. players do nothing until faceoff is over
 	cmp.w midpercue
 	bcs .rts
 	stz.w midpercue
-	jsl.l StartSong5		; bank $89: mid-period music cue
+	jsl.l StartSong5		; mid-period music cue
 .rts:
 	rtl
 assexit:		;exit current assignment on player a3

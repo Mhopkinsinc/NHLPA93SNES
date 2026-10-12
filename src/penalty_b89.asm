@@ -46,8 +46,8 @@ printscores1:		;draw scoreboard. Vertical rink: period box and the score box (te
 	sta.b a1
 	lda.w #PerLabels>>16
 	sta.b a1+2
-	jsl.l PrintStringFromList		; bank $8F
-	jsl.l EASNLogo		; bank $8D
+	jsl.l PrintStringFromList
+	jsl.l EASNLogo
 	lda.w sflags3		; lower line change box is up
 	bit.w #sf3llcs
 	bne .ex
@@ -58,7 +58,7 @@ printscores1:		;draw scoreboard. Vertical rink: period box and the score box (te
 	sta.b d0
 	lda.w #5
 	sta.b d1
-	jsl.l Framer		; bank $8F (d0 x d1)
+	jsl.l Framer		; d0 x d1
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$1C,$18
@@ -125,15 +125,15 @@ printscores1:		;draw scoreboard. Vertical rink: period box and the score box (te
 	db $BF,$17,$04
 	lda.w tmscore		; home score in big font
 	sta.b d0
-	jsl.l PushNumber		; bank $8F
-	jsl.l printbig		; bank $8B
+	jsl.l PushNumber
+	jsl.l printbig
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$07,$04
 	lda.w tmscore+2		; away score
 	sta.b d0
-	jsl.l PushNumber		; bank $8F
-	jsl.l printbig		; bank $8B
+	jsl.l PushNumber
+	jsl.l printbig
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$17,$02

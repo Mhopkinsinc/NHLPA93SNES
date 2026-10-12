@@ -26,17 +26,17 @@ lineinput:		;process input for line changes
 	stz.b d2
 	bit.w #abut		; Y: choice 0
 	beq .b
-	jml.l lcfound		; bank $8F (d2 = choice)
+	jml.l lcfound		; d2 = choice
 .b:
 	inc.b d2
 	bit.w #bbut		; B: choice 1
 	beq .a
-	jml.l lcfound		; bank $8F (d2 = choice)
+	jml.l lcfound		; d2 = choice
 .a:
 	inc.b d2
 	bit.w #JOYA		; A: choice 2
 	beq .dpad
-	jml.l lcfound		; bank $8F (d2 = choice)
+	jml.l lcfound		; d2 = choice
 .dpad:
 	lda.w pflags,x		; joystick controlled, not locked or fighting: skate
 	bit.w #pfjoycon
@@ -45,7 +45,7 @@ lineinput:		;process input for line changes
 	bne .x
 	lda.w pf2fight,x
 	bne .x
-	jml.l doplayeracc		; bank $8F
+	jml.l doplayeracc
 .x:
 	rtl
 getlchoice:		;d0 = choice 0-2 of team a2 -> d0 = line 0-6 by the man advantage and tmline (.tab), -1 = none

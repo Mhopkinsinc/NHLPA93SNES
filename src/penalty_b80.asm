@@ -33,7 +33,7 @@ ClrHor:		;revert the graphics back to vertical ice rink mode. Does not remap the
 	stz.b textdirtylo		; whole text map dirty
 	lda.w #$03FF
 	sta.b textdirtyhi
-	jsl.l printscores1		; bank $89
+	jsl.l printscores1
 .ex:
 	stx.b xsave
 	ldx.w #$003A
@@ -171,8 +171,8 @@ updatepwrplay:		;show graphic and time remaining for power plays. Prints the tim
 	jsl.l printz
 	dw $0012		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$01,$19,"   ",$16,$17,$18,$19,$BF,$01,$1A,"   "
-	jsl.l GetLowestPen		; bank $8D
-	jsl.l PushTime		; bank $8F
+	jsl.l GetLowestPen
+	jsl.l PushTime
 	jsl.l print
 	ldx.b a3
 	lda.w tmdata,x		; team name (bank $83)
@@ -185,7 +185,7 @@ updatepwrplay:		;show graphic and time remaining for power plays. Prints the tim
 	sta.b a3+2
 	lda.w #$0002
 	sta.b [a3]
-	jsl.l appendz		; bank $82
+	jsl.l appendz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$01,$19
 	lda.b a0
@@ -198,7 +198,7 @@ updatepwrplay:		;show graphic and time remaining for power plays. Prints the tim
 	sta.b a1
 	lda.b a0+2
 	sta.b a1+2
-	jsl.l appstring		; bank $8F
+	jsl.l appstring
 	lda.b a3
 	sta.b a1
 	lda.b a3+2
@@ -208,7 +208,7 @@ updatepwrplay_clr:		;power play over, EASN logo back
 	lda.w #sf2pwrplay
 	trb.w sflags
 	beq .rtl
-	jml.l EASNLogo		; bank $8D
+	jml.l EASNLogo
 .rtl:
 	rtl
 printteamname:		;print the team name of team d3 (0 home) at printx/printy, then printy += 2
@@ -444,7 +444,7 @@ PenGoalStuff:		;do this stuff after a goal. a1 = scored on team, a2 = scoring te
 	cpx.w #$0004
 	bne .savea
 	ldx.b xsave
-	jsl.l ClearPenaltyBuffer		; bank $8F
+	jsl.l ClearPenaltyBuffer
 	ldy.b a2
 	lda.w tmap,y		; tmap(a2) - tmap(a1) > 0?
 	ldy.b a1
@@ -482,7 +482,7 @@ PenGoalStuff:		;do this stuff after a goal. a1 = scored on team, a2 = scoring te
 	bne .loop
 	lda.w #$0000		; out of the box, one more on the ice, power play goal
 	sta.w tmpdst,y
-	jsl.l RemovePlayerFromList		; bank $8F
+	jsl.l RemovePlayerFromList
 	ldy.b a1
 	lda.w tmap,y
 	inc a
@@ -518,7 +518,7 @@ PenGoalStuff:		;do this stuff after a goal. a1 = scored on team, a2 = scoring te
 org $80E6C7
 PenaltyManager:		;called periodically. d7 = elapsed time since last call
 		;   SNES: updatepentime, checkfornewpen, chkprogress, UpdatePA
-	jsl.l updatepentime		; bank $8F
+	jsl.l updatepentime
 	jsl.l checkfornewpen
 	jsl.l chkprogress
 	jmp.w UpdatePA
@@ -952,8 +952,8 @@ chkprogress:		;control progress of ref and game control thru penalty events. Whe
 	beq .find
 	lda.w #sf2drec		; sf2drec, SetHor, load the horizontal ref; the puck does nothing for 120 s
 	tsb.w sflags
-	jsl.l SetHor		; bank $8F
-	jsl.l NewTicker		; bank $8F (horizontal ref)
+	jsl.l SetHor
+	jsl.l NewTicker		; horizontal ref
 	lda.w #$FF00
 	tsb.w puckc
 	ldx.w #puckobj
@@ -971,7 +971,7 @@ chkprogress:		;control progress of ref and game control thru penalty events. Whe
 	lda.w #$0032
 	sta.w RefCnt
 	stz.b d0
-	jsl.l PushRef		; bank $8F
+	jsl.l PushRef
 .rtl:
 	rtl
 InProgress:		;ref in progress-- update graphics and stats and penalty information. Takes the last PenBuf entry: the first pass logs a penalty with minutes and sends the player to the box
@@ -1129,7 +1129,7 @@ InProgress:		;ref in progress-- update graphics and stats and penalty informatio
 	lda.b d2
 	and.w #$00FF
 	sta.b mulb
-	jsl.l mulu16		; bank $8D: mulu, A = mula*mulb
+	jsl.l mulu16		; mulu, A = mula*mulb
 	ora.w #$2000
 	sta.b d2
 	lda.b a2
@@ -1230,7 +1230,7 @@ InProgress:		;ref in progress-- update graphics and stats and penalty informatio
 	ldx.b xsave
 	ldx.b a3		; SetPA, USBoard
 	jsl.l SetPA
-	jsl.l USBoard		; bank $8F
+	jsl.l USBoard
 	bra .ex
 .sa2:
 	lda.w #$0000		; no minutes: clear it, SetPA
@@ -1332,7 +1332,7 @@ UpdatePA:		;animate ref in ref window. Reprints the horizontal penalty message l
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$11,$0B
-	jsl.l GetPlayerName		; bank $8D (a1 = name)
+	jsl.l GetPlayerName		; a1 = name
 	lda.b [a1]
 	lsr a
 	sta.b d0
@@ -1348,7 +1348,7 @@ SetPA:		;start ref animation. d0 = animation (penalty number)
 	lda.b d0		; RefPen = d0, RefStep = 0, prefmes
 	sta.w RefPen
 	stz.w RefStep
-	jsl.l prefmes		; bank $8F
+	jsl.l prefmes
 	lda.b d0
 	cmp.w #PenGoal		; goal: the goal box
 	bne .0

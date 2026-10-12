@@ -166,7 +166,7 @@ DrawFrameHi:		;SNES: draw frame sprframe (6-byte pieces) of the frame set at [fa
 	sta.b sprslot
 	cmp.b sprslotend
 	bne .chk
-	jml.l addframe_full		; bank $8F: VRAM sprite cache full
+	jml.l addframe_full		; VRAM sprite cache full
 .chk:
 	asl a
 	tax
@@ -333,7 +333,7 @@ DrawFrameHi:		;SNES: draw frame sprframe (6-byte pieces) of the frame set at [fa
 	sta.b sprbigslot
 	cmp.b sprbigslotend
 	bne .bchk
-	jml.l addframe_full		; bank $8F: VRAM sprite cache full
+	jml.l addframe_full		; VRAM sprite cache full
 .bchk:
 	and.w #$000F
 	cmp.w #$000F

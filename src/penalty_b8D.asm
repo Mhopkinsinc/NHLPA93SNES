@@ -164,7 +164,7 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	sta.b d0
 	lda.w #3
 	sta.b d1
-	jsl.l Framer		; bank $8F (d0 x d1)
+	jsl.l Framer		; d0 x d1
 	inc.w printx
 	dec.w printy
 	dec.w printy
@@ -173,13 +173,13 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	db "Highlight from game:"
 	lda.w #180		; 180 frames, Start skips
 	sta.b d0
-	jsl.l waitxsr		; bank $8F: wait d0 frames or a button
+	jsl.l waitxsr		; wait d0 frames or a button
 	lda.b d1
 	bit.w #JOYSTART
 	beq .play
 	jmp.w .nhl1
 .play:
-	jsl.l forceblack		; bank $8F
+	jsl.l forceblack
 	jsl.l sndqreset
 	lda.w sndbank
 	cmp.w #$0001
@@ -416,7 +416,7 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	cpx.w #$0004
 	bne .pusha0
 	ldx.b xsave
-	jsl.l KillCrowd		; bank $8F
+	jsl.l KillCrowd
 	jsl.l sndqreset
 	stx.b xsave
 	ldx.w #$0002
@@ -446,10 +446,10 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	beq .stats
 	jmp.w .nhl1
 .stats:
-	jsl.l forceblack		; bank $8F
+	jsl.l forceblack
 	jsl.l .lo		; restore the game state
 	jsl.l setplayercolors
-	jsl.l SetHor		; bank $8F
+	jsl.l SetHor
 	jsl.l setvideo
 	jsl.l printz		; DisplayStats box
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
@@ -458,9 +458,9 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	sta.b d0
 	lda.w #7
 	sta.b d1
-	jsl.l Framer		; bank $8F (d0 x d1)
+	jsl.l Framer		; d0 x d1
 	jsl.l printscores1
-	jsl.l Pmenu		; bank $8F: DisplayStats
+	jsl.l Pmenu		; DisplayStats
 	stx.b xsave
 	ldx.w #$001A
 .resta:
@@ -512,10 +512,10 @@ StartHL2:		;play hilite for game a0. Start skips it with a random result. A tied
 	sta.w gsper,y
 	lda.b d1
 	sta.b d3
-	jsl.l NewTicker3		; bank $8F
+	jsl.l NewTicker3
 	lda.w #180
 	sta.b d0
-	jsl.l waitxsr		; bank $8F: wait d0 frames or a button
+	jsl.l waitxsr		; wait d0 frames or a button
 	lda.b d1
 	bit.w #JOYSTART
 	beq .exit

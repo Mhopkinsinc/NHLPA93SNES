@@ -133,7 +133,7 @@ PickStartingGoalie:		;SNES: tmgoalie of team a2 = 0 (FigureJoy); a computer team
 	ldy.b a2
 	lda.w #$0000
 	sta.w tmgoalie,y
-	jsl.l FigureJoy		; bank $8B
+	jsl.l FigureJoy
 	lda.b a2
 	tay
 	lsr a
@@ -171,8 +171,8 @@ PickStartingGoalie:		;SNES: tmgoalie of team a2 = 0 (FigureJoy); a computer team
 	sta.b a0
 	lda.w #$0004
 	sta.b d0
-	jsl.l UnpackNibbles		; bank $8F
-	jsl.l WeightedRandomSelect		; bank $8F
+	jsl.l UnpackNibbles
+	jsl.l WeightedRandomSelect
 .set:
 	ldy.b a2
 	lda.b d0

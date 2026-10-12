@@ -75,7 +75,7 @@ Start:		; Start + Begin (RAM clear). Reset vector. Native mode, stack $1FFF, D=0
 	bne .validate
 	lda.w #$0001		; hold the sound queue while the hardware/sound driver starts
 	sta.b sndlock
-	jsl.l InitPPU		; bank $8D: PPU registers off/clear, sound driver start
+	jsl.l InitPPU		; PPU registers off/clear, sound driver start
 	sep #$20
 	cli
 	lda.w RDNMI		; ack a pending NMI
@@ -85,7 +85,7 @@ Start:		; Start + Begin (RAM clear). Reset vector. Native mode, stack $1FFF, D=0
 	jsl.l SPCBootUpload
 	stz.b sndlock
 	stz.b vbactive		; vblank handlers may run
-	jsl.l ResetPassWord		; bank $8F: $1610-$161F = $1E
-	jsl.l DefaultMenus		; bank $8F (initial menu choices at $1600)
+	jsl.l ResetPassWord		; $1610-$161F = $1E
+	jsl.l DefaultMenus		; initial menu choices at $1600
 	jsl.l Readjoy12
-	jml.l Opening		; bank $8B: on to the title screen
+	jml.l Opening		; on to the title screen
