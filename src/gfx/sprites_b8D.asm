@@ -2,7 +2,7 @@
 ; Bank $8D. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8D883C
-SpriteSet10:		;frame set 10 (frames 462-517): frames 462-517
+SpriteSet10:		;frame set 10: frames 462-517
 	dw 56		; frames
 	dw 388		; pieces
 	dw 768		; tiles
