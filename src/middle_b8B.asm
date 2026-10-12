@@ -8,13 +8,13 @@ printbig:		;same as print, only use bigfont.map graphics. a1 = string macro, pri
 	phx
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	ldy.w #$0002		; y = 2: after the length word
 .top:
@@ -34,9 +34,9 @@ printbig:		;same as print, only use bigfont.map graphics. a1 = string macro, pri
 	sta.b d1
 	lda.b [a1],y
 	bit.w #$0080
-	beq .char
+	beq .dochar
 	jmp.w .code
-.char:
+.dochar:
 	and.w #$00FF
 	bne .lc
 	jmp.w .skip
@@ -193,12 +193,12 @@ printbig:		;same as print, only use bigfont.map graphics. a1 = string macro, pri
 .done:
 	stx.b xsave
 	ldx.w #$000A
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	plx
 	rtl
