@@ -2,7 +2,7 @@
 ; Bank $8B. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8B8000
-NewPO:		;93 continue playoffs: read the playoff state back from the password bits, rebuild the tree.
+NewPO:		;new playoff generates tree with same team 1.
 		;   SNES: new playoffs with the same team 1: random postarts whose playoffseats hold OptTeam1 (all-star teams count as team 23), clear the series, then maketree
 	lda.w #32		; d0 = random 0-31
 	sta.b d0
@@ -49,7 +49,7 @@ NewPO:		;93 continue playoffs: read the playoff state back from the password bit
 	sta.b bosgames
 	lda.w OptPlayMode
 	cmp.w #2
-	beq .n0
+	beq .tree
 	stz.b bosgames		; best of seven: clear the series
 	lda.w #7
 	sta.b d0
@@ -61,9 +61,9 @@ NewPO:		;93 continue playoffs: read the playoff state back from the password bit
 	inx
 	dec.b d0
 	bpl .cg
-.n0:
+.tree:
 	jml.l maketree		; bank $8D
-FigureJoy:		;set cont1team/cont2team appropriately. Called from maketree and UpdateTeamNameisplay .
+FigureJoy:		;set cont1team/cont2team appropriately. Called from maketree and UpdateTeamNameisplay.
 		;   SNES: in the playoffs from the po team's game (gamenum, OptTeam2, HomeTeam/VisTeam) and pojoy; else from OptPlayers. Not after the
 		;   demo (notdemo = 0)
 	stz.w cont1team
@@ -169,11 +169,11 @@ FigureJoy:		;set cont1team/cont2team appropriately. Called from maketree and Upd
 	dw 2,0
 	dw 1,1
 	dw 1,2
-Opening:		;title screen, then into Opening2. Jumped to from Begin. Same as 92 REV A
+Opening:		;title screen, then into Opening2. Jumped to from Begin
 		;   SNES: TitleScreen, then Restart
 	jsl.l TitleScreen
 	jml.l Restart
-Opening4:		;ScoutingReport (ScoutingReport), then StartGame
+Opening4:		;SNES: ScoutingReport, then StartGame
 	jsl.l ScoutingReport		; bank $8F
 	jml.l StartGame
 ReadPassBits:		;translate the password bits at a3 (5 words) to the playoff variables.
@@ -188,7 +188,7 @@ ReadPassBits:		;translate the password bits at a3 (5 words) to the playoff varia
 	sta.b d2
 	lda.w #14
 	sta.b a1
-.gs:		;the 8 series scores, range 5
+.0:		;the 8 series scores, range 5
 	ldy.b a1
 	lda.w gsflags,y		; gsftf off
 	and.w #$FFFB
@@ -200,11 +200,11 @@ ReadPassBits:		;translate the password bits at a3 (5 words) to the playoff varia
 	ldy.b a1
 	sta.w gspobwins,y
 	cmp.w #4		; 4 wins: gsftf (series over)
-	bne .g1
+	bne .nsf0
 	lda.w gsflags,y
 	ora.w #$0004
 	sta.w gsflags,y
-.g1:
+.nsf0:
 	lda.w #5
 	sta.b d0
 	jsl.l .sd
@@ -212,15 +212,15 @@ ReadPassBits:		;translate the password bits at a3 (5 words) to the playoff varia
 	lda.b d0
 	sta.w gspotwins,y
 	cmp.w #4
-	bne .g2
+	bne .nsf1
 	lda.w gsflags,y
 	ora.w #$0004
 	sta.w gsflags,y
-.g2:
+.nsf1:
 	dec.b a1
 	dec.b a1
 	dec.b d2
-	bpl .gs
+	bpl .0
 	lda.w #$4000
 	sta.b d0
 	jsl.l .sd
@@ -338,45 +338,45 @@ ResolveGames:		;compute winners and losers for playoff matchups. Called from Enc
 	lda.w gamelevel
 	sec
 	sbc.w #3
-	bmi .lt
+	bmi .lvlneg
 	bvs .cr
 	bra .nextround
-.lt:
+.lvlneg:
 	bvs .nextround
 .cr:
 	jsl.l GetShifter
 	lda.b d1
 	asl a
 	sta.b a0
-.c0:
+.cr0:
 	ldy.b a0
 	lda.b d1
 	cmp.w gamenum
-	beq .c1
+	beq .crn
 	lda.w #4
 	cmp.w gspotwins,y
-	beq .c1
+	beq .crn
 	cmp.w gspobwins,y
-	beq .c1
+	beq .crn
 	lda.w gspotwins,y
 	inc a
 	sta.w gspotwins,y
 	lda.w #200		; random series result: 50/50 per game
 	jsl.l randoma
 	lsr a
-	bcc .c0
+	bcc .cr0
 	lda.w gspotwins,y
 	dec a
 	sta.w gspotwins,y
 	lda.w gspobwins,y
 	inc a
 	sta.w gspobwins,y
-	bra .c0
-.c1:
+	bra .cr0
+.crn:
 	dec.b a0
 	dec.b a0
 	dec.b d1
-	bpl .c0
+	bpl .cr0
 	jsl.l WritePassBits		; sf3alttree: passbits before the rest was resolved
 	ldy.w #$000E
 .cp:
@@ -394,24 +394,24 @@ ResolveGames:		;compute winners and losers for playoff matchups. Called from Enc
 	asl a
 	sta.b a0
 	stz.b d3
-.n0:
+.nr0:
 	ldy.b a0
 	lda.w gspotwins,y
 	cmp.w #$0004
-	beq .n1
+	beq .nr1
 	lda.b d1
 	asl a
 	tax
 	lda.l BitMaskTable,x
 	tsb.b d3
-.n1:
+.nr1:
 	lda.w #$0000
 	sta.w gspotwins,y
 	sta.w gspobwins,y
 	dec.b a0
 	dec.b a0
 	dec.b d1
-	bpl .n0
+	bpl .nr0
 	lda.b d2		; WinBits: the winners of level d2
 	asl a
 	tax
