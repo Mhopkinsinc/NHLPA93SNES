@@ -88,7 +88,7 @@ def dest(module, s):
         return 'routines/%s' % ('video' if module == 'gfx' else module)
     if module in ('gfx',): return 'data/gfx'
     if module == 'frames': return 'data/frames'
-    if module == 'teamdata': return 'data/teams'
+    if module == 'teamdata': return 'data'
     if n is None: raise SystemExit('unnamed segment in %s: %r' % (module, s['lines'][:4]))
     if TEXTY.search(n): return 'data/text'
     if module == 'sound': return 'data/sound'

@@ -236,34 +236,7 @@ Regenerate this file with `python3 tools/gen_file_map.py` after `./build.sh`.
 
 ## src/banks/b83_teams.asm
 
-- `$838000` data/teams/TeamList.asm (also TeamListEnd)
-- `$838068` data/teams/AllStarsEast.asm
-- `$8382F6` data/teams/AllStarsWest.asm
-- `$83858B` data/teams/Boston.asm
-- `$838833` data/teams/Buffalo.asm
-- `$838AE6` data/teams/Calgary.asm
-- `$838D83` data/teams/Chicago.asm
-- `$839032` data/teams/Detroit.asm
-- `$8392DD` data/teams/Edmonton.asm
-- `$83957E` data/teams/Hartford.asm
-- `$839823` data/teams/LosAngeles.asm
-- `$839ADF` data/teams/LongIsland.asm
-- `$839D7D` data/teams/Minnesota.asm
-- `$83A00E` data/teams/Montreal.asm
-- `$83A2D8` data/teams/NewJersey.asm
-- `$83A583` data/teams/NewYork.asm
-- `$83A83F` data/teams/Ottawa.asm
-- `$83AA52` data/teams/Philadelphia.asm
-- `$83AD02` data/teams/Pittsburgh.asm
-- `$83AF9D` data/teams/Quebec.asm
-- `$83B26A` data/teams/SanJose.asm
-- `$83B516` data/teams/StLouis.asm
-- `$83B7C3` data/teams/TampaBay.asm
-- `$83B9FA` data/teams/Toronto.asm
-- `$83BCA8` data/teams/Vancouver.asm
-- `$83BF4F` data/teams/Winnipeg.asm
-- `$83C204` data/teams/Washington.asm
-- `$83C4B8` data/teams/playoffseats.asm (also playoffseatsEnd)
+- `$838000` data/teamdata93s.asm (also TeamListEnd, AllStarsEast, AllStarsWest, Boston, Buffalo, Calgary, Chicago, Detroit, Edmonton, Hartford, LosAngeles, LongIsland, Minnesota, Montreal, NewJersey, NewYork, Ottawa, Philadelphia, Pittsburgh, Quebec, SanJose, StLouis, TampaBay, Toronto, Vancouver, Winnipeg, Washington, playoffseats, playoffseatsEnd)
 - `$83C6D8` data/gfx/SmallFontTiles.asm (also SmallFontTilesEnd)
 - `$83CC0C` routines/hockey/PlayerNumName.asm
 - `$83CCCB` data/gfx/IceRinkMap.asm (also IceRinkMapEnd)
@@ -424,7 +397,7 @@ Regenerate this file with `python3 tools/gen_file_map.py` after `./build.sh`.
 
 - `$8A8000` data/gfx/SpriteSet12.asm (also SpriteSet12End)
 - `$8AF880` data/gfx/PlayoffBracketMap.asm
-- `$8AFAA8` data/teams/Credits.asm
+- `$8AFAA8` data/text/Credits.asm
 - `$8AFD0C` routines/logic/lineinput.asm
 - `$8AFD6D` routines/logic/getlchoice.asm
 - `$8AFE21` routines/penalty/SetScore.asm (also unusedFF8A)
