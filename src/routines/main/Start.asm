@@ -1,5 +1,5 @@
-Start:		; Start + Begin (RAM clear). Reset vector. Native mode, stack $1FFF, D=0, DB=$00; clears DP/RAM, sets vbint/hbint, inits the sprite tile cache
-		;   checks the ROM sum, inits hardware/sound, then the title screen
+Start:		;Reset entry and cold start: switch to native mode, clear RAM, set up the interrupt handlers and sprite tile cache,
+		;   check the ROM, start the hardware and sound, then go to the title screen
 	sei		; interrupts off
 	clc
 	xce		; native mode
