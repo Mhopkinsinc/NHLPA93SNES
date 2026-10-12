@@ -2,28 +2,28 @@
 ; Bank $84. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $84FC44
-GetNameandAttrib:		;print player d0's name, then at x $1E the column picked by
+GetNameandAttrib:		;print player d0's name, then the column picked by d4
 		;   SNES: print player d0 (number and name), then at x 26 the column d4 (attribjmp); columns above 2 average the rating nibbles masked by
 		;   d4 high word
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0014
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	jsl.l PlayerNumName
 	jsl.l print
@@ -43,14 +43,14 @@ GetNameandAttrib:		;print player d0's name, then at x $1E the column picked by
 	ldy.w #Playerdata
 	adc.b [a0],y
 	sta.b a0
-.pl:
+.skip:
 	lda.b a0
 	clc
 	adc.b [a0]
 	adc.w #$0008
 	sta.b a0
 	dec.b d0
-	bpl .pl
+	bpl .skip
 	stz.b d0
 	stz.b d1
 	lda.w #$000F
@@ -59,22 +59,22 @@ GetNameandAttrib:		;print player d0's name, then at x $1E the column picked by
 	ldy.b d4+2
 	sta.b d4+2
 	sty.b d4
-.one:
+.bit:
 	lda.b d4
 	sta.b tmp0
 	lda.b d4+2
 	sta.b tmp1
 	lda.b d2
 	sta.b tmp2
-.sh:
+.shift:
 	dec.b tmp2
-	bmi .bit
+	bmi .test
 	lsr.b tmp1
 	ror.b tmp0
-	bra .sh
-.bit:
+	bra .shift
+.test:
 	lsr.b tmp0
-	bcc .three
+	bcc .next
 	lda.b d2
 	lsr a
 	eor.w #$FFFF
@@ -89,14 +89,14 @@ GetNameandAttrib:		;print player d0's name, then at x $1E the column picked by
 	sta.b d3
 	lda.b d2
 	lsr a
-	bcc .lo
+	bcc .2
 	lda.b d3
 	lsr a
 	lsr a
 	lsr a
 	lsr a
 	sta.b d3
-.lo:
+.2:
 	lda.b d3
 	and.w #$000F
 	sta.b d3
@@ -107,9 +107,9 @@ GetNameandAttrib:		;print player d0's name, then at x $1E the column picked by
 	clc
 	adc.w #$000F
 	sta.b d1
-.three:
+.next:
 	dec.b d2
-	bpl .one
+	bpl .bit
 	lda.b d4
 	ldy.b d4+2
 	sta.b d4+2
@@ -130,32 +130,32 @@ GetNameandAttrib:		;print player d0's name, then at x $1E the column picked by
 	jsl.l jmlvector
 	stx.b xsave
 	ldx.w #$0006
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0012
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	rtl
 attribjmp:		;GetNameandAttrib column handlers, offsets from attribjmp
 	dw AttribStatus-attribjmp,AttribEnergy-attribjmp,AttribHanded-attribjmp,AttribWeight-attribjmp,AttribFighting-attribjmp,AttribRating-attribjmp
-AttribStatus:		;Player d0's word at $66(a2):
+AttribStatus:		;Roster column: status. Player d0's word at $66(a2)
 		;   SNES: tmpdst of player d0: Ice/Bench/Injury, or the penalty time (injured: Inj G, $4000: C)
 	asl.b d0
 	lda.b a2
-	beq .tm
+	beq .team
 	lda.w #$0034
-.tm:
+.team:
 	adc.b d0
 	tay
 	lda.w tmpdst,y		; tmpdst: negative = not of the status
@@ -208,13 +208,13 @@ StatusTextTbl:		;AttribStatus strings
 	%String("Inj G ")
 	%String("  ")
 	%String(" C")
-AttribEnergy:		;$32(a2) word / 40, max 100
+AttribEnergy:		;Roster column: energy. $32(a2) word / 40, max 100
 		;   SNES: tmpde of player d0 / 40, max 100
 	asl.b d0
 	lda.b a2
-	beq .tm
+	beq .team
 	lda.w #$0034
-.tm:
+.team:
 	adc.b d0
 	tay
 	lda.w tmpde,y		; divu16 by 40
@@ -223,12 +223,12 @@ AttribEnergy:		;$32(a2) word / 40, max 100
 	sta.b mula
 	jsl.l divu16
 	cmp.w #$0065
-	bcc .pr
+	bcc .cap
 	lda.w #$0064
-.pr:
+.cap:
 	sta.b d0
 	bra AttribPrintPct
-AttribFighting:		;Bit 0 of the nibble is
+AttribFighting:		;Roster column: fighting
 		;   SNES: bit 0 of the nibble is handedness, only bits 1-3 count
 	lda.b d0
 	and.w #$000E
@@ -253,7 +253,7 @@ AttribPrintPct:		;print d0 4 wide plus padding
 	dw $0004		; printz inline string: length (counts itself), then control bytes / text
 	db "  "
 	rtl
-AttribHanded:		;Bit 0 of the sum
+AttribHanded:		;Roster column: handedness. Bit 0 of the sum
 	lda.b d0
 	and.w #$0001
 	sta.b d0
