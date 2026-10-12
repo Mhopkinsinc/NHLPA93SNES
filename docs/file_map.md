@@ -1,525 +1,666 @@
 # Source file map
 
-`src/nhlpa93snes.asm` includes one file per 93G module per bank, named after the NHLPA 93 Genesis source files
-(`hockey93_01..11` -> `hockey`, `logic93_1..5` -> `logic`, `middle93_1/2` -> `middle`, `penalty93_1/2` -> `penalty`,
-`video93_1/2` -> `video`, `stats93`, `sound93`, `frames93`, `teamdata93`, `main93`; `graphics93` and the sprite frame sets are in `src/gfx/`).
-A file is `<module>_b<bank>.asm`, or `<module>.asm` when the module sits in one bank only. The SNES code of a module is spread
-over the ROM between other modules, so each file holds one or more blocks, each starting with `org` at its ROM address.
-Routines with no Genesis counterpart go with the module of their caller/neighbour; SNES hardware code (vblank/IRQ handlers,
-PPU/DMA, sprite emitters) is in `video`, the SPC700 sound code and data in `sound`, math helpers in `middle`.
-
-Regenerate the routine lists from the source if they drift; the old ~4 KB slice notes are in `docs/segment_notes.md`.
-
-## src/main.asm
-
-- `$808000`: Start
-
-## src/video_b80.asm
-
-- `$8080B2`: BRKHalt, VBjsr, vb2_blank, vb2, vb2_main, VBlank_long, VBlank, VBlank_SprPal, VBlank_List, VBlank_VScroll, VBlank_Cram, VBlank_CramOnly, HBjsr, HBdefault
-- `$80E35E`: setvideo, show_rink, checkfo, setsortcords, projxy, setffo, ButtonLabelCharTable, uppads
-
-## src/logic_b80.asm
-
-- `$8083AB`: goalieacc, dostop, StopNA
-- `$8084E7`: MaxSpeed, check4bench, checkob, chk4lc, chk4shot, CompShoot, assnearest, check4check, burst, skatetopuck, Sweepcheck, chkpk, chkpk2, assshoot, SetShotMode, ShotMode, doshot, shotsets, asspassrec, assfight, chkhit, CwdFight, FightFall, assfwatch, assfaceoff, assexit, assfaceoffpl
-- `$8097AC`: pucknorm, findpc, findpc_calc
-- `$8099C7`: a2touchpuck, a2offsides, GetHot, puckIChk, ChkOffsides, ClearOffsidesIfAllPlayers
-- `$80A148`: setc1player, setc2player, restorepl
-- `$80A52A`: pucknothing, puckfaceoff, SetLCmode, SetLCmode2
-- `$80A87C`: puckfaceoff2, updatefaceoff, Endfaceoff, dirtab
-- `$80AE9D`: changeplayer, vtoa, SetSPA
-- `$80B49D`: assinsert, assreplace
-- `$80BAF2`: ChkGoalies, ChkGoalies_CPG
-- `$80BE47`: ReturnGoalies, ReturnGoalies_r, CPgoalie
-- `$80CEC9`: puckflip
-- `$80DF3F`: doinput, faceoffinput, holdplayer, setpads
-- `$80F391`: setlccords
-- `$80F45B`: asspuckc
-- `$80F6AD`: assgoalie, ClampYPosition, AdjustFacingDirection, GoalieSaveList, shotdiradj, CalcAngleOffset
-
-## src/middle_b80.asm
-
-- `$808496`: muls16
-- `$8097A3`: randomd0
-- `$80996C`: divs
-- `$80AE56`: random, randoma
-- `$80B8D8`: divu16, printz, print
-- `$80C28B`: sfx
-- `$80C40B`: Readjoy1, Readjoy2, ReadJoy, jdtab
-- `$80CBB1`: sroot, divu
-- `$80F3E8`: ReadPads
-- `$80F6A1`: randomd0s
-
-## src/hockey_b80.asm
-
-- `$8084C4`: getpde, rtss
-- `$809D17`: checkpuckcoll, checkpuckcoll_ccx, puckstick, puckglue, deflect
-- `$80A1B4`: makepde, puckbody, puckgoalie
-- `$80B01A`: ResetBench, forcepldata, Setplass, setplayer, ClampNibble, resetplstuff
-- `$80B4C1`: setupice, setplayercolors, SetTeamColors, SetTeamColors_team, nullrtl, SprSort, DoGameFrame, periodicevents
-- `$80BB5A`: setpersonel, SetPlList, TryAddPlayerToList
-- `$80BED1`: updatecrowdf, PenaltyList
-- `$80C278`: freezewindow
-- `$80C2B4`: updatereplay, demoread
-- `$80C46D`: updateplayers, checkcoll, checkwallcoll
-- `$80CC1E`: wallcollb, wallcoll
-- `$80CEE7`: checkgoal
-- `$80D182`: Goal
-- `$80D3D3`: checkgoalp, CheckBump, checkplcoll, checkcx, newcheck, checkint, FallDown, checkcheck, checkfight, SetInst
-- `$80E13E`: updateanim, checkwindow
-- `$80F36E`: adda43
-- `$80F3E1`: startpause
-- `$80F5EA`: DecodePW, PlayoffScreenOpening4, SuperDiv
-
-## src/penalty_b80.asm
-
-- `$80A828`: ClrHor
-- `$80B84C`: AvgCline
-- `$80B9F4`: updatepwrplay, updatepwrplay_clr, printteamname
-- `$80C18F`: AddPenalty, AddPenalty2
-- `$80D12E`: ChkShotStat, addteamstat
-- `$80D329`: PenGoalStuff
-- `$80E6C7`: PenaltyManager, chkatop, checkfornewpen, Stop4Pen, limitfo, chkprogress, InProgress, coinsearch, UpdatePA, SetPA
-- `$80FED1`: reenergizeteam, unusedFF
-
-## src/gfx/graphics_b80.asm
-
-- `$80ED38`: RonBarrMap
-
-## src/sound_b81.asm
-
-- `$818000`: GameSoundUpload, GameSampleDir, GameSamples
-
-## src/sound_b82.asm
-
-- `$82B86C`: SPAList
-- `$82FA1A`: sndqreset, SPCBootUpload, SPCGameUpload, SPCUpload, QueueSound
-
-## src/frames.asm
-
-- `$82B86E`: SPAgready_table, SPAgready2_table, SPAgglover_table, SPAgglovel_table, SPAgstickr_table, SPAgstickl_table, SPAgstackr_table, SPAgstackl_table, SPAgswing_table, SPAgskate_table, SPApflip_table, SPAglide_table, SPAskatewp_table, SPAskate_table, SPAturnl_table, SPAturnr_table, SPAstop_table, SPApassf_table, SPApassb_table, SPAshotf_table, SPAshotb_table, SPAglideback_table, SPAskateback_table, SPAsweepchk_table, SPAshoulderchkl_table, SPAshoulderchkr_table, SPAhipchkl_table, SPAhipchkr_table, SPAburst_table, SPAHold_table, SPAHold2_table, SPAflail_table, SPAfallfwd_table, SPAfallback_table, SPAcelebrate_table, SPApump_table, SPAfight_table, SPAfgrab_table, SPAfheld_table, SPAfhigh_table, SPAflow_table, SPAfhith_table, SPAfhitl_table, SPAffall_table, SPAwallright_table, SPAwallleft_table, SPAfaceoff_table, SPAfaceoffr_table, SPAsiren_table, SPAstanley_table, SPAfinjury_table, SPAflip_table, SPAstumble_table, SPAhook_table, SPAhook2_table, SPAcatch_table, SPAbglass_table, SPAgdive_table, SPAinjury1_table
-
-## src/gfx/graphics_b82.asm
-
-- `$82CDA0`: IceRinkTiles
-- `$82FCBD`: PixelRemap8D
-- `$82FCD4`: PixelRemap83
-
-## src/penalty_b82.asm
-
-- `$82F93C`: SetPA2, UpdateScores
-- `$82FD95`: ClearPenaltyMessage
-
-## src/hockey_b82.asm
-
-- `$82FA01`: BitstoPW
-- `$82FBA6`: PasstoText, PWtoBits, ClrPassBits, PushBits, BitMaskTable, ContinuePlayoffs, SaveRegsStartHL2
-- `$82FDB5`: startpause2
-
-## src/video_b82.asm
-
-- `$82FCCD`: marktextlo
-- `$82FD17`: addframe_hi, revplayeracc, marktexthi, ClearTeamStats
-
-## src/middle_b82.asm
-
-- `$82FCDB`: muls32
-- `$82FDBF`: printbigz, appendz
-
-## src/logic_b82.asm
-
-- `$82FDE7`: asscentero, unusedFF82
-
-## src/teamdata_b83.asm
-
-- `$838000`: TeamList, AllStarsEast, AllStarsWest, Boston, Buffalo, Calgary, Chicago, Detroit, Edmonton, Hartford, LosAngeles, LongIsland, Minnesota, Montreal, NewJersey, NewYork, Ottawa, Philadelphia, Pittsburgh, Quebec, SanJose, StLouis, TampaBay, Toronto, Vancouver, Winnipeg, Washington, playoffseats
-
-## src/gfx/graphics_b83.asm
-
-- `$83C6D8`: SmallFontTiles
-- `$83CCCB`: IceRinkMap, HorRinkMap, RinkPalette
-- `$83FAEC`: RefsMap
-
-## src/hockey_b83.asm
-
-- `$83CC0C`: PlayerNumName
-- `$83F82B`: Pausemode, PauseMenu, PauseReadJoy, PauseResume, PauseLeave, Restart
-
-## src/logic_b83.asm
-
-- `$83FDFC`: assgoalietopuck, unusedFF83
-
-## src/gfx/sprites_b84.asm
-
-- `$848000`: SpriteSet9
-
-## src/sound_b84.asm
-
-- `$84D630`: ScoutingReportText
-
-## src/gfx/graphics_b84.asm
-
-- `$84E949`: FaceOffMap
-- `$84EF3C`: HotList, RinkLogoTiles
-- `$84F79D`: PlayoffTiles
-
-## src/middle_b84.asm
-
-- `$84EA39`: PutDigits2
-- `$84FAD2`: Readjoy12
-
-## src/hockey_b84.asm
-
-- `$84EA66`: ScoutPlayersRun, ScoutTeamStep, ScoutPlayerExit, ScoutNextPlayer, ScoutPickScript, GetRosterEntry, ScoutScriptPick, ScoutScriptPickG, ScoutScripts, ScoutLineOrder, DrawScoutPlayers, DrawScoutPlayer
-- `$84F532`: UpdateScoutingDisplay, ScrollDisplayUp
-
-## src/video_b84.asm
-
-- `$84F816`: InitSortObjects, SsoInitTable, FfoInitTable, SortObjInitTable
-
-## src/penalty_b84.asm
-
-- `$84FAE3`: DisplayStats, DisplayStats_sslist
-
-## src/stats_b84.asm
-
-- `$84FC44`: GetNameandAttrib, attribjmp, AttribStatus, StatusTextTbl, AttribEnergy, AttribFighting, AttribRating, AttribPrintPct, AttribHanded, HandedTextTbl, AttribWeight, unusedFF84
-
-## src/gfx/sprites_b85.asm
-
-- `$858000`: SpriteSet4
-
-## src/hockey_b85.asm
-
-- `$85D5A4`: GetShifter
-- `$85FF0E`: getpzjoy, PrintTeamNames, nullrtl85, ResetClock, unusedFF85
-
-## src/gfx/graphics_b85.asm
-
-- `$85D5C0`: Title1Map
-
-## src/video_b85.asm
-
-- `$85FBB9`: DrawFrameHi
-
-## src/sound_b86.asm
-
-- `$868000`: BootSoundUpload, SPCDriver, BootInstruments, BootSampleDir, BootSamples
-- `$86FBE1`: StartSong6, StartSong7
-
-## src/middle_b86.asm
-
-- `$86FA3E`: DecompressBytecode
-- `$86FC53`: ProcessInputWithRepeat
-
-## src/hockey_b86.asm
-
-- `$86FB96`: RestoreBenchEnergy
-- `$86FC29`: setteams
-- `$86FC76`: ScoutNamePos, GetPeriodTimeRemaining, GetPeriodTime, GetPeriodTime_timetab
-- `$86FCE3`: PickStartingGoalie
-
-## src/logic_b86.asm
-
-- `$86FCB7`: lcfound2
-- `$86FD86`: assscore, unusedFF86
-
-## src/gfx/sprites_b87.asm
-
-- `$878000`: SpriteSet2
-- `$87D205`: SpriteSet6
-
-## src/gfx/graphics_b87.asm
-
-- `$87C3A0`: EASNMap, FaceOffTiles, TeamBlocksMap
-- `$87F55A`: PixelRemap87, RefTiles
-
-## src/video_b87.asm
-
-- `$87CE62`: DrawFrame, addframe_end
-
-## src/hockey_b87.asm
-
-- `$87F3E9`: RestoreReplayFrame
-
-## src/logic_b87.asm
-
-- `$87FF78`: assepen, unusedFF87
-
-## src/gfx/graphics_b88.asm
-
-- `$888000`: GameSetupMap, SmallFontMap
-- `$88871C`: FramerMap, FramerTiles
-- `$889B73`: TeamBlocksTiles
-
-## src/middle_b88.asm
-
-- `$88832F`: mulu32
-- `$888942`: mulu
-
-## src/penalty_b88.asm
-
-- `$888405`: getlinee
-
-## src/hockey_b88.asm
-
-- `$8884A9`: WritePassBits
-- `$8885F7`: PWprint, EncodePW
-- `$888853`: SuperMult, DrawGameSetupBack
-- `$88EF9C`: GetPassWord, PasswordText, TitleScreen, CreditsBlank, PlayoffScreen, PlayoffTreeSetup
-- `$88FDB2`: SuperAdd
-
-## src/logic_b88.asm
-
-- `$888548`: noturn0
-- `$88FBA6`: assdefd
-- `$88FDD0`: skateto, unusedFF88
-
-## src/video_b88.asm
-
-- `$8887AE`: showcrowd
-
-## src/gfx/sprites_b88.asm
-
-- `$888A0F`: SpriteSet8
-- `$88BC56`: SpriteSet7
-
-## src/gfx/sprites_b89.asm
-
-- `$898000`: SpriteSet11
-- `$899383`: SpriteSet13
-
-## src/hockey_b89.asm
-
-- `$8990F0`: ReplayMode
-- `$89FCC1`: EraseScoutName, GetPlayerRecord, MesAreaDone, StartGame, restoreteams
-
-## src/penalty_b89.asm
-
-- `$89E95D`: printscores1, PrintPerLabel, PrintTeamNameAndScore, nullrtl89
-
-## src/sound_b89.asm
-
-- `$89EB15`: p_music_vblank
-- `$89FB6B`: StartSong8, StartSong9, StartSong1, StartSong2, StartSong3, StartSong4, StartSong5
-
-## src/gfx/graphics_b89.asm
-
-- `$89EB45`: RefTilesHor, RefsMapHor
-
-## src/middle_b89.asm
-
-- `$89FC8F`: CopyWords
-
-## src/logic_b89.asm
-
-- `$89FD6A`: EvadePC, asswingd, unusedFF89
-
-## src/gfx/sprites_b8A.asm
-
-- `$8A8000`: SpriteSet12
-
-## src/gfx/graphics_b8A.asm
-
-- `$8AF880`: PlayoffBracketMap
-
-## src/teamdata_b8A.asm
-
-- `$8AFAA8`: Credits
-
-## src/logic_b8A.asm
-
-- `$8AFD0C`: lineinput, getlchoice
-
-## src/penalty_b8A.asm
-
-- `$8AFE21`: SetScore, unusedFF8A
-
-## src/hockey_b8B.asm
-
-- `$8B8000`: NewPO, FigureJoy, Opening, Opening4, ReadPassBits, ResolveGames
-
-## src/gfx/sprites_b8B.asm
-
-- `$8B83EE`: SpriteSet5
-
-## src/middle_b8B.asm
-
-- `$8BFCCE`: printbig
-
-## src/logic_b8B.asm
-
-- `$8BFE47`: asswingo
-- `$8BFFD3`: skatetopuckinit
-
-## src/video_b8B.asm
-
-- `$8BFFCC`: showref
-
-## src/gfx/graphics_b8C.asm
-
-- `$8C8000`: NHLPALogo
-
-## src/gfx/sprites_b8C.asm
-
-- `$8C845A`: SpriteSet0
-
-## src/video_b8C.asm
-
-- `$8CFC1A`: checksso
-
-## src/logic_b8C.asm
-
-- `$8CFD83`: chk4pass, unusedFF8C
-
-## src/hockey_b8D.asm
-
-- `$8D8000`: maketree
-- `$8D8217`: StartPer
-- `$8D8389`: Bcheck, NewPO93
-- `$8D84E2`: DrawTeamBlocks
-- `$8D85A9`: PeriodOver, GetPlayerName
-- `$8D86A8`: asstab
-- `$8D87FB`: setd0player
-
-## src/video_b8D.asm
-
-- `$8D8120`: InitPPU
-
-## src/penalty_b8D.asm
-
-- `$8D82F0`: GetLowestPen
-- `$8D8549`: EASNLogo
-- `$8DF888`: StartHL2
-
-## src/middle_b8D.asm
-
-- `$8D847C`: eraser
-- `$8D871C`: mulu16
-
-## src/sound_b8D.asm
-
-- `$8D865A`: updatesound
-
-## src/logic_b8D.asm
-
-- `$8D87B0`: puckshadow
-- `$8DFCC7`: asspenalty, clrplayer, avdgoal, unused008D
-
-## src/gfx/sprites_b8D.asm
-
-- `$8D883C`: SpriteSet10
-
-## src/gfx/graphics_b8D.asm
-
-- `$8DEEC8`: BigFontTiles
-
-## src/hockey_b8E.asm
-
-- `$8E8000`: Gameloop, PlayerShortName
-
-## src/logic_b8E.asm
-
-- `$8E826B`: assbench
-- `$8EFE73`: assdefo, unused008E
-
-## src/gfx/sprites_b8E.asm
-
-- `$8E83EB`: SpriteSet3, SpriteSet14
-
-## src/gfx/graphics_b8F.asm
-
-- `$8F8000`: BigFontMap, unusedEnergyBar
-- `$8F824D`: EASNLogoMap, BigFontIndex
-- `$8FE154`: PixelRemap8F
-- `$8FE67D`: FrameSetTable
-- `$8FF4B8`: PixelRemapFramer, PixelRemapFont
-
-## src/hockey_b8F.asm
-
-- `$8F8213`: linelist, PerLabels
-- `$8F8B11`: clockcont, clockcont_0
-- `$8F8E03`: startpause1, PauseExit, suba4, adda4
-- `$8F9073`: ResetPassWord
-- `$8FD5BF`: holdcheck
-- `$8FDA75`: InitScoutDisplay
-- `$8FDBDB`: box, UpdateCwdExcite
-- `$8FDC0D`: ScoutingReport, ScoutCompare, ScoutLabels, PuckcSpots
-- `$8FE32B`: DefaultMenus, checkagr
-- `$8FE825`: TeamRoster, RosterGoalies, RosterG, RosterLineNames
-- `$8FECAB`: Pmenu, GetPadTeam, setpde, setoptions
-- `$8FF741`: CheckInjury, setInjuryType, sublist, priolist, ShowInjuryBox
-- `$8FFB2B`: GetPlayerNumInitial
-- `$8FFDFB`: cd0
-- `$8FFEB4`: ShowGoalBox, GoalBoxText, unusedFF8F
-
-## src/video_b8F.asm
-
-- `$8F82A4`: showclock
-- `$8F87C0`: KillCrowd
-- `$8F8ABC`: showzam
-- `$8F8EF7`: QueueTextDMA, QueueBackmapDMA, ShowRinkRows
-- `$8FDAF3`: addframe_full
-- `$8FE04C`: ClearSprites, RemapTiles
-- `$8FEC68`: addframe
-
-## src/logic_b8F.asm
-
-- `$8F833F`: asseben
-- `$8F8C4B`: assdopen
-- `$8F8DC7`: lcfound
-- `$8FD4F9`: fightinput
-- `$8FD75A`: assnothing, GoalieCount
-- `$8FDA8F`: assstanley
-- `$8FDB1B`: asscenterd
-- `$8FE164`: playeracc, dirtab8F
-- `$8FE3B0`: WeightedRandomSelect
-- `$8FE43C`: passmode, dopass
-- `$8FE6BD`: CompLine
-- `$8FF4D8`: UnpackNibbles
-- `$8FF603`: Findhittype
-- `$8FF8C4`: passtoa0
-- `$8FFB5B`: Acheck
-- `$8FFBDC`: doplayeracc, ResetAndSelectPlayers
-
-## src/penalty_b8F.asm
-
-- `$8F83A7`: PushRef, SetHor, USBoard, pplpen
-- `$8F86B6`: Intermission, InitTicker, StatsScreen, IntermissionTick, TickerNext
-- `$8F8858`: NewTicker, NewTicker2, NewTicker3, TickerTeam, GameLabels
-- `$8F8C1B`: DoHiLights
-- `$8F8C72`: updatepentime, linebar
-- `$8F902A`: InitScores
-- `$8FD68C`: PrintStringFromList
-- `$8FD793`: AdvanceStringPtr, AttribMenuSkater, AttribMenuGoalie, PositionNames, releasepl
-- `$8FDAFC`: RemovePlayerFromList
-- `$8FDBF9`: loadTeamStruct
-- `$8FE00A`: SetupTeamForIntermission
-- `$8FE2F9`: ClearPenaltyBuffer
-- `$8FF58D`: StatsReport
-- `$8FF63D`: prefmes
-
-## src/middle_b8F.asm
-
-- `$8F8682`: pushnumber
-- `$8F87C9`: appstring, PushTime
-- `$8F8AE9`: waitxsr
-- `$8F901A`: jdtab8F
-- `$8FD69F`: Framer
-- `$8FE316`: randomd0sd0
-- `$8FE404`: forceblack
-- `$8FF54E`: PushNumberWidth
-- `$8FFB8B`: divs16
-
-## src/gfx/sprites_b8F.asm
-
-- `$8F9085`: SpriteSet1
-
-## src/stats_b8F.asm
-
-- `$8FFAF3`: GetPlayerCount
-
-## src/sound_b8F.asm
-
-- `$8FFE7B`: MusicCue, sfx8F
+`src/nhlpa93snes.asm` includes one file per bank (`src/banks/bXX_<name>.asm`). A bank file sets the bank address with one `org`
+and includes its routine and data files in exact ROM order. Routines are in `src/routines/<93G module>/<Routine>.asm`
+(one routine per file; a routine that falls through into the next keeps both), non-code data in `src/data/<category>/<Name>.asm`.
+The SNES internal header and vectors are in `src/header/snes_header.asm` (end of bank $80).
+Regenerate this file with `python3 tools/gen_file_map.py` after `./build.sh`.
+
+## src/banks/b80_engine.asm
+
+- `$808000` routines/main/Start.asm
+- `$8080B2` routines/video/BRKHalt.asm
+- `$8080B4` routines/video/VBjsr.asm
+- `$8080CE` routines/video/vb2_blank.asm
+- `$8080DE` routines/video/vb2.asm (also vb2_main)
+- `$80812F` routines/video/VBlank_long.asm
+- `$808133` routines/video/VBlank.asm
+- `$8081C5` routines/video/VBlank_SprPal.asm
+- `$808250` routines/video/VBlank_List.asm
+- `$808293` routines/video/VBlank_VScroll.asm
+- `$8082E0` routines/video/VBlank_Cram.asm
+- `$808361` routines/video/VBlank_CramOnly.asm
+- `$808390` routines/video/HBjsr.asm
+- `$8083A3` routines/video/HBdefault.asm
+- `$8083AB` routines/logic/goalieacc.asm
+- `$808404` routines/logic/dostop.asm (also StopNA)
+- `$808496` routines/middle/muls16.asm
+- `$8084C4` routines/hockey/getpde.asm (also rtss)
+- `$8084E7` routines/logic/MaxSpeed.asm
+- `$808527` routines/logic/check4bench.asm
+- `$808598` routines/logic/checkob.asm
+- `$808681` routines/logic/chk4lc.asm
+- `$8086E3` routines/logic/chk4shot.asm
+- `$8087F7` routines/logic/CompShoot.asm
+- `$808834` routines/logic/assnearest.asm
+- `$808B15` routines/logic/check4check.asm
+- `$808BAD` routines/logic/burst.asm
+- `$808C2D` routines/logic/skatetopuck.asm
+- `$808D8A` routines/logic/Sweepcheck.asm
+- `$808D95` routines/logic/chkpk.asm
+- `$808D9F` routines/logic/chkpk2.asm
+- `$808DB5` routines/logic/assshoot.asm
+- `$808DE9` routines/logic/SetShotMode.asm
+- `$808E33` routines/logic/ShotMode.asm
+- `$808E78` routines/logic/doshot.asm
+- `$8090EB` routines/logic/shotsets.asm
+- `$80910F` routines/logic/asspassrec.asm
+- `$80915C` routines/logic/assfight.asm
+- `$809330` routines/logic/chkhit.asm
+- `$809493` routines/logic/CwdFight.asm
+- `$8094CB` routines/logic/FightFall.asm
+- `$809595` routines/logic/assfwatch.asm
+- `$8096A8` routines/logic/assfaceoff.asm
+- `$8096F9` routines/logic/assexit.asm
+- `$80970D` routines/logic/assfaceoffpl.asm
+- `$8097A3` routines/middle/randomd0.asm
+- `$8097AC` routines/logic/pucknorm.asm
+- `$80988A` routines/logic/findpc.asm
+- `$8098C2` routines/logic/findpc_calc.asm
+- `$80996C` routines/middle/divs.asm
+- `$8099C7` routines/logic/a2touchpuck.asm
+- `$809AA8` routines/logic/a2offsides.asm
+- `$809B0A` routines/logic/GetHot.asm
+- `$809B7A` routines/logic/puckIChk.asm
+- `$809BC3` routines/logic/ChkOffsides.asm
+- `$809CC2` routines/logic/ClearOffsidesIfAllPlayers.asm
+- `$809D17` routines/hockey/checkpuckcoll.asm
+- `$809D8A` routines/hockey/checkpuckcoll_ccx.asm
+- `$809F15` routines/hockey/puckstick.asm
+- `$80A07D` routines/hockey/puckglue.asm
+- `$80A121` routines/hockey/deflect.asm
+- `$80A148` routines/logic/setc1player.asm
+- `$80A15E` routines/logic/setc2player.asm
+- `$80A174` routines/logic/restorepl.asm
+- `$80A1B4` routines/hockey/makepde.asm
+- `$80A21A` routines/hockey/puckbody.asm
+- `$80A2FA` routines/hockey/puckgoalie.asm
+- `$80A52A` routines/logic/pucknothing.asm
+- `$80A550` routines/logic/puckfaceoff.asm
+- `$80A70F` routines/logic/SetLCmode.asm
+- `$80A748` routines/logic/SetLCmode2.asm
+- `$80A828` routines/penalty/ClrHor.asm
+- `$80A87C` routines/logic/puckfaceoff2.asm
+- `$80ACC4` routines/logic/updatefaceoff.asm
+- `$80AD34` routines/logic/Endfaceoff.asm
+- `$80AE36` routines/logic/dirtab.asm
+- `$80AE56` routines/middle/random.asm
+- `$80AE8B` routines/middle/randoma.asm
+- `$80AE9D` routines/logic/changeplayer.asm
+- `$80AFA8` routines/logic/vtoa.asm
+- `$80B006` routines/logic/SetSPA.asm
+- `$80B01A` routines/hockey/ResetBench.asm
+- `$80B086` routines/hockey/forcepldata.asm
+- `$80B138` routines/hockey/Setplass.asm
+- `$80B15D` routines/hockey/setplayer.asm
+- `$80B3E7` routines/hockey/ClampNibble.asm
+- `$80B3F8` routines/hockey/resetplstuff.asm
+- `$80B49D` routines/logic/assinsert.asm (also assreplace)
+- `$80B4C1` routines/hockey/setupice.asm
+- `$80B6D5` routines/hockey/setplayercolors.asm
+- `$80B706` routines/hockey/SetTeamColors.asm
+- `$80B72C` routines/hockey/SetTeamColors_team.asm
+- `$80B76B` routines/hockey/nullrtl.asm
+- `$80B76C` routines/hockey/SprSort.asm
+- `$80B7FA` routines/hockey/DoGameFrame.asm
+- `$80B80D` routines/hockey/periodicevents.asm
+- `$80B84C` routines/penalty/AvgCline.asm
+- `$80B8D8` routines/middle/divu16.asm
+- `$80B90C` routines/middle/printz.asm
+- `$80B92D` routines/middle/print.asm
+- `$80B9F4` routines/penalty/updatepwrplay.asm
+- `$80BAAF` routines/penalty/updatepwrplay_clr.asm
+- `$80BABC` routines/penalty/printteamname.asm
+- `$80BAF2` routines/logic/ChkGoalies.asm (also ChkGoalies_CPG)
+- `$80BB5A` routines/hockey/setpersonel.asm
+- `$80BCB0` routines/hockey/SetPlList.asm
+- `$80BDEB` routines/hockey/TryAddPlayerToList.asm
+- `$80BE47` routines/logic/ReturnGoalies.asm (also ReturnGoalies_r)
+- `$80BE89` routines/logic/CPgoalie.asm
+- `$80BED1` routines/hockey/updatecrowdf.asm
+- `$80BF6A` routines/hockey/PenaltyList.asm
+- `$80C18F` routines/penalty/AddPenalty.asm
+- `$80C1B0` routines/penalty/AddPenalty2.asm
+- `$80C278` routines/hockey/freezewindow.asm
+- `$80C28B` routines/middle/sfx.asm
+- `$80C2B4` routines/hockey/updatereplay.asm
+- `$80C3D4` routines/hockey/demoread.asm
+- `$80C40B` routines/middle/Readjoy1.asm
+- `$80C429` routines/middle/Readjoy2.asm
+- `$80C447` routines/middle/ReadJoy.asm
+- `$80C45D` routines/middle/jdtab.asm
+- `$80C46D` routines/hockey/updateplayers.asm
+- `$80C894` routines/hockey/checkcoll.asm
+- `$80CA1D` routines/hockey/checkwallcoll.asm
+- `$80CBB1` routines/middle/sroot.asm
+- `$80CBE5` routines/middle/divu.asm
+- `$80CC1E` routines/hockey/wallcollb.asm
+- `$80CCDE` routines/hockey/wallcoll.asm
+- `$80CEC9` routines/logic/puckflip.asm
+- `$80CEE7` routines/hockey/checkgoal.asm
+- `$80D12E` routines/penalty/ChkShotStat.asm
+- `$80D16F` routines/penalty/addteamstat.asm
+- `$80D182` routines/hockey/Goal.asm
+- `$80D329` routines/penalty/PenGoalStuff.asm
+- `$80D3D3` routines/hockey/checkgoalp.asm
+- `$80D4C5` routines/hockey/CheckBump.asm
+- `$80D573` routines/hockey/checkplcoll.asm
+- `$80D632` routines/hockey/checkcx.asm
+- `$80D87B` routines/hockey/newcheck.asm
+- `$80D88B` routines/hockey/checkint.asm
+- `$80D933` routines/hockey/FallDown.asm
+- `$80DB12` routines/hockey/checkcheck.asm
+- `$80DC95` routines/hockey/checkfight.asm
+- `$80DE89` routines/hockey/SetInst.asm
+- `$80DF3F` routines/logic/doinput.asm
+- `$80E073` routines/logic/faceoffinput.asm
+- `$80E0C5` routines/logic/holdplayer.asm
+- `$80E0E1` routines/logic/setpads.asm
+- `$80E13E` routines/hockey/updateanim.asm
+- `$80E1E8` routines/hockey/checkwindow.asm
+- `$80E35E` routines/video/setvideo.asm
+- `$80E3C9` routines/video/show_rink.asm
+- `$80E3E7` routines/video/checkfo.asm
+- `$80E439` routines/video/setsortcords.asm
+- `$80E495` routines/video/projxy.asm
+- `$80E501` routines/video/setffo.asm
+- `$80E605` routines/video/ButtonLabelCharTable.asm
+- `$80E60B` routines/video/uppads.asm
+- `$80E6C7` routines/penalty/PenaltyManager.asm
+- `$80E6D6` routines/penalty/chkatop.asm
+- `$80E715` routines/penalty/checkfornewpen.asm
+- `$80E7F7` routines/penalty/Stop4Pen.asm
+- `$80E8F4` routines/penalty/limitfo.asm
+- `$80E99F` routines/penalty/chkprogress.asm
+- `$80EA40` routines/penalty/InProgress.asm
+- `$80EC89` routines/penalty/coinsearch.asm
+- `$80ECC7` routines/penalty/UpdatePA.asm
+- `$80ED0C` routines/penalty/SetPA.asm
+- `$80ED38` data/gfx/RonBarrMap.asm (also RonBarrMapEnd)
+- `$80F36E` routines/hockey/adda43.asm
+- `$80F391` routines/logic/setlccords.asm
+- `$80F3E1` routines/hockey/startpause.asm
+- `$80F3E8` routines/middle/ReadPads.asm
+- `$80F45B` routines/logic/asspuckc.asm
+- `$80F5EA` routines/hockey/DecodePW.asm
+- `$80F5F2` routines/hockey/PlayoffScreenOpening4.asm
+- `$80F5FA` routines/hockey/SuperDiv.asm
+- `$80F6A1` routines/middle/randomd0s.asm
+- `$80F6AD` routines/logic/assgoalie.asm
+- `$80FCC9` routines/logic/ClampYPosition.asm
+- `$80FD05` routines/logic/AdjustFacingDirection.asm
+- `$80FD70` routines/logic/GoalieSaveList.asm
+- `$80FD7C` routines/logic/shotdiradj.asm
+- `$80FE89` routines/logic/CalcAngleOffset.asm
+- `$80FED1` routines/penalty/reenergizeteam.asm (also unusedFF)
+- `$80FFC0` header/snes_header.asm
+
+## src/banks/b81_sfx.asm
+
+- `$818000` data/sound/GameSoundUpload.asm
+- `$818004` data/sound/GameSampleDir.asm (also GameSampleDirEnd)
+- `$818054` data/sound/GameSamples.asm (also GameSamplesEnd)
+
+## src/banks/b82_sfx_rink.asm
+
+- `$82B86C` data/sound/SPAList.asm
+- `$82B86E` data/frames/SPAgready_table.asm
+- `$82B9A0` data/frames/SPAgready2_table.asm
+- `$82B9D2` data/frames/SPAgglover_table.asm
+- `$82BA04` data/frames/SPAgglovel_table.asm
+- `$82BA36` data/frames/SPAgstickr_table.asm
+- `$82BA68` data/frames/SPAgstickl_table.asm
+- `$82BA9A` data/frames/SPAgstackr_table.asm
+- `$82BAEC` data/frames/SPAgstackl_table.asm
+- `$82BB3E` data/frames/SPAgswing_table.asm
+- `$82BBB0` data/frames/SPAgskate_table.asm
+- `$82BC42` data/frames/SPApflip_table.asm
+- `$82BCE4` data/frames/SPAglide_table.asm
+- `$82BD16` data/frames/SPAskatewp_table.asm
+- `$82BDC8` data/frames/SPAskate_table.asm
+- `$82BE7A` data/frames/SPAturnl_table.asm
+- `$82BEAC` data/frames/SPAturnr_table.asm
+- `$82BEDE` data/frames/SPAstop_table.asm
+- `$82BF30` data/frames/SPApassf_table.asm
+- `$82BFA2` data/frames/SPApassb_table.asm
+- `$82C014` data/frames/SPAshotf_table.asm
+- `$82C126` data/frames/SPAshotb_table.asm
+- `$82C238` data/frames/SPAglideback_table.asm
+- `$82C26A` data/frames/SPAskateback_table.asm
+- `$82C2FC` data/frames/SPAsweepchk_table.asm
+- `$82C36E` data/frames/SPAshoulderchkl_table.asm
+- `$82C3A0` data/frames/SPAshoulderchkr_table.asm
+- `$82C3D2` data/frames/SPAhipchkl_table.asm
+- `$82C404` data/frames/SPAhipchkr_table.asm
+- `$82C436` data/frames/SPAburst_table.asm
+- `$82C468` data/frames/SPAHold_table.asm
+- `$82C49A` data/frames/SPAHold2_table.asm
+- `$82C4CC` data/frames/SPAflail_table.asm
+- `$82C4FE` data/frames/SPAfallfwd_table.asm
+- `$82C5B0` data/frames/SPAfallback_table.asm
+- `$82C662` data/frames/SPAcelebrate_table.asm
+- `$82C6D4` data/frames/SPApump_table.asm
+- `$82C746` data/frames/SPAfight_table.asm
+- `$82C778` data/frames/SPAfgrab_table.asm
+- `$82C79A` data/frames/SPAfheld_table.asm
+- `$82C7BC` data/frames/SPAfhigh_table.asm
+- `$82C7EE` data/frames/SPAflow_table.asm
+- `$82C820` data/frames/SPAfhith_table.asm
+- `$82C842` data/frames/SPAfhitl_table.asm
+- `$82C864` data/frames/SPAffall_table.asm
+- `$82C886` data/frames/SPAwallright_table.asm
+- `$82C8C4` data/frames/SPAwallleft_table.asm
+- `$82C902` data/frames/SPAfaceoff_table.asm
+- `$82C92C` data/frames/SPAfaceoffr_table.asm
+- `$82C946` data/frames/SPAsiren_table.asm
+- `$82C990` data/frames/SPAstanley_table.asm
+- `$82C9C2` data/frames/SPAfinjury_table.asm
+- `$82CA1C` data/frames/SPAflip_table.asm
+- `$82CB0E` data/frames/SPAstumble_table.asm
+- `$82CBC0` data/frames/SPAhook_table.asm
+- `$82CBF2` data/frames/SPAhook2_table.asm
+- `$82CC84` data/frames/SPAcatch_table.asm
+- `$82CCD6` data/frames/SPAbglass_table.asm
+- `$82CCFC` data/frames/SPAgdive_table.asm
+- `$82CD6E` data/frames/SPAinjury1_table.asm (also SPAListEnd)
+- `$82CDA0` data/gfx/IceRinkTiles.asm (also IceRinkTilesEnd)
+- `$82F93C` routines/penalty/SetPA2.asm
+- `$82F9D1` routines/penalty/UpdateScores.asm
+- `$82FA01` routines/hockey/BitstoPW.asm
+- `$82FA1A` routines/sound/sndqreset.asm
+- `$82FA31` routines/sound/SPCBootUpload.asm
+- `$82FA7A` routines/sound/SPCGameUpload.asm
+- `$82FAB9` routines/sound/SPCUpload.asm
+- `$82FB79` routines/sound/QueueSound.asm
+- `$82FBA6` data/text/PasstoText.asm
+- `$82FBC5` routines/hockey/PWtoBits.asm
+- `$82FBEA` routines/hockey/ClrPassBits.asm
+- `$82FC03` routines/hockey/PushBits.asm
+- `$82FC39` routines/hockey/BitMaskTable.asm
+- `$82FC59` routines/hockey/GameOver.asm
+- `$82FC97` routines/hockey/SaveRegsStartHL2.asm
+- `$82FCBD` data/gfx/PixelRemap8D.asm
+- `$82FCCD` routines/video/marktextlo.asm
+- `$82FCD4` data/gfx/PixelRemap83.asm
+- `$82FCDB` routines/middle/muls32.asm
+- `$82FD17` routines/video/addframe_hi.asm
+- `$82FD54` routines/video/revplayeracc.asm
+- `$82FD64` routines/video/marktexthi.asm
+- `$82FD6B` routines/video/ClearTeamStats.asm
+- `$82FD95` routines/penalty/ClearPenaltyMessage.asm
+- `$82FDB5` routines/hockey/startpause2.asm
+- `$82FDBF` routines/middle/printbigz.asm
+- `$82FDD3` routines/middle/appendz.asm
+- `$82FDE7` routines/logic/asscentero.asm (also unusedFF82)
+
+## src/banks/b83_teams.asm
+
+- `$838000` data/teams/TeamList.asm (also TeamListEnd)
+- `$838068` data/teams/AllStarsEast.asm
+- `$8382F6` data/teams/AllStarsWest.asm
+- `$83858B` data/teams/Boston.asm
+- `$838833` data/teams/Buffalo.asm
+- `$838AE6` data/teams/Calgary.asm
+- `$838D83` data/teams/Chicago.asm
+- `$839032` data/teams/Detroit.asm
+- `$8392DD` data/teams/Edmonton.asm
+- `$83957E` data/teams/Hartford.asm
+- `$839823` data/teams/LosAngeles.asm
+- `$839ADF` data/teams/LongIsland.asm
+- `$839D7D` data/teams/Minnesota.asm
+- `$83A00E` data/teams/Montreal.asm
+- `$83A2D8` data/teams/NewJersey.asm
+- `$83A583` data/teams/NewYork.asm
+- `$83A83F` data/teams/Ottawa.asm
+- `$83AA52` data/teams/Philadelphia.asm
+- `$83AD02` data/teams/Pittsburgh.asm
+- `$83AF9D` data/teams/Quebec.asm
+- `$83B26A` data/teams/SanJose.asm
+- `$83B516` data/teams/StLouis.asm
+- `$83B7C3` data/teams/TampaBay.asm
+- `$83B9FA` data/teams/Toronto.asm
+- `$83BCA8` data/teams/Vancouver.asm
+- `$83BF4F` data/teams/Winnipeg.asm
+- `$83C204` data/teams/Washington.asm
+- `$83C4B8` data/teams/playoffseats.asm (also playoffseatsEnd)
+- `$83C6D8` data/gfx/SmallFontTiles.asm (also SmallFontTilesEnd)
+- `$83CC0C` routines/hockey/PlayerNumName.asm
+- `$83CCCB` data/gfx/IceRinkMap.asm (also IceRinkMapEnd)
+- `$83ECAB` data/gfx/HorRinkMap.asm (also HorRinkMapEnd)
+- `$83F72B` data/gfx/RinkPalette.asm
+- `$83F82B` routines/hockey/Pausemode.asm
+- `$83F891` routines/hockey/PauseMenu.asm
+- `$83FA32` routines/hockey/PauseReadJoy.asm
+- `$83FA79` routines/hockey/PauseResume.asm
+- `$83FA83` routines/hockey/PauseLeave.asm
+- `$83FA87` routines/hockey/Restart.asm
+- `$83FAEC` data/gfx/RefsMap.asm (also RefsMapEnd)
+- `$83FDFC` routines/logic/assgoalietopuck.asm (also unusedFF83)
+
+## src/banks/b84_scouting.asm
+
+- `$848000` data/gfx/SpriteSet9.asm (also SpriteSet9End)
+- `$84D630` data/text/ScoutingReportText.asm (also ScoutingReportTextEnd)
+- `$84E949` data/gfx/FaceOffMap.asm
+- `$84EA39` routines/middle/PutDigits2.asm
+- `$84EA66` routines/hockey/ScoutPlayersRun.asm
+- `$84EABF` routines/hockey/ScoutTeamStep.asm
+- `$84EC4C` routines/hockey/ScoutPlayerExit.asm
+- `$84EC5C` routines/hockey/ScoutNextPlayer.asm
+- `$84ED51` routines/hockey/ScoutPickScript.asm
+- `$84ED96` routines/hockey/GetRosterEntry.asm
+- `$84EDBB` routines/hockey/ScoutScriptPick.asm
+- `$84EDD7` routines/hockey/ScoutScriptPickG.asm
+- `$84EDF3` routines/hockey/ScoutScripts.asm
+- `$84EEE3` routines/hockey/ScoutLineOrder.asm
+- `$84EEF4` routines/hockey/DrawScoutPlayers.asm (also DrawScoutPlayer)
+- `$84EF3C` data/gfx/HotList.asm
+- `$84F386` data/gfx/RinkLogoTiles.asm (also RinkLogoTilesEnd)
+- `$84F532` routines/hockey/UpdateScoutingDisplay.asm
+- `$84F734` routines/hockey/ScrollDisplayUp.asm
+- `$84F79D` data/gfx/PlayoffTiles.asm
+- `$84F816` routines/video/InitSortObjects.asm
+- `$84F960` routines/video/SsoInitTable.asm
+- `$84F980` routines/video/FfoInitTable.asm
+- `$84F9B2` routines/video/SortObjInitTable.asm
+- `$84FAD2` routines/middle/Readjoy12.asm
+- `$84FAE3` routines/penalty/DisplayStats.asm
+- `$84FC30` routines/penalty/DisplayStats_sslist.asm
+- `$84FC44` routines/stats/GetNameandAttrib.asm
+- `$84FD49` routines/stats/attribjmp.asm
+- `$84FD55` routines/stats/AttribStatus.asm
+- `$84FDC6` data/text/StatusTextTbl.asm
+- `$84FDEE` routines/stats/AttribEnergy.asm
+- `$84FE14` routines/stats/AttribFighting.asm (also AttribRating, AttribPrintPct)
+- `$84FE4A` routines/stats/AttribHanded.asm
+- `$84FE5F` data/text/HandedTextTbl.asm
+- `$84FE6F` routines/stats/AttribWeight.asm (also unusedFF84)
+
+## src/banks/b85_title_gfx.asm
+
+- `$858000` data/gfx/SpriteSet4.asm (also SpriteSet4End)
+- `$85D5A4` routines/hockey/GetShifter.asm
+- `$85D5C0` data/gfx/Title1Map.asm (also Title1MapEnd)
+- `$85FBB9` routines/video/DrawFrameHi.asm
+- `$85FF0E` routines/hockey/getpzjoy.asm
+- `$85FF1E` routines/hockey/PrintTeamNames.asm
+- `$85FF96` routines/hockey/nullrtl85.asm
+- `$85FF97` routines/hockey/ResetClock.asm (also unusedFF85)
+
+## src/banks/b86_sound_driver.asm
+
+- `$868000` data/sound/BootSoundUpload.asm
+- `$868004` data/sound/SPCDriver.asm (also SPCDriverEnd)
+- `$86A6EF` data/sound/BootInstruments.asm (also BootInstrumentsEnd)
+- `$86A7A1` data/sound/BootSampleDir.asm (also BootSampleDirEnd)
+- `$86A7C9` data/sound/BootSamples.asm (also BootSamplesEnd)
+- `$86FA3E` routines/middle/DecompressBytecode.asm
+- `$86FB96` routines/hockey/RestoreBenchEnergy.asm
+- `$86FBE1` routines/sound/StartSong6.asm
+- `$86FC05` routines/sound/StartSong7.asm
+- `$86FC29` routines/hockey/setteams.asm
+- `$86FC53` routines/middle/ProcessInputWithRepeat.asm
+- `$86FC76` routines/hockey/ScoutNamePos.asm
+- `$86FC8A` routines/hockey/GetPeriodTimeRemaining.asm
+- `$86FCA1` routines/hockey/GetPeriodTime.asm
+- `$86FCAF` routines/hockey/GetPeriodTime_timetab.asm
+- `$86FCB7` routines/logic/lcfound2.asm
+- `$86FCE3` routines/hockey/PickStartingGoalie.asm
+- `$86FD86` routines/logic/assscore.asm (also unusedFF86)
+
+## src/banks/b87_player_sprites.asm
+
+- `$878000` data/gfx/SpriteSet2.asm (also SpriteSet2End)
+- `$87C3A0` data/gfx/EASNMap.asm
+- `$87C6B4` data/gfx/FaceOffTiles.asm
+- `$87CABA` data/gfx/TeamBlocksMap.asm
+- `$87CE62` routines/video/DrawFrame.asm
+- `$87D1FE` routines/video/addframe_end.asm
+- `$87D205` data/gfx/SpriteSet6.asm (also SpriteSet6End)
+- `$87F3E9` routines/hockey/RestoreReplayFrame.asm
+- `$87F55A` data/gfx/PixelRemap87.asm
+- `$87F55E` data/gfx/RefTiles.asm
+- `$87FF78` routines/logic/assepen.asm (also unusedFF87)
+
+## src/banks/b88_title_playoffs.asm
+
+- `$888000` data/gfx/GameSetupMap.asm (also GameSetupMapEnd)
+- `$88822F` data/gfx/SmallFontMap.asm
+- `$88832F` routines/middle/mulu32.asm
+- `$888405` routines/penalty/getlinee.asm
+- `$8884A9` routines/hockey/WritePassBits.asm
+- `$888548` routines/logic/noturn0.asm
+- `$8885F7` routines/hockey/PWprint.asm
+- `$88868D` routines/hockey/EncodePW.asm
+- `$88871C` data/gfx/FramerMap.asm
+- `$88872E` data/gfx/FramerTiles.asm
+- `$8887AE` routines/video/showcrowd.asm
+- `$888853` routines/hockey/SuperMult.asm
+- `$8888C3` routines/hockey/DrawGameSetupBack.asm
+- `$888942` routines/middle/mulu.asm
+- `$888A0F` data/gfx/SpriteSet8.asm (also SpriteSet8End)
+- `$889B73` data/gfx/TeamBlocksTiles.asm (also TeamBlocksTilesEnd)
+- `$88BC56` data/gfx/SpriteSet7.asm (also SpriteSet7End)
+- `$88EF9C` routines/hockey/GetPassWord.asm
+- `$88F28F` data/text/PasswordText.asm
+- `$88F2B0` routines/hockey/TitleScreen.asm
+- `$88F4F0` data/text/CreditsBlank.asm
+- `$88F512` routines/hockey/PlayoffScreen.asm
+- `$88F9FB` routines/hockey/PlayoffTreeSetup.asm
+- `$88FBA6` routines/logic/assdefd.asm
+- `$88FDB2` routines/hockey/SuperAdd.asm
+- `$88FDD0` routines/logic/skateto.asm (also unusedFF88)
+
+## src/banks/b89_replay_music.asm
+
+- `$898000` data/gfx/SpriteSet11.asm (also SpriteSet11End)
+- `$8990F0` routines/hockey/ReplayMode.asm
+- `$899383` data/gfx/SpriteSet13.asm (also SpriteSet13End)
+- `$89E95D` routines/penalty/printscores1.asm
+- `$89EAB1` routines/penalty/PrintPerLabel.asm
+- `$89EAD7` routines/penalty/PrintTeamNameAndScore.asm
+- `$89EB14` routines/penalty/nullrtl89.asm
+- `$89EB15` routines/sound/p_music_vblank.asm
+- `$89EB45` data/gfx/RefTilesHor.asm (also RefTilesHorEnd)
+- `$89F3FB` data/gfx/RefsMapHor.asm (also RefsMapHorEnd)
+- `$89FB6B` routines/sound/StartSong8.asm
+- `$89FB8F` routines/sound/StartSong9.asm
+- `$89FBB3` routines/sound/StartSong1.asm
+- `$89FBDF` routines/sound/StartSong2.asm
+- `$89FC0B` routines/sound/StartSong3.asm
+- `$89FC37` routines/sound/StartSong4.asm
+- `$89FC63` routines/sound/StartSong5.asm
+- `$89FC8F` routines/middle/CopyWords.asm
+- `$89FCC1` routines/hockey/EraseScoutName.asm
+- `$89FCD8` routines/hockey/GetPlayerRecord.asm
+- `$89FCFD` routines/hockey/MesAreaDone.asm
+- `$89FD0C` routines/hockey/StartGame.asm
+- `$89FD3A` routines/hockey/restoreteams.asm
+- `$89FD6A` routines/logic/EvadePC.asm
+- `$89FDD6` routines/logic/asswingd.asm (also unusedFF89)
+
+## src/banks/b8A_playoffbracket_credits.asm
+
+- `$8A8000` data/gfx/SpriteSet12.asm (also SpriteSet12End)
+- `$8AF880` data/gfx/PlayoffBracketMap.asm
+- `$8AFAA8` data/teams/Credits.asm
+- `$8AFD0C` routines/logic/lineinput.asm
+- `$8AFD6D` routines/logic/getlchoice.asm
+- `$8AFE21` routines/penalty/SetScore.asm (also unusedFF8A)
+
+## src/banks/b8B_opening.asm
+
+- `$8B8000` routines/hockey/NewPO.asm
+- `$8B807D` routines/hockey/FigureJoy.asm
+- `$8B816A` routines/hockey/Opening.asm
+- `$8B8172` routines/hockey/Opening4.asm
+- `$8B817A` routines/hockey/ReadPassBits.asm
+- `$8B8253` routines/hockey/ResolveGames.asm
+- `$8B83EE` data/gfx/SpriteSet5.asm (also SpriteSet5End)
+- `$8BFCCE` routines/middle/printbig.asm
+- `$8BFE47` routines/logic/asswingo.asm
+- `$8BFFCC` routines/video/showref.asm
+- `$8BFFD3` routines/logic/skatetopuckinit.asm
+
+## src/banks/b8C_skate_sprites.asm
+
+- `$8C8000` data/gfx/NHLPALogo.asm (also NHLPALogoEnd)
+- `$8C845A` data/gfx/SpriteSet0.asm (also SpriteSet0End)
+- `$8CFC1A` routines/video/checksso.asm
+- `$8CFD83` routines/logic/chk4pass.asm (also unusedFF8C)
+
+## src/banks/b8D_fonts.asm
+
+- `$8D8000` routines/hockey/maketree.asm
+- `$8D8120` routines/video/InitPPU.asm
+- `$8D8217` routines/hockey/StartPer.asm
+- `$8D82F0` routines/penalty/GetLowestPen.asm
+- `$8D8389` routines/hockey/Bcheck.asm
+- `$8D8416` routines/hockey/ContinuePlayoffs.asm
+- `$8D847C` routines/middle/eraser.asm
+- `$8D84E2` routines/hockey/DrawTeamBlocks.asm
+- `$8D8549` routines/penalty/EASNLogo.asm
+- `$8D85A9` routines/hockey/PeriodOver.asm
+- `$8D8605` routines/hockey/GetPlayerName.asm
+- `$8D865A` routines/sound/updatesound.asm
+- `$8D86A8` routines/hockey/asstab.asm
+- `$8D871C` routines/middle/mulu16.asm
+- `$8D87B0` routines/logic/puckshadow.asm
+- `$8D87FB` routines/hockey/setd0player.asm
+- `$8D883C` data/gfx/SpriteSet10.asm (also SpriteSet10End)
+- `$8DEEC8` data/gfx/BigFontTiles.asm (also BigFontTilesEnd)
+- `$8DF888` routines/penalty/StartHL2.asm
+- `$8DFCC7` routines/logic/asspenalty.asm
+- `$8DFE1B` routines/logic/clrplayer.asm
+- `$8DFE36` routines/logic/avdgoal.asm (also unused008D)
+
+## src/banks/b8E_gameloop.asm
+
+- `$8E8000` routines/hockey/Gameloop.asm
+- `$8E8182` routines/hockey/PlayerShortName.asm
+- `$8E826B` routines/logic/assbench.asm
+- `$8E83EB` data/gfx/SpriteSet3.asm (also SpriteSet3End)
+- `$8ED9A7` data/gfx/SpriteSet14.asm (also SpriteSet14End)
+- `$8EFE73` routines/logic/assdefo.asm (also unused008E)
+
+## src/banks/b8F_frontend.asm
+
+- `$8F8000` data/gfx/BigFontMap.asm
+- `$8F8130` routines/video/unusedEnergyBar.asm
+- `$8F8213` routines/hockey/linelist.asm
+- `$8F8236` data/text/PerLabels.asm
+- `$8F824D` data/gfx/EASNLogoMap.asm
+- `$8F8269` data/gfx/BigFontIndex.asm
+- `$8F82A4` routines/video/showclock.asm
+- `$8F833F` routines/logic/asseben.asm
+- `$8F83A7` routines/penalty/PushRef.asm
+- `$8F84B5` routines/penalty/SetHor.asm
+- `$8F852E` routines/penalty/USBoard.asm
+- `$8F85FA` routines/penalty/pplpen.asm
+- `$8F8682` routines/middle/PushNumber.asm
+- `$8F86B6` routines/penalty/Intermission.asm
+- `$8F873F` routines/penalty/InitTicker.asm
+- `$8F8757` routines/penalty/StatsScreen.asm
+- `$8F877D` routines/penalty/IntermissionTick.asm
+- `$8F87A8` routines/penalty/TickerNext.asm
+- `$8F87C0` routines/video/KillCrowd.asm
+- `$8F87C9` routines/middle/appstring.asm
+- `$8F87EA` routines/middle/PushTime.asm
+- `$8F8858` routines/penalty/NewTicker.asm
+- `$8F8861` routines/penalty/NewTicker2.asm
+- `$8F887A` routines/penalty/NewTicker3.asm
+- `$8F8960` routines/penalty/TickerTeam.asm
+- `$8F89A3` data/text/GameLabels.asm
+- `$8F8ABC` routines/video/showzam.asm
+- `$8F8AE9` routines/middle/waitxsr.asm
+- `$8F8B11` routines/hockey/clockcont.asm
+- `$8F8B21` routines/hockey/clockcont_0.asm
+- `$8F8C1B` routines/penalty/DoHiLights.asm
+- `$8F8C4B` routines/logic/assdopen.asm
+- `$8F8C72` routines/penalty/updatepentime.asm
+- `$8F8D68` routines/penalty/linebar.asm
+- `$8F8DC7` routines/logic/lcfound.asm
+- `$8F8E03` routines/hockey/startpause1.asm
+- `$8F8E0D` routines/hockey/PauseExit.asm
+- `$8F8E54` routines/hockey/suba4.asm
+- `$8F8EAF` routines/hockey/adda4.asm
+- `$8F8EF7` routines/video/QueueTextDMA.asm
+- `$8F8F28` routines/video/QueueBackmapDMA.asm
+- `$8F8F4A` routines/video/ShowRinkRows.asm
+- `$8F901A` routines/middle/jdtab8F.asm
+- `$8F902A` routines/penalty/InitScores.asm
+- `$8F9073` routines/hockey/ResetPassWord.asm
+- `$8F9085` data/gfx/SpriteSet1.asm (also SpriteSet1End)
+- `$8FD4F9` routines/logic/fightinput.asm
+- `$8FD5BF` routines/hockey/holdcheck.asm
+- `$8FD68C` routines/penalty/PrintStringFromList.asm
+- `$8FD69F` routines/middle/Framer.asm
+- `$8FD75A` routines/logic/assnothing.asm
+- `$8FD76B` routines/logic/GoalieCount.asm
+- `$8FD793` routines/penalty/AdvanceStringPtr.asm
+- `$8FD7A1` data/text/AttribMenuSkater.asm
+- `$8FD8E6` data/text/AttribMenuGoalie.asm
+- `$8FD9CC` data/text/PositionNames.asm
+- `$8FD9DF` routines/penalty/releasepl.asm
+- `$8FDA75` routines/hockey/InitScoutDisplay.asm
+- `$8FDA8F` routines/logic/assstanley.asm
+- `$8FDAF3` routines/video/addframe_full.asm
+- `$8FDAFC` routines/penalty/RemovePlayerFromList.asm
+- `$8FDB1B` routines/logic/asscenterd.asm
+- `$8FDBDB` routines/hockey/box.asm
+- `$8FDBF7` routines/hockey/UpdateCwdExcite.asm
+- `$8FDBF8` routines/hockey/CheckLateGameSong.asm
+- `$8FDBF9` routines/penalty/loadTeamStruct.asm
+- `$8FDC0D` routines/hockey/ScoutingReport.asm
+- `$8FDED2` routines/hockey/ScoutCompare.asm
+- `$8FDF66` data/text/ScoutLabels.asm
+- `$8FDFE2` routines/hockey/PuckcSpots.asm
+- `$8FE00A` routines/penalty/SetupTeamForIntermission.asm
+- `$8FE04C` routines/video/ClearSprites.asm
+- `$8FE0E4` routines/video/RemapTiles.asm
+- `$8FE154` data/gfx/PixelRemap8F.asm
+- `$8FE164` routines/logic/playeracc.asm
+- `$8FE2D9` routines/logic/dirtab8F.asm
+- `$8FE2F9` routines/penalty/ClearPenaltyBuffer.asm
+- `$8FE316` routines/middle/randomd0sd0.asm
+- `$8FE32B` routines/hockey/DefaultMenus.asm
+- `$8FE369` routines/hockey/checkagr.asm
+- `$8FE3B0` routines/logic/WeightedRandomSelect.asm
+- `$8FE404` routines/middle/forceblack.asm
+- `$8FE43C` routines/logic/passmode.asm
+- `$8FE458` routines/logic/dopass.asm
+- `$8FE67D` data/gfx/FrameSetTable.asm
+- `$8FE6BD` routines/logic/CompLine.asm
+- `$8FE825` routines/hockey/TeamRoster.asm
+- `$8FEBE0` routines/hockey/RosterGoalies.asm
+- `$8FEBE4` routines/hockey/RosterG.asm
+- `$8FEBF0` data/text/RosterLineNames.asm
+- `$8FEC68` routines/video/addframe.asm
+- `$8FECAB` routines/hockey/Pmenu.asm
+- `$8FEE4A` routines/hockey/GetPadTeam.asm
+- `$8FEE6B` routines/hockey/setpde.asm
+- `$8FEE83` routines/hockey/setoptions.asm
+- `$8FF4B8` data/gfx/PixelRemapFramer.asm
+- `$8FF4C8` data/gfx/PixelRemapFont.asm
+- `$8FF4D8` routines/logic/UnpackNibbles.asm
+- `$8FF54E` routines/middle/PushNumberWidth.asm
+- `$8FF58D` routines/penalty/StatsReport.asm
+- `$8FF603` routines/logic/Findhittype.asm
+- `$8FF63D` routines/penalty/prefmes.asm
+- `$8FF741` routines/hockey/CheckInjury.asm
+- `$8FF74A` routines/hockey/setInjuryType.asm
+- `$8FF7B6` routines/hockey/sublist.asm
+- `$8FF820` routines/hockey/priolist.asm
+- `$8FF827` routines/hockey/ShowInjuryBox.asm
+- `$8FF8C4` routines/logic/passtoa0.asm
+- `$8FFAF3` routines/stats/GetPlayerCount.asm
+- `$8FFB2B` routines/hockey/GetPlayerNumInitial.asm
+- `$8FFB5B` routines/logic/Acheck.asm
+- `$8FFB8B` routines/middle/divs16.asm
+- `$8FFBDC` routines/logic/doplayeracc.asm
+- `$8FFDD8` routines/logic/ResetAndSelectPlayers.asm
+- `$8FFDFB` routines/hockey/cd0.asm
+- `$8FFE7B` routines/sound/MusicCue.asm
+- `$8FFE8E` routines/sound/sfx8F.asm
+- `$8FFEB4` routines/hockey/ShowGoalBox.asm
+- `$8FFFDC` data/text/GoalBoxText.asm (also unusedFF8F)

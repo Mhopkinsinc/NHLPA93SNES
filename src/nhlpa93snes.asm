@@ -1,4 +1,4 @@
-; NHLPA Hockey '93 (SNES) - top level: hardware registers, macros, RAM names, then the module files (docs/file_map.md).
+; NHLPA Hockey '93 (SNES) - top level: hardware registers, macros, RAM names, then one file per bank in ROM order (docs/file_map.md).
 ; LoROM + FastROM (map mode $30), 4 Mbit, 16 banks mapped at $80-$8F.
 asar 1.91
 lorom
@@ -22,5 +22,3 @@ incsrc "banks/b8C_skate_sprites.asm"
 incsrc "banks/b8D_fonts.asm"
 incsrc "banks/b8E_gameloop.asm"
 incsrc "banks/b8F_frontend.asm"
-; Module files (source file names, one per module per bank). Every block has its own org, so this order
-; does not move any byte; it follows the ROM address of each file's first block.

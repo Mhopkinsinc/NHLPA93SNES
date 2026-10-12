@@ -1,93 +1,93 @@
 # Name review checklist (93 SNES)
 
-Full every-line read per file: SNES-only names checked against 93G/92G, generic locals named, header comments fixed.
+Paths updated to the bank/routine layout; the old module file each entry covered is in brackets. Full every-line read per file: SNES-only names checked against 93G/92G, generic locals named, header comments fixed.
 
-- [x] src/frames.asm
-- [x] src/gfx/graphics_b80.asm
-- [x] src/gfx/graphics_b82.asm
-- [x] src/gfx/graphics_b83.asm
-- [x] src/gfx/graphics_b84.asm
-- [x] src/gfx/graphics_b85.asm
-- [x] src/gfx/graphics_b87.asm
-- [x] src/gfx/graphics_b88.asm
-- [x] src/gfx/graphics_b89.asm
-- [x] src/gfx/graphics_b8A.asm
-- [x] src/gfx/graphics_b8C.asm
-- [x] src/gfx/graphics_b8D.asm
-- [x] src/gfx/graphics_b8F.asm
-- [x] src/gfx/sprites_b84.asm
-- [x] src/gfx/sprites_b85.asm
-- [x] src/gfx/sprites_b87.asm
-- [x] src/gfx/sprites_b88.asm
-- [x] src/gfx/sprites_b89.asm
-- [x] src/gfx/sprites_b8A.asm
-- [x] src/gfx/sprites_b8B.asm
-- [x] src/gfx/sprites_b8C.asm
-- [x] src/gfx/sprites_b8D.asm
-- [x] src/gfx/sprites_b8E.asm
-- [x] src/gfx/sprites_b8F.asm
-- [x] src/hockey_b80.asm
-- [x] src/hockey_b82.asm
-- [x] src/hockey_b83.asm
-- [x] src/hockey_b84.asm
-- [x] src/hockey_b85.asm
-- [x] src/hockey_b86.asm
-- [x] src/hockey_b87.asm
-- [x] src/hockey_b88.asm
-- [x] src/hockey_b89.asm
-- [x] src/hockey_b8B.asm
-- [x] src/hockey_b8D.asm
-- [x] src/hockey_b8E.asm
-- [x] src/hockey_b8F.asm
-- [x] src/logic_b80.asm
-- [x] src/logic_b82.asm
-- [x] src/logic_b83.asm
-- [x] src/logic_b86.asm
-- [x] src/logic_b87.asm
-- [x] src/logic_b88.asm
-- [x] src/logic_b89.asm
-- [x] src/logic_b8A.asm
-- [x] src/logic_b8B.asm
-- [x] src/logic_b8C.asm
-- [x] src/logic_b8D.asm
-- [x] src/logic_b8E.asm
-- [x] src/logic_b8F.asm
-- [x] src/main.asm
-- [x] src/middle_b80.asm
-- [x] src/middle_b82.asm
-- [x] src/middle_b84.asm
-- [x] src/middle_b86.asm
-- [x] src/middle_b88.asm
-- [x] src/middle_b89.asm
-- [x] src/middle_b8B.asm
-- [x] src/middle_b8D.asm
-- [x] src/middle_b8F.asm
-- [x] src/penalty_b80.asm
-- [x] src/penalty_b82.asm
-- [x] src/penalty_b84.asm
-- [x] src/penalty_b88.asm
-- [x] src/penalty_b89.asm
-- [x] src/penalty_b8A.asm
-- [x] src/penalty_b8D.asm
-- [x] src/penalty_b8F.asm
-- [x] src/sound_b81.asm
-- [x] src/sound_b82.asm
-- [x] src/sound_b84.asm
-- [x] src/sound_b86.asm
-- [x] src/sound_b89.asm
-- [x] src/sound_b8D.asm
-- [x] src/sound_b8F.asm
-- [x] src/stats_b84.asm
-- [x] src/stats_b8F.asm
-- [x] src/teamdata_b83.asm
-- [x] src/teamdata_b8A.asm
-- [x] src/video_b80.asm
-- [x] src/video_b82.asm
-- [x] src/video_b84.asm
-- [x] src/video_b85.asm
-- [x] src/video_b87.asm
-- [x] src/video_b88.asm
-- [x] src/video_b8B.asm
-- [x] src/video_b8C.asm
-- [x] src/video_b8D.asm
-- [x] src/video_b8F.asm
+- [x] src/banks/b82_sfx_rink.asm (was src/frames.asm)
+- [x] src/banks/b80_engine.asm (was src/gfx/graphics_b80.asm)
+- [x] src/banks/b82_sfx_rink.asm (was src/gfx/graphics_b82.asm)
+- [x] src/banks/b83_teams.asm (was src/gfx/graphics_b83.asm)
+- [x] src/banks/b84_scouting.asm (was src/gfx/graphics_b84.asm)
+- [x] src/banks/b85_title_gfx.asm (was src/gfx/graphics_b85.asm)
+- [x] src/banks/b87_player_sprites.asm (was src/gfx/graphics_b87.asm)
+- [x] src/banks/b88_title_playoffs.asm (was src/gfx/graphics_b88.asm)
+- [x] src/banks/b89_replay_music.asm (was src/gfx/graphics_b89.asm)
+- [x] src/banks/b8A_playoffbracket_credits.asm (was src/gfx/graphics_b8A.asm)
+- [x] src/banks/b8C_skate_sprites.asm (was src/gfx/graphics_b8C.asm)
+- [x] src/banks/b8D_fonts.asm (was src/gfx/graphics_b8D.asm)
+- [x] src/banks/b8F_frontend.asm (was src/gfx/graphics_b8F.asm)
+- [x] src/banks/b84_scouting.asm (was src/gfx/sprites_b84.asm)
+- [x] src/banks/b85_title_gfx.asm (was src/gfx/sprites_b85.asm)
+- [x] src/banks/b87_player_sprites.asm (was src/gfx/sprites_b87.asm)
+- [x] src/banks/b88_title_playoffs.asm (was src/gfx/sprites_b88.asm)
+- [x] src/banks/b89_replay_music.asm (was src/gfx/sprites_b89.asm)
+- [x] src/banks/b8A_playoffbracket_credits.asm (was src/gfx/sprites_b8A.asm)
+- [x] src/banks/b8B_opening.asm (was src/gfx/sprites_b8B.asm)
+- [x] src/banks/b8C_skate_sprites.asm (was src/gfx/sprites_b8C.asm)
+- [x] src/banks/b8D_fonts.asm (was src/gfx/sprites_b8D.asm)
+- [x] src/banks/b8E_gameloop.asm (was src/gfx/sprites_b8E.asm)
+- [x] src/banks/b8F_frontend.asm (was src/gfx/sprites_b8F.asm)
+- [x] src/banks/b80_engine.asm (was src/hockey_b80.asm)
+- [x] src/banks/b82_sfx_rink.asm (was src/hockey_b82.asm)
+- [x] src/banks/b83_teams.asm (was src/hockey_b83.asm)
+- [x] src/banks/b84_scouting.asm (was src/hockey_b84.asm)
+- [x] src/banks/b85_title_gfx.asm (was src/hockey_b85.asm)
+- [x] src/banks/b86_sound_driver.asm (was src/hockey_b86.asm)
+- [x] src/banks/b87_player_sprites.asm (was src/hockey_b87.asm)
+- [x] src/banks/b88_title_playoffs.asm (was src/hockey_b88.asm)
+- [x] src/banks/b89_replay_music.asm (was src/hockey_b89.asm)
+- [x] src/banks/b8B_opening.asm (was src/hockey_b8B.asm)
+- [x] src/banks/b8D_fonts.asm (was src/hockey_b8D.asm)
+- [x] src/banks/b8E_gameloop.asm (was src/hockey_b8E.asm)
+- [x] src/banks/b8F_frontend.asm (was src/hockey_b8F.asm)
+- [x] src/banks/b80_engine.asm (was src/logic_b80.asm)
+- [x] src/banks/b82_sfx_rink.asm (was src/logic_b82.asm)
+- [x] src/banks/b83_teams.asm (was src/logic_b83.asm)
+- [x] src/banks/b86_sound_driver.asm (was src/logic_b86.asm)
+- [x] src/banks/b87_player_sprites.asm (was src/logic_b87.asm)
+- [x] src/banks/b88_title_playoffs.asm (was src/logic_b88.asm)
+- [x] src/banks/b89_replay_music.asm (was src/logic_b89.asm)
+- [x] src/banks/b8A_playoffbracket_credits.asm (was src/logic_b8A.asm)
+- [x] src/banks/b8B_opening.asm (was src/logic_b8B.asm)
+- [x] src/banks/b8C_skate_sprites.asm (was src/logic_b8C.asm)
+- [x] src/banks/b8D_fonts.asm (was src/logic_b8D.asm)
+- [x] src/banks/b8E_gameloop.asm (was src/logic_b8E.asm)
+- [x] src/banks/b8F_frontend.asm (was src/logic_b8F.asm)
+- [x] src/banks/b80_engine.asm (was src/main.asm)
+- [x] src/banks/b80_engine.asm (was src/middle_b80.asm)
+- [x] src/banks/b82_sfx_rink.asm (was src/middle_b82.asm)
+- [x] src/banks/b84_scouting.asm (was src/middle_b84.asm)
+- [x] src/banks/b86_sound_driver.asm (was src/middle_b86.asm)
+- [x] src/banks/b88_title_playoffs.asm (was src/middle_b88.asm)
+- [x] src/banks/b89_replay_music.asm (was src/middle_b89.asm)
+- [x] src/banks/b8B_opening.asm (was src/middle_b8B.asm)
+- [x] src/banks/b8D_fonts.asm (was src/middle_b8D.asm)
+- [x] src/banks/b8F_frontend.asm (was src/middle_b8F.asm)
+- [x] src/banks/b80_engine.asm (was src/penalty_b80.asm)
+- [x] src/banks/b82_sfx_rink.asm (was src/penalty_b82.asm)
+- [x] src/banks/b84_scouting.asm (was src/penalty_b84.asm)
+- [x] src/banks/b88_title_playoffs.asm (was src/penalty_b88.asm)
+- [x] src/banks/b89_replay_music.asm (was src/penalty_b89.asm)
+- [x] src/banks/b8A_playoffbracket_credits.asm (was src/penalty_b8A.asm)
+- [x] src/banks/b8D_fonts.asm (was src/penalty_b8D.asm)
+- [x] src/banks/b8F_frontend.asm (was src/penalty_b8F.asm)
+- [x] src/banks/b81_sfx.asm (was src/sound_b81.asm)
+- [x] src/banks/b82_sfx_rink.asm (was src/sound_b82.asm)
+- [x] src/banks/b84_scouting.asm (was src/sound_b84.asm)
+- [x] src/banks/b86_sound_driver.asm (was src/sound_b86.asm)
+- [x] src/banks/b89_replay_music.asm (was src/sound_b89.asm)
+- [x] src/banks/b8D_fonts.asm (was src/sound_b8D.asm)
+- [x] src/banks/b8F_frontend.asm (was src/sound_b8F.asm)
+- [x] src/banks/b84_scouting.asm (was src/stats_b84.asm)
+- [x] src/banks/b8F_frontend.asm (was src/stats_b8F.asm)
+- [x] src/banks/b83_teams.asm (was src/teamdata_b83.asm)
+- [x] src/banks/b8A_playoffbracket_credits.asm (was src/teamdata_b8A.asm)
+- [x] src/banks/b80_engine.asm (was src/video_b80.asm)
+- [x] src/banks/b82_sfx_rink.asm (was src/video_b82.asm)
+- [x] src/banks/b84_scouting.asm (was src/video_b84.asm)
+- [x] src/banks/b85_title_gfx.asm (was src/video_b85.asm)
+- [x] src/banks/b87_player_sprites.asm (was src/video_b87.asm)
+- [x] src/banks/b88_title_playoffs.asm (was src/video_b88.asm)
+- [x] src/banks/b8B_opening.asm (was src/video_b8B.asm)
+- [x] src/banks/b8C_skate_sprites.asm (was src/video_b8C.asm)
+- [x] src/banks/b8D_fonts.asm (was src/video_b8D.asm)
+- [x] src/banks/b8F_frontend.asm (was src/video_b8F.asm)

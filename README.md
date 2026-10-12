@@ -2,7 +2,7 @@
 
 **AI agent: start with [START_HERE.md](START_HERE.md).**
 
-Bitwise rebuild of NHLPA Hockey '93 for the Super Nintendo, assembled with asar. The full build is byte-identical to `lst/nhlpa93snes.bin` (sha1 `76a01492cfb656e9fce0094bca356c312adfea0e`). Every bank is disassembled and named; the source is laid out like the NHLPA 93 Genesis source (one file per 93G module per bank).
+Bitwise rebuild of NHLPA Hockey '93 for the Super Nintendo, assembled with asar. The full build is byte-identical to `lst/nhlpa93snes.bin` (sha1 `76a01492cfb656e9fce0094bca356c312adfea0e`). Every bank is disassembled and named; the source is laid out like the NHLPA 93 Genesis source (one file per bank, one file per routine, routine folders named after the 93G modules).
 
 ## Lineage
 
@@ -10,9 +10,10 @@ The SNES port is a hybrid: it began as a port of NHL92 Genesis (likely while NHL
 
 ## Layout
 
-- `src/nhlpa93snes.asm` top level. Module files named after the 93G source files: `main`, `video_bXX`, `logic_bXX`, `hockey_bXX`, `middle_bXX`, `penalty_bXX`, `stats_bXX`, `sound_bXX`, `frames`, `teamdata_bXX`; graphics data in `src/gfx/` (`graphics_bXX`, `sprites_bXX`). Each file holds that module's code of one bank as `org` blocks at their ROM addresses (FastROM mirror). `docs/file_map.md` lists every block and routine.
+- `src/nhlpa93snes.asm` top level: includes the 16 bank files `src/banks/bXX_<name>.asm` in order. Each bank file has one `org` and includes its files in exact ROM order: routines in `src/routines/<93G module>/<Routine>.asm` (one per file), data in `src/data/<category>/<Name>.asm`, the header and vectors in `src/header/snes_header.asm`. `docs/file_map.md` lists every file per bank.
 - `src/inc/snes_regs.asm` hardware registers and register values, `src/macros/snes93.mac` macros, `src/ram93snes.asm` RAM names and constants.
 - `docs/name_map.csv` the quick-pass names (`CODE_xxxxxx`) of the named routines; `docs/segment_notes.md` the notes of the old ~4 KB slices.
+- `tools/split_routines.py` the tool that split the old module files into this layout; `tools/gen_file_map.py` regenerates `docs/file_map.md`.
 - `tools/scan_cleanup.py` counts raw addresses, generic labels and noise comments left in `src/`.
 - `lst/nhlpa93snes.bin` reference ROM (committed, as NHL94Genesis does).
 - `tools/disasm65816.py` the quick-pass generator (recursive descent from the vectors, REP/SEP/PHP/PLP M/X tracking). Setup only; it wrote the old `bankXX_YYYY` slices.

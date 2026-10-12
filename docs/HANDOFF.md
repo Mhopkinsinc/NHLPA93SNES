@@ -4,8 +4,14 @@ Moving to the bank/routine layout: `src/banks/bXX_<name>.asm` (one per bank: `or
 `src/routines/<module>/<Routine>.asm` (one routine per file), `src/data/<category>/<Name>.asm`. Split mechanically with
 `tools/split_routines.py migrate <bank> <bankfile>`; every step builds MATCH.
 
-Migrated banks: b8C_skate_sprites, b81_sfx, b82_sfx_rink, b83_teams, b84_scouting, b85_title_gfx, b86_sound_driver, b87_player_sprites, b88_title_playoffs, b89_replay_music, b8A_playoffbracket_credits, b8B_opening, b8D_fonts, b8E_gameloop, b8F_frontend, b80_engine.
-Not yet migrated: the remaining banks still live in the old `src/<module>_bXX.asm` / `src/gfx/*.asm` files.
+Done: all 16 banks migrated, every step MATCH. Bank files: b80_engine, b81_sfx, b82_sfx_rink, b83_teams, b84_scouting, b85_title_gfx,
+b86_sound_driver, b87_player_sprites, b88_title_playoffs, b89_replay_music, b8A_playoffbracket_credits, b8B_opening, b8C_skate_sprites,
+b8D_fonts, b8E_gameloop, b8F_frontend. The old `src/<module>_bXX.asm`, `src/frames.asm`, `src/main.asm` and `src/gfx/` are gone.
+Rules for new routines: SEGMENT_AGENT.md Layout note. Judgment calls: small tables of code modules stay in `routines/<module>/`
+(e.g. jdtab, dirtab, PenaltyList, linelist); text tables (GameLabels, PerLabels, ScoutLabels, PositionNames, RosterLineNames,
+AttribMenuSkater/Goalie) moved to `data/text/`; frames93 sprite animation tables are `data/frames/`; `unusedFFxx` fills merged
+into the routine before; `XxxEnd` end labels stay in their table's file; GameSamples (bank $81) runs into $82, so b82 starts at $82B86C.
+Next: the cleanup items below (93G inline comments, generic locals) now work per routine file.
 
 ## Previous state (name review)
 

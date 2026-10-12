@@ -1,5 +1,7 @@
 # Segment prompt
 
+Note (2026-10-12): the segment phase is finished and the `src/<file>.asm` / `nhlpa93snes.asm` paths below are historical. The source is now `src/banks/bXX_<name>.asm` + `src/routines/<module>/<Routine>.asm` + `src/data/<category>/<Name>.asm`; to add a routine, create a new file in `src/routines/<module>/` and add its `incsrc` line to the right bank file in ROM order (START_HERE.md section 5 and SEGMENT_AGENT.md Layout note).
+
 Paste this into a new agent session. One segment per prompt; START_HERE.md runs the 8 segments of one bank, then stops for the user. Do not edit this prompt.
 
 ```text

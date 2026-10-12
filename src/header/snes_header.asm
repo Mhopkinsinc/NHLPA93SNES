@@ -1,3 +1,4 @@
+; SNES internal header ($80FFC0) and the interrupt vectors ($80FFE0). Included from banks/b80_engine.asm after reenergizeteam's $FF fill.
 	db "NHLPA Hockey '93     "		; title (21 bytes)
 	db $30		; map mode: LoROM, FastROM
 	db $00		; cartridge type: ROM only

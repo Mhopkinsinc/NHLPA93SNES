@@ -3,6 +3,21 @@
 This file is the queue and the history. Do not rewrite it as a whole file. Edit it in place.
 (Adapted from the NHL94Genesis SEGMENT_AGENT.md for 65816 / asar.)
 
+## Layout note (bank/routine layout, 2026-10-12)
+
+The 93G module files below (`src/hockey_b80.asm`, `src/gfx/...`) were split by `tools/split_routines.py` into:
+`src/banks/bXX_<name>.asm` (one per bank: one `org`, then `incsrc` lines in exact ROM order, nothing else),
+`src/routines/<93G module>/<Routine>.asm` (one routine per file; fall-through routines stay with the first; local labels stay with their routine)
+and `src/data/<category>/<Name>.asm` (sound, gfx, frames, teams, text). Header/vectors: `src/header/snes_header.asm`.
+
+Rules for adding or splitting routines:
+- A new routine is a new file `src/routines/<module>/<Routine>.asm` named after its global label; the folder is the 93G module
+  (93G first, then the module of its caller/neighbour; hardware code in `video`, SPC code in `sound`, math helpers in `middle`).
+- Add one `incsrc "../routines/<module>/<Routine>.asm"` line to the bank file at its exact ROM position. No `org` in routine or data files.
+- Splitting a routine out of a file: cut at its global label line (move the comment lines right above the label with it); bytes stay in order.
+- Unused padding/filler goes with the routine before it, or in a clearly named file.
+- Build MATCH, then `python3 tools/gen_file_map.py` to refresh `docs/file_map.md`.
+
 ## Layout note (cleanup pass)
 
 The 128 `src/bankXX_YYYY.asm` slices named below no longer exist: after every slice was matched they were regrouped into the 93G
@@ -27,7 +42,7 @@ NHLPA Hockey 93 SNES is a hybrid. The SNES port started from NHL92 Genesis (like
 - Reference ROM: `lst/nhlpa93snes.bin` (524288 bytes, sha1 `76a01492cfb656e9fce0094bca356c312adfea0e`). Bytes and branch targets come from it. Do not substitute another ROM.
 - There is no IDA listing. The starting point is the auto-generated `src/bankXX_YYYY.asm` slices (quick recursive-descent pass from the vectors, `tools/disasm65816.py`). Each instruction line carries `; $address: bytes`. Unreached bytes are `db` lines: they are unresolved, not proven data. Do not re-run the generator over a bank once it has been edited.
 - Style / naming source: https://github.com/abdulahmad/NHLPA93Genesis (first), then https://github.com/abdulahmad/NHL92Genesis where 93 lacks the routine.
-- `src/nhlpa93snes.asm` is the full build top level: `inc/snes_regs.asm`, `macros/snes93.mac`, `ram93snes.asm`, then the module files (each block has its own `org`).
+- `src/nhlpa93snes.asm` is the full build top level: `inc/snes_regs.asm`, `macros/snes93.mac`, `ram93snes.asm`, then the 16 bank files `banks/bXX_<name>.asm`.
 
 ## Mapping
 

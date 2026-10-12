@@ -32,11 +32,13 @@ The last line must be `MATCH` and both sha1 lines must equal `76a01492cfb656e9fc
 ## 3. Source layout
 
 The segment phase is finished: every bank is disassembled and named (the per-slice log is in `SEGMENT_AGENT.md`).
-The source is now laid out like the NHLPA 93 Genesis source: `src/nhlpa93snes.asm` includes one file per 93G module per bank
-(`main`, `video_bXX`, `logic_bXX`, `hockey_bXX`, `middle_bXX`, `penalty_bXX`, `stats_bXX`, `sound_bXX`, `frames`, `teamdata_bXX`,
-and `gfx/graphics_bXX`, `gfx/sprites_bXX` for the graphics data). A module's SNES code is spread over the ROM, so a file holds one or
-more blocks, each with its own `org` at its exact ROM address; the include order does not move bytes. `docs/file_map.md` lists every
-block and routine; `docs/name_map.csv` maps the quick-pass `CODE_xxxxxx` names to the real names.
+The source is laid out by bank: `src/nhlpa93snes.asm` includes `src/banks/bXX_<name>.asm` in bank order. Each bank file has one
+`org` (the bank start, or the first byte after a block that runs over from the bank before) and then `incsrc` lines in exact ROM order,
+nothing else. Code is one routine per file in `src/routines/<93G module>/<Routine>.asm` (`hockey`, `logic`, `middle`, `penalty`,
+`video`, `stats`, `sound`, `main`); a routine that falls through into the next keeps both in one file, named after the first. Small
+tables a module uses stay in its routines folder. Non-code data is in `src/data/<category>/<Name>.asm` (`sound`, `gfx`, `frames`,
+`teams`, `text`). The SNES header and vectors are `src/header/snes_header.asm`. `docs/file_map.md` lists every bank's files with
+their addresses (`python3 tools/gen_file_map.py` regenerates it); `docs/name_map.csv` maps the quick-pass `CODE_xxxxxx` names.
 
 ## 4. Work loop: cleanup
 
@@ -45,8 +47,9 @@ block and routine; `docs/name_map.csv` maps the quick-pass `CODE_xxxxxx` names t
 3. Work one file (or one file group) at a time. Rebuild after every logical change; it must print MATCH. If not, fix or revert before moving on.
 4. Names: 93G first, then 92G, then a name from what the code does (`SEGMENT_AGENT.md` naming rules). Rename across the whole repo at once.
    Keep operand sizes explicit (`lda.b name` / `lda.w name` / `lda.l name`, `lda.w #label>>16`) so asar emits the same bytes.
-5. Moving code between files: cut at a routine boundary and give the moved block its own `org` (its ROM address, from `output/nhlpa93snes.sym`).
-   Update `docs/file_map.md`.
+5. Adding a routine (splitting one out, or naming code that was data): put it in a new file `src/routines/<module>/<Routine>.asm`
+   (data: `src/data/<category>/<Name>.asm`) and add its `incsrc` line to the bank file at its exact ROM position. Never add an `org`
+   to a routine file. Run `python3 tools/gen_file_map.py` to update `docs/file_map.md`.
 6. Commit with a clear message, push, and update the `Cleanup progress` section of `docs/HANDOFF.md` before you stop.
 
 ## 5. When stuck

@@ -73,7 +73,7 @@ def segments(block):
 def merged(segs):
     out = []
     for s in segs:
-        if out and (s['name'] is None or s['name'].endswith('End') or s['name'].startswith('unused')
+        if out and (s['name'] is None or s['name'].endswith('End') or (s['name'].startswith('unused') and not s['code'])
                     or (out[-1]['code'] and out[-1]['last'] not in TERM and out[-1]['last'] != 'data')):
             p = out[-1]; p['lines'] += s['lines']; p['code'] |= s['code']; p['last'] = s['last'] or p['last']
             p.setdefault('also', []).append(s['name'])
