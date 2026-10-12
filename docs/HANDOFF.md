@@ -1,6 +1,6 @@
 ## Current state (name review)
 
-Name review pass, one file per push; checklist in `docs/name_review_93s.md`. Done: `src/middle_b80.asm`, `src/logic_b8B.asm`, `src/middle_b86.asm`, `src/sound_b82.asm`. Next: the smaller files with generic locals (`video_b8F`, ...), then `logic_b80`/`hockey_b80`/`penalty_b80`/`frames`. Rename history goes in `docs/name_map.csv` only.
+Name review pass, one file per push; checklist in `docs/name_review_93s.md`. Done: `src/middle_b80.asm`, `src/logic_b8B.asm`, `src/middle_b86.asm`, `src/sound_b82.asm`. Next: the smaller files with generic locals (...), then `logic_b80`/`hockey_b80`/`penalty_b80`/`frames`. Rename history goes in `docs/name_map.csv` only.
 
 # Setup handoff (2026-10-09)
 

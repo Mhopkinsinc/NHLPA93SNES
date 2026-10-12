@@ -18,10 +18,10 @@ showclock:		;put the game clock in the dma list. Called from setvideo; returns u
 	lda.w #600
 	sta.b mula
 	jsl.l divu16
-	beq .zero
+	beq .notens
 	adc.w #$0030
 	sta.w mesarea+2
-.zero:
+.notens:
 	lda.w #60
 	sta.b mula
 	lda.b mulres+2
@@ -75,7 +75,7 @@ KillCrowd:		;silence the crowd noise (psg). Called from Reset, SetupPauseScreen,
 
 org $8F8ABC
 showzam:		;zamboni. Called from setvideo.
-		;   SNES: role: on the horizontal rink the zamboni sprite ($22D) moves with the time since vcountmark
+		;   SNES: on the horizontal rink the zamboni sprite ($22D) moves with the time since vcountmark
 	lda.b vcount
 	ldy.b vcount+2
 	cmp.b vcount
@@ -141,7 +141,7 @@ QueueBackmapDMA:		;SNES: DMAList entry for backmap ($800 bytes) to vram $400
 	adc.w #dmasize
 	sta.b DMAListend
 	rtl
-ShowRinkRows:		;show_rink role: DMAList entries for the IceRinkMap rows that Vscroll brought on screen (Oldrow, vramrow)
+ShowRinkRows:		;show_rink part: DMAList entries for the IceRinkMap rows that Vscroll brought on screen (Oldrow, vramrow)
 	ldy.b DMAListend
 	lda.w Vscroll
 	clc
@@ -152,15 +152,15 @@ ShowRinkRows:		;show_rink role: DMAList entries for the IceRinkMap rows that Vsc
 	tax
 	sec
 	sbc.w Oldrow
-	bne .nonzero
-	jmp.w .join2
-.nonzero:
-	bpl .pos
+	bne .moved
+	jmp.w .done
+.moved:
+	bpl .down
 	stx.w Oldrow
 	eor.w #$FFFF
 	inc a
 	cmp.w #$0019
-	bcs .loop
+	bcs .redraw
 	sta.b tmp1
 	lda.w vramrow
 	sec
@@ -168,17 +168,17 @@ ShowRinkRows:		;show_rink role: DMAList entries for the IceRinkMap rows that Vsc
 	and.w #$001F
 	sta.w vramrow
 	sta.b tmp2
-	bra .join
-.loop:
+	bra .rows
+.redraw:
 	lda.w #$001D
 	sta.b tmp1
 	stz.w vramrow
 	stz.b tmp2
-	bra .join
-.pos:
+	bra .rows
+.down:
 	stx.w Oldrow
 	cmp.w #$0019
-	bcs .loop
+	bcs .redraw
 	sta.b tmp1
 	adc.w vramrow
 	and.w #$001F
@@ -194,7 +194,7 @@ ShowRinkRows:		;show_rink role: DMAList entries for the IceRinkMap rows that Vsc
 	sec
 	sbc.b tmp1
 	tax
-.join:
+.rows:
 	txa
 	asl a
 	asl a
@@ -215,7 +215,7 @@ ShowRinkRows:		;show_rink role: DMAList entries for the IceRinkMap rows that Vsc
 	adc.w #$0400
 	sta.b tmp2
 	ldx.b tmp1
-.loop2:
+.rowloop:
 	lda.w #IceRinkMap>>16
 	sta.w DMAList+dmabank,y
 	sta.w DMAList+dmasize+dmabank,y
@@ -227,9 +227,9 @@ ShowRinkRows:		;show_rink role: DMAList entries for the IceRinkMap rows that Vsc
 	sec
 	sbc.w #$03E0
 	cmp.w #$0800
-	bne .ne
+	bne .nowrap
 	lda.w #$0400
-.ne:
+.nowrap:
 	sta.b tmp2
 	lda.b tmp0
 	sta.w DMAList,y
@@ -246,8 +246,8 @@ ShowRinkRows:		;show_rink role: DMAList entries for the IceRinkMap rows that Vsc
 	adc.w #$000E
 	tay
 	dex
-	bne .loop2
-.join2:
+	bne .rowloop
+.done:
 	sty.b DMAListend
 	rtl
 
@@ -301,12 +301,12 @@ ClearSprites:		;SNES: all 128 OAM entries off screen (y $E0), the high table cle
 	tax
 	dey
 	bne .loop
-.loop2:
+.hiclear:
 	stz.w Satt,x
 	inx
 	inx
 	cpx.w #$0220
-	bne .loop2
+	bne .hiclear
 	stz.b sprcount
 	inc.b sprclock
 	lda.b sprnodraw
@@ -325,7 +325,7 @@ ClearSprites:		;SNES: all 128 OAM entries off screen (y $E0), the high table cle
 RemapTiles:		;SNES: d0 4bpp tiles at [a0] to vram with each pixel value remapped through the 16-byte table [a1]
 	lda.w #$000E
 	sta.b tmp2+1
-.loop:
+.tile:
 	rep #$30
 	ldy.b tmp2+1
 	lda.b [a0],y
@@ -340,7 +340,7 @@ RemapTiles:		;SNES: d0 4bpp tiles at [a0] to vram with each pixel value remapped
 	ldx.b tmp2+1
 	lda.b #$07
 	sta.b tmp2
-.loop2:
+.pixel:
 	ldy.b #$00
 	asl.b tmp1+1
 	bcc .lt
@@ -372,19 +372,19 @@ RemapTiles:		;SNES: d0 4bpp tiles at [a0] to vram with each pixel value remapped
 	lsr a
 	rol.b mula+17,x
 	dec.b tmp2
-	bpl .loop2
+	bpl .pixel
 	dec.b tmp2+1
 	dec.b tmp2+1
-	bpl .loop
+	bpl .tile
 	rep #$30
 	ldx.w #$0000
-.loop3:
+.out:
 	lda.b mula,x
 	sta.w VMDATAL
 	inx
 	inx
 	cpx.w #$0020
-	bne .loop3
+	bne .out
 	lda.b a0
 	clc
 	adc.w #$0020
@@ -395,7 +395,7 @@ RemapTiles:		;SNES: d0 4bpp tiles at [a0] to vram with each pixel value remapped
 
 org $8FEC68
 addframe:		;a3 = cords.l frame/oldframe VRsize VRchar. Project the object with find3d, then addframe2.
-		;   SNES: sprite frame sprframe at sprx/spry: find its frame set in FrameSetTable (sprsetofs), then DrawFrame; frames $293 and up are drawn by addframe_hi
+		;   SNES: sprite frame sprframe at sprx/spry: find its frame set in FrameSetTable (sprsetofs), then DrawFrame; frames $293 and up (addframe_hi) and frame 0 are skipped
 	lda.b sprframe
 	cmp.w #$0293
 	bcc .sprframelt
