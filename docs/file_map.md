@@ -301,11 +301,7 @@ Regenerate this file with `python3 tools/gen_file_map.py` after `./build.sh`.
 
 ## src/banks/b86_sound_driver.asm
 
-- `$868000` data/sound/BootSoundUpload.asm
-- `$868004` data/sound/SPCDriver.asm (also SPCDriverEnd)
-- `$86A6EF` data/sound/BootInstruments.asm (also BootInstrumentsEnd)
-- `$86A7A1` data/sound/BootSampleDir.asm (also BootSampleDirEnd)
-- `$86A7C9` data/sound/BootSamples.asm (also BootSamplesEnd)
+- `$868000` data/sound/bootsound.asm (also SPCDriver, SPCDriverEnd, BootInstruments, BootInstrumentsEnd, BootSampleDir, BootSampleDirEnd, BootSamples, BootSamplesEnd)
 - `$86FA3E` routines/middle/DecompressBytecode.asm
 - `$86FB96` routines/hockey/RestoreBenchEnergy.asm
 - `$86FBE1` routines/sound/StartSong6.asm
