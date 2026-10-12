@@ -67,3 +67,9 @@ What's next:
 - Copy the important 93G inline comments, matching them instruction by instruction.
 - Rename the remaining generic locals (`.zero`, `.join`, `.skip`, `.lt`, ...) by reading the code.
 - Split the larger `hockey_bXX`/`logic_bXX` files further once more routines are identified, and keep `docs/file_map.md` in step with them.
+
+## Routine header rewrite (2026-10-12)
+Each `src/routines/<module>/*.asm` opens with one plain-English header comment on the label line (93G file header style):
+what the routine does, no `SNES:` second line, no ROM addresses or banks, no stray values. One commit per module folder, MATCH.
+- Done: main, stats, sound, video.
+- Next: middle, penalty, logic, hockey.
