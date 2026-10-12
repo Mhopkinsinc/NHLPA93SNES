@@ -6,13 +6,13 @@ getlinee:		;d0 = line number, a2 = team struct. Return d0 = energy level of this
 		;   SNES: Returns d0 = average energy (tmpde) of the skaters of that line (priolist picks the positions)
 	stx.b xsave
 	ldx.w #$0000
-.saved:
+.save:
 	lda.b d3,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .saved
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
@@ -86,11 +86,11 @@ getlinee:		;d0 = line number, a2 = team struct. Return d0 = energy level of this
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0006
-.restd:
+.restore:
 	pla
 	sta.b d3,x
 	dex
 	dex
-	bpl .restd
+	bpl .restore
 	ldx.b xsave
 	rtl
