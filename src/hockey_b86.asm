@@ -5,19 +5,19 @@ org $86FB96
 RestoreBenchEnergy:		;called once per second. Restore energy for players on the bench
 		;   SNES: once a second with line changes on, players on the bench (TMPDBENCH) regain 10 energy up to $1000, both teams
 	lda.w OptLine
-	bne .rtl
+	bne .x
 	stz.b a2		; home team, then the away team
-	jsl.l .tm
+	jsl.l .team
 	lda.w #$0002
 	sta.b a2
-.tm:
+.team:
 	lda.w #$0032
 	sta.b d0
-.pl:
+.b0:
 	lda.b a2
-	beq .p2
+	beq .away
 	lda.w #$0034
-.p2:
+.away:
 	clc
 	adc.b d0
 	tay
@@ -30,10 +30,10 @@ RestoreBenchEnergy:		;called once per second. Restore energy for players on the 
 	sta.w tmpde,y
 	sec
 	sbc.w #$1000
-	bmi .v1
+	bmi .neg
 	bvc .max
 	bra .next
-.v1:
+.neg:
 	bvc .next
 .max:
 	lda.w #$1000
@@ -41,12 +41,12 @@ RestoreBenchEnergy:		;called once per second. Restore energy for players on the 
 .next:
 	dec.b d0
 	dec.b d0
-	bpl .pl
-.rtl:
+	bpl .b0
+.x:
 	rtl
 
 org $86FC29
-setteams:		;use hometeam/visteam to set team structures. Falls in from clearTeamStats, also called from hockey93_08.
+setteams:		;use hometeam/visteam to set team structures. Falls in from clearTeamStats.
 		;   SNES: with InitTeamStructure: use HomeTeam/VisTeam to set the team structs (tmsort, tmteam, tmdata from TeamList). Falls in from ClearTeamStats
 	stz.w tmsort		; home: tmsort 0, away: tmsort $0C
 	lda.w #$000C
@@ -112,23 +112,23 @@ PickStartingGoalie:		;SNES: tmgoalie of team a2 = 0 (FigureJoy); a computer team
 		;   report (UnpackNibbles, WeightedRandomSelect)
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	ldy.b a2
 	lda.w #$0000
@@ -140,18 +140,18 @@ PickStartingGoalie:		;SNES: tmgoalie of team a2 = 0 (FigureJoy); a computer team
 	inc a
 	sta.b d0
 	cmp.w cont1team		; a controller team: keep goalie 0
-	beq .ex
+	beq .x
 	cmp.w cont2team
-	beq .ex
+	beq .x
 	stz.b d0
 	lda.w gamelevel
 	sec
 	sbc.w #$0002
 	beq .po
-	bmi .v1
+	bmi .neg
 	bvs .po
 	bra .set
-.v1:
+.neg:
 	bvs .set
 .po:
 	lda.w OptLine
@@ -177,23 +177,23 @@ PickStartingGoalie:		;SNES: tmgoalie of team a2 = 0 (FigureJoy); a computer team
 	ldy.b a2
 	lda.b d0
 	sta.w tmgoalie,y
-.ex:
+.x:
 	stx.b xsave
 	ldx.w #$0002
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0002
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	rtl
