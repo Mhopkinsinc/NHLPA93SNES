@@ -1,7 +1,3 @@
-; Player logic and the assignments (asstab).
-; Bank $8B. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $8BFE47
 asswingo:		;asstab 4. player a3 is winger on offense
 		;   SNES: wing on offence: pick a spot in the zone the puck is in (.dedata + random), awingd when the other team has the puck
 	lda.w pfalock,x
@@ -191,29 +187,3 @@ asswingo:		;asstab 4. player a3 is winger on offense
 	dw 100,20,60,10		; centre
 	dw 60,50,230,20		; their zone
 	dw 80,30,250,20		; past the goal line
-
-org $8BFFD3
-skatetopuckinit:		;d0/d1 = puck x/y plus half the high byte of its velocity. Called from skatetopuck and assnearest
-	lda.w puckvx		; puckvx high byte / 2
-	xba
-	lsr a
-	and.w #$007F
-	bit.w #$0040
-	beq .x
-	ora.w #$FF80
-.x:
-	clc
-	adc.w puckx
-	sta.b d0
-	lda.w puckvy
-	xba
-	lsr a
-	and.w #$007F
-	bit.w #$0040
-	beq .y
-	ora.w #$FF80
-.y:
-	clc
-	adc.w pucky
-	sta.b d1
-	rtl
