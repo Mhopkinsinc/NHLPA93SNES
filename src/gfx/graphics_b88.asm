@@ -29,7 +29,7 @@ FramerMap:		;Framer.map.jim: the 3 x 3 box pieces (corner, edge, side, centre) f
 	dw $0000,$0001,$4000
 	dw $0002,$0003,$4002
 	dw $8000,$8001,$C000
-FramerTiles:		;the 4 Framer box tiles (4bpp, data/Framer.chr): vram by ScoutingReport_loop7; setupice remaps them with PixelRemap87
+FramerTiles:		;the 4 Framer box tiles (4bpp, data/Framer.chr): sent to vram by ScoutingReport; setupice remaps them with PixelRemap87
 	incbin "../../data/Framer.chr"
 
 org $889B73
