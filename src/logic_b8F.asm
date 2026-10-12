@@ -8,7 +8,7 @@ asseben:		;asstab 9. player a3 should exit bench area
 	bne .rtl
 	lda.w pflags,x
 	bit.w #$0002
-	beq .nopflags
+	beq .nna
 	and.w #$FFFD
 	sta.w pflags,x
 	stz.w Xvel,x
@@ -17,9 +17,9 @@ asseben:		;asstab 9. player a3 should exit bench area
 	lsr a
 	sec
 	sbc.w #$0006
-	bmi .neg
+	bmi .0
 	inc a
-.neg:
+.0:
 	sta.b mulb
 	lda.w #$000E
 	sta.b mula
@@ -35,7 +35,7 @@ asseben:		;asstab 9. player a3 should exit bench area
 	jml.l SetSPA
 .rtl:
 	rtl
-.nopflags:
+.nna:
 	lda.w #$0004
 	sta.w facedir,x
 	lda.w pflags,x
@@ -55,10 +55,10 @@ assdopen:		;asstab $D. add player a3 to penalty box
 	lda.w #$0010
 	sta.b d0
 	lda.w pfteam,x
-	beq .nopfteam
+	beq .1
 	lda.w #$0001
 	sta.b d0
-.nopfteam:
+.1:
 	lda.w PBnum
 	clc
 	adc.b d0
@@ -100,36 +100,36 @@ fightinput:		;controller processing for fighting
 		;   SNES: pad input in a fight: dpad moves (playeracc), stay near the fight spot (xc1), B/A/Y punch (SPA $F82/$F50/$F0C)
 	lda.w temp3,x
 	ora.w Pencntdwn
-	bpl .Pencntdwnpos
+	bpl .go
 	jmp.w .rtl
-.Pencntdwnpos:
+.go:
 	lda.w SPA,x
 	cmp.w #$0EDA
-	bne .SPAne
+	bne .input
 	jmp.w .rtl
-.SPAne:
+.input:
 	lda.b d1
 	pha
 	lda.b d0
 	sta.b d2
 	bit.w #$0008
-	bne .nonzero
+	bne .noa
 	and.w #$0007
 	sta.b d2
 	jsl.l playeracc
-.nonzero:
+.noa:
 	lda.w xc1
 	clc
 	adc.w #$000C
 	sta.b d0
 	lda.w facedir,x
 	cmp.w #$0002
-	bne .facedirne
+	bne .0
 	lda.b d0
 	sec
 	sbc.w #$0018
 	sta.b d0
-.facedirne:
+.0:
 	lda.b d0
 	sec
 	sbc.w Xpos,x
@@ -137,13 +137,13 @@ fightinput:		;controller processing for fighting
 	lda.w Xvel,x
 	eor.b d0
 	sta.b d1
-	bpl .Xvelpos
+	bpl .ind
 	lda.b d0
 	bit.w #$8000
-	beq .nod0
+	beq .1
 	eor.w #$FFFF
 	inc a
-.nod0:
+.1:
 	sta.b d0
 	lda.w Xvel,x
 	sta.b mula
@@ -158,7 +158,7 @@ fightinput:		;controller processing for fighting
 	sec
 	sbc.b d0
 	sta.w Xvel,x
-.Xvelpos:
+.ind:
 	pla
 	sta.b d1
 	lda.w pf2aip,x
@@ -170,23 +170,23 @@ fightinput:		;controller processing for fighting
 	sta.w pf2aip,x
 	lda.b d2
 	bit.w #$0080
-	beq .nod2
+	beq .p2
 	jml.l SetSPA
-.nod2:
+.p2:
 	lda.w #$0F82
 	sta.b d1
 	lda.b d2
 	bit.w #$8000
-	beq .nod22
+	beq .p3
 	jml.l SetSPA
-.nod22:
+.p3:
 	lda.w #$0F0C
 	sta.b d1
 	lda.b d2
 	bit.w #$4000
-	beq .nod23
+	beq .nopunch
 	jml.l SetSPA
-.nod23:
+.nopunch:
 	stz.w pf2aip,x
 .rtl:
 	rtl
@@ -206,8 +206,8 @@ GoalieCount:		;SNES: d0 = goalies of team a2 (nibbles of its goalie weights word
 	lda.b a2
 	tay
 	and.w #$FFFD
-.loop:
-	bne .loop
+.hang:
+	bne .hang
 	lda.w #TeamList>>16
 	sta.b tmp1
 	lda.w tmdata,y
@@ -219,13 +219,13 @@ GoalieCount:		;SNES: d0 = goalies of team a2 (nibbles of its goalie weights word
 	stz.b d0
 	lda.b [tmp0]
 	xba
-.loop2:
+.cnt:
 	inc.b d0
 	asl a
 	asl a
 	asl a
 	asl a
-	bne .loop2
+	bne .cnt
 	rtl
 
 org $8FDA8F
@@ -235,22 +235,22 @@ assstanley:		;asstab 8. player a3 skates with stanley cup overhead
 	bne .rtl
 	lda.w pflags,x
 	bit.w #$0002
-	beq .nopflags
+	beq .nna
 	and.w #$FFFD
 	sta.w pflags,x
 	lda.w #$005A
 	sta.w temp3,x
 	lda.w Hpos
-	bpl .Hpospos
+	bpl .0
 	lda.w #$FFA6
 	sta.w temp3,x
-.Hpospos:
+.0:
 	lda.w Vpos
 	sta.w temp4,x
 	lda.w #$1124
 	sta.b d1
 	jsl.l SetSPA
-.nopflags:
+.nna:
 	lda.w temp3,x
 	sec
 	sbc.w Xpos,x
@@ -263,13 +263,13 @@ assstanley:		;asstab 8. player a3 skates with stanley cup overhead
 	lda.b d0
 	sec
 	sbc.w #$0007
-	beq .nod0
-	bmi .neg
-	bvs .nod0
+	beq .turn
+	bmi .lt
+	bvs .turn
 	bra .rtl
-.neg:
+.lt:
 	bvs .rtl
-.nod0:
+.turn:
 	lda.b d0
 	sta.b d2
 	sta.w facedir,x
@@ -279,11 +279,11 @@ assstanley:		;asstab 8. player a3 skates with stanley cup overhead
 
 org $8FDB1B
 asscenterd:		;asstab 5. player a3 is center on defense
-		;   SNES: centre on defence: halfway between the puck and his goal; acentero when the team gets the puck
+		;   SNES: center on defense: halfway between the puck and his goal; acentero when the team gets the puck
 	lda.w gmclock
-	beq .nogmclock
+	beq .go
 	jml.l assnothing
-.nogmclock:
+.go:
 	jsl.l check4bench
 	lda.w pflags,x
 	bit.w #$0008
@@ -291,23 +291,23 @@ asscenterd:		;asstab 5. player a3 is center on defense
 	jmp.w .rtl
 .nopflags:
 	bit.w #$0002
-	beq .zero
+	beq .nna
 	and.w #$FFFD
 	sta.w pflags,x
 	stz.w temp1,x
 	stz.w temp2,x
 	lda.w #$0008
 	sta.w temp2b,x
-.zero:
+.nna:
 	lda.w temp1,x
 	sec
 	sbc.b d7
 	sta.w temp1,x
-	bpl .pos
+	bpl .nodec
 	lda.w aidef,x
 	sta.w temp1,x
 	lda.w puckc
-	bmi .pos
+	bmi .nodec
 	sec
 	sbc.w #$0006
 	sta.b d1
@@ -318,9 +318,9 @@ asscenterd:		;asstab 5. player a3 is center on defense
 	sec
 	sbc.w #$0006
 	eor.b d1
-	bmi .pos
+	bmi .nodec
 	jml.l assreplace
-.pos:
+.nodec:
 	lda.w puckx
 	pha
 	asl a
@@ -336,13 +336,13 @@ asscenterd:		;asstab 5. player a3 is center on defense
 	lda.w #$FFA8
 	sec
 	sbc.w pucky
-	beq .zero2
-	bmi .neg
-	bvs .zero2
-	bra .join
-.neg:
-	bvs .join
-.zero2:
+	beq .half
+	bmi .lt
+	bvs .half
+	bra .z1
+.lt:
+	bvs .z1
+.half:
 	lda.w #$FF80
 	clc
 	adc.w pucky
@@ -351,19 +351,19 @@ asscenterd:		;asstab 5. player a3 is center on defense
 	pla
 	ror a
 	sta.b d1
-	bra .join
+	bra .z1
 .rtl:
 	rtl
 .nopfgoal:
 	lda.w #$0058
 	sec
 	sbc.w pucky
-	bmi .neg2
-	bvc .vc
-	bra .join
-.neg2:
-	bvc .join
-.vc:
+	bmi .lt2
+	bvc .half2
+	bra .z1
+.lt2:
+	bvc .z1
+.half2:
 	lda.b d1
 	clc
 	adc.w pucky
@@ -372,7 +372,7 @@ asscenterd:		;asstab 5. player a3 is center on defense
 	pla
 	ror a
 	sta.b d1
-.join:
+.z1:
 	lda.w #rtss
 	sta.b a0
 	lda.w #rtss>>16
@@ -393,9 +393,9 @@ playeracc:		;d2 = direction of acc
 	lsr a
 	lsr a
 	bit.w #$2000
-	beq .zero
+	beq .sx
 	ora.w #$C000
-.zero:
+.sx:
 	sta.b d1
 	lda.l dirtab8F,x
 	sta.b mula
@@ -405,23 +405,23 @@ playeracc:		;d2 = direction of acc
 	lsr a
 	lsr a
 	bit.w #$2000
-	beq .zero2
+	beq .sy
 	ora.w #$C000
-.zero2:
+.sy:
 	sta.b d0
 	ldx.b a3
 	lda.w Wallsin,x
-	beq .noWallsin
+	beq .nox
 	eor.b d0
-	bpl .noWallsin
+	bpl .nox
 	stz.b d0
-.noWallsin:
+.nox:
 	lda.w Wallcos,x
-	beq .noWallcos
+	beq .noy
 	eor.b d1
-	bmi .noWallcos
+	bmi .noy
 	stz.b d1
-.noWallcos:
+.noy:
 	lda.w weight,x
 	lsr a
 	lsr a
@@ -435,14 +435,14 @@ playeracc:		;d2 = direction of acc
 	adc.w legstr,x
 	sta.b d2
 	lda.w position,x
-	bne .position
+	bne .ng
 	lda.b d2
 	clc
 	adc.w legstr,x
 	clc
 	adc.w #$0008
 	sta.b d2
-.position:
+.ng:
 	lda.b d2
 	pha
 	sta.b mula
@@ -538,12 +538,12 @@ playeracc:		;d2 = direction of acc
 	cmp.b d3
 	lda.b d2+2
 	sbc.b d3+2
-	bcc .d2lt
+	bcc .sube
 	lda.b d0
 	sta.w Xvel,x
 	lda.b d1
 	sta.w Yvel,x
-.d2lt:
+.sube:
 	lda.w OptLine
 	bne .rtl
 	lda.w seed
@@ -556,13 +556,13 @@ playeracc:		;d2 = direction of acc
 	sta.b d0
 	sec
 	sbc.w #$0C00
-	bmi .neg
-	bvc .vc
-.loop:
+	bmi .lt
+	bvc .add
+.set:
 	jmp.w setpde
-.neg:
-	bvc .loop
-.vc:
+.lt:
+	bvc .set
+.add:
 	lda.w endurance,x
 	sta.b d2
 	clc
@@ -583,7 +583,6 @@ dirtab8F:		;x, y acceleration per direction 0-7 (playeracc)
 
 org $8FE3B0
 WeightedRandomSelect:		;d0 = number of word weights at nibblebuffer. Return d0 = random index, picked with those weights. Called from SetScore_getscore and UpdateTeamNameisplay
-
 		;   SNES: d0 = random index 0..d0-1 weighted by the words in nibblebuffer
 	lda.b d1+2
 	pha
@@ -598,28 +597,28 @@ WeightedRandomSelect:		;d0 = number of word weights at nibblebuffer. Return d0 =
 	lda.w #$0000
 	sta.b a1+2
 	stz.b d1
-	bra .join
-.loop:
+	bra .next
+.sum:
 	lda.b d1
 	clc
 	adc.b [a1]
 	sta.b d1
 	inc.b a1
 	inc.b a1
-.join:
+.next:
 	dec.b d0
-	bpl .loop
+	bpl .sum
 	lda.b d1
 	sta.b d0
 	jsl.l randomd0
-.loop2:
+.find:
 	dec.b a1
 	dec.b a1
 	lda.b d0
 	sec
 	sbc.b [a1]
 	sta.b d0
-	bpl .loop2
+	bpl .find
 	lda.b a1
 	sec
 	sbc.w #nibblebuffer
@@ -655,23 +654,23 @@ dopass:		;pass the puck in passdir, to the best teammate there if any.
 		;   SNES: the team mate nearest the passdir lane (or passdir), puck velocity, SPA, pfalock
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0018
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	lda.w seed+2
 	and.w #$0003
@@ -691,10 +690,10 @@ dopass:		;pass the puck in passdir, to the best teammate there if any.
 	lda.w #$0007
 	sta.b d0
 	lda.w position,x
-	beq .noposition
+	beq .pa
 	lda.w passacc,x
 	sta.b d0
-.noposition:
+.pa:
 	lda.b d0
 	asl a
 	asl a
@@ -706,24 +705,24 @@ dopass:		;pass the puck in passdir, to the best teammate there if any.
 	sta.b d3
 	stz.b a1
 	cpx.w #$000C
-	bcc .loop
+	bcc .0
 	lda.w #$000C
 	sta.b a1
-.loop:
+.0:
 	cpx.b a1
-	bne .ne
-	jmp.w .join
-.ne:
+	bne .1
+	jmp.w .next
+.1:
 	ldy.b a1
 	lda.w position,y
-	bne .position
-	jmp.w .join
-.position:
+	bne .2
+	jmp.w .next
+.2:
 	lda.w pflags,y
 	bit.w #$1000
-	beq .nopflags
-	jmp.w .join
-.nopflags:
+	beq .3
+	jmp.w .next
+.3:
 	lda.w Ypos,y
 	sec
 	sbc.w pucky
@@ -750,9 +749,9 @@ dopass:		;pass the puck in passdir, to the best teammate there if any.
 	asl a
 	and.w #$00FF
 	bit.w #$0080
-	beq .zero
+	beq .sx
 	ora.w #$FF00
-.zero:
+.sx:
 	asl a
 	asl a
 	asl a
@@ -764,7 +763,7 @@ dopass:		;pass the puck in passdir, to the best teammate there if any.
 	lda.b mulres+2
 	sta.b d0+2
 	sbc.w #$0001
-	bcs .join
+	bcs .next
 	lda.b d1
 	sta.b mula
 	sta.b mulb
@@ -792,25 +791,25 @@ dopass:		;pass the puck in passdir, to the best teammate there if any.
 	cmp.b d2
 	lda.b d4+2
 	sbc.b d2+2
-	bcc .join
+	bcc .next
 	lda.b d2
 	sta.b d4
 	lda.b d2+2
 	sta.b d4+2
 	lda.b a1
 	sta.b a0
-.join:
+.next:
 	inc.b a1
 	inc.b a1
 	dec.b d3
-	bmi .d3neg
-	jmp.w .loop
-.d3neg:
+	bmi .done
+	jmp.w .0
+.done:
 	lda.b d4+2
-	bmi .d4neg
+	bmi .nopp
 	jsl.l passtoa0
-	jmp.w .join2
-.d4neg:
+	jmp.w .exit
+.nopp:
 	lda.w passdir
 	asl a
 	asl a
@@ -861,22 +860,22 @@ dopass:		;pass the puck in passdir, to the best teammate there if any.
 	lda.w #$1000
 	jsl.l randoma
 	sta.w puckvz
-.join2:
+.exit:
 	lda.w position,x
-	bne .position2
+	bne .notgoalie
 	lda.w pfgoal,x
-	beq .nopfgoal
+	beq .g0
 	lda.w puckvy
-	bmi .puckvyneg
-	bra .position2
-.nopfgoal:
+	bmi .nvy
+	bra .notgoalie
+.g0:
 	lda.w puckvy
-	bmi .position2
-.puckvyneg:
+	bmi .notgoalie
+.nvy:
 	eor.w #$FFFF
 	inc a
 	sta.w puckvy
-.position2:
+.notgoalie:
 	lda.w puckvx
 	sta.b d0
 	lda.w puckvy
@@ -885,34 +884,34 @@ dopass:		;pass the puck in passdir, to the best teammate there if any.
 	lda.w #$02D2
 	sta.b d1
 	lda.w position,x
-	beq .noposition2
+	beq .e1
 	lda.w #$06C4
 	sta.b d1
 	jsl.l Findhittype
-	beq .noposition2
+	beq .e1
 	lda.w #$0736
 	sta.b d1
-.noposition2:
+.e1:
 	jsl.l SetSPA
 	lda.w #$0001
 	sta.w pfalock,x
 	stx.b xsave
 	ldx.w #$0006
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0016
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	rtl
 
@@ -921,23 +920,23 @@ CompLine:		;find good line for comp to switch to. a2 = team, a1 = other team. Ca
 		;   SNES: the computer team picks a line by the man advantage, the score late in the game and the line energies (getlinee)
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	lda.w #$0003
 	sta.b d0
@@ -945,11 +944,11 @@ CompLine:		;find good line for comp to switch to. a2 = team, a1 = other team. Ca
 	lda.w tmap,y
 	ldy.b a1
 	cmp.w tmap,y
-	beq .a1eq
-	bpl .a1pos
+	beq .nopwr
+	bpl .0
 	inc.b d0
 	inc.b d0
-.a1pos:
+.0:
 	lda.b d0
 	pha
 	jsl.l getlinee
@@ -964,61 +963,61 @@ CompLine:		;find good line for comp to switch to. a2 = team, a1 = other team. Ca
 	sbc.b d0
 	bmi .d1neg
 	bvs .vs
-	bra .join
+	bra .1
 .d1neg:
-	bvs .join
+	bvs .1
 .vs:
 	pla
 	inc a
 	pha
-.join:
+.1:
 	pla
 	ldy.b a2
 	sta.w tmline,y
-.loop:
+.ex:
 	stx.b xsave
 	ldx.w #$0002
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000A
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	rtl
-.a1eq:
+.nopwr:
 	ldy.b a2
-	bne .a2
+	bne .away
 	lda.w #$0002
 	sta.b d1
-	lda.w #.tie
+	lda.w #.hl1
 	sta.b a0
-	lda.w #.tie>>16
+	lda.w #.hl1>>16
 	sta.b a0+2
 	lda.w gsp
 	cmp.w #$0002
-	bne .gspne
+	bne .h0
 	lda.w tmscore,y
 	ldy.b a1
 	cmp.w tmscore,y
-	beq .gspne
+	beq .h0
 	php
 	lda.w #.ahead
 	sta.b a0
 	plp
-	bpl .gspne
+	bpl .h0
 	lda.w #.behind
 	sta.b a0
-.gspne:
+.h0:
 	ldy.b a1
 	lda.w tmline,y
 	asl a
@@ -1029,41 +1028,41 @@ CompLine:		;find good line for comp to switch to. a2 = team, a1 = other team. Ca
 	jsl.l getlinee
 	lda.b d0
 	cmp.w #$0C01
-	bcc .a2
+	bcc .away
 	ldy.b d1
 	lda.b [a0],y
 	ldy.b a2
 	sta.w tmline,y
-	bra .loop
-.tie:		;CompLine tables: next line by tmline, score tied (7 words)
+	bra .ex
+.hl1:		;CompLine tables: next line by tmline, score tied (7 words)
 	dw 0,1,2,0,1,0,1
 .ahead:		;ahead in the third period
 	dw 2,0,1,2,0,2,0
 .behind:		;behind in the third period
 	dw 0,1,0,0,1,0,1
-.a2:
+.away:
 	lda.w #$0002
 	sta.b d1
-	lda.w #.tie2
+	lda.w #.al1
 	sta.b a0
-	lda.w #.tie2>>16
+	lda.w #.al1>>16
 	sta.b a0+2
 	lda.w gsp
 	cmp.w #$0002
-	bne .loop2
+	bne .a0
 	ldy.b a2
 	lda.w tmscore,y
 	ldy.b a1
 	cmp.w tmscore,y
-	beq .loop2
+	beq .a0
 	php
 	lda.w #.ahead2
 	sta.b a0
 	plp
-	bpl .loop2
+	bpl .a0
 	lda.w #.behind2
 	sta.b a0
-.loop2:
+.a0:
 	lda.b [a0]
 	inc.b a0
 	inc.b a0
@@ -1071,17 +1070,17 @@ CompLine:		;find good line for comp to switch to. a2 = team, a1 = other team. Ca
 	jsl.l getlinee
 	lda.b d0
 	cmp.w #$0F34
-	bcs .d0ge
+	bcs .got
 	dec.b d1
-	bpl .loop2
-.d0ge:
+	bpl .a0
+.got:
 	dec.b a0
 	dec.b a0
 	ldy.b a2
 	lda.b [a0]
 	sta.w tmline,y
-	jmp.w .loop
-.tie2:		;the lines tried on a power play / penalty kill (3 words each)
+	jmp.w .ex
+.al1:		;the lines tried on a power play / penalty kill (3 words each)
 	dw 0,1,2
 .ahead2:
 	dw 0,2,1
@@ -1093,30 +1092,30 @@ UnpackNibbles:		;a0 = packed data, d0 = count. Unpacks d0 4-bit values (high nib
 		;   SNES: d0 nibbles at [a0], high nibble first, to words at nibblebuffer; saves d0-d2, a0-a1
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	lda.w #nibblebuffer
 	sta.b a1
 	lda.w #$0000
 	sta.b a1+2
 	stz.b d2
-	bra .join
+	bra .next
 .loop:
 	lda.b [a0]
 	inc.b a0
@@ -1125,7 +1124,7 @@ UnpackNibbles:		;a0 = packed data, d0 = count. Unpacks d0 4-bit values (high nib
 	inc.b d2
 	lda.b d2
 	lsr a
-	bcc .d2lt
+	bcc .lo
 	dec.b a0
 	lda.b d1
 	lsr a
@@ -1133,32 +1132,32 @@ UnpackNibbles:		;a0 = packed data, d0 = count. Unpacks d0 4-bit values (high nib
 	lsr a
 	lsr a
 	sta.b d1
-.d2lt:
+.lo:
 	lda.b d1
 	and.w #$000F
 	sta.b [a1]
 	inc.b a1
 	inc.b a1
-.join:
+.next:
 	dec.b d0
 	bpl .loop
 	stx.b xsave
 	ldx.w #$0006
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000A
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	rtl
 
@@ -1206,9 +1205,9 @@ passtoa0:		;pass puck to player a0
 	lsr a
 	lsr a
 	bit.w #$2000
-	beq .zero
+	beq .sx
 	ora.w #$C000
-.zero:
+.sx:
 	sta.b d5
 	ldx.b a0
 	ldy.b a3
@@ -1235,9 +1234,9 @@ passtoa0:		;pass puck to player a0
 	lsr a
 	lsr a
 	bit.w #$2000
-	beq .zero2
+	beq .sy
 	ora.w #$C000
-.zero2:
+.sy:
 	sta.b d3
 	lda.b d0
 	clc
@@ -1249,9 +1248,9 @@ passtoa0:		;pass puck to player a0
 	lsr a
 	lsr a
 	bit.w #$2000
-	beq .zero3
+	beq .sx2
 	ora.w #$C000
-.zero3:
+.sx2:
 	sta.b d2
 	lda.w Yvel,y
 	sta.b mulb
@@ -1340,15 +1339,15 @@ passtoa0:		;pass puck to player a0
 	lsr a
 	lsr a
 	bit.w #$2000
-	beq .zero4
+	beq .sx3
 	ora.w #$C000
-.zero4:
+.sx3:
 	sta.b d5
 	lda.b d5
-	bne .loop
+	bne .0
 	lda.w #$0001
 	sta.b d5
-.loop:
+.0:
 	lda.b d0
 	sta.b d2
 	eor.w #$FFFF
@@ -1364,28 +1363,28 @@ passtoa0:		;pass puck to player a0
 	sta.b d2
 	bpl .pos
 	dec.b d3
-	bpl .loop
+	bpl .0
 .pos:
-	bne .nonzero
+	bne .1
 	inc.b d2
-.nonzero:
+.1:
 	lda.b d2
 	cmp.w #$0019
-	bcc .d2lt
+	bcc .2
 	lda.w #$0018
 	sta.b d2
-.d2lt:
+.2:
 	lda.b d2
 	sep #$20
 	sta.w puckvz+1
 	rep #$30
 	cmp.w #$000C
-	bcc .lt
+	bcc .3
 	sep #$20
 	lda.b #$0C
 	sta.w puckvz+1
 	rep #$30
-.lt:
+.3:
 	ldy.b a0
 	lda.b d2
 	asl a
@@ -1474,30 +1473,30 @@ passtoa0:		;pass puck to player a0
 	rtl
 
 org $8FFB5B
-Acheck:		;start hold (or hook if a0 is ahead, $CB0) on player a0. Also entered
-		;   SNES: player X holds a0: pfalock, SPAhook, or SPAHold when he has impact and a0 is not ahead. SNES: with pfgoal clear the bmi tests the pfgoal load, so
+Acheck:		;start hold (or hook if a0 is ahead) on player a0
+		;   SNES: player X holds a0: pfalock, SPAhook, or SPAHold when he has impact and a0 is not ahead. With pfgoal clear the bmi tests the pfgoal load, so
 		;   always SPAHold then
 	ldy.b a0
 	lda.w #SPAhook
 	sta.b d1
 	sta.w pfalock,x
 	lda.w impact,x
-	beq .goSetSPA
+	beq .set
 	lda.w Ypos,x
 	sec
 	sbc.w Ypos,y
 	sta.b d0
 	lda.w pfgoal,x
-	beq .nopfgoal
+	beq .0
 	lda.b d0
 	eor.w #$FFFF
 	inc a
 	sta.b d0
-.nopfgoal:
-	bmi .goSetSPA
+.0:
+	bmi .set
 	lda.w #SPAHold
 	sta.b d1
-.goSetSPA:
+.set:
 	jml.l SetSPA
 
 org $8FFBDC
@@ -1505,9 +1504,9 @@ doplayeracc:		;player a3 gets acc. in d0 dir
 		;   SNES: player X skates in direction d0 (0-7; 8 glides, 9 stops when moving); goalies use goalieacc. Sets pfrev to skate backwards in his own
 		;   zone, turns facedir/facefrac toward d0 (.ftab * d7, slower when fast), SPAturnl/SPAturnr or SPAglide/SPAglideback; revplayeracc when moving
 	lda.w position,x
-	bne .position
+	bne .skater
 	jml.l goalieacc
-.position:
+.skater:
 	lda.w #SPAglide
 	sta.b d1
 	lda.w pfrev,x
@@ -1541,9 +1540,9 @@ doplayeracc:		;player a3 gets acc. in d0 dir
 	txa
 	lsr a
 	cmp.w puckc
-	bne .ne
+	bne .nocarrier
 	jmp.w .clrrev
-.ne:
+.nocarrier:
 	lda.w puckx
 	sec
 	sbc.w Xpos,x
@@ -1559,9 +1558,9 @@ doplayeracc:		;player a3 gets acc. in d0 dir
 	lsr a
 	lsr a
 	bit.w #$0100
-	beq .zero
+	beq .sx
 	ora.w #$FE00
-.zero:
+.sx:
 	clc
 	adc.w pucky
 	sec
@@ -1631,7 +1630,7 @@ doplayeracc:		;player a3 gets acc. in d0 dir
 	inc a
 	sta.w pfrev,x
 	bra .done
-.clrrev:		;.fwd / .clrrev
+.clrrev:
 	stz.w pfrev,x
 .done:		;turn rate = .ftab (direction difference) * d7; 0: noturn0
 	pla
@@ -1655,9 +1654,9 @@ doplayeracc:		;player a3 gets acc. in d0 dir
 	jsl.l muls16
 	sta.b tmp0
 	lda.b tmp0
-	bne .tmp0
+	bne .turn
 	jml.l noturn0
-.tmp0:
+.turn:
 	lda.w Xvel,x
 	sta.b mula
 	sta.b mulb
@@ -1744,18 +1743,18 @@ doplayeracc:		;player a3 gets acc. in d0 dir
 	jml.l revplayeracc
 .rtl2:
 	rtl
-.ftab:		;turn rate by the direction difference (93 $10)
+.ftab:		;turn rate by the direction difference
 	dw 0,23,23,23,0,-23,-23,-23
-ResetAndSelectPlayers:		;93 split from 92 puckfaceoff2: c1playernum/c2playernum = -1, then changeplayer for each human team. Called from puckfaceoff2
+ResetAndSelectPlayers:		;c1playernum/c2playernum = -1, then changeplayer for each human team. Called from puckfaceoff2
 		;   SNES: c1playernum/c2playernum = -1, then changeplayer for each human team (d4 = 0, 2)
 	lda.w #$FFFF
 	sta.w c1playernum
 	sta.w c2playernum
 	lda.w cont1team
-	beq .nocont1team
+	beq .nt1
 	stz.b d4
 	jsl.l changeplayer
-.nocont1team:
+.nt1:
 	lda.w cont2team
 	beq .rtl
 	lda.w #$0002
