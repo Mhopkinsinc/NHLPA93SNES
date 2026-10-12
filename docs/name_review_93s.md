@@ -7,7 +7,7 @@ Full every-line read per file: SNES-only names checked against 93G/92G, generic 
 - [x] src/gfx/graphics_b82.asm
 - [x] src/gfx/graphics_b83.asm
 - [x] src/gfx/graphics_b84.asm
-- [ ] src/gfx/graphics_b85.asm
+- [x] src/gfx/graphics_b85.asm
 - [ ] src/gfx/graphics_b87.asm
 - [x] src/gfx/graphics_b88.asm
 - [x] src/gfx/graphics_b89.asm
