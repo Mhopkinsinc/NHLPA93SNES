@@ -8,7 +8,7 @@ This file is the queue and the history. Do not rewrite it as a whole file. Edit 
 The 93G module files below (`src/hockey_b80.asm`, `src/gfx/...`) were split by `tools/split_routines.py` into:
 `src/banks/bXX_<name>.asm` (one per bank: one `org`, then `incsrc` lines in exact ROM order, nothing else),
 `src/routines/<93G module>/<Routine>.asm` (one routine per file; fall-through routines stay with the first; local labels stay with their routine)
-and `src/data/<category>/<Name>.asm` (sound, gfx, frames, teams, text). Header/vectors: `src/header/snes_header.asm`.
+and `src/data/<category>/<Name>.asm` (sound, gfx, text; bank $83 team data is one file `data/teamdata93s.asm`, the SPC streams are `data/sound/gamesound.asm` and `data/sound/bootsound.asm`). Header/vectors: `src/header/snes_header.asm`.
 
 Rules for adding or splitting routines:
 - A new routine is a new file `src/routines/<module>/<Routine>.asm` named after its global label; the folder is the 93G module

@@ -9,8 +9,8 @@ Regenerate this file with `python3 tools/gen_file_map.py` after `./build.sh`.
 ## src/banks/b80_engine.asm
 
 - `$808000` routines/main/Start.asm
-- `$8080B2` routines/video/BRKHalt.asm
-- `$8080B4` routines/video/VBjsr.asm
+- `$8080B2` routines/hockey/BRKHalt.asm
+- `$8080B4` routines/hockey/VBjsr.asm
 - `$8080CE` routines/video/vb2_blank.asm
 - `$8080DE` routines/video/vb2.asm (also vb2_main)
 - `$80812F` routines/video/VBlank_long.asm
@@ -20,7 +20,7 @@ Regenerate this file with `python3 tools/gen_file_map.py` after `./build.sh`.
 - `$808293` routines/video/VBlank_VScroll.asm
 - `$8082E0` routines/video/VBlank_Cram.asm
 - `$808361` routines/video/VBlank_CramOnly.asm
-- `$808390` routines/video/HBjsr.asm
+- `$808390` routines/hockey/HBjsr.asm
 - `$8083A3` routines/video/HBdefault.asm
 - `$8083AB` routines/logic/goalieacc.asm
 - `$808404` routines/logic/dostop.asm (also StopNA)
@@ -223,9 +223,9 @@ Regenerate this file with `python3 tools/gen_file_map.py` after `./build.sh`.
 - `$82FCD4` data/gfx/PixelRemap83.asm
 - `$82FCDB` routines/middle/muls32.asm
 - `$82FD17` routines/video/addframe_hi.asm
-- `$82FD54` routines/video/revplayeracc.asm
+- `$82FD54` routines/logic/revplayeracc.asm
 - `$82FD64` routines/video/marktexthi.asm
-- `$82FD6B` routines/video/ClearTeamStats.asm
+- `$82FD6B` routines/hockey/ClearTeamStats.asm
 - `$82FD95` routines/penalty/ClearPenaltyMessage.asm
 - `$82FDB5` routines/hockey/startpause2.asm
 - `$82FDBF` routines/middle/printbigz.asm
@@ -430,14 +430,14 @@ Regenerate this file with `python3 tools/gen_file_map.py` after `./build.sh`.
 - `$8D8549` routines/penalty/EASNLogo.asm
 - `$8D85A9` routines/hockey/PeriodOver.asm
 - `$8D8605` routines/hockey/GetPlayerName.asm
-- `$8D865A` routines/sound/updatesound.asm
+- `$8D865A` routines/video/updatesound.asm
 - `$8D86A8` routines/hockey/asstab.asm
 - `$8D871C` routines/middle/mulu16.asm
 - `$8D87B0` routines/logic/puckshadow.asm
 - `$8D87FB` routines/hockey/setd0player.asm
 - `$8D883C` data/gfx/SpriteSet10.asm (also SpriteSet10End)
 - `$8DEEC8` data/gfx/BigFontTiles.asm (also BigFontTilesEnd)
-- `$8DF888` routines/penalty/StartHL2.asm
+- `$8DF888` routines/hockey/StartHL2.asm
 - `$8DFCC7` routines/logic/asspenalty.asm
 - `$8DFE1B` routines/logic/clrplayer.asm
 - `$8DFE36` routines/logic/avdgoal.asm (also unused008D)
@@ -483,7 +483,7 @@ Regenerate this file with `python3 tools/gen_file_map.py` after `./build.sh`.
 - `$8F8AE9` routines/middle/waitxsr.asm
 - `$8F8B11` routines/hockey/clockcont.asm
 - `$8F8B21` routines/hockey/clockcont_0.asm
-- `$8F8C1B` routines/penalty/DoHiLights.asm
+- `$8F8C1B` routines/hockey/DoHiLights.asm
 - `$8F8C4B` routines/logic/assdopen.asm
 - `$8F8C72` routines/penalty/updatepentime.asm
 - `$8F8D68` routines/penalty/linebar.asm
@@ -533,15 +533,15 @@ Regenerate this file with `python3 tools/gen_file_map.py` after `./build.sh`.
 - `$8FE316` routines/middle/randomd0sd0.asm
 - `$8FE32B` routines/hockey/DefaultMenus.asm
 - `$8FE369` routines/hockey/checkagr.asm
-- `$8FE3B0` routines/logic/WeightedRandomSelect.asm
+- `$8FE3B0` routines/middle/WeightedRandomSelect.asm
 - `$8FE404` routines/middle/forceblack.asm
 - `$8FE43C` routines/logic/passmode.asm
 - `$8FE458` routines/logic/dopass.asm
 - `$8FE67D` data/gfx/FrameSetTable.asm
 - `$8FE6BD` routines/logic/CompLine.asm
-- `$8FE825` routines/hockey/TeamRoster.asm
-- `$8FEBE0` routines/hockey/RosterGoalies.asm
-- `$8FEBE4` routines/hockey/RosterG.asm
+- `$8FE825` routines/stats/TeamRoster.asm
+- `$8FEBE0` routines/stats/RosterGoalies.asm
+- `$8FEBE4` routines/stats/RosterG.asm
 - `$8FEBF0` data/text/RosterLineNames.asm
 - `$8FEC68` routines/video/addframe.asm
 - `$8FECAB` routines/hockey/Pmenu.asm
@@ -550,7 +550,7 @@ Regenerate this file with `python3 tools/gen_file_map.py` after `./build.sh`.
 - `$8FEE83` routines/hockey/setoptions.asm
 - `$8FF4B8` data/gfx/PixelRemapFramer.asm
 - `$8FF4C8` data/gfx/PixelRemapFont.asm
-- `$8FF4D8` routines/logic/UnpackNibbles.asm
+- `$8FF4D8` routines/middle/UnpackNibbles.asm
 - `$8FF54E` routines/middle/PushNumberWidth.asm
 - `$8FF58D` routines/penalty/StatsReport.asm
 - `$8FF603` routines/logic/Findhittype.asm

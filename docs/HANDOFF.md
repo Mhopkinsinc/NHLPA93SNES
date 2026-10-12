@@ -11,6 +11,13 @@ Rules for new routines: SEGMENT_AGENT.md Layout note. Judgment calls: small tabl
 (e.g. jdtab, dirtab, PenaltyList, linelist); text tables (GameLabels, PerLabels, ScoutLabels, PositionNames, RosterLineNames,
 AttribMenuSkater/Goalie) moved to `data/text/`; the sprite animation list and tables (SPAList and every SPA*_table) are one file, `data/frames93s.asm`; `unusedFFxx` fills merged
 into the routine before; `XxxEnd` end labels stay in their table's file; GameSamples (bank $81) runs into $82, so b82 starts at $82B86C.
+Data merges: bank $83 team data (TeamList..playoffseats) is one file `data/teamdata93s.asm` (`data/teams/` gone; Credits moved to
+`data/text/Credits.asm`); bank $81 sound is `data/sound/gamesound.asm` (GameSoundUpload, GameSampleDir, GameSamples); bank $86 is
+`data/sound/bootsound.asm` (BootSoundUpload, SPCDriver, BootInstruments, BootSampleDir, BootSamples).
+Module audit: every `routines/<module>/` file checked against 93G (ref93) then 92G; misplaced ones moved (UnpackNibbles,
+WeightedRandomSelect -> middle; DoHiLights, StartHL2, ClearTeamStats, VBjsr -> hockey; updatesound -> video; by judgment HBjsr,
+BRKHalt -> hockey (interrupt vectors beside VBjsr), revplayeracc -> logic (playeracc), TeamRoster, RosterG, RosterGoalies -> stats
+(93G TeamRosterScreen/GoalieRowText)). SNES-only routines otherwise stay with the module of their 93G caller/neighbour.
 Next: the cleanup items below (93G inline comments, generic locals) now work per routine file.
 
 ## Previous state (name review)
