@@ -71,5 +71,5 @@ What's next:
 ## Routine header rewrite (2026-10-12)
 Each `src/routines/<module>/*.asm` opens with one plain-English header comment on the label line (93G file header style):
 what the routine does, no `SNES:` second line, no ROM addresses or banks, no stray values. One commit per module folder, MATCH.
-- Done: main, stats, sound, video, middle, penalty.
-- Next: logic, hockey.
+- Done: main, stats, sound, video, middle, penalty, logic.
+- Next: hockey.
