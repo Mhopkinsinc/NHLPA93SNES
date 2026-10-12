@@ -2,7 +2,7 @@
 ; Bank $80. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $808496
-muls16:		;68k muls.w: A = mula*mulb (signed 16-bit result, also in mula/mulb/mulres); C clear. Signs folded around the unsigned mulu (bank $8D)
+muls16:		;68k muls.w: A = mula*mulb (signed 16-bit result, also in mula/mulb/mulres); C clear. Signs folded around the unsigned mulu16
 	stz.b mula+2		; count the negative operands in mula+2
 	lda.b mula
 	bpl .bpos
@@ -18,7 +18,7 @@ muls16:		;68k muls.w: A = mula*mulb (signed 16-bit result, also in mula/mulb/mul
 	sta.b mulb
 	inc.b mula+2
 .mul:
-	jsl.l mulu16		; bank $8D: mulu, mulres = mula*mulb
+	jsl.l mulu16		; mulres = mula*mulb
 	lsr.b mula+2		; odd count: negate the result
 	bcc .rtl
 	eor.w #$FFFF
@@ -100,13 +100,13 @@ random:		;randomd0 seed step: seed = seed*$BB40E62D+1 (32-bit LCG); returns A = 
 	sta.b mulb
 	lda.w #$BB40
 	sta.b mulb+2
-	jsl.l mulu32		; bank $88: mulu 32-bit
+	jsl.l mulu32
 	adc.w #$0001
 	sta.w seed
 	lda.b mulres+2
 	adc.w #$0000
 	sta.w seed+2
-	xba		; seed bytes 2/1 for the 8-bit users ($0493/$0491)
+	xba		; rndb2 = seed byte 3, rndb1 = seed bytes 1-2
 	and.w #$00FF
 	sta.w rndb2
 	lda.w seed+1
@@ -119,7 +119,7 @@ randoma:		;randomd0 with A = range: returns A = random 0..range-1 (high word of 
 	sta.b mula
 	pla
 	sta.b mulb
-	jsl.l mulu		; bank $88, mulres = mula*mulb
+	jsl.l mulu		; mulres = mula*mulb
 	lda.b mulres+2
 	clc
 	rtl
@@ -154,7 +154,7 @@ divu16:		;68k divu.w: mulres = mulb / mula (16-bit), mulres+2 = remainder; A = m
 	sta.b mulb
 	clc
 	rtl
-printz:		;see print. String macro should follow the bsr/jsr to this routine. 93 keeps a1 (92 popped the return into a1)
+printz:		;see print. String macro should follow the bsr/jsr to this routine. Keeps a1
 		;   SNES: print the string that follows the jsl (length word counting itself, then control bytes / text), return after it. Keeps a1
 	lda.b a1+2
 	pha
@@ -176,7 +176,7 @@ printz:		;see print. String macro should follow the bsr/jsr to this routine. 93 
 	sta.b a1+2
 	rtl
 print:		;a1 = string macro, printx/y = x/y cordinate on map for printing, printm = map to print on, printa = attribute for characters. string \-$ab,$xx,$yy,'Sample!'\ : a = map number (1-3)
-		;   b = color/priority (0-3 = color fam, prio off),(4-7 = color fam, prio on), xx/yy = x/y cord to print at. 93: '@' = char $7FF, '^' = skip a column
+		;   b = color/priority (0-3 = color fam, prio off),(4-7 = color fam, prio on), xx/yy = x/y cord to print at. '@' = char $7FF, '^' = skip a column
 		;   SNES: [a1] = string (length word, control bytes / text) into textmap at printx/printy; marks textdirtylo/hi. "@" = blank tile
 	lda.b [a1]
 	cmp.w #$0100
@@ -212,7 +212,7 @@ print:		;a1 = string macro, printx/y = x/y cordinate on map for printing, printm
 	phx
 	asl a
 	tax
-	lda.l SmallFontMap,x		; char -> tile (bank $88 table) + font + printa
+	lda.l SmallFontMap,x		; char -> tile + font + printa
 	adc.w smallfontchars
 	adc.w printfontset
 	ora.w printa
@@ -314,7 +314,7 @@ sfx:		;play sound effect number. One word passed on stack
 	pla		; lastsfx = sound number
 	sta.w lastsfx
 	beq .ret
-	jsl.l QueueSound		; queue it (bank $82)
+	jsl.l QueueSound
 .ret:		;return through jmlvector
 	jml.l jmlvector
 .drop:
@@ -371,12 +371,12 @@ jdtab:		;convert buttons r,l,d,u into directions 0-7, 8
 	db 8,2,6,8,4,3,5,8,0,1,7,8,8,8,8,8
 
 org $80CBB1
-sroot:		;Square Root, this returns (d0.L)^.5 in d0. 93: values above $F00000 use a binary search
-		;   SNES: d0 = sqrt(d0, 32-bit) by binary search on the square
+sroot:		;Square Root, this returns (d0.L)^.5 in d0
+		;   SNES: binary search only (tmp0 = low, tmp1 = high)
 	stz.b tmp0
 	lda.w #$1000
 	sta.b tmp1
-.loop:
+.bs:
 	lda.b tmp0
 	clc
 	adc.b tmp1
@@ -386,19 +386,19 @@ sroot:		;Square Root, this returns (d0.L)^.5 in d0. 93: values above $F00000 use
 	sta.b tmp2
 	sta.b mula
 	sta.b mulb
-	jsl.l mulu		; bank $88, mulres = mula*mulb
+	jsl.l mulu		; mulres = mula*mulb
 	lda.b d0
 	cmp.b mulres
 	lda.b d0+2
 	sbc.b mulres+2
-	bcs .low
+	bcs .lo
 	lda.b tmp2
 	sta.b tmp1
-	bra .loop
-.low:
+	bra .bs
+.lo:
 	lda.b tmp2
 	sta.b tmp0
-	bra .loop
+	bra .bs
 .done:
 	sta.b d0
 	rtl
@@ -482,7 +482,7 @@ ReadPads:		;SNES: once per frame (padvcount) read the 4 auto-read pads into joyp
 
 org $80F6A1
 randomd0s:		;d0 = range. Return d0 = random number (-range < d0 < range)
-		;   SNES: A = random -A..A (randoma of 2A, minus A)
+		;   SNES: A = range in, A = random -range..range-1 out
 	sta.b tmp0
 	asl a
 	jsl.l randoma
