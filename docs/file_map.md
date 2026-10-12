@@ -197,9 +197,7 @@ Regenerate this file with `python3 tools/gen_file_map.py` after `./build.sh`.
 
 ## src/banks/b81_sfx.asm
 
-- `$818000` data/sound/GameSoundUpload.asm
-- `$818004` data/sound/GameSampleDir.asm (also GameSampleDirEnd)
-- `$818054` data/sound/GameSamples.asm (also GameSamplesEnd)
+- `$818000` data/sound/gamesound.asm (also GameSampleDir, GameSampleDirEnd, GameSamples, GameSamplesEnd)
 
 ## src/banks/b82_sfx_rink.asm
 
