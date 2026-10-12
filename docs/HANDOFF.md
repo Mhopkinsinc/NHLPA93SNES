@@ -18,6 +18,7 @@ Module audit: every `routines/<module>/` file checked against 93G (ref93) then 9
 WeightedRandomSelect -> middle; DoHiLights, StartHL2, ClearTeamStats, VBjsr -> hockey; updatesound -> video; by judgment HBjsr,
 BRKHalt -> hockey (interrupt vectors beside VBjsr), revplayeracc -> logic (playeracc), TeamRoster, RosterG, RosterGoalies -> stats
 (93G TeamRosterScreen/GoalieRowText)). SNES-only routines otherwise stay with the module of their 93G caller/neighbour.
+Cleanup 2026-10-12: `src/ram93snes.asm` comments no longer end by repeating the variable name (208 lines; space-joined forms like `68k d0`, `pflags bit pfgoal` and case-different 68k names like `PassBits` kept on purpose). Signed-compare overflow locals in `src/routines/` renamed `.vN` -> `.neg`, `.neg1`, `.neg2`, ... per routine scope (148 labels, 49 files; no `.vN` left).
 Next: the cleanup items below (93G inline comments, generic locals) now work per routine file.
 
 ## Previous state (name review)
