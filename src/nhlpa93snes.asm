@@ -6,6 +6,7 @@ check bankcross off
 incsrc "inc/snes_regs.asm"
 incsrc "macros/snes93.mac"
 incsrc "ram93snes.asm"
+incsrc "banks/b81_sfx.asm"
 incsrc "banks/b8C_skate_sprites.asm"
 ; Module files (source file names, one per module per bank). Every block has its own org, so this order
 ; does not move any byte; it follows the ROM address of each file's first block.
@@ -16,7 +17,6 @@ incsrc "middle_b80.asm"
 incsrc "hockey_b80.asm"
 incsrc "penalty_b80.asm"
 incsrc "gfx/graphics_b80.asm"
-incsrc "sound_b81.asm"
 incsrc "sound_b82.asm"
 incsrc "frames.asm"
 incsrc "gfx/graphics_b82.asm"

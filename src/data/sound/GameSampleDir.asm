@@ -1,9 +1,3 @@
-; SPC700 uploads, the sound queue, music cues (keeps ScoutingReportText here too).
-; Bank $81. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $818000
-GameSoundUpload:		;in-game sample set for the SPC700 sound driver (the boot stream at BootSoundUpload carries the driver itself)
-	dw GameSampleDirEnd-GameSampleDir, SPCSAMPLEDIR		; block 1: 76 bytes to APU $2C00
 GameSampleDir:		;DSP sample directory: per sample the APU address of its start and of its loop point
 	dw SPCSAMPLES+$0000,SPCSAMPLES+$001B		; sample $00: start, loop (offsets in gamesamples.brr)
 	dw SPCSAMPLES+$002D,SPCSAMPLES+$3B8E		; sample $01: start, loop (offsets in gamesamples.brr)
@@ -26,7 +20,3 @@ GameSampleDir:		;DSP sample directory: per sample the APU address of its start a
 	dw SPCSAMPLES+$B034,SPCSAMPLES+$B814		; sample $12: start, loop (offsets in gamesamples.brr)
 GameSampleDirEnd:
 	dw GAMESAMPLESIZE, SPCSAMPLES		; block 2: the BRR samples to APU $2C50
-GameSamples:		;BRR samples (9-byte blocks)
-	incbin "../data/gamesamples.brr"
-GameSamplesEnd:
-	dw $0000, SPCRESUME		; end block: length 0, start the driver at $0800
