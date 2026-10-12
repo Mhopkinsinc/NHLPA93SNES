@@ -5,44 +5,44 @@ org $83CC0C
 PlayerNumName:		;SNES: mesarea = "<uniform number> <name>" of the roster player d0 (team a2), like the Pausemode .gnum digits. Returns X = mesarea
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pushb:
+.savea2:
 	lda.b a2,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pushb
+	bne .savea2
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pusha
+	bne .savea
 	ldx.b xsave
-	jsl.l GetPlayerRecord		; a0 = the player entry, bank $89: a0 = roster entry of player d0
+	jsl.l GetPlayerRecord		; bank $89
 	stx.b xsave
 	ldx.w #$0000
-.push2:
+.pushrec:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .push2
+	bne .pushrec
 	ldx.b xsave
 	lda.w #mesarea		; a3 = mesarea (length 4), a1 = mesarea+2
 	sta.b a3
@@ -67,12 +67,12 @@ PlayerNumName:		;SNES: mesarea = "<uniform number> <name>" of the roster player 
 	db " "
 	stx.b xsave
 	ldx.w #$0002
-.pop1:
+.poprec:
 	pla
 	sta.b a1,x
 	dex
 	dex
-	bpl .pop1
+	bpl .poprec
 	ldx.b xsave
 	jsl.l appstring		; bank $8F
 	lda.w #mesarea
@@ -81,37 +81,37 @@ PlayerNumName:		;SNES: mesarea = "<uniform number> <name>" of the roster player 
 	sta.b a1+2
 	stx.b xsave
 	ldx.w #$0002
-.pop2:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .pop2
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0006
-.pop3:
+.resta2:
 	pla
 	sta.b a2,x
 	dex
 	dex
-	bpl .pop3
+	bpl .resta2
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000E
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	ldx.b a3
 	rtl
 
 org $83F82B
 Pausemode:		;game is in pause mode now. Save textmap, stop the sound, horizontal screen, PAUSE title and frame, PauseMenu until it returns 0
-		;   then PauseExit (PauseExit)
+		;   then PauseExit
 	phx
 	ldx.w #$07FE
 .save:		;textsave = textmap
@@ -148,33 +148,33 @@ Pausemode:		;game is in pause mode now. Save textmap, stop the sound, horizontal
 	jsl.l PauseMenu		; nonzero: draw again
 	bne .top
 	jml.l PauseExit		; bank $8F
-PauseMenu:		;draw the menu (.Pmenu Pmenu), read the pad (.rjoy); up/down move psitem (5 items), Start leaves, else the .jump handler of the item. Returns A =
-		;   0 to leave, 1 to redraw
+PauseMenu:		;draw the menu (Pmenu), read the pad (PauseReadJoy); up/down move psitem (5 items), Start leaves, else the .jump handler of the item.
+		;   Returns A = 0 to leave, 1 to redraw
 	stz.w psitem
 .gj:
-	jsl.l Pmenu		; bank $8F: Pausemode .Pmenu (menu text and goalie number)
+	jsl.l Pmenu		; bank $8F
 	jsl.l PauseReadJoy
 	lda.b d1		; Start: leave
 	bit.w #JOYSTART
-	beq .one
+	beq .down
 	jml.l PauseLeave
-.one:		;down
+.down:		;down
 	bit.w #JOYDOWN
-	beq .two
+	beq .up
 	inc.w psitem
 	lda.w psitem
 	cmp.w #$0005
 	bne .gj
 	dec.w psitem
 	bra .gj
-.two:		;up
+.up:		;up
 	bit.w #JOYUP
-	beq .three
+	beq .item
 	dec.w psitem
 	bpl .gj
 	stz.w psitem
 	bra .gj
-.three:		;go to .jump[psitem] through jmlvector
+.item:		;go to .jump[psitem] through jmlvector
 	lda.w psitem		; jmlvector = .jump[psitem]
 	asl a
 	asl a
@@ -194,7 +194,7 @@ PauseMenu:		;draw the menu (.Pmenu Pmenu), read the pad (.rjoy); up/down move ps
 	lda.b d1
 	bit.w #cbut
 	beq .gj
-	jsl.l forceblack		; ReplayMode with vcountmark+2 = vcount-2, bank $8F
+	jsl.l forceblack		; bank $8F
 	jsl.l sndqreset
 	lda.b d7
 	pha
@@ -214,7 +214,7 @@ PauseMenu:		;draw the menu (.Pmenu Pmenu), read the pad (.rjoy); up/down move ps
 	bne .sr1
 	jmp.w .gj
 .sr1:
-	jsl.l StatsScreen		; stats report screen, then back, bank $8F
+	jsl.l StatsScreen		; bank $8F
 	jsl.l StatsReport		; bank $8F
 	bra .redraw
 .ros:		;SNES Team Roster: show the roster, then rebuild the game screen (bg registers, palette, small font tiles, SetHor)
@@ -223,7 +223,7 @@ PauseMenu:		;draw the menu (.Pmenu Pmenu), read the pad (.rjoy); up/down move ps
 	bne .ros1
 	jmp.w .gj
 .ros1:
-	jsl.l TeamRoster		; roster screen; then BG mode/maps, palbuffer to CGRAM, the big font, sprites, bank $8F: team roster screen
+	jsl.l TeamRoster		; bank $8F
 	jsl.l sndqreset
 	jsl.l forceblack		; bank $8F
 	sep #$20
@@ -296,31 +296,31 @@ PauseMenu:		;draw the menu (.Pmenu Pmenu), read the pad (.rjoy); up/down move ps
 	ldy.b a2		; A or right: next goalie; left: previous; d0 = number of goalies
 	lda.b d1
 	bit.w #cbut|JOYRIGHT
-	bne .up
+	bne .nextg
 	bit.w #JOYLEFT
-	bne .dn
+	bne .prevg
 	jmp.w .gj
-.dn:
+.prevg:
 	lda.w tmgoalie,y
-	bmi .wrap
+	bmi .lastg
 .dec:
 	dec a
 .set:
 	sta.w tmgoalie,y
 	jsl.l setpersonel
 	jmp.w .gj
-.wrap:
+.lastg:
 	lda.b d0
 	bra .dec
-.up:
+.nextg:
 	lda.w tmgoalie,y
-	bmi .z
+	bmi .firstg
 	inc a
 	cmp.b d0
 	bcc .set
 	lda.w #$FFFF
 	bra .set
-.z:
+.firstg:
 	lda.w #$0000
 	bra .set
 .jump:		;Resume Game, Instant Replay, Stats Report, Goalie, Team Roster
@@ -364,8 +364,8 @@ PauseResume:		;pause menu item 0, Resume Game: A or Start leaves
 PauseLeave:		;return 0: leave the pause menu
 	lda.w #$0000
 	rtl
-Restart:		;SNES: restart the game from scratch (Begin role): native mode, stack, DP and DB 0, clear RAM $0000-$15FE, the sprite VRAM cache, vbint vb2, hbint HBdefault, then
-		; and PlayoffScreenOpening4
+Restart:		;SNES: restart from scratch: native mode, stack, DP and DB 0, InitPPU, clear low RAM and the sprite VRAM cache, vbint vb2, hbint HBdefault,
+		;   setoptions, then PlayoffScreenOpening4
 	sei		; interrupts off, native mode
 	clc
 	xce

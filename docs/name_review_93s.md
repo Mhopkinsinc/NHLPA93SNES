@@ -28,7 +28,7 @@ Full every-line read per file: SNES-only names checked against 93G/92G, generic 
 - [x] src/gfx/sprites_b8F.asm
 - [ ] src/hockey_b80.asm
 - [x] src/hockey_b82.asm
-- [ ] src/hockey_b83.asm
+- [x] src/hockey_b83.asm
 - [ ] src/hockey_b84.asm
 - [x] src/hockey_b85.asm
 - [x] src/hockey_b86.asm
