@@ -3720,9 +3720,9 @@ wallcollb:		;check for puck over wall. a3 = object, d0/d1 = cos/sin of the wall.
 	beq .z1
 	bmi .v1
 	bvs .z1
-	bra .over
+	bra .0
 .v1:
-	bvs .over
+	bvs .0
 .z1:
 	lda.w Zpos+puckobj
 	cmp.w #$0016		; Zpos <= 21: wallcoll
@@ -3734,9 +3734,9 @@ wallcollb:		;check for puck over wall. a3 = object, d0/d1 = cos/sin of the wall.
 	sbc.w #$0112		; y >= 274
 	bmi .v2
 	bvc .x13
-	bra .over
+	bra .0
 .v2:
-	bvc .over
+	bvc .0
 .x13:
 	lda.w puckx
 	sec
@@ -3789,15 +3789,15 @@ wallcollb:		;check for puck over wall. a3 = object, d0/d1 = cos/sin of the wall.
 	clc
 	adc.w #$0258
 	sta.b crowdlevel
-.over:		;puck out of play
+.0:		;puck out of play
 	lda.w #sfslock		; sfslock; puck pfnc
 	tsb.w sflags
 	sta.w pfnc+puckobj
 	lda.w pucky		; bottom: y flip
-	bpl .n1
+	bpl .1
 	lda.w #$8000
 	tsb.w attribute+puckobj
-.n1:
+.1:
 	stz.w frame+$1E		; shadow frame 0
 	lda.w gmclock		; clock stopped
 	bne .rtl
@@ -3820,13 +3820,13 @@ wallcoll:		;d0 = cosine, d1 = sine of angle of incidence with wall, a3 = object.
 	sta.w Wallsin,x
 	stx.b xsave
 	ldx.w #$0000
-.push:
+.save:
 	lda.b d2,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .push
+	bne .save
 	ldx.b xsave
 	lda.b d1		; v1n = (Yvel*cos - Xvel*sin)/256, negated; v1t = (Xvel*cos + Yvel*sin)/256
 	pha
@@ -4068,12 +4068,12 @@ wallcoll:		;d0 = cosine, d1 = sine of angle of incidence with wall, a3 = object.
 	pla
 	stx.b xsave
 	ldx.w #$0006
-.pop:
+.restore:
 	pla
 	sta.b d2,x
 	dex
 	dex
-	bpl .pop
+	bpl .restore
 	ldx.b xsave
 	rtl
 
@@ -4213,7 +4213,7 @@ checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 =
 	bne .dy
 	jmp.w .sideentry
 .dy:
-	bmi .dy0
+	bmi .0
 	lda.b d0
 	eor.w #$FFFF
 	inc a
@@ -4222,7 +4222,7 @@ checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 =
 	eor.w #$FFFF
 	inc a
 	sta.b d5
-.dy0:		;d5 = dy at entry; d2 -= dx*dy/vy: x where the puck crossed the goal line
+.0:		;d5 = dy at entry; d2 -= dx*dy/vy: x where the puck crossed the goal line
 	lda.b d5
 	clc
 	adc.b d3
@@ -4520,19 +4520,19 @@ Goal:		;puck in goal. a3 = puck. Entered from checkgoal
 	lda.w #$0006
 	sta.b d0
 	lda.w puckx
-	bpl .px
+	bpl .1
 	lda.w #$FFFA
 	sta.b d0
-.px:
+.1:
 	lda.b d0
 	sta.w puckx
 	lda.w #$0110
 	sta.b d0
 	lda.w pucky
-	bpl .py
+	bpl .0
 	lda.w #$FEF0
 	sta.b d0
-.py:
+.0:
 	lda.b d0
 	sta.w pucky
 	lda.w #$0600
@@ -4714,17 +4714,17 @@ CheckBump:		;supply minimum separation velocity for coll with walls/goal/net. a2
 		;   PenGhold
 	stx.b xsave
 	ldx.w #$0000
-.push:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .push
+	bne .save
 	ldx.b xsave
 	lda.w seed		; 1 in 32 frames
 	and.w #$001F
-	bne .exit
+	bne .ex
 	ldy.b a2
 	lda.w pucky		; puck within 41 of the net in y
 	sec
@@ -4735,7 +4735,7 @@ CheckBump:		;supply minimum separation velocity for coll with walls/goal/net. a2
 	inc a
 .dy:
 	cmp.w #$0029
-	bcs .exit
+	bcs .ex
 	lda.w Xvel,x
 	sta.b d0
 	lda.w Yvel,x
@@ -4755,15 +4755,15 @@ CheckBump:		;supply minimum separation velocity for coll with walls/goal/net. a2
 .vx:
 	cmp.w #$2001
 	bcs .bb
-.exit:
+.ex:
 	stx.b xsave
 	ldx.w #$0006
-.pop:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .pop
+	bpl .restore
 	ldx.b xsave
 .rtl:
 	rtl
@@ -4804,7 +4804,7 @@ CheckBump:		;supply minimum separation velocity for coll with walls/goal/net. a2
 	lda.w #PenGhold
 	sta.b d0
 	jmp.w AddPenalty2
-checkplcoll:		;d2/d3 = x/y cords, a3 = struct. Walk up and down the OOlist from a3 and call checkcx for each object within $10 in y (92 collrad*2). Called from checkcoll
+checkplcoll:		;d2/d3 = x/y cords, a3 = struct. Walk up and down the OOlist from a3 and call checkcx for each object within $10 in y. Called from checkcoll
 		;   SNES: d2/d3 = x/y, X = object. Walk up and down the OOlist from X and call checkcx for each object within 14 in y
 	lda.w pflags,x
 	bit.w #pf2npc
@@ -4817,7 +4817,7 @@ checkplcoll:		;d2/d3 = x/y cords, a3 = struct. Walk up and down the OOlist from 
 .go:
 	lda.w OOlistpos,x		; d1 = position of X in OOlist
 	sta.b d1
-.up:		;objects higher in the list
+.0:		;objects higher in the list
 	ldy.b d1
 	cpy.w #$000F		; top of the list
 	beq .cl
@@ -4857,12 +4857,12 @@ checkplcoll:		;d2/d3 = x/y cords, a3 = struct. Walk up and down the OOlist from 
 	jsl.l checkcx
 .unext:
 	inc.b d1
-	bra .up
+	bra .0
 .cl:		;objects lower in the list
 	lda.w OOlistpos,x
 	beq .ex
 	sta.b d1
-.down:
+.1:
 	ldy.b d1
 	lda.w OOlist-1,y
 	and.w #$00FF
@@ -4900,7 +4900,7 @@ checkplcoll:		;d2/d3 = x/y cords, a3 = struct. Walk up and down the OOlist from 
 	jsl.l checkcx
 .dnext:
 	dec.b d1
-	bne .down
+	bne .1
 .ex:
 	rtl
 checkcx:		;d4 = obj. # * 2 for possible coll so check x range and distance for coll. d2 = x, d5 = delta y, a3 = moving object. Opposing players add impact and run newcheck, checkint
