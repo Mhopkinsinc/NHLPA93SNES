@@ -1,11 +1,3 @@
-; gfx/ packed screens, tiles, maps, palettes, fonts, pixel remap tables.
-; Bank $87. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $87C3A0
-EASNMap:		;EASN.map.jim: the EASN logo backdrop, packed (decompressor DecompressBytecode): a 32 x 16 map, then the tiles; unpacked by the scouting report and team roster screens
-	incbin "../../data/EASN.map.pak"
-FaceOffTiles:		;packed faceoff box tiles (55, FaceOff.map.jim tiles): setupice sends them to faceoffvrcset
-	incbin "../../data/FaceOff.chr.pak"
 TeamBlocksMap:		;TeamBlocks.map: per team (26) a 9 x 2 tile block map (palette 1, tiles from TeamBlocksTiles), 36 bytes each (team * 36, read by PlayoffScreen and DrawTeamBlocks)
 	dw $0400,$0401,$0402,$0403,$0404,$0405,$0406,$0401,$0407,$0408,$0409,$040A,$040B,$040C,$040D,$040E,$0409,$040F		; team 0
 	dw $0410,$0411,$0412,$0413,$0414,$0415,$0416,$0417,$0418,$0408,$0419,$041A,$041B,$041C,$041D,$041E,$041F,$040F		; team 1
@@ -33,9 +25,3 @@ TeamBlocksMap:		;TeamBlocks.map: per team (26) a 9 x 2 tile block map (palette 1
 	dw $0449,$0564,$0565,$0566,$0567,$0568,$0569,$056A,$0451,$0435,$056B,$056C,$056D,$056E,$056F,$0570,$0571,$043D		; team 23
 	dw $0572,$0573,$0574,$0575,$0576,$0577,$0578,$0579,$0407,$057A,$057B,$057C,$057D,$057E,$057F,$0580,$0581,$0582		; team 24
 	dw $0583,$0584,$0585,$0586,$0587,$0588,$0589,$058A,$058B,$058C,$058D,$058E,$058F,$0590,$0591,$0592,$0593,$0594		; team 25
-
-org $87F55A
-PixelRemap87:		;SNES: 4bpp pixel value remap for the 4 FramerTiles (bank $88; setupice via RemapTiles): colours 0-3 only
-	db $00,$03,$04,$03
-RefTiles:		;packed ref window tiles for the vertical rink (117): setupice sends them to refchars
-	incbin "../../data/Ref.chr.pak"

@@ -1,7 +1,3 @@
-; The game, screens, menus, password, playoffs.
-; Bank $87. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $87F3E9
 RestoreReplayFrame:		;a4 = current replay frame address to convert into normal
 		;   SNES: replay frame record [a4] back into the objects (x, y 12 bits, frame, flip bits), rostnum/position pairs, puck and
 		;   shadow z, lastsfx, d7 = frame delay, PadControlBits, crowdframe, glovecords, PBnum, Hpos/Vpos (not when sfscrl)

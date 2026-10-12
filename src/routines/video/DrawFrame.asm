@@ -1,7 +1,3 @@
-; Vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
-; Bank $87. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $87CE62
 DrawFrame:		;SNES: as DrawFrameHi with 4-byte pieces (x, y signed bytes, tile, attributes); sprnodraw skips the upload; a full
 		;   cache shortens sprslotlife first
 	lda.b farptr+1
@@ -505,8 +501,3 @@ DrawFrame:		;SNES: as DrawFrameHi with 4-byte pieces (x, y signed bytes, tile, a
 	dec.w sprpieces
 	beq addframe_end
 	jmp.w .piece
-addframe_end:		;SNES addframe end: clear sprhflip, sprvflip, sprflag
-	stz.b sprhflip
-	stz.b sprvflip
-	stz.b sprflag
-	rtl
