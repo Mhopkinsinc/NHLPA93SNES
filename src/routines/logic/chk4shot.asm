@@ -1,4 +1,4 @@
-chk4shot:		;Computer player X looks for a shot
+chk4shot:		;Computer player X looks for a shot. A penalty killer under pressure in front of his net may clear the puck
 	jsl.l chkpk
 	bne .npk
 	lda.w threat		; threat on the puck carrier

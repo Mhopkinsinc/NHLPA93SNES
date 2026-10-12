@@ -1,4 +1,4 @@
-ChkGoalies:		;The computer pulls its goalie on a delayed penalty
+ChkGoalies:		;A computer team with the puck pulls its goalie on a delayed penalty, or late in a game it trails by two
 	lda.w gmclock		; clock stopped
 	bne ChkGoalies_CPG_rtl
 	stz.b a2

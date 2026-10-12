@@ -1,4 +1,5 @@
-ShotMode:		;Pad input while shooting. Shoots at the end of the animation
+ShotMode:		;Pad input while shooting: aim with the pad and build shot power during the windup; releasing the button
+		;   swings through. Shoots at the end of the animation
 	lda.w SPAnum,x
 	cmp.w #$0018		; 7*4: end of the animation
 	bcs doshot

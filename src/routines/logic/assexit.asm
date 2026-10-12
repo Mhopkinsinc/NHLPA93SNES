@@ -1,4 +1,4 @@
-assexit:		;End player X's current assignment
+assexit:		;End player X's current assignment and go back to the one under it
 	lda.w assnum,x
 	inc a		; next assignment
 	and.w #$0007

@@ -1,4 +1,4 @@
-skatetopuck:		;Player X skates to the puck
+skatetopuck:		;Player X skates to the puck, slowing down near it; may sweep check when the puck comes at him
 	jsl.l skatetopuckinit		; d0/d1 = puck spot
 	lda.w temp2,x
 	sec

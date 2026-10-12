@@ -1,4 +1,4 @@
-assstanley:		;Assignment: skate around holding the Stanley Cup overhead
+assstanley:		;Assignment: skate to the side of the screen holding the Stanley Cup overhead
 	lda.w pfalock,x
 	bne .rtl
 	lda.w pflags,x

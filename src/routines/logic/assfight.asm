@@ -1,4 +1,4 @@
-assfight:		;Assignment: fighting
+assfight:		;Assignment: fighting. A computer fighter punches when close; both stay near the fight spot
 	lda.w pfalock,x
 	beq .go
 	jmp.w .rts

@@ -1,4 +1,4 @@
-a2touchpuck:		;A player touches the puck: last touch, offsides and icing checks
+a2touchpuck:		;A player touches the puck: remember the last touches (for assists), then the offsides and icing checks
 	ldy.b a2
 	lda.w Xpos,y
 	sta.w ltx		; ltx/lty/ltplayer

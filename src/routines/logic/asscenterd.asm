@@ -1,4 +1,5 @@
-asscenterd:		;Assignment: the center on defense, halfway between the puck and his goal
+asscenterd:		;Assignment: the center on defense, halfway between the puck and his goal; switches to offense when his team
+		;   gets the puck
 	lda.w gmclock
 	beq .go
 	jml.l assnothing

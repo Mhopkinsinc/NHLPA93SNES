@@ -1,4 +1,5 @@
-assdefo:		;Assignment: a defenseman on offense holds the blue line on his side
+assdefo:		;Assignment: a defenseman on offense holds the blue line on his side; back to defense when offsides, when
+		;   the puck goes back past the line or when the other team has it
 	lda.w pfalock,x
 	beq .clk
 	jmp.w .rtl

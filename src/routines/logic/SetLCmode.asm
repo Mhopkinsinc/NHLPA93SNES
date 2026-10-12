@@ -1,4 +1,4 @@
-SetLCmode:		;Open the line change box when the puck carrier's team asks for it
+SetLCmode:		;Open the line change box for player X's team, when line changes are on and the box is not already open
 	lda.w OptLine
 	bne .rtl
 	jsl.l loadTeamStruct		; loadTeamStruct: a2 = team of X

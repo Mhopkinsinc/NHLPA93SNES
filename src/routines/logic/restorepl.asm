@@ -1,4 +1,4 @@
-restorepl:		;Take the controller off player d1 and give it to player d0
+restorepl:		;Take the controller off player d1 and give it to player d0; a player in a line change keeps the controller
 	stz.b a0
 	lda.b d1
 	bmi .spd

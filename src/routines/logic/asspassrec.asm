@@ -1,4 +1,4 @@
-asspassrec:		;Assignment: catching a pass
+asspassrec:		;Assignment: waiting for a pass. Ends when someone has the puck or the wait runs out
 	lda.w pfalock,x
 	bne .rts		; locked
 	lda.w gmclock		; clock stopped

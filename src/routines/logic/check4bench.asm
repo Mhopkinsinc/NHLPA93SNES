@@ -1,4 +1,4 @@
-check4bench:		;Should player X go to the bench?
+check4bench:		;If a line change wants player X off, send him to the bench (or just change his position when he stays on)
 	lda.w pflags,x
 	bit.w #pfjoycon|pf2pen		; joystick controlled, or penalty
 	bne .rts

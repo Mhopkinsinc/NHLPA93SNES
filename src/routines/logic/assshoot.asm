@@ -1,4 +1,4 @@
-assshoot:		;Assignment: computer shooting
+assshoot:		;Assignment: computer shooting: wind up, then shoot when the swing time runs out
 	lda.w pflags,x
 	bit.w #pfna		; pfna
 	beq .nna

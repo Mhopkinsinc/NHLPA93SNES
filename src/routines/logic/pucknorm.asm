@@ -1,4 +1,5 @@
-pucknorm:		;Assignment: the puck most of the time
+pucknorm:		;Assignment: the puck most of the time. Follows the carrier, watches for icing and offsides, blows the
+		;   whistle when a loose puck stops moving, then checks puck collisions
 	lda.w #pfna
 	trb.w pflags+puckobj		; pfna
 	beq .nna

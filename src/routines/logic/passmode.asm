@@ -1,4 +1,4 @@
-passmode:		;While the pass button is held, the pad sets the pass direction
+passmode:		;Pass mode: a pad direction sets the pass direction and passes; releasing the button passes too
 	lda.b d2
 	bit.w #$8000
 	bne dopass
