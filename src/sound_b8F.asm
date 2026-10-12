@@ -13,8 +13,8 @@ MusicCue:		;SNES: send driver command A (a music cue): the sound queue becomes j
 	sta.b sndqin
 	stz.b sndlock
 	rtl
-sfx8F:		;SNES: bank $8F copy of sfx: queue the sound pushed before the jsl (0 = none) unless within 180 frames of sfxmutetime; no lastsfx; returns through jmlvector. Sends the
-		;   crowd volume (KillCrowd, bank $8D)
+sfx8F:		;SNES: bank $8F copy of sfx: queue the sound pushed before the jsl (0 = none) unless within 180 frames of sfxmutetime; no lastsfx; returns through jmlvector. Also sends the
+		;   crowd volume (KillCrowd, updatesound)
 	pla		; return address +1 into jmlvector
 	inc a
 	sta.w jmlvector+1
@@ -26,12 +26,12 @@ sfx8F:		;SNES: bank $8F copy of sfx: queue the sound pushed before the jsl (0 = 
 	sec
 	sbc.w sfxmutetime
 	cmp.w #$00B4
-	bcc .lt
+	bcc .muted
 	pla		; the sound (0 = none)
-	beq .loop
+	beq .ret
 	jsl.l QueueSound
-.loop:
+.ret:
 	jml.l jmlvector
-.lt:
+.muted:
 	pla
-	bra .loop
+	bra .ret
