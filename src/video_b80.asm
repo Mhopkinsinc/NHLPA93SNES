@@ -2,9 +2,9 @@
 ; Bank $80. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $8080B2
-BRKHalt:		;BRK vector: hang. No /counterpart (68k traps go to IRQ7 rte)
+BRKHalt:		;SNES: BRK vector: hang
 	bra BRKHalt
-VBjsr:		;Vertical blank interrupt (vector $78), jumps through the vbint RAM vector
+VBjsr:		;Vertical blank interrupt, jumps through the vbint RAM vector
 		;   SNES: NMI: ack RDNMI, skip if vbactive, else "rts" into the vbint handler
 	rep #$30
 	pha
@@ -83,7 +83,7 @@ vb2_main:		;common vblank tail: vcount, sound tick (p_music_vblank), brightness 
 VBlank_long:		;vbint target (set by setvideo): jml into VBlank so it runs from the FastROM bank $80
 	jml.l VBlank
 VBlank:		;main vblank code for game play (vbint target, set by setupice).
-		;   SNES: DumpSprites2+DoDMAList role: forced blank, run DMAList (ch7), BG2 scroll from Hscroll/vramrow/Vscroll, OAM dma from Satt; one shot: sets vbint back to vb2
+		;   SNES: forced blank, run DMAList (ch7), BG2 scroll from Hscroll/vramrow/Vscroll, OAM dma from Satt; one shot: sets vbint back to vb2
 	sep #$20
 	lda.b #INIDISP_FBLANK
 	sta.w INIDISP
@@ -183,7 +183,7 @@ VBlank_SprPal:		;vbint target (banks $88/$8F): VBlank, plus CGRAM colors $A0-$BF
 	stz.b DMAListend
 	lda.w #DMA_OAM
 	sta.w DMAP7
-	lda.w #$01FF
+	lda.w #Satt
 	sta.w A1T7L
 	lda.w #$0220
 	sta.w DAS7L
@@ -196,7 +196,7 @@ VBlank_SprPal:		;vbint target (banks $88/$8F): VBlank, plus CGRAM colors $A0-$BF
 	rep #$30
 	lda.w #DMA_CGRAM		; DMAP7=$00, BBAD7=$22 (CGDATA)
 	sta.w DMAP7
-	lda.w #$6DB4		; palbuffer+$140 (color $A0)
+	lda.w #(palbuffer+$140)&$FFFF		; color $A0
 	sta.w A1T7L
 	lda.w #$0040		; 32 colors
 	sta.w DAS7L
@@ -321,7 +321,7 @@ VBlank_Cram:		;vbint target (bank $88): DMAList, BG1 fine h-scroll Hscroll&7, BG
 	rep #$30
 	lda.w #DMA_CGRAM
 	sta.w DMAP7
-	lda.w #$6C74		; palbuffer, colors 0-127
+	lda.w #palbuffer&$FFFF		; colors 0-127
 	sta.w A1T7L
 	lda.w #$0100
 	sta.w DAS7L
@@ -346,7 +346,7 @@ VBlank_CramOnly:		;vbint target (stays installed): forced blank, CGRAM 0-127 fro
 	rep #$30
 	lda.w #DMA_CGRAM
 	sta.w DMAP7
-	lda.w #$6C74
+	lda.w #palbuffer&$FFFF
 	sta.w A1T7L
 	lda.w #$0100
 	sta.w DAS7L
@@ -358,7 +358,7 @@ VBlank_CramOnly:		;vbint target (stays installed): forced blank, CGRAM 0-127 fro
 	sta.w MDMAEN
 	rep #$30
 	jmp.w vb2
-HBjsr:		;IRQ vector: if TIMEUP set, "rts" into hbint; else HBdefault. No counterpart (Genesis hbint not used this way)
+HBjsr:		;SNES: IRQ vector: if TIMEUP set, "rts" into hbint; else HBdefault
 	rep #$30
 	pha
 	phx
@@ -395,15 +395,15 @@ setvideo:		;this is not vblank code but sets up ram for vblank transfers.
 	jsl.l ClearSprites		; bank $8F: clear the sprite table (all sprites off screen)
 	stx.b xsave
 	ldx.w #$0000
-.push:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$003C
-	bne .push
+	bne .savea
 	ldx.b xsave
-	jsl.l show_rink		; show_rink, checkfo, checksso, setsortcords, setffo, showclock, showzam, showcrowd, showref
+	jsl.l show_rink
 	jsl.l checkfo
 	jsl.l checksso		; bank $8C
 	jsl.l setsortcords
@@ -418,12 +418,12 @@ setvideo:		;this is not vblank code but sets up ram for vblank transfers.
 	sta.b vbint
 	stx.b xsave
 	ldx.w #$003A
-.pop:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .pop
+	bpl .resta
 	ldx.b xsave
 	ldx.b a3
 .rtl:
@@ -445,7 +445,7 @@ show_rink:		;using hpos and vpos set scroll cords; queue rink map rows on the dm
 .rtl:
 	rtl
 checkfo:		;check for face off sprites. Called from setvideo. Falls into checkfo2
-		;   SNES: checkfo2 : face off sprites: the three fofdata2 entries (frame, flags) at fodropx/fodropy, priority $30
+		;   SNES: face off sprites: the three fofdata2 entries (frame, flags) at fodropx/fodropy, priority $30
 	lda.w sflags		; not in pause, face off only
 	bit.w #sfpz
 	bne .rtl
