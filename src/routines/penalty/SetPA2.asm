@@ -1,7 +1,3 @@
-; Penalties, scoreboard, ticker, intermission.
-; Bank $82. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $82F93C
 SetPA2:		;update animation for ref. Next frame/delay pair from the PenaltyList animation of RefPen. Also called from UpdatePA
 		;   SNES: a negative pair is the last one (RefStep = -1). RefCnt = delay*8, then PushRef
 	phx
@@ -84,35 +80,4 @@ SetPA2:		;update animation for ref. Next frame/delay pair from the PenaltyList a
 	bpl .restore
 	ldx.b xsave
 	plx
-	rtl
-UpdateScores:		;update ticker score values. Called from PeriodOver
-		;   SNES: update the ticker scores of the other playoff games (not gamenum, not over)
-	jsl.l GetShifter		; GetShifter: d1 = games - 1
-	lda.b d1
-	sta.w TickerNum
-	asl a
-	sta.b a0
-.top:
-	lda.b d1
-	cmp.w gamenum
-	beq .next
-	ldy.b a0
-	lda.w gsflags,y		; clear gsfhl; game not over: SetScore
-	and.w #~gsfhl&$FFFF
-	sta.w gsflags,y
-	bit.w #gsfso
-	bne .next
-	jsl.l SetScore
-.next:
-	dec.b a0
-	dec.b a0
-	dec.b d1
-	bpl .top
-	rtl
-
-org $82FD95
-ClearPenaltyMessage:		;blank the horizontal mode penalty message line (22 spaces at x 5, y $B)
-	jsl.l printz
-	dw $001B		; printz inline string: length (counts itself), then control bytes / text
-	db $BF,$05,$0B,"                      "
 	rtl

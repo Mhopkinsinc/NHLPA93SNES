@@ -1,7 +1,3 @@
-; Player logic and the assignments (asstab).
-; Bank $82. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $82FDE7
 asscentero:		;asstab 6. player a3 is center on offense
 		;   SNES: player X is the center on offense. Every aidef frames: acenterd when the other team has the puck, else a random spot in the
 		;   zone of the puck (.dedata), skateto with EvadePC
