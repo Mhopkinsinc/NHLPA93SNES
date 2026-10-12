@@ -13,10 +13,10 @@ puckshadow:		;asstab $19. assignment for puck shadow. a3 = puck shadow (struct a
 	sta.w Ypos,x
 	stz.w Zpos,x
 	lda.w sfhormode
-	beq .v
+	beq .nhor
 	inc.w Xpos,x
 	rtl
-.v:
+.nhor:
 	inc.w Ypos,x
 	rtl
 .none:
@@ -41,9 +41,9 @@ org $8DFCC7
 asspenalty:		;asstab $C. player a3 should goto penalty box
 		;   SNES: player X skates to the penalty box (temp3/temp4 by PBnum), glides in, faces the ice (SPAwallright), then adopen
 	lda.w pfalock,x
-	beq .go
+	beq .na
 	jmp.w .rtl
-.go:
+.na:
 	lda.w pflags,x		; new assignment
 	bit.w #pfna
 	beq .nna
@@ -62,7 +62,7 @@ asspenalty:		;asstab $C. player a3 should goto penalty box
 	lda.w PBnum
 	sta.b d1
 	lda.w pfteam,x
-	bne .zero
+	bne .0
 	lda.b d1
 	lsr a
 	lsr a
@@ -71,15 +71,15 @@ asspenalty:		;asstab $C. player a3 should goto penalty box
 	sta.b d1
 	lda.w #-11
 	sta.b d0
-.zero:
+.0:
 	lda.b d1
 	and.w #$000F
 	sta.b d1
 	cmp.w #3
-	bcc .one
+	bcc .1
 	lda.w #2
 	sta.b d1
-.one:
+.1:
 	inc.b d1
 	inc.b d1
 	inc.b d1
@@ -191,7 +191,7 @@ asspenalty:		;asstab $C. player a3 should goto penalty box
 	lda.w #rtss>>16
 	sta.b a0+2
 	jml.l skateto
-clrplayer:		;take the joystick off player a3 (92 asspenalty .clrplayer)
+clrplayer:		;take the joystick off player a3
 		;   SNES: take the joystick off player X (changeplayer)
 	lda.w pflags,x
 	bit.w #pfjoycon
@@ -206,8 +206,8 @@ clrplayer:		;take the joystick off player a3 (92 asspenalty .clrplayer)
 	inc.b d4
 .ch:
 	jml.l changeplayer
-avdgoal:		;don't try to skate thru goal: if d0/d1 cords intersect thru goal then provide new d0/d1 cords. a3 = player. 93 .gl 254 ($FE), .yr/.ye 35 (92 258/30/30), .xr 80
-		;   SNES: if the path d0/d1 crosses a goal line (y +-254) within 40 of the net, aim beside the net (x +-60) instead
+avdgoal:		;don't try to skate thru goal: if d0/d1 cords intersect thru goal then provide new d0/d1 cords. a3 = player
+		;   SNES: if the path d0/d1 crosses a goal line (y +-258) within 40 of the net, aim beside the net (x +-60) instead
 	stz.b tmp2
 	lda.w #-258		; goal line at y -258 ($FEFE) and 258 ($102)
 	jsl.l .ch1
