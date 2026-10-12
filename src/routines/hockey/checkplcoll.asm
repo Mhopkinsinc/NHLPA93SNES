@@ -26,10 +26,10 @@ checkplcoll:		;d2/d3 = x/y cords, a3 = struct. Walk up and down the OOlist from 
 	sec
 	sbc.w #$000E
 	beq .uy
-	bmi .v1
+	bmi .neg
 	bvs .uy
 	bra .cl
-.v1:
+.neg:
 	bvs .cl
 .uy:
 	lda.w Xpos,y
@@ -69,10 +69,10 @@ checkplcoll:		;d2/d3 = x/y cords, a3 = struct. Walk up and down the OOlist from 
 	sec
 	sbc.w #$000E
 	beq .dy
-	bmi .v2
+	bmi .neg1
 	bvs .dy
 	bra .ex
-.v2:
+.neg1:
 	bvs .ex
 .dy:
 	lda.w Xpos,y

@@ -16,10 +16,10 @@ puckIChk:		;check for icing of puck penalty. Called from pucknorm
 	sec
 	sbc.w pucky
 	beq .rtl
-	bmi .v1
+	bmi .neg
 	bvs .rtl
 	bra .set
-.v1:
+.neg:
 	bvs .set
 .rtl:
 	rtl
@@ -28,10 +28,10 @@ puckIChk:		;check for icing of puck penalty. Called from pucknorm
 	sec
 	sbc.w pucky
 	beq .set
-	bmi .v2
+	bmi .neg1
 	bvs .set
 	bra .rtl
-.v2:
+.neg1:
 	bvs .rtl
 .set:
 	lda.w #ifcgl		; ifcgl

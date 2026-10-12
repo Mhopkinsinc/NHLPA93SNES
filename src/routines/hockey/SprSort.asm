@@ -46,10 +46,10 @@ SprSort:		;sort objects in struct SortObj and set corresponding tables for keepi
 	sec
 	sbc.w Ylist,y
 	beq .1
-	bmi .v1
+	bmi .neg
 	bvc .swap
 	bra .1
-.v1:
+.neg:
 	bvc .1
 .swap:
 	lda.w OOlist,x

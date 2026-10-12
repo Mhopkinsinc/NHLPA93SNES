@@ -71,10 +71,10 @@ assfwatch:		;asstab $15. for player who is watching fight
 	lda.b d0
 	sec
 	sbc.b d3
-	bmi .v1
+	bmi .neg
 	bvc .cl1
 	bra .x0
-.v1:
+.neg:
 	bvc .x0
 .cl1:
 	lda.b d3
@@ -88,10 +88,10 @@ assfwatch:		;asstab $15. for player who is watching fight
 	sec
 	sbc.b d3
 	beq .cl2
-	bmi .v2
+	bmi .neg1
 	bvs .cl2
 	bra .x1
-.v2:
+.neg1:
 	bvs .x1
 .cl2:
 	lda.b d3

@@ -44,10 +44,10 @@ Stop4Pen:		;a0 = penaltylist penalty +2. Stop the clock, set the face off spot f
 	sta.b tmp0
 	sec
 	sbc.w #$0046
-	bmi .v0
+	bmi .neg
 	bvc .x0
 	bra .0
-.v0:
+.neg:
 	bvc .0
 .x0:
 	lda.w #$0046
@@ -57,10 +57,10 @@ Stop4Pen:		;a0 = penaltylist penalty +2. Stop the clock, set the face off spot f
 	sec
 	sbc.w #$FFBA
 	beq .x1
-	bmi .v1
+	bmi .neg1
 	bvs .x1
 	bra .1
-.v1:
+.neg1:
 	bvs .1
 .x1:
 	lda.w #$FFBA
@@ -69,10 +69,10 @@ Stop4Pen:		;a0 = penaltylist penalty +2. Stop the clock, set the face off spot f
 	lda.b d1
 	sec
 	sbc.w #$00A6
-	bmi .v2
+	bmi .neg2
 	bvc .yhi
 	bra .2
-.v2:
+.neg2:
 	bvc .2
 .yhi:
 	lda.w #$00CE
@@ -88,10 +88,10 @@ Stop4Pen:		;a0 = penaltylist penalty +2. Stop the clock, set the face off spot f
 	sec
 	sbc.w #$FF5A
 	beq .ylo
-	bmi .v3
+	bmi .neg3
 	bvs .ylo
 	bra .3
-.v3:
+.neg3:
 	bvs .3
 .ylo:
 	lda.w #$FF32

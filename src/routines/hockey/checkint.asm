@@ -34,20 +34,20 @@ checkint:		;check for interference penalty. player a2 interferes with a3 or vice
 	sec
 	sbc.w #$001A
 	beq .rtl
-	bmi .v1
+	bmi .neg
 	bvc .pc
 	bra .rtl
-.v1:
+.neg:
 	bvc .rtl
 .pc:		;impact of X > 2
 	lda.w impact,x
 	sec
 	sbc.w #$0003
 	beq .rtl
-	bmi .v2
+	bmi .neg1
 	bvc .fall
 	bra .rtl
-.v2:
+.neg1:
 	bvc .rtl
 .fall:		;X falls
 	ldx.b a2
@@ -63,10 +63,10 @@ checkint:		;check for interference penalty. player a2 interferes with a3 or vice
 	sec
 	sbc.w #$001F
 	beq .rtl
-	bmi .v3
+	bmi .neg2
 	bvc .pen
 	bra .rtl
-.v3:
+.neg2:
 	bvc .rtl
 .pen:		;no double minor; penalty 3 times in (20 - GGSleft)
 	lda.w pflags,x

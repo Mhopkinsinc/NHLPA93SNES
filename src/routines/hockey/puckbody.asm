@@ -4,10 +4,10 @@ puckbody:		;puck hits player a2. a3 = puck, d0 = distance^2 (from checkpuckcoll 
 	sec
 	sbc.w #$0008
 	beq .low
-	bmi .v1
+	bmi .neg
 	bvs .low
 	bra .hit
-.v1:
+.neg:
 	bvs .hit
 .low:		;low puck: only a hit dead center counts
 	lda.b d0
@@ -53,10 +53,10 @@ puckbody:		;puck hits player a2. a3 = puck, d0 = distance^2 (from checkpuckcoll 
 	sec
 	sbc.w #$0008
 	beq .rtl
-	bmi .v2
+	bmi .neg1
 	bvc .high
 	bra .rtl
-.v2:
+.neg1:
 	bvc .rtl
 .high:		;old speed^2 > $3000^2 and puck above 12: FallDown
 	lda.b d2
@@ -81,11 +81,11 @@ puckbody:		;puck hits player a2. a3 = puck, d0 = distance^2 (from checkpuckcoll 
 	sec
 	sbc.w #$000C		; Zpos 12
 	beq .rtl
-	bmi .v3
+	bmi .neg2
 	bvs .rtl
 .fall:
 	jmp.w FallDown		; FallDown
-.v3:
+.neg2:
 	bvs .fall
 .rtl:
 	rtl

@@ -93,11 +93,11 @@ checkfornewpen:		;look for new penalty (entered thru addpenalty(2)). Stops play 
 	sec
 	sbc.w Pencntdwn
 	beq .nx
-	bmi .v1
+	bmi .neg
 	bvc .longer
 .nx:
 	jmp.w .next
-.v1:
+.neg:
 	bvc .nx
 .longer:		;Pencntdwn = delay*32 if longer
 	lda.b d1

@@ -8,10 +8,10 @@ ClampYPosition:		;d1 = y clamped to +-$103, minus goal line d3. d0 = 0 if X has 
 	lda.b d1
 	sec
 	sbc.w #$0103
-	bmi .v1
+	bmi .neg
 	bvc .hi
 	bra .one
-.v1:
+.neg:
 	bvc .one
 .hi:
 	lda.w #$0103
@@ -21,10 +21,10 @@ ClampYPosition:		;d1 = y clamped to +-$103, minus goal line d3. d0 = 0 if X has 
 	sec
 	sbc.w #$FEFD
 	beq .lo
-	bmi .v2
+	bmi .neg1
 	bvs .lo
 	bra .two
-.v2:
+.neg1:
 	bvs .two
 .lo:
 	lda.w #$FEFD

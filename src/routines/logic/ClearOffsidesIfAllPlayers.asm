@@ -29,11 +29,11 @@ ClearOffsidesIfAllPlayers:		;a2 = team struct. Clears the team offsides flag (tm
 	sec
 	sbc.w #blueline
 	beq .more
-	bmi .v1
+	bmi .neg
 	bvs .more
 .rtl:
 	jmp.w ChkOffsides_rtl
-.v1:
+.neg:
 	bvs .rtl
 .more:
 	dec.b d1

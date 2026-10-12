@@ -4,10 +4,10 @@ checkpuckcoll:		;look for puck coll with players. a3 = puck. Entered from puckno
 	sec
 	sbc.w #$0010
 	beq .setup
-	bmi .v1
+	bmi .neg
 	bvs .setup
 	bra .rtl
-.v1:
+.neg:
 	bvs .rtl
 .setup:
 	lda.w OOlistpos+puckobj		; Y = puck position in OOlist
@@ -26,10 +26,10 @@ checkpuckcoll:		;look for puck coll with players. a3 = puck. Entered from puckno
 	sec
 	sbc.w #$0016		; next higher object within 22 in y
 	beq .cc1
-	bmi .v2
+	bmi .neg1
 	bvs .cc1
 	bra .cl
-.v2:
+.neg1:
 	bvs .cl
 .cc1:
 	jsl.l checkpuckcoll_ccx
@@ -51,10 +51,10 @@ checkpuckcoll:		;look for puck coll with players. a3 = puck. Entered from puckno
 	sec
 	sbc.w #$0016
 	beq .cc2
-	bmi .v3
+	bmi .neg2
 	bvs .cc2
 	bra .rtl
-.v3:
+.neg2:
 	bvs .rtl
 .cc2:
 	jsl.l checkpuckcoll_ccx

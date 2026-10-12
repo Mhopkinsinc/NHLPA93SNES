@@ -5,11 +5,11 @@ checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 =
 	sec
 	sbc.w #$000D
 	beq .z
-	bmi .v1
+	bmi .neg
 	bvs .z
 .ex1:
 	jmp.w .rtl
-.v1:
+.neg:
 	bvs .ex1
 .z:
 	cpx.w #puckobj		; not the puck: checkgoalp
@@ -28,11 +28,11 @@ checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 =
 	sec
 	sbc.b d4
 	beq .xl
-	bmi .v2
+	bmi .neg1
 	bvs .xl
 .ex2:
 	jmp.w .rtl
-.v2:
+.neg1:
 	bvs .ex2
 .xl:
 	lda.b d4
@@ -42,11 +42,11 @@ checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 =
 	lda.b d2
 	sec
 	sbc.b d4
-	bmi .v3
+	bmi .neg2
 	bvc .yh
 .ex3:
 	jmp.w .rtl
-.v3:
+.neg2:
 	bvc .ex3
 .yh:
 	lda.w #$0004
@@ -60,11 +60,11 @@ checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 =
 	sec
 	sbc.b d5
 	beq .yl
-	bmi .v4
+	bmi .neg3
 	bvs .yl
 .ex4:
 	jmp.w .rtl
-.v4:
+.neg3:
 	bvs .ex4
 .yl:
 	lda.b d5
@@ -74,11 +74,11 @@ checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 =
 	lda.b d3
 	sec
 	sbc.b d5
-	bmi .v5
+	bmi .neg4
 	bvc .inside
 .ex5:
 	jmp.w .rtl
-.v5:
+.neg4:
 	bvc .ex5
 .inside:		;inside the goal area now
 	lda.w #$FFFF		; collflag
@@ -86,10 +86,10 @@ checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 =
 	lda.w OldZpos+puckobj
 	sec
 	sbc.w #$000D
-	bmi .v6
+	bmi .neg5
 	bvc .over
 	bra .nod
-.v6:
+.neg5:
 	bvc .nod
 .over:		;OldZpos >= 13: came over the top
 	lda.w OldZpos+puckobj
@@ -186,11 +186,11 @@ checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 =
 	sta.b d2
 	sec
 	sbc.b d4
-	bmi .v7
+	bmi .neg6
 	bvc .xl2
 .se1:
 	jmp.w .sideentry
-.v7:
+.neg6:
 	bvc .se1
 .xl2:
 	lda.b d4
@@ -201,11 +201,11 @@ checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 =
 	sec
 	sbc.b d4
 	beq .mouth
-	bmi .v8
+	bmi .neg7
 	bvs .mouth
 .se2:
 	jmp.w .sideentry
-.v8:
+.neg7:
 	bvs .se2
 .mouth:		;crossed between the posts
 	stz.b d1
@@ -233,10 +233,10 @@ checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 =
 	sec
 	sbc.b d4
 	beq .ml
-	bmi .v9
+	bmi .neg8
 	bvs .ml
 	bra .deflectsf
-.v9:
+.neg8:
 	bvs .deflectsf
 .ml:
 	lda.b d4
@@ -246,11 +246,11 @@ checkgoal:		;look for coll with goal/net. a2 = goal struct, a3 = object, d2/d3 =
 	lda.b d2
 	sec
 	sbc.b d4
-	bmi .v10
+	bmi .neg9
 	bvs .deflectsf
 .goal:
 	jmp.w Goal
-.v10:
+.neg9:
 	bvs .goal
 .deflectsf:		;off the post
 	jsl.l ChkShotStat		; off the post: sfx and crowd +300

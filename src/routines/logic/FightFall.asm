@@ -45,10 +45,10 @@ FightFall:		;X lost the fight: the a0 player gets PenFighting, maybe X is injure
 	sec
 	sbc.w aggress,y		; random 60 vs the winner aggress: injury?
 	beq .inj
-	bmi .v1
+	bmi .neg
 	bvs .inj
 	bra .noinj
-.v1:
+.neg:
 	bvs .noinj
 .inj:		;player X is injured
 	lda.w #$00B4		; 180: player is injured

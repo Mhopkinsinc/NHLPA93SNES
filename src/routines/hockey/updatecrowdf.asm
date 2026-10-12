@@ -3,10 +3,10 @@ updatecrowdf:		;this is called every game loop with d7 = elapsed frames
 	lda.b crowdlevel
 	sec
 	sbc.w #$015E		; 350
-	bmi .v1
+	bmi .neg
 	bvc .loud
 	bra .dec
-.v1:
+.neg:
 	bvc .dec
 .loud:
 	dec.b crowdlevel		; loud crowd calms down faster

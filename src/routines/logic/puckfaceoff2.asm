@@ -195,10 +195,10 @@ puckfaceoff2:		;asstab $1C. puckfaceoff2 : face off control logic and general se
 	sec
 	sbc.w #$0008
 	beq .def
-	bmi .v1
+	bmi .neg
 	bvs .def
 	bra .nodef
-.v1:
+.neg:
 	bvs .nodef
 .def:
 	lda.w fox
@@ -458,10 +458,10 @@ puckfaceoff2:		;asstab $1C. puckfaceoff2 : face off control logic and general se
 	sta.b tmp0
 	sec
 	sbc.w temp1,x
-	bmi .v2
+	bmi .neg1
 	bvc .one
 	bra .sub
-.v2:
+.neg1:
 	bvc .sub
 .one:
 	lda.w #$0001

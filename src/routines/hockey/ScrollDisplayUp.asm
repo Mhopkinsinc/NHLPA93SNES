@@ -5,11 +5,11 @@ ScrollDisplayUp:		;next text line for UpdateScoutingDisplay (column 0). After li
 	lda.w VertLineScrolling
 	sec
 	sbc.w #$0007
-	bmi .v1
+	bmi .neg
 	bvc .up
 .ex1:
 	jmp.w UpdateScoutingDisplay_rtl
-.v1:
+.neg:
 	bvc .ex1
 .up:
 	dec.w VertLineScrolling

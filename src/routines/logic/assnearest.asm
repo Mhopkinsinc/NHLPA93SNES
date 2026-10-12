@@ -337,10 +337,10 @@ assnearest:		;asstab $11. this is a special assignment used for the player who i
 	lda.b d1
 	sec
 	sbc.w #$0053
-	bmi .v1
+	bmi .neg1
 	bvc .clamp1
 	bra .go
-.v1:
+.neg1:
 	bvc .go
 .clamp1:
 	lda.w #$0044
@@ -351,10 +351,10 @@ assnearest:		;asstab $11. this is a special assignment used for the player who i
 	sec
 	sbc.w #$FFAD
 	beq .clamp2
-	bmi .v2
+	bmi .neg2
 	bvs .clamp2
 	bra .go
-.v2:
+.neg2:
 	bvs .go
 .clamp2:
 	lda.w #$FFBC

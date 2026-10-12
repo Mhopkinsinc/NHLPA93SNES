@@ -146,11 +146,11 @@ assgoalie:		;asstab $E. Player a3 is goalie. Also entered from assnearest
 	sec
 	sbc.w #$005A
 	beq .roll
-	bmi .v1
+	bmi .neg
 	bvs .roll
 .de1j:
 	jmp.w .de1
-.v1:
+.neg:
 	bvs .de1j
 .roll:
 	lda.w #$0064		; 1 in 4: pass
@@ -346,20 +346,20 @@ assgoalie:		;asstab $E. Player a3 is goalie. Also entered from assnearest
 	sec
 	sbc.w #$00E0
 	beq .lo
-	bmi .v2
+	bmi .neg1
 	bvs .lo
 	bra .lead2
-.v2:
+.neg1:
 	bvs .lead2
 .lo:
 	lda.b d1
 	sec
 	sbc.w #$FF20
 	beq .lead2
-	bmi .v3
+	bmi .neg2
 	bvs .lead2
 	bra .lead
-.v3:
+.neg2:
 	bvs .lead
 .lead2:
 	lda.b d0
@@ -515,20 +515,20 @@ assgoalie:		;asstab $E. Player a3 is goalie. Also entered from assnearest
 	sec
 	sbc.w #$0008
 	beq .pz
-	bmi .v4
+	bmi .neg3
 	bvs .pz
 	bra .de7
-.v4:
+.neg3:
 	bvs .de7
 .pz:
 	lda.w puckvz
 	sec
 	sbc.w #$0800
 	beq .stick
-	bmi .v5
+	bmi .neg4
 	bvs .stick
 	bra .de7
-.v5:
+.neg4:
 	bvs .de7
 .stick:
 	lda.b d0
@@ -569,20 +569,20 @@ assgoalie:		;asstab $E. Player a3 is goalie. Also entered from assnearest
 	sec
 	sbc.w #$00FC
 	beq .p2
-	bmi .v6
+	bmi .neg5
 	bvs .p2
 	bra .post
-.v6:
+.neg5:
 	bvs .post
 .p2:
 	lda.w pucky
 	sec
 	sbc.w #$FF04
 	beq .post
-	bmi .v7
+	bmi .neg6
 	bvs .post
 	bra .de5
-.v7:
+.neg6:
 	bvs .de5
 .post:		;hug the post
 	lda.w #$0018
@@ -665,11 +665,11 @@ assgoalie:		;asstab $E. Player a3 is goalie. Also entered from assnearest
 	sec
 	sbc.w #$0007
 	beq .acc
-	bmi .v8
+	bmi .neg7
 	bvc .stop
 .acc:
 	jml.l playeracc
-.v8:
+.neg7:
 	bvc .acc
 .stop:
 	jmp.w StopNA
@@ -711,21 +711,21 @@ assgoalie:		;asstab $E. Player a3 is goalie. Also entered from assnearest
 	lda.w pucky		; puck near my end, moving toward me, mostly in y
 	sbc.w #$00E0
 	beq .r4
-	bmi .v9
+	bmi .neg8
 	bvs .r4
 	bra .dir
-.v9:
+.neg8:
 	bvs .dir
 .r4:
 	lda.w pucky
 	sec
 	sbc.w #$FF20
 	beq .dir
-	bmi .v10
+	bmi .neg9
 	bvs .dir
 .de5j:
 	jmp.w .de5
-.v10:
+.neg9:
 	bvs .de5j
 .dir:
 	lda.w puckvy

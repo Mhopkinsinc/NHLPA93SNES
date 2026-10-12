@@ -118,17 +118,17 @@ setplayer:		;bring player onto the ice and set his stats
 	lda.w gsp		; 3rd period?
 	sec
 	sbc.w #$0002
-	bmi .v1
+	bmi .neg
 	bvc .p3
 	bra .nomod
-.v1:
+.neg:
 	bvc .nomod
 .p3:
 	beq .half
-	bmi .v2
+	bmi .neg1
 	bvs .half
 	bra .score
-.v2:
+.neg1:
 	bvs .score
 .half:
 	jsl.l GetPeriodTime		; GetPeriodTime
@@ -137,10 +137,10 @@ setplayer:		;bring player onto the ice and set his stats
 	sec
 	sbc.w gameclock
 	beq .score
-	bmi .v3
+	bmi .neg2
 	bvs .score
 	bra .nomod
-.v3:
+.neg2:
 	bvs .nomod
 .score:
 	lda.w tmscore		; tied or trailing: ThirdPBonus = 2

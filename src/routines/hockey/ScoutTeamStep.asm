@@ -29,11 +29,11 @@ ScoutTeamStep:		;SNES: step the showcased player of team a2: a new team (tmteam 
 	sec
 	sbc.w #40
 	beq .rtl
-	bmi .v1
+	bmi .neg
 	bvs .rtl
 .next1:
 	jmp.w ScoutNextPlayer
-.v1:
+.neg:
 	bvs .next1
 .rtl:
 	rtl

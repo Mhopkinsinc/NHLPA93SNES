@@ -81,10 +81,10 @@ wallcoll:		;d0 = cosine, d1 = sine of angle of incidence with wall, a3 = object.
 	sec
 	sbc.w #$FC00		; hard hit (v1n <= -$400): pop up, flip, sound by speed
 	beq .hard
-	bmi .v1
+	bmi .neg
 	bvs .hard
 	bra .pok
-.v1:
+.neg:
 	bvs .pok
 .hard:
 	lda.w #$0800
@@ -99,10 +99,10 @@ wallcoll:		;d0 = cosine, d1 = sine of angle of incidence with wall, a3 = object.
 	lda.b d2
 	sec
 	sbc.w #$EE00
-	bmi .v2
+	bmi .neg1
 	bvc .s2
 	bra .snd
-.v2:
+.neg1:
 	bvc .snd
 .s2:
 	pla
@@ -111,10 +111,10 @@ wallcoll:		;d0 = cosine, d1 = sine of angle of incidence with wall, a3 = object.
 	lda.b d2
 	sec
 	sbc.w #$F800
-	bmi .v3
+	bmi .neg2
 	bvc .s3
 	bra .snd
-.v3:
+.neg2:
 	bvc .snd
 .s3:
 	pla
@@ -152,30 +152,30 @@ wallcoll:		;d0 = cosine, d1 = sine of angle of incidence with wall, a3 = object.
 	sec
 	sbc.w #$03E8		; player: v1n > 1000: no collision
 	beq .p1
-	bmi .v4
+	bmi .neg3
 	bvs .p1
 .nocoll1:
 	jmp.w .nocoll
-.v4:
+.neg3:
 	bvs .nocoll1
 .p1:
 	lda.b d2
 	sec
 	sbc.w #$F000		; v1n <= -$1000 and impact >= 10: board sound
 	beq .imp
-	bmi .v5
+	bmi .neg4
 	bvs .imp
 	bra .nosfx
-.v5:
+.neg4:
 	bvs .nosfx
 .imp:
 	lda.w impact,x
 	sec
 	sbc.w #$000A
-	bmi .v6
+	bmi .neg5
 	bvc .psnd
 	bra .nosfx
-.v6:
+.neg5:
 	bvc .nosfx
 .psnd:
 	lda.w seed+1
@@ -195,10 +195,10 @@ wallcoll:		;d0 = cosine, d1 = sine of angle of incidence with wall, a3 = object.
 	sta.b d2
 	sec
 	sbc.w #$FC7C		; v1n >= -900: -1000
-	bmi .v7
+	bmi .neg6
 	bvc .min
 	bra .noadd
-.v7:
+.neg6:
 	bvc .noadd
 .min:
 	lda.w #$FC18

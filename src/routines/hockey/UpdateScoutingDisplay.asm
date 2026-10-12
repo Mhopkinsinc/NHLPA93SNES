@@ -6,10 +6,10 @@ UpdateScoutingDisplay:		;called every frame by ScoutingReport. When ScoutingRepo
 	sec
 	sbc.w #$1000
 	beq .tm
-	bmi .v1
+	bmi .neg
 	bvs .tm
 	bra .rtl
-.v1:
+.neg:
 	bvs .rtl
 .tm:
 	lda.w asv		; asv: no delay
@@ -155,12 +155,12 @@ UpdateScoutingDisplay:		;called every frame by ScoutingReport. When ScoutingRepo
 	sec
 	sbc.w #$0014
 	beq .noscr
-	bmi .v2
+	bmi .neg1
 	bvs .noscr
 .scr:
 	jsl.l ScrollDisplayUp
 	bra .noscr
-.v2:
+.neg1:
 	bvs .scr
 .noscr:
 	jsl.l printz		; print at column + DispAttribCtr, line + VertLineScrolling

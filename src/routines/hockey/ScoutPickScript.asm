@@ -10,21 +10,21 @@ ScoutPickScript:		;SNES: rating nibble d1 against the next (minimum, script) pai
 	lda.b d1
 	sec
 	sbc.b tmp0
-	bmi .v1
+	bmi .neg
 	bvc .best
 .ex1:
 	jmp.w ScoutPlayerExit_rtl
-.v1:
+.neg:
 	bvc .ex1
 .best:
 	lda.b d1
 	sec
 	sbc.b d2
-	bmi .v2
+	bmi .neg1
 	bvc .z
 .ex2:
 	jmp.w ScoutPlayerExit_rtl
-.v2:
+.neg1:
 	bvc .ex2
 .z:
 	lda.b d2

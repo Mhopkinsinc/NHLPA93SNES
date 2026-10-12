@@ -25,19 +25,19 @@ checkwallcoll:		;d2/d3 = x/y to test, a3 = object, wcradiusx/wcradiusy = radius.
 	sec
 	sbc.b d5
 	beq .negy
-	bmi .v1
+	bmi .neg
 	bvs .negy
 	bra .ctc
-.v1:
+.neg:
 	bvs .ctc
 .negy:
 	lda.b d2
 	sec
 	sbc.b d4
-	bmi .v2
+	bmi .neg1
 	bvc .gl1
 	bra .circle
-.v2:
+.neg1:
 	bvc .circle
 .gl1:
 	lda.b d4
@@ -46,10 +46,10 @@ checkwallcoll:		;d2/d3 = x/y to test, a3 = object, wcradiusx/wcradiusy = radius.
 	sta.b d4
 	sec
 	sbc.b d2
-	bmi .v3
+	bmi .neg2
 	bvc .goal13
 	bra .circle
-.v3:
+.neg2:
 	bvc .circle
 .goal13:		;goal at the -y end (object 13)
 	lda.w #$001A
@@ -64,20 +64,20 @@ checkwallcoll:		;d2/d3 = x/y to test, a3 = object, wcradiusx/wcradiusy = radius.
 	sec
 	sbc.b d3
 	beq .c2
-	bmi .v4
+	bmi .neg3
 	bvs .c2
 .exit1:
 	jmp.w .exit
-.v4:
+.neg3:
 	bvs .exit1
 .c2:
 	lda.b d2
 	sec
 	sbc.b d4
-	bmi .v5
+	bmi .neg4
 	bvc .c3
 	bra .circle
-.v5:
+.neg4:
 	bvc .circle
 .c3:
 	lda.b d4
@@ -86,10 +86,10 @@ checkwallcoll:		;d2/d3 = x/y to test, a3 = object, wcradiusx/wcradiusy = radius.
 	sta.b d4
 	sec
 	sbc.b d2
-	bmi .v6
+	bmi .neg5
 	bvc .goal12
 	bra .circle
-.v6:
+.neg5:
 	bvc .circle
 .goal12:		;goal at the +y end (object 12)
 	lda.w #$0018
@@ -177,11 +177,11 @@ checkwallcoll:		;d2/d3 = x/y to test, a3 = object, wcradiusx/wcradiusy = radius.
 	lda.b d3
 	sec
 	sbc.b d5
-	bmi .v7
+	bmi .neg6
 	bvs .s1
 .b1:
 	jmp.w wallcollb
-.v7:
+.neg6:
 	bvs .b1
 .s1:
 	lda.b d0
@@ -194,11 +194,11 @@ checkwallcoll:		;d2/d3 = x/y to test, a3 = object, wcradiusx/wcradiusy = radius.
 	sta.b d5
 	sec
 	sbc.b d3
-	bmi .v8
+	bmi .neg7
 	bvs .s2
 .b2:
 	jmp.w wallcollb
-.v8:
+.neg7:
 	bvs .b2
 .s2:
 	lda.b d0
@@ -210,11 +210,11 @@ checkwallcoll:		;d2/d3 = x/y to test, a3 = object, wcradiusx/wcradiusy = radius.
 	lda.b d2
 	sec
 	sbc.b d4
-	bmi .v9
+	bmi .neg8
 	bvs .s3
 .b3:
 	jmp.w wallcollb
-.v9:
+.neg8:
 	bvs .b3
 .s3:
 	lda.b d1
@@ -227,11 +227,11 @@ checkwallcoll:		;d2/d3 = x/y to test, a3 = object, wcradiusx/wcradiusy = radius.
 	sta.b d4
 	sec
 	sbc.b d2
-	bmi .v10
+	bmi .neg9
 	bvs .rtl
 .b4:
 	jmp.w wallcollb
-.v10:
+.neg9:
 	bvs .b4
 .rtl:
 	rtl

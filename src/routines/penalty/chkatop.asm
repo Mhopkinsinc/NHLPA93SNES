@@ -5,10 +5,10 @@ chkatop:		;attack time of possession stat update. Called once a second from upda
 	sec
 	sbc.w #$0058
 	beq .lo
-	bmi .v1
+	bmi .neg
 	bvs .lo
 	bra .1
-.v1:
+.neg:
 	bvs .1
 .lo:
 	inc.b d1
@@ -16,10 +16,10 @@ chkatop:		;attack time of possession stat update. Called once a second from upda
 	lda.w pucky
 	sec
 	sbc.w #$FFA8
-	bmi .v2
+	bmi .neg1
 	bvs .1
 	bra .rtl
-.v2:
+.neg1:
 	bvs .rtl
 .1:
 	lda.w gmode		; gmdir: swap the teams

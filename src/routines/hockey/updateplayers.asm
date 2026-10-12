@@ -202,10 +202,10 @@ updateplayers:		;animation, velocity, position, input and the assignment for eve
 	sta.w Zvel,x
 	sec
 	sbc.w #$0200		; bounce sound when Zvel >= $200
-	bmi .v1
+	bmi .neg
 	bvc .bsnd
 	bra .done
-.v1:
+.neg:
 	bvc .done
 .bsnd:
 	lda.w seed
@@ -352,10 +352,10 @@ updateplayers:		;animation, velocity, position, input and the assignment for eve
 	sec
 	sbc.w #$FFA0
 	beq .cl1
-	bmi .v2
+	bmi .neg1
 	bvs .cl1
 	bra .cx
-.v2:
+.neg1:
 	bvs .cx
 .cl1:
 	lda.w #$FFA0
@@ -364,10 +364,10 @@ updateplayers:		;animation, velocity, position, input and the assignment for eve
 	lda.w Xpos,x
 	sec
 	sbc.w #$0060
-	bmi .v3
+	bmi .neg2
 	bvc .cl2
 	bra .next
-.v3:
+.neg2:
 	bvc .next
 .cl2:
 	lda.w #$0060
@@ -428,10 +428,10 @@ updateplayers:		;animation, velocity, position, input and the assignment for eve
 	lda.w puckx
 	sec
 	sbc.w #$FF78		; x >= -$88
-	bmi .v4
+	bmi .neg3
 	bvs .px1
 	bra .px2
-.v4:
+.neg3:
 	bvs .px2
 .px1:
 	lda.w #$FF78
@@ -441,10 +441,10 @@ updateplayers:		;animation, velocity, position, input and the assignment for eve
 	sec
 	sbc.w #$0088		; x <= $88
 	beq .py
-	bmi .v5
+	bmi .neg4
 	bvc .px3
 	bra .py
-.v5:
+.neg4:
 	bvc .py
 .px3:
 	lda.w #$0088
@@ -463,10 +463,10 @@ updateplayers:		;animation, velocity, position, input and the assignment for eve
 	lda.w pucky
 	sec
 	sbc.w #$FEDB		; y >= -$125
-	bmi .v6
+	bmi .neg5
 	bvs .py2
 	bra .py3
-.v6:
+.neg5:
 	bvs .py3
 .py2:
 	lda.w #$FEDB
@@ -476,10 +476,10 @@ updateplayers:		;animation, velocity, position, input and the assignment for eve
 	sec
 	sbc.w #$012A		; y <= $12A
 	beq .cy
-	bmi .v7
+	bmi .neg6
 	bvc .py4
 	bra .cy
-.v7:
+.neg6:
 	bvc .cy
 .py4:
 	lda.w #$012A

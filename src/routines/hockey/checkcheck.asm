@@ -112,11 +112,11 @@ checkcheck:		;player is in contact look for various contact events. Runs .cc for
 	lda.b d4		; impact under 20: no fall
 	sec
 	sbc.w #$0014
-	bmi .v1
+	bmi .neg
 	bvc .fall
 .ex1:
 	jmp.w .rtl
-.v1:
+.neg:
 	bvc .ex1
 .fall:		;d0 = (120 (*2 joystick) - weight + weight of a2) / 2 - impact of a2
 	lda.w #$0078
@@ -142,10 +142,10 @@ checkcheck:		;player is in contact look for various contact events. Runs .cc for
 	sec
 	sbc.w aggress,x
 	beq .down
-	bmi .v2
+	bmi .neg1
 	bvc .pen
 	bra .down
-.v2:
+.neg1:
 	bvc .down
 .pen:
 	jsl.l checkagr		; checkagr <= 4 and no highlight: PenCharge or PenSlash (d0 = penalty roll)

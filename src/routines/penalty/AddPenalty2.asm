@@ -26,10 +26,10 @@ AddPenalty2:		;forced penalties like face off and game over. d0 = penalty, X = p
 	lda.b d0
 	sec
 	sbc.w #$000E		; goal and up
-	bmi .v1
+	bmi .neg
 	bvc .snd
 	bra .nosnd
-.v1:
+.neg:
 	bvc .nosnd
 .snd:		;goal and up: crowd and a sound
 	lda.b crowdlevel		; crowd +200

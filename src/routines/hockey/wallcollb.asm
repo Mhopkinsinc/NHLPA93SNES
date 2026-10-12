@@ -8,10 +8,10 @@ wallcollb:		;check for puck over wall. a3 = object, d0/d1 = cos/sin of the wall.
 	sec
 	sbc.w #$0020		; Zpos > 32: over
 	beq .z1
-	bmi .v1
+	bmi .neg
 	bvs .z1
 	bra .0
-.v1:
+.neg:
 	bvs .0
 .z1:
 	lda.w Zpos+puckobj
@@ -22,39 +22,39 @@ wallcollb:		;check for puck over wall. a3 = object, d0/d1 = cos/sin of the wall.
 	lda.w pucky
 	sec
 	sbc.w #$0112		; y >= 274
-	bmi .v2
+	bmi .neg1
 	bvc .x13
 	bra .0
-.v2:
+.neg1:
 	bvc .0
 .x13:
 	lda.w puckx
 	sec
 	sbc.w #$000D		; x 13-15 (the goal mouth)
-	bmi .v3
+	bmi .neg2
 	bvc .x15
 .wc1:
 	jmp.w wallcoll
-.v3:
+.neg2:
 	bvc .wc1
 .x15:
 	lda.w puckx
 	sec
 	sbc.w #$000F
 	beq .vy
-	bmi .v4
+	bmi .neg3
 	bvs .vy
 	bra wallcoll
-.v4:
+.neg3:
 	bvs wallcoll
 .vy:
 	lda.w puckvy
 	sec
 	sbc.w #$0FA0		; Yvel >= $FA0
-	bmi .v5
+	bmi .neg4
 	bvc .glass
 	bra wallcoll
-.v5:
+.neg4:
 	bvc wallcoll
 .glass:		;over the glass at the goal: shadow animation, sound, crowd
 	phx

@@ -10,10 +10,10 @@ puckgoalie:		;puck hits goalie a2. a3 = puck, d0/d1 = goalie - puck x/y
 	sec
 	sbc.w #$0008
 	beq .low
-	bmi .v1
+	bmi .neg
 	bvs .low
 	bra .side
-.v1:
+.neg:
 	bvs .side
 .low:		;puck region: +2 when low
 	inc.b d2
@@ -112,11 +112,11 @@ puckgoalie:		;puck hits goalie a2. a3 = puck, d0/d1 = goalie - puck x/y
 	lda.w Zpos+puckobj
 	sec
 	sbc.w #$0002
-	bmi .v2
+	bmi .neg1
 	bvs .saved
 .nosave:
 	jmp.w .rtl
-.v2:
+.neg1:
 	bvs .nosave
 .saved:
 	jsl.l ChkShotStat		; ChkShotStat
@@ -227,21 +227,21 @@ puckgoalie:		;puck hits goalie a2. a3 = puck, d0/d1 = goalie - puck x/y
 	sta.b d0
 	sec
 	sbc.w puckvx
-	bmi .v3
+	bmi .neg2
 	bvc .c2
 .b1:
 	jmp.w .bounce
-.v3:
+.neg2:
 	bvc .b1
 .c2:
 	lda.b d0
 	sec
 	sbc.w puckvy
-	bmi .v4
+	bmi .neg3
 	bvc .c3
 .b2:
 	jmp.w .bounce
-.v4:
+.neg3:
 	bvc .b2
 .c3:
 	lda.b d0
@@ -251,22 +251,22 @@ puckgoalie:		;puck hits goalie a2. a3 = puck, d0/d1 = goalie - puck x/y
 	sec
 	sbc.w puckvx
 	beq .c4
-	bmi .v5
+	bmi .neg4
 	bvs .c4
 .b3:
 	jmp.w .bounce
-.v5:
+.neg4:
 	bvs .b3
 .c4:
 	lda.b d0
 	sec
 	sbc.w puckvy
 	beq .c5
-	bmi .v6
+	bmi .neg5
 	bvs .c5
 .b4:
 	jmp.w .bounce
-.v6:
+.neg5:
 	bvs .b4
 .c5:
 	ldy.b a2

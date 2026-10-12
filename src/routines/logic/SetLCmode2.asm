@@ -13,10 +13,10 @@ SetLCmode2:		;a2 = team struct for lc. Draw the lc box with one row per eligible
 	lda.w printy		; lower half of the screen?
 	sec
 	sbc.w #$000F
-	bmi .v1
+	bmi .neg
 	bvc .lower
 	bra .box
-.v1:
+.neg:
 	bvc .box
 .lower:		;lower box: sf3llcs
 	lda.w #sf3llcs

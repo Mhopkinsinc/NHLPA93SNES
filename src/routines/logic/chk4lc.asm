@@ -14,10 +14,10 @@ chk4lc:		;see if computer should call line change
 	sec
 	sbc.w #blueline		; blueline
 	beq .inzone
-	bmi .v1
+	bmi .neg
 	bvs .inzone
 	bra .rts
-.v1:
+.neg:
 	bvs .rts
 .inzone:		;in own half, inside the blue line
 	lda.w seed

@@ -19,10 +19,10 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	sta.w yleader
 	sec
 	sbc.w #$0032
-	bmi .v1
+	bmi .neg
 	bvc .ylmax
 	bra .ok
-.v1:
+.neg:
 	bvc .ok
 .ylmax:
 	lda.w #$0032
@@ -73,10 +73,10 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	sta.b d0
 	sec
 	sbc.w #$FFF6
-	bmi .v3
+	bmi .neg1
 	bvs .up
 	bra .1
-.v3:
+.neg1:
 	bvs .1
 .up:
 	lda.b d2
@@ -86,10 +86,10 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	sec
 	sbc.w #$FF39
 	beq .yslimd
-	bmi .v4
+	bmi .neg2
 	bvs .yslimd
 	bra .2
-.v4:
+.neg2:
 	bvs .2
 .yslimd:
 	lda.w #$FF39
@@ -100,10 +100,10 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	sec
 	sbc.w #$000A
 	beq .2x
-	bmi .v5
+	bmi .neg3
 	bvc .down
 	bra .2x
-.v5:
+.neg3:
 	bvc .2x
 .down:
 	lda.b d2
@@ -112,10 +112,10 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	sta.b d1
 	sec
 	sbc.w #$0100
-	bmi .v6
+	bmi .neg4
 	bvc .yslimu
 	bra .2
-.v6:
+.neg4:
 	bvc .2
 .yslimu:
 	lda.w #$0100
@@ -133,9 +133,9 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	ora.w #$E000
 .s2:
 	cmp.w #$0000
-	bne .v2
+	bne .neg5
 	inc a
-.v2:
+.neg5:
 	clc
 	adc.w Vpos
 	sta.w Vpos
@@ -146,10 +146,10 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	sta.b d0
 	sec
 	sbc.w #$FFD8
-	bmi .v7
+	bmi .neg6
 	bvs .left
 	bra .3
-.v7:
+.neg6:
 	bvs .3
 .left:
 	lda.b d3
@@ -158,10 +158,10 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	sta.b d1
 	sec
 	sbc.w #$FFC4
-	bmi .v8
+	bmi .neg7
 	bvs .xslimn
 	bra .4
-.v8:
+.neg7:
 	bvs .4
 .xslimn:
 	lda.w #$FFC4
@@ -172,10 +172,10 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	sec
 	sbc.w #$0028
 	beq .rtl
-	bmi .v9
+	bmi .neg8
 	bvc .right
 	bra .rtl
-.v9:
+.neg8:
 	bvc .rtl
 .right:
 	lda.b d3
@@ -185,10 +185,10 @@ checkwindow:		;set hpos and vpos according to how screen should follow puck
 	sec
 	sbc.w #$003C
 	beq .4
-	bmi .v10
+	bmi .neg9
 	bvc .xslim
 	bra .4
-.v10:
+.neg9:
 	bvc .4
 .xslim:
 	lda.w #$003C

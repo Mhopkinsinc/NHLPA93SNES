@@ -44,10 +44,10 @@ FallDown:		;player a2 falls down, player a3 is the hitting player. Some players 
 	sec
 	sbc.w impact,y
 	beq .fall
-	bmi .v1
+	bmi .neg
 	bvc .stumble
 	bra .fall
-.v1:
+.neg:
 	bvc .fall
 .stumble:		;no second stumble for $3C
 	lda.w #$003C
@@ -116,10 +116,10 @@ FallDown:		;player a2 falls down, player a3 is the hitting player. Some players 
 	lda.w aggress,x
 	sec
 	sbc.w #$000A
-	bmi .v2
+	bmi .neg1
 	bvc .f3
 	bra .set
-.v2:
+.neg1:
 	bvc .set
 .f3:
 	cpx.w #$0018
@@ -173,10 +173,10 @@ FallDown:		;player a2 falls down, player a3 is the hitting player. Some players 
 	sec
 	sbc.w impact,y
 	beq .inj
-	bmi .v3
+	bmi .neg2
 	bvs .inj
 	bra .snd
-.v3:
+.neg2:
 	bvs .snd
 .inj:
 	lda.w gmclock

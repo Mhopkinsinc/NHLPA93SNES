@@ -9,11 +9,11 @@ checkgoalp:		;check for player a3 collision with goal/net a2. Entered from check
 	sec
 	sbc.w #$000A
 	beq .pl
-	bmi .v1
+	bmi .neg
 	bvs .pl
 .ex1:
 	jmp.w .rtl
-.v1:
+.neg:
 	bvs .ex1
 .pl:		;players only (SCnum <= 11)
 	cpx.w #$0017

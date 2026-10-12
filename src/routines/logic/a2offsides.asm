@@ -16,10 +16,10 @@ a2offsides:		;player a2 touched the puck: offsides penalty if his team is flagge
 	lda.b d0
 	sec
 	sbc.w #blueline		; blueline
-	bmi .v1
+	bmi .neg
 	bvc .team
 	bra .rtl
-.v1:
+.neg:
 	bvc .rtl
 .team:
 	stz.b a0

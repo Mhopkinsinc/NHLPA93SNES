@@ -145,10 +145,10 @@ checkcoll:		;d2 = new x cord, d3 = new y cord, a3 = struct of object. Check wall
 	sec
 	sbc.w Ylist,y
 	beq .cl2
-	bmi .v1
+	bmi .neg
 	bvc .swapup
 	bra .cl2
-.v1:
+.neg:
 	bvc .cl2
 .swapup:
 	inc.w OOlistpos,x
@@ -177,10 +177,10 @@ checkcoll:		;d2 = new x cord, d3 = new y cord, a3 = struct of object. Check wall
 	lda.b d3
 	sec
 	sbc.w Ylist,y
-	bmi .v2
+	bmi .neg1
 	bvs .swapdn
 	bra .ex2
-.v2:
+.neg1:
 	bvs .ex2
 .swapdn:
 	dec.w OOlistpos,x

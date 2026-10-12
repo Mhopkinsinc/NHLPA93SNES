@@ -96,10 +96,10 @@ chkhit:		;part of fight to see if player is hit
 	sta.b d0
 	sec
 	sbc.w #$005A
-	bmi .v1
+	bmi .neg
 	bvc .cl1
 	bra .chkneg
-.v1:
+.neg:
 	bvc .chkneg
 .cl1:
 	lda.w #$005A
@@ -109,10 +109,10 @@ chkhit:		;part of fight to see if player is hit
 	sec
 	sbc.w #$FFA6
 	beq .cl2
-	bmi .v2
+	bmi .neg1
 	bvs .cl2
 	bra .drcont
-.v2:
+.neg1:
 	bvs .drcont
 .cl2:
 	lda.w #$FFA6

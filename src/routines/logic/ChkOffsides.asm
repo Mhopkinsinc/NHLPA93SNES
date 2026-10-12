@@ -16,20 +16,20 @@ ChkOffsides:		;check for offsides penalty. a3 = puck. Flags the whole team (tmfl
 	sec
 	sbc.w pucky
 	beq .top
-	bmi .v1
+	bmi .neg1
 	bvs .top
 	bra .neg
-.v1:
+.neg1:
 	bvs .neg
 .top:		;puck crossed the top line this frame?
 	lda.w #blueline-4
 	sec
 	sbc.w OldYpos+puckobj
 	beq .rtl
-	bmi .v2
+	bmi .neg2
 	bvc .t
 	bra .rtl
-.v2:
+.neg2:
 	bvc .rtl
 .t:
 	lda.w #blueline-4+$A		; +$A
@@ -54,10 +54,10 @@ ChkOffsides:		;check for offsides penalty. a3 = puck. Flags the whole team (tmfl
 	lda.b d0
 	sec
 	sbc.w Ypos,y
-	bmi .v3
+	bmi .neg3
 	bvs .set0
 	bra .1
-.v3:
+.neg3:
 	bvs .1
 .set0:
 	ldy.b a2
@@ -79,19 +79,19 @@ ChkOffsides:		;check for offsides penalty. a3 = puck. Flags the whole team (tmfl
 	sta.b d0
 	sec
 	sbc.w pucky
-	bmi .v4
+	bmi .neg4
 	bvc .b1
 	bra .rtl
-.v4:
+.neg4:
 	bvc .rtl
 .b1:
 	lda.b d0
 	sec
 	sbc.w OldYpos+puckobj
-	bmi .v5
+	bmi .neg5
 	bvs .b2
 	bra .rtl
-.v5:
+.neg5:
 	bvs .rtl
 .b2:
 	lda.b d0
@@ -119,10 +119,10 @@ ChkOffsides:		;check for offsides penalty. a3 = puck. Flags the whole team (tmfl
 	sec
 	sbc.w Ypos,y
 	beq .3
-	bmi .v6
+	bmi .neg6
 	bvc .set2
 	bra .3
-.v6:
+.neg6:
 	bvc .3
 .set2:
 	ldy.b a2

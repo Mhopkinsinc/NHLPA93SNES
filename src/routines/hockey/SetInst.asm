@@ -8,11 +8,11 @@ SetInst:		;d0 = fight rating a3 needs. Called twice from checkfight (a2/a3 swapp
 	sta.b tmp0
 	sec
 	sbc.w #$0002
-	bmi .v1
+	bmi .neg
 	bvc .r2
 .ex1:
 	jmp.w checkfight_rtl
-.v1:
+.neg:
 	bvc .ex1
 .r2:
 	lda.w pnum,y		; d1 = $10 - 2 * a2 checks
@@ -40,11 +40,11 @@ SetInst:		;d0 = fight rating a3 needs. Called twice from checkfight (a2/a3 swapp
 	sec
 	sbc.b tmp0
 	beq .set
-	bmi .v2
+	bmi .neg1
 	bvs .set
 .ex2:
 	jmp.w checkfight_rtl
-.v2:
+.neg1:
 	bvs .ex2
 .set:
 	lda.w #$0001

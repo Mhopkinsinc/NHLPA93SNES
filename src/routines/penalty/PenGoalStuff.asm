@@ -27,10 +27,10 @@ PenGoalStuff:		;do this stuff after a goal. a1 = scored on team, a2 = scoring te
 	sec
 	sbc.w tmap,y
 	beq .ex
-	bmi .v1
+	bmi .neg
 	bvc .more
 	bra .ex
-.v1:
+.neg:
 	bvc .ex
 .more:		;scoring team had more players on the ice
 	lda.b a1

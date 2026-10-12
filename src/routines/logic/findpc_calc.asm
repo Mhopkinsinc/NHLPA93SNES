@@ -55,10 +55,10 @@ findpc_calc:		;d4 = goal line y, Y = puckcross entry offset
 	sta.b d0
 	sec
 	sbc.w #$0088		; sideline $88
-	bmi .v1
+	bmi .neg
 	bvc .o1
 	bra .o1b
-.v1:
+.neg:
 	bvc .o1b
 .o1:		;bounce off the right side boards
 	lda.w #$0198		; 3*$88 - x
@@ -70,10 +70,10 @@ findpc_calc:		;d4 = goal line y, Y = puckcross entry offset
 	sec
 	sbc.w #$FF78
 	beq .o2
-	bmi .v2
+	bmi .neg1
 	bvs .o2
 	bra .o2b
-.v2:
+.neg1:
 	bvs .o2b
 .o2:		;bounce off the left side boards
 	lda.w #$FE68		; -3*$88 - x

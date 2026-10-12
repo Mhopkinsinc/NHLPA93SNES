@@ -35,22 +35,22 @@ checkpuckcoll_ccx:		;d4 = object index: stick (puckstick), body (puckbody) or go
 	sec
 	sbc.w #$0005		; puck above 5
 	beq .zv
-	bmi .v1
+	bmi .neg
 	bvs .zv
 .body1:
 	jmp.w .chkbody
-.v1:
+.neg:
 	bvs .body1
 .zv:
 	lda.w puckvz
 	sec
 	sbc.w #$0100		; puckvz > $100
 	beq .stick
-	bmi .v2
+	bmi .neg1
 	bvs .stick
 .body2:
 	jmp.w .chkbody
-.v2:
+.neg1:
 	bvs .body2
 .stick:
 	tya

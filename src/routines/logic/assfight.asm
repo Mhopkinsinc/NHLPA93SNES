@@ -44,10 +44,10 @@ assfight:		;asstab $14. assfight : fighting logic for player X. The SNES drops t
 	sec
 	sbc.w #$006F
 	beq .left
-	bmi .v1
+	bmi .neg
 	bvc .clampr
 	bra .left
-.v1:
+.neg:
 	bvc .left
 .clampr:
 	stz.w Xvel,x
@@ -57,10 +57,10 @@ assfight:		;asstab $14. assfight : fighting logic for player X. The SNES drops t
 	lda.w Xpos,x
 	sec
 	sbc.w #$FF91
-	bmi .v2
+	bmi .neg1
 	bvs .clampl
 	bra .nna2
-.v2:
+.neg1:
 	bvs .nna2
 .clampl:
 	stz.w Xvel,x
@@ -197,10 +197,10 @@ assfight:		;asstab $14. assfight : fighting logic for player X. The SNES drops t
 	sta.b d1
 	sec
 	sbc.w #$1000
-	bmi .v3
+	bmi .neg2
 	bvc .y1
 	bra .y2
-.v3:
+.neg2:
 	bvc .y2
 .y1:
 	lda.w #$1000
@@ -210,10 +210,10 @@ assfight:		;asstab $14. assfight : fighting logic for player X. The SNES drops t
 	sec
 	sbc.w #$F000
 	beq .y3
-	bmi .v4
+	bmi .neg3
 	bvs .y3
 	bra .sety
-.v4:
+.neg3:
 	bvs .sety
 .y3:
 	lda.w #$F000

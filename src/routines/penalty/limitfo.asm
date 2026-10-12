@@ -63,10 +63,10 @@ limitfo:		;limit face off to 5-20 feet from walls of rink. Checks every player i
 	sta.b d1
 	sec
 	sbc.w foy
-	bmi .v1
+	bmi .neg
 	bvc .ny
 	bra .rtl
-.v1:
+.neg:
 	bvc .rtl
 .ny:
 	lda.w #$FFBF
@@ -77,10 +77,10 @@ limitfo:		;limit face off to 5-20 feet from walls of rink. Checks every player i
 	sec
 	sbc.w foy
 	beq .py
-	bmi .v2
+	bmi .neg1
 	bvs .py
 	bra .rtl
-.v2:
+.neg1:
 	bvs .rtl
 .py:
 	lda.w #$0041

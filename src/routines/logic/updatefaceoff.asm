@@ -11,10 +11,10 @@ updatefaceoff:		;a3 = puck. Drop animation frame from temp1; at 0 erases the fac
 	sec
 	sbc.w #$0002
 	beq .set
-	bmi .v1
+	bmi .neg
 	bvs .set
 	bra .rtl
-.v1:
+.neg:
 	bvs .rtl
 .set:
 	lda.b d0

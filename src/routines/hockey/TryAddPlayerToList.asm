@@ -14,10 +14,10 @@ TryAddPlayerToList:		;used by SetPlList. d0 = player number (1 based), d4 = PlLi
 	sec
 	sbc.w #$0000
 	beq .chk
-	bmi .v1
+	bmi .neg
 	bvs .chk
 	bra .no
-.v1:
+.neg:
 	bvs .no
 .chk:
 	lda.w tmpdst,y

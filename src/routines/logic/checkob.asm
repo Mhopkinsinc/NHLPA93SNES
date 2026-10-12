@@ -42,10 +42,10 @@ checkob:		;bring up little warning ref if a player on your team is over blue lin
 	sec
 	sbc.w pucky		; puck not in this zone: no offside
 	beq .bottom
-	bmi .v1
+	bmi .neg
 	bvs .bottom
 	bra .nob
-.v1:
+.neg:
 	bvs .nob
 .bottom:		;any teammate below the blue line?
 	ldy.b a0
@@ -55,10 +55,10 @@ checkob:		;bring up little warning ref if a player on your team is over blue lin
 	sec
 	sbc.w Ypos,y
 	beq .bn
-	bmi .v2
+	bmi .neg1
 	bvs .bn
 	bra .ob
-.v2:
+.neg1:
 	bvs .ob
 .bn:
 	inc.b a0
@@ -107,10 +107,10 @@ checkob:		;bring up little warning ref if a player on your team is over blue lin
 	lda.b d1
 	sec
 	sbc.w pucky
-	bmi .v3
+	bmi .neg2
 	bvc .top1
 	bra .nob
-.v3:
+.neg2:
 	bvc .nob
 .top1:
 	ldy.b a0
@@ -119,10 +119,10 @@ checkob:		;bring up little warning ref if a player on your team is over blue lin
 	lda.b d1
 	sec
 	sbc.w Ypos,y
-	bmi .v4
+	bmi .neg3
 	bvc .tn
 	bra .ob
-.v4:
+.neg3:
 	bvc .ob
 .tn:
 	inc.b a0

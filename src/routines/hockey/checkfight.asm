@@ -5,21 +5,21 @@ checkfight:		;look for start of fight between players a2 & a3. Called from check
 	lda.w impact,x
 	sec
 	sbc.w #$000A
-	bmi .v1
+	bmi .neg
 	bvc .i2
 .ex1:
 	jmp.w .rtl
-.v1:
+.neg:
 	bvc .ex1
 .i2:
 	lda.w impact,y
 	sec
 	sbc.w #$000A
-	bmi .v2
+	bmi .neg1
 	bvc .lock
 .ex2:
 	jmp.w .rtl
-.v2:
+.neg1:
 	bvc .ex2
 .lock:
 	lda.w pfalock,y
@@ -134,10 +134,10 @@ checkfight:		;look for start of fight between players a2 & a3. Called from check
 	sta.b d0
 	sec
 	sbc.w Xpos,y
-	bmi .v3
+	bmi .neg2
 	bvc .flip
 	bra .1
-.v3:
+.neg2:
 	bvc .1
 .flip:
 	lda.b d1
