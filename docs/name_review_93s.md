@@ -79,7 +79,7 @@ Full every-line read per file: SNES-only names checked against 93G/92G, generic 
 - [x] src/sound_b8F.asm
 - [x] src/stats_b84.asm
 - [x] src/stats_b8F.asm
-- [ ] src/teamdata_b83.asm
+- [x] src/teamdata_b83.asm
 - [x] src/teamdata_b8A.asm
 - [x] src/video_b80.asm
 - [x] src/video_b82.asm
