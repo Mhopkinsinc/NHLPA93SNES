@@ -58,19 +58,19 @@ EvadePC:		;player a3 should avoid the puck carrier if he's on my team
 asswingd:		;asstab 3. player a3 is wing on defense
 		;   SNES: wing on defence: cover his side between the puck and the goal; awingo when the team gets the puck
 	lda.w pfalock,x
-	beq .go
+	beq .clk
 	jmp.w .rtl
-.go:
+.clk:
 	lda.w gmclock
-	beq .gm
+	beq .bench
 	jml.l assnothing		; bank $8F
-.gm:
+.bench:
 	jsl.l check4bench
 	lda.w pflags,x
 	bit.w #$0008
-	beq .chk
+	beq .na
 	jmp.w .rtl
-.chk:
+.na:
 	bit.w #$0002
 	beq .nna
 	and.w #$FFFD
@@ -87,9 +87,9 @@ asswingd:		;asstab 3. player a3 is wing on defense
 	bpl .nodec
 	clc
 	adc.w aidef,x
-	bpl .t1
+	bpl .store
 	lda.w #$0000
-.t1:
+.store:
 	sta.w temp1,x
 	lda.w puckc		; our team has the puck: awingo
 	bmi .nodec
@@ -111,10 +111,10 @@ asswingd:		;asstab 3. player a3 is wing on defense
 	sta.b d0
 	lda.w position,x
 	cmp.w #5
-	bne .zero
+	bne .0
 	lda.w #-100
 	sta.b d0
-.zero:
+.0:
 	lda.w #158
 	sta.b d1
 	lda.w pfgoal,x		; pfgoal: defending the top goal
@@ -143,7 +143,7 @@ asswingd:		;asstab 3. player a3 is wing on defense
 .hi0:
 	lda.w pucky
 	sta.b d1
-	bra .go2
+	bra .go
 .rtl:
 	rtl
 .lo:
@@ -153,9 +153,9 @@ asswingd:		;asstab 3. player a3 is wing on defense
 	sbc.w pucky
 	bmi .lt2
 	bvc .set1
-	bra .go2
+	bra .go
 .lt2:
-	bvc .go2
+	bvc .go
 .set1:
 	bra .set
 .up:
@@ -176,7 +176,7 @@ asswingd:		;asstab 3. player a3 is wing on defense
 .up0:
 	lda.w pucky
 	sta.b d1
-	bra .go2
+	bra .go
 .hi:
 	lda.w #264
 	sta.b d2
@@ -185,13 +185,13 @@ asswingd:		;asstab 3. player a3 is wing on defense
 	beq .set
 	bmi .lt4
 	bvs .set
-	bra .go2
+	bra .go
 .lt4:
-	bvs .go2
+	bvs .go
 .set:
 	lda.b d2
 	sta.b d1
-.go2:
+.go:
 	lda.w #rtss		; a0 = rtss: no avoidance
 	sta.b a0
 	lda.w #rtss>>16

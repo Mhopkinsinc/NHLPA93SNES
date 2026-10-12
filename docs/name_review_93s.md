@@ -45,7 +45,7 @@ Full every-line read per file: SNES-only names checked against 93G/92G, generic 
 - [x] src/logic_b86.asm
 - [x] src/logic_b87.asm
 - [ ] src/logic_b88.asm
-- [ ] src/logic_b89.asm
+- [x] src/logic_b89.asm
 - [x] src/logic_b8A.asm
 - [x] src/logic_b8B.asm
 - [x] src/logic_b8C.asm
