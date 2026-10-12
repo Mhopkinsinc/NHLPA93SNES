@@ -60,7 +60,7 @@ Full every-line read per file: SNES-only names checked against 93G/92G, generic 
 - [ ] src/middle_b88.asm
 - [x] src/middle_b89.asm
 - [ ] src/middle_b8B.asm
-- [ ] src/middle_b8D.asm
+- [x] src/middle_b8D.asm
 - [ ] src/middle_b8F.asm
 - [ ] src/penalty_b80.asm
 - [x] src/penalty_b82.asm
