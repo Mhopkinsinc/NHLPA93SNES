@@ -1,6 +1,6 @@
 ## Current state (name review)
 
-Name review pass, one file per push; checklist in `docs/name_review_93s.md` (ticked = done). `src/logic_b80.asm` done (all 6060 lines). Remaining: `src/hockey_b80.asm` (6484 lines, several pushes; start at line 1). Local naming conventions used: register save/restore loops `.save`/`.restore` (d regs) and `.savea`/`.resta` (a regs); 93G local names where the routine matches (e.g. ScoutingReport `.pl/.same/.top/.upd`, setoptions `.nopo/.ii0/.ii1/.iil1/.2/.3/.4`, checkagr `.nojoy/.far`); copy loops named by what they copy (`.clrtext`, `.blocktiles`, `.ronpal`, ...). Rename history goes in `docs/name_map.csv` only. `src/hockey_b8F.asm` and `src/hockey_b88.asm` are done.
+Name review pass, one file per push; checklist in `docs/name_review_93s.md` (ticked = done). `src/logic_b80.asm` done (all 6060 lines). Remaining: `src/hockey_b80.asm` (6484 lines; lines 1-2164, getpde..setpersonel, done; continue at SetPlList line 2165). Local naming conventions used: register save/restore loops `.save`/`.restore` (d regs) and `.savea`/`.resta` (a regs); 93G local names where the routine matches (e.g. ScoutingReport `.pl/.same/.top/.upd`, setoptions `.nopo/.ii0/.ii1/.iil1/.2/.3/.4`, checkagr `.nojoy/.far`); copy loops named by what they copy (`.clrtext`, `.blocktiles`, `.ronpal`, ...). Rename history goes in `docs/name_map.csv` only. `src/hockey_b8F.asm` and `src/hockey_b88.asm` are done.
 
 # Setup handoff (2026-10-09)
 

@@ -5,9 +5,9 @@ org $8084C4
 getpde:		;get player a3's energy level into d0. Return a2 = his team struct, d1 = pnum*2
 		;   SNES: d0 = energy of player X (tmpde of its team, entry pnum)
 	lda.w pfteam,x
-	beq .team
+	beq .0
 	lda.w #$0002		; a2 = 2: away team
-.team:
+.0:
 	sta.b a2
 	lda.w pnum,x
 	and.w #$00FF		; pnum low byte
@@ -92,13 +92,13 @@ checkpuckcoll:		;look for puck coll with players. a3 = puck. Entered from puckno
 checkpuckcoll_ccx:		;d4 = object index: stick (puckstick), body (puckbody) or goalie (puckgoalie) contact
 	stx.b xsave
 	ldx.w #$0000
-.push:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$001C
-	bne .push
+	bne .save
 	ldx.b xsave
 	lda.b d4		; a2 = object
 	sta.b a2
@@ -254,12 +254,12 @@ checkpuckcoll_ccx:		;d4 = object index: stick (puckstick), body (puckbody) or go
 .exit:
 	stx.b xsave
 	ldx.w #$001A
-.pop:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .pop
+	bpl .restore
 	ldx.b xsave
 	rtl
 .chkgoalie:
@@ -291,12 +291,12 @@ puckstick:		;puck collides with stick
 		;   SNES: puck hits the stick of player a2. d0 = distance^2 (from checkpuckcoll_ccx)
 	ldy.b a2
 	lda.w position,y
-	bne .p0
+	bne .0
 	lda.w gmode
 	bit.w #gmhl		; gmhl: goalie ignores the puck
-	beq .p0
+	beq .0
 	jmp.w .rtl
-.p0:
+.0:
 	lda.w pflags,y
 	and.w #~pfdoff&$FFFF		; clear pfdoff
 	sta.w pflags,y
@@ -436,7 +436,7 @@ puckstick:		;puck collides with stick
 	sta.b mulb
 	lda.w #$02BC		; * 700
 	sta.b mula
-	jsl.l mulu16		; bank $8D: mulu, mulres = mula*mulb
+	jsl.l mulu16		; mulu, mulres = mula*mulb
 	sta.b d1
 .nohand:
 	lda.b d1
@@ -444,7 +444,7 @@ puckstick:		;puck collides with stick
 	adc.w #$32C8		; + 13000
 	sta.b mula
 	sta.b mulb
-	jsl.l mulu		; bank $88, mulres = mula*mulb
+	jsl.l mulu		; mulres = mula*mulb
 	cmp.b d0
 	lda.b mulres+2
 	sbc.b d0+2
@@ -453,8 +453,8 @@ puckstick:		;puck collides with stick
 	lda.w #$0008		; too fast: nopuck 8, deflect
 	sta.w nopuck,y
 	jmp.w .stdef
-puckglue:		;Player a2 takes the puck (92 puckstick .glue)
-		;   SNES: Falls into setd0player (bank $8D)
+puckglue:		;Player a2 takes the puck
+		;   SNES: ends in setd0player
 	lda.w seed+2		; pickup sound (one of 4)
 	and.w #$0003
 	clc
@@ -511,7 +511,7 @@ puckglue:		;Player a2 takes the puck (92 puckstick .glue)
 	ldy.b a2
 	lda.w position,y
 	beq .goalie
-	jml.l setd0player		; bank $8D
+	jml.l setd0player
 .goalie:
 	jsl.l ChkShotStat		; ChkShotStat (goalie made a save)
 	ldy.b a2
@@ -519,12 +519,12 @@ puckglue:		;Player a2 takes the puck (92 puckstick .glue)
 	sta.w temp5,y
 	lda.w SPA,y
 	cmp.w #SPAgdive
-	beq .g314
-	jml.l setd0player		; bank $8D
-.g314:
+	beq .gdive
+	jml.l setd0player
+.gdive:
 	lda.w #$0005
 	sta.w temp5,y
-	jml.l setd0player		; bank $8D
+	jml.l setd0player
 deflect:		;random puck direction on deflection puck = a3. Entered from puckstick .stdef
 		;   SNES: Entered from puckstick .stdef
 	lda.w #$FFFF		; puck loose
@@ -546,44 +546,44 @@ makepde:		;pass d0 as value to be scaled by player a0's energy level
 	pha
 	stx.b xsave
 	ldx.w #$0000
-.pushd:		;movem d1/a2-a3
+.save:		;movem d1/a2-a3
 	lda.b d1,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a2,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	ldx.b a0		; a3 = a0 for getpde
 	stx.b a3
 	jsl.l getpde
 	stx.b xsave
 	ldx.w #$0006
-.popa:
+.resta:
 	pla
 	sta.b a2,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0002
-.popd:
+.restore:
 	pla
 	sta.b d1,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	ldx.b a3
 	pla
@@ -639,10 +639,10 @@ puckbody:		;puck hits player a2. a3 = puck, d0 = distance^2 (from checkpuckcoll 
 	sec
 	sbc.w Ypos,y
 	sta.b d1
-	bne .vel		; centered: use the hot spot
+	bne .0		; centered: use the hot spot
 	tya
 	jsl.l GetHot
-.vel:
+.0:
 	lda.w Xvel,x
 	sta.b d2
 	lda.w Yvel,x
@@ -713,7 +713,7 @@ puckbody:		;puck hits player a2. a3 = puck, d0 = distance^2 (from checkpuckcoll 
 	sty.b a2
 	rtl
 puckgoalie:		;puck hits goalie a2. a3 = puck, d0/d1 = goalie - puck x/y
-		;   SNES: puck (X) hits goalie a2. d0/d1 = goalie - puck x/y. SNES: save odds from the four save ratings, no .list2 frame table
+		;   SNES: puck (X) hits goalie a2. d0/d1 = goalie - puck x/y. Save odds from the four save ratings, no frame odds table
 	lda.w gmode
 	bit.w #gmhl		; gmhl
 	beq .go
@@ -822,17 +822,17 @@ puckgoalie:		;puck hits goalie a2. a3 = puck, d0/d1 = goalie - puck x/y
 	sec
 	sbc.w #SPFgdive		; goalie dive frames SPFgdive..+15
 	cmp.w #$0010
-	bcs .save
+	bcs .saved
 	lda.w Zpos+puckobj
 	sec
 	sbc.w #$0002
 	bmi .v2
-	bvs .save
+	bvs .saved
 .nosave:
 	jmp.w .rtl
 .v2:
 	bvs .nosave
-.save:
+.saved:
 	jsl.l ChkShotStat		; ChkShotStat
 	jsl.l a2touchpuck
 	lda.w seed+1		; puck body sound (one of 2)
@@ -910,12 +910,12 @@ puckgoalie:		;puck hits goalie a2. a3 = puck, d0/d1 = goalie - puck x/y
 	ldy.b a2
 	lda.w Yvel,y
 	eor.b d1
-	bmi .setv
+	bmi .0
 	lda.b d1
 	eor.w #$FFFF
 	inc a
 	sta.b d1
-.setv:
+.0:
 	sep #$20
 	lda.b d0
 	sta.w Xvel+1,x
@@ -1050,23 +1050,23 @@ forcepldata:		;no skating on/off force players to correct data (for faceoffs onl
 		;   SNES: a2 = team. No skating on/off: force the players to their new positions (faceoffs only)
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0014
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	ldy.b a2
 	lda.w tmsort,y
@@ -1120,21 +1120,21 @@ forcepldata:		;no skating on/off force players to correct data (for faceoffs onl
 	bpl .top
 	stx.b xsave
 	ldx.w #$000E
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0012
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	ldx.b a3
 	rtl
@@ -1165,10 +1165,10 @@ setplayer:		;bring player onto the ice and set his stats
 	sta.w pflags,x
 	stz.b a0
 	lda.w pfteam,x
-	beq .tm
+	beq .0
 	inc.b a0
 	inc.b a0
-.tm:
+.0:
 	lda.b d3
 	and.w #$00FF
 	sta.w pnum,x		; pnum = d3
@@ -1205,20 +1205,20 @@ setplayer:		;bring player onto the ice and set his stats
 	lda.w #TMPDICE		; tmpdst = TMPDICE
 	sta.w tmpdst,y
 	lsr.b d3
-	ldy.b a0		; a0 = team data (bank $83)
+	ldy.b a0		; a0 = team data
 	lda.w tmdata,y
 	sta.b a0
 	lda.w #TeamList>>16
 	sta.b a0+2
 	stx.b xsave
 	ldx.w #$0000
-.push:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .push
+	bne .savea
 	ldx.b xsave
 	ldy.w #$0008		; team data + word at +8: bonus bytes
 	lda.b [a0],y
@@ -1262,7 +1262,7 @@ setplayer:		;bring player onto the ice and set his stats
 	inc a
 	sta.b d0
 	lda.w pfteam,x
-	bne .tmb
+	bne .tm
 	lda.b [a0],y
 	lsr a
 	lsr a
@@ -1270,7 +1270,7 @@ setplayer:		;bring player onto the ice and set his stats
 	lsr a
 	and.w #$000F
 	sta.b d0
-.tmb:
+.tm:
 	lda.b d0
 	sta.w HmAwBonus
 	lda.w gsp		; 3rd period?
@@ -1321,12 +1321,12 @@ setplayer:		;bring player onto the ice and set his stats
 .nomod:
 	stx.b xsave
 	ldx.w #$0002
-.pop:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .pop
+	bpl .resta
 	ldx.b xsave
 	ldy.w #$0000		; a0 = roster records
 	lda.b [a0],y
@@ -1498,23 +1498,23 @@ resetplstuff:		;reset team variables/and players on both teams. Called from puck
 		;   SNES: reset team variables and the players on both teams
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	stz.b a2
 	jsl.l .top
@@ -1523,21 +1523,21 @@ resetplstuff:		;reset team variables/and players on both teams. Called from puck
 	jsl.l .top
 	stx.b xsave
 	ldx.w #$000E
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000A
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	ldx.b a3
 	rtl
@@ -1580,7 +1580,7 @@ resetplstuff:		;reset team variables/and players on both teams. Called from puck
 org $80B4C1
 setupice:		;set all variables, send non purgeable graphics, build sprite frame lists for ice rink.
 		;   SNES: set all variables, send the rink and text graphics to vram, palettes, video mode, team colors
-	jsl.l forceblack		; setvram role (bank $8F), bank $8F
+	jsl.l forceblack		; setvram role
 	lda.w #$0207		; vram tile bases of the text layer
 	sta.w faceoffvrcset
 	clc
@@ -1605,7 +1605,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	lda.w #$FF00		; charofs = $FF00
 	sta.w charofs
 	stz.w charofs+2
-	jsl.l InitPPU		; PPU init (bank $8D), bank $8D: PPU registers off/clear, sound driver start
+	jsl.l InitPPU		; PPU init: PPU registers off/clear, sound driver start
 	sep #$20
 	cli
 	lda.w RDNMI
@@ -1625,20 +1625,20 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	sta.w TM
 	rep #$30
 	ldx.w #$00FE
-.pal:		;rink palette (bank $83) to both halves of palbuffer
+.pal:		;rink palette to both halves of palbuffer
 	lda.l RinkPalette,x
 	sta.l palbuffer,x
 	sta.l palbuffer+$100,x
 	dex
 	dex
 	bpl .pal
-	jsl.l sndqreset		; sound queue reset (bank $82)
+	jsl.l sndqreset		; sound queue reset
 	lda.w sndbank		; in-game sound set not loaded yet: load it
 	cmp.w #$0001
 	beq .gfx
 	jsl.l SPCGameUpload
 .gfx:		;decompress each tile set to $7F0000 and send it to vram
-	lda.w #IceRinkTiles		; packed rink tiles (bank82_D000)
+	lda.w #IceRinkTiles		; packed rink tiles
 	sta.b tmp0
 	lda.w #IceRinkTiles>>16
 	sta.b tmp1
@@ -1653,7 +1653,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	inx
 	cpx.w #$40E0
 	bne .up1
-	lda.w #FaceOffTiles		; packed faceoff box tiles (bank87_C000)
+	lda.w #FaceOffTiles		; packed faceoff box tiles
 	sta.b tmp0
 	lda.w #FaceOffTiles>>16
 	sta.b tmp1
@@ -1666,7 +1666,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	inx
 	cpx.w #$06E0
 	bne .up2
-	lda.w #RinkLogoTiles		; packed rink logo tiles (bank84_F000)
+	lda.w #RinkLogoTiles		; packed rink logo tiles
 	sta.b tmp0
 	lda.w #RinkLogoTiles>>16
 	sta.b tmp1
@@ -1679,7 +1679,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	inx
 	cpx.w #$01C0
 	bne .up3
-	lda.w #RefTilesHor		; packed ref window tiles, horizontal rink (bank89_E000)
+	lda.w #RefTilesHor		; packed ref window tiles, horizontal rink
 	sta.b tmp0
 	lda.w #RefTilesHor>>16
 	sta.b tmp1
@@ -1692,7 +1692,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	inx
 	cpx.w #$0D00
 	bne .up4
-	lda.w #RefTiles		; packed ref window tiles, vertical rink (bank87_F000)
+	lda.w #RefTiles		; packed ref window tiles, vertical rink
 	sta.b tmp0
 	lda.w #RefTiles>>16
 	sta.b tmp1
@@ -1710,7 +1710,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	stz.w VMDATAL
 	dex
 	bne .blank
-	lda.w #SmallFontTiles		; packed small font tiles (bank83_C000)
+	lda.w #SmallFontTiles		; packed small font tiles
 	sta.b tmp0
 	lda.w #SmallFontTiles>>16
 	sta.b tmp1
@@ -1724,7 +1724,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	sta.b a1+2
 	lda.w #$0064
 	sta.b d0
-	jsl.l RemapTiles		; bank $8F: build a sprite frame list ([a0] data, [a1] table, d0 count)
+	jsl.l RemapTiles		; build a sprite frame list ([a0] data, [a1] table, d0 count)
 	lda.w #FramerTiles
 	sta.b a0
 	lda.w #FramerTiles>>16
@@ -1735,8 +1735,8 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	sta.b a1+2
 	lda.w #$0004
 	sta.b d0
-	jsl.l RemapTiles		; bank $8F: build a sprite frame list ([a0] data, [a1] table, d0 count)
-	lda.w #BigFontTiles		; packed big font tiles (bank8D_E000)
+	jsl.l RemapTiles		; build a sprite frame list ([a0] data, [a1] table, d0 count)
+	lda.w #BigFontTiles		; packed big font tiles
 	sta.b tmp0
 	lda.w #BigFontTiles>>16
 	sta.b tmp1
@@ -1750,7 +1750,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	sta.b a1+2
 	lda.w #$0090
 	sta.b d0
-	jsl.l RemapTiles		; bank $8F: build a sprite frame list ([a0] data, [a1] table, d0 count)
+	jsl.l RemapTiles		; build a sprite frame list ([a0] data, [a1] table, d0 count)
 	lda.w #999		; Oldrow = 999, no pause, Hpos = Vpos = 0
 	sta.w Oldrow
 	lda.w #$0001
@@ -1768,13 +1768,13 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	bit.w #gmdir		; gmdir
 	beq .gok
 	ldx.w #$0016
-.flip:		;gmdir: flip pfgoal of the 12 players
+.l01:		;gmdir: flip pfgoal of the 12 players
 	lda.w pfgoal,x
 	eor.w #$0001
 	sta.w pfgoal,x
 	dex
 	dex
-	bpl .flip
+	bpl .l01
 .gok:
 	jsl.l setplayercolors
 	lda.w #$FFFF		; PadControlBits = $FFFF, padcont = 0
@@ -1790,7 +1790,7 @@ setupice:		;set all variables, send non purgeable graphics, build sprite frame l
 	lda.w #$000A
 	sta.b fadein
 	rtl
-setplayercolors:		;copy in correct color data for each team. Called from setupice, setupice_highlight,
+setplayercolors:		;copy in correct color data for each team. Called from setupice, setupice_highlight, StartHL2
 		;   SNES: team colors into palbuffer, then the whole palette to CGRAM
 	stz.w ffoframe+6		; pad 3 frame = 0
 	stz.w colorflag1
@@ -1873,24 +1873,24 @@ SprSort:		;sort objects in struct SortObj and set corresponding tables for keepi
 	phy
 	stx.b xsave
 	ldx.w #$0000
-.push:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .push
+	bne .save
 	ldx.b xsave
 	ldx.w #$0000
 	lda.w sfhormode		; horizontal mode sorts by x
 	bne .xlist
-.ylist:
+.loop0:
 	lda.w Ypos,x
 	sta.w Ylist,x
 	inx
 	inx
 	cpx.w #$0020
-	bne .ylist
+	bne .loop0
 	bra .loop
 .xlist:
 	lda.w Xpos,x
@@ -1902,7 +1902,7 @@ SprSort:		;sort objects in struct SortObj and set corresponding tables for keepi
 .loop:
 	stz.b d2
 	ldx.w #$0000
-.pair:
+.0:
 	lda.w OOlist+1,x
 	and.w #$00FF
 	sta.b d1
@@ -1914,12 +1914,12 @@ SprSort:		;sort objects in struct SortObj and set corresponding tables for keepi
 	ldy.b d1
 	sec
 	sbc.w Ylist,y
-	beq .next
+	beq .1
 	bmi .v1
 	bvc .swap
-	bra .next
+	bra .1
 .v1:
-	bvc .next
+	bvc .1
 .swap:
 	lda.w OOlist,x
 	xba
@@ -1930,20 +1930,20 @@ SprSort:		;sort objects in struct SortObj and set corresponding tables for keepi
 	ldy.b d0
 	sta.w OOlistpos,y
 	inc.b d2
-.next:
+.1:
 	inx
 	cpx.w #$000F
-	bne .pair
+	bne .0
 	lda.b d2		; swapped: sort again
 	bne .loop
 	stx.b xsave
 	ldx.w #$000A
-.pop:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .pop
+	bpl .restore
 	ldx.b xsave
 	ply
 	plx
@@ -1959,8 +1959,8 @@ periodicevents:		;called every time thru game loop with d7 = elapsed frames
 		;   SNES: every game loop; once a second (lldisp) the slower checks
 	jsl.l PenaltyManager		; PenaltyManager
 	jsl.l updatecrowdf		; updatecrowdf
-	jsl.l updatesound		; updatesound, bank $8D
-	jsl.l clockcont		; clockcont, bank $8F
+	jsl.l updatesound		; updatesound
+	jsl.l clockcont		; clockcont
 	lda.w sfhormode		; horizontal: no screen updates
 	bne .rtl
 	lda.w lldisp
@@ -1972,10 +1972,10 @@ periodicevents:		;called every time thru game loop with d7 = elapsed frames
 	adc.w #$0018		; +$18 frames
 	sta.w lldisp
 	jsl.l ChkGoalies		; ChkGoalies
-	jsl.l UpdateCwdExcite		; UpdateCwdExcite, bank $8F
-	jsl.l CheckLateGameSong		; CheckLateGameSong, bank $8F
+	jsl.l UpdateCwdExcite		; UpdateCwdExcite
+	jsl.l CheckLateGameSong		; CheckLateGameSong
 	jsl.l RestoreBenchEnergy		; RestoreBenchEnergy
-	jsl.l CheckInjury		; CheckInjury, bank $8F
+	jsl.l CheckInjury		; CheckInjury
 	jmp.w updatepwrplay
 .rtl:
 	rtl
@@ -1985,30 +1985,30 @@ setpersonel:		;this will set personel on team a2 according to team a2's register
 		;   SNES: set the personel of team a2 from SetPlList: keep the players already on the ice, place the rest
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0018
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0014
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	ldy.b a2
 	ldx.w tmsort,y
 	stx.b a3
 	lda.w #$0005
 	sta.b d4
-.loop:
+.l0:
 	lda.w #$FFFF		; newpos = newpnum = -1 for the 6 objects
 	sta.w newpos,x
 	sta.w newpnum,x
@@ -2016,7 +2016,7 @@ setpersonel:		;this will set personel on team a2 according to team a2's register
 	inx
 	stx.b a3
 	dec.b d4
-	bpl .loop
+	bpl .l0
 	jsl.l SetPlList
 	lda.w #$0005
 	sta.b d4
@@ -2024,7 +2024,7 @@ setpersonel:		;this will set personel on team a2 according to team a2's register
 	sta.b a4
 	lda.w #PlList>>16
 	sta.b a4+2
-.loop2:		;wanted players already on the ice keep their object
+.1:		;wanted players already on the ice keep their object
 	ldy.b d4
 	lda.b [a4],y
 	and.w #$00FF
@@ -2037,7 +2037,7 @@ setpersonel:		;this will set personel on team a2 according to team a2's register
 	ldx.w tmsort,y
 	dex
 	dex
-.loop3:
+.2:
 	inx
 	inx
 	stx.b a3
@@ -2049,7 +2049,7 @@ setpersonel:		;this will set personel on team a2 according to team a2's register
 	cmp.b tmp0
 	beq .found
 	dec.b d3
-	bpl .loop3
+	bpl .2
 	bra .next
 .found:
 	lda.b d4
@@ -2077,14 +2077,14 @@ setpersonel:		;this will set personel on team a2 according to team a2's register
 	rep #$20
 .next:
 	dec.b d4
-	bpl .loop2
+	bpl .1
 	lda.w #$0005
 	sta.b d4
 	lda.w #PlList
 	sta.b a4
 	lda.w #PlList>>16
 	sta.b a4+2
-.loop4:		;the rest go to objects with no requested player
+.3:		;the rest go to objects with no requested player
 	ldy.b d4
 	lda.b [a4],y
 	and.w #$00FF
@@ -2097,7 +2097,7 @@ setpersonel:		;this will set personel on team a2 according to team a2's register
 	ldx.w tmsort,y
 	dex
 	dex
-.loop5:
+.4:
 	inx
 	inx
 	stx.b a3
@@ -2105,7 +2105,7 @@ setpersonel:		;this will set personel on team a2 according to team a2's register
 	bit.w #$0080
 	bne .free
 	dec.b d3
-	bpl .loop5
+	bpl .4
 	bra .chkpos
 .free:
 	stx.b a0
@@ -2113,7 +2113,7 @@ setpersonel:		;this will set personel on team a2 according to team a2's register
 	lda.w position,x
 	bpl .put
 	dec.b d3
-	bpl .loop5
+	bpl .4
 .put:
 	lda.b d4
 	clc
@@ -2141,24 +2141,24 @@ setpersonel:		;this will set personel on team a2 according to team a2's register
 	rep #$20
 .next2:
 	dec.b d4
-	bpl .loop4
+	bpl .3
 	stx.b xsave
 	ldx.w #$0012
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0016
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	ldx.b a3
 	rtl
@@ -2174,7 +2174,7 @@ SetPlList:		;create list (PlList) of players who we want on the ice now
 	sta.b [a4],y
 	ldy.w #$0004
 	sta.b [a4],y
-	lda.w #priolist		; priolist (bank $8F)
+	lda.w #priolist		; priolist
 	sta.b a0
 	lda.w #priolist>>16
 	sta.b a0+2
@@ -2284,7 +2284,7 @@ SetPlList:		;create list (PlList) of players who we want on the ice now
 	and.w #$00FF
 	asl a
 	sta.b d0
-	lda.w #sublist		; sublist (bank $8F, word offsets)
+	lda.w #sublist		; sublist (word offsets)
 	sta.b a0
 	lda.w #sublist>>16
 	sta.b a0+2
@@ -2313,7 +2313,7 @@ SetPlList:		;create list (PlList) of players who we want on the ice now
 .rtl:
 	rtl
 .all:		;try every roster player, last first
-	jsl.l GetPlayerCount		; GetPlayerCount, bank $8F
+	jsl.l GetPlayerCount		; GetPlayerCount
 	lda.b d0
 	sta.b d3
 .try:
@@ -2423,7 +2423,7 @@ updatecrowdf:		;this is called every game loop with d7 = elapsed frames
 	adc.b d0
 	sta.b d0
 	tay
-	lda.w #cd0		; cd0 (bank $8F): frame high byte, time low byte
+	lda.w #cd0		; cd0: frame high byte, time low byte
 	sta.b a0
 	lda.w #cd0>>16
 	sta.b a0+2
@@ -2749,7 +2749,7 @@ demoread:		;monitor joystick if in demo mode (called every game loop)
 	lda.b d1
 	bit.w #JOYSTART		; Start on pad 1: startpause1
 	beq .any1
-	jml.l startpause1		; bank $8F
+	jml.l startpause1
 .any1:
 	lda.b d1
 	bne .exit
@@ -2765,7 +2765,7 @@ demoread:		;monitor joystick if in demo mode (called every game loop)
 	rtl
 .exit:		;end the demo: back to the title screen
 	jsl.l sndqreset		; sound queue reset; on to the title screen
-	jml.l Opening		; bank $8B: on to the title screen
+	jml.l Opening		; on to the title screen
 
 org $80C46D
 updateplayers:		;animation, velocity, position, input and the assignment for every sort object
@@ -2850,7 +2850,7 @@ updateplayers:		;animation, velocity, position, input and the assignment for eve
 	cmp.w #$0000
 	bmi .vel
 	asl.b d0
-	jsl.l loadTeamStruct		; bank $8F
+	jsl.l loadTeamStruct
 .vel:
 	lda.w SPA,x
 	cmp.w #SPAinjury1		; SPAinjury1: no movement
@@ -3032,12 +3032,12 @@ updateplayers:		;animation, velocity, position, input and the assignment for eve
 	asl a
 	asl a
 	tax
-	lda.l asstab,x		; asstab (bank $8D) entry into jmlvector
+	lda.l asstab,x		; asstab entry into jmlvector
 	sta.w jmlvector+1
 	lda.l asstab+1,x
 	sta.w jmlvector+2
 	ldx.b a3
-	jsl.l loadTeamStruct		; loadTeamStruct, then the assignment, bank $8F
+	jsl.l loadTeamStruct		; loadTeamStruct, then the assignment
 	jsl.l jmlvector
 .cc:
 	lda.w Ypos,x
@@ -4501,7 +4501,7 @@ Goal:		;puck in goal. a3 = puck. Entered from checkgoal
 	rep #$20
 .noast:
 	jsl.l PenGoalStuff		; PenGoalStuff, printscores1, ascore for the scoring team
-	jsl.l printscores1		; bank $89
+	jsl.l printscores1
 	lda.w #ascore
 	sta.b d0
 	jsl.l .setass
@@ -5061,7 +5061,7 @@ checkcx:		;d4 = obj. # * 2 for possible coll so check x range and distance for c
 	sta.b mula
 	lda.b evalue
 	sta.b mulb
-	jsl.l mulu16		; bank $8D: mulu, A = mula*mulb
+	jsl.l mulu16		; mulu, A = mula*mulb
 	lsr a
 	lsr a
 	lsr a
@@ -5498,7 +5498,7 @@ FallDown:		;player a2 falls down, player a3 is the hitting player. 93 adds anim 
 	ldy.b a3
 	stx.b a3
 	sty.b a2
-	jsl.l setInjuryType		; setInjuryType, bank $8F
+	jsl.l setInjuryType		; setInjuryType
 	lda.w #$0004
 	sta.w InjCntDown
 	lda.w #PenInjury		; PenInjury if the hitter is a goalie or penalties are off, else PenRough2 and Stop4Pen
@@ -5581,15 +5581,15 @@ checkcheck:		;player is in contact look for various contact events. Runs .cc for
 	lda.w SPA,y
 	cmp.w #SPAHold
 	bne .h2
-	jml.l holdcheck		; bank $8F
+	jml.l holdcheck
 .h2:
 	cmp.w #SPAhook
 	bne .b
-	jml.l holdcheck		; bank $8F
+	jml.l holdcheck
 .b:
 	cmp.w #SPAsweepchk
 	bne .burst
-	jml.l Bcheck		; bank $8D
+	jml.l Bcheck
 .burst:		;X must be in the burst anim
 	lda.w SPA,x
 	cmp.w #SPAburst
@@ -5677,7 +5677,7 @@ checkcheck:		;player is in contact look for various contact events. Runs .cc for
 .v2:
 	bvc .down
 .pen:
-	jsl.l checkagr		; checkagr <= 4 and no highlight: PenCharge or PenSlash, bank $8F (d0 = penalty roll)
+	jsl.l checkagr		; checkagr <= 4 and no highlight: PenCharge or PenSlash (d0 = penalty roll)
 	lda.b d0
 	cmp.w #$0005
 	bcc .nohl
@@ -5695,7 +5695,7 @@ checkcheck:		;player is in contact look for various contact events. Runs .cc for
 	sta.b d0
 	jmp.w AddPenalty
 .down:
-	jsl.l checkagr		; checkagr <= 3 and no highlight: PenRough or PenCross, bank $8F (d0 = penalty roll)
+	jsl.l checkagr		; checkagr <= 3 and no highlight: PenRough or PenCross (d0 = penalty roll)
 	lda.b d0
 	cmp.w #$0004
 	bcs .dn2
@@ -5928,7 +5928,7 @@ checkfight:		;look for start of fight between players a2 & a3. Called from check
 	txa		; setd0player
 	lsr a
 	sta.b d0
-	jsl.l setd0player		; bank $8D
+	jsl.l setd0player
 	lda.w #afight
 	sta.b d0
 	jsl.l assinsert
@@ -6391,10 +6391,10 @@ org $80F5EA
 DecodePW:		;translate char password in PassWord to variables used in game
 		;   SNES: translate the password in PassWord to game variables: PWtoBits, then ReadPassBits (ReadPassBits)
 	jsl.l PWtoBits
-	jml.l ReadPassBits		; bank $8B
+	jml.l ReadPassBits
 PlayoffScreenOpening4:		;SNES: PlayoffScreen, then on to Opening4
-	jsl.l PlayoffScreen		; bank $88 (font tile bases, the playoff tree)
-	jml.l Opening4		; bank $8B
+	jsl.l PlayoffScreen		; font tile bases, the playoff tree
+	jml.l Opening4
 SuperDiv:		;5 words at a3 divided by 1 word (d0).
 		;   SNES: passbits (128 bits) / d0: quotient in passbits, remainder in d0. Shift-subtract over 128 bits with the divisor in mula+0..+16 and the remainder in
 		;   mulres+0..+14
