@@ -1,7 +1,3 @@
-; gfx/sprites_b8D: sprite frame sets (SpriteSetN, see FrameSetTable): header, frame table, pieces, 4bpp tiles.
-; Bank $8D. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $8D883C
 SpriteSet10:		;frame set 10: frames 462-517
 	dw 56		; frames
 	dw 388		; pieces
@@ -18,9 +14,9 @@ SpriteSet10:		;frame set 10: frames 462-517
 	dw 339,345,349,355,360,367,373,380
 	dw 388
 .pieces:		;x, y, tile, attributes per piece
-	incbin "../../data/Sprites/set10.pieces"
+	incbin "../../../data/Sprites/set10.pieces"
 	assert .tiles-.pieces == 4*388
 .tiles:		;768 4bpp tiles (32 bytes each)
-	incbin "../../data/Sprites/set10.chr"
+	incbin "../../../data/Sprites/set10.chr"
 SpriteSet10End:
 	assert SpriteSet10End-SpriteSet10 == $68C+768*32

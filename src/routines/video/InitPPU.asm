@@ -1,7 +1,3 @@
-; Vblank and IRQ handlers, sprites, the screen. SNES PPU/DMA code lives here.
-; Bank $8D. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $8D8120
 InitPPU:		;SNES: all PPU and CPU I/O registers to their reset values (forced blank, mode 0, no layers, NMI off)
 	sep #$20
 	lda.b #INIDISP_FBLANK|$0F
