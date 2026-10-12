@@ -1,0 +1,19 @@
+VBlank_CramOnly:		;vbint target (stays installed): forced blank, CGRAM 0-127 from palbuffer each frame, then vb2_main
+	sep #$20
+	lda.b #INIDISP_FBLANK
+	sta.w INIDISP
+	rep #$30
+	lda.w #DMA_CGRAM
+	sta.w DMAP7
+	lda.w #palbuffer&$FFFF
+	sta.w A1T7L
+	lda.w #$0100
+	sta.w DAS7L
+	sep #$20
+	stz.w CGADD
+	lda.b #palbuffer>>16
+	sta.w A1B7
+	lda.b #MDMAEN_CH7
+	sta.w MDMAEN
+	rep #$30
+	jmp.w vb2
