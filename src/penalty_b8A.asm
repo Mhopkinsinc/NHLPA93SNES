@@ -13,28 +13,28 @@ SetScore:		;add to score for game in a0. After period 3 a game within one goal g
 .go:
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	ldy.b a0
 	lda.w gsper,y
 	cmp.w #3		; after period 3
-	bne .zero
+	bne .0
 	lda.w #5		; final
 	sta.w gsper,y
 	lda.w gss1,y
@@ -53,7 +53,7 @@ SetScore:		;add to score for game in a0. After period 3 a game within one goal g
 	ora.w #gsfhl		; gsfhl: show it in the ticker
 	sta.w gsflags,y
 	bra .ex
-.zero:
+.0:
 	lda.w gsper,y
 	inc a
 	sta.w gsper,y
@@ -80,21 +80,21 @@ SetScore:		;add to score for game in a0. After period 3 a game within one goal g
 .ex:
 	stx.b xsave
 	ldx.w #$0006
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0006
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 .rtl:
 	rtl
