@@ -149,7 +149,7 @@ PWprint:		;print pass word (from PassWord
 	ldx.b xsave
 .rtl:
 	rtl
-EncodePW:		;after playoff game compute winners and password if needed. Called from GameOver .
+EncodePW:		;after playoff game compute winners and password if needed. Called from GameOver.
 		;   SNES: after a playoff game, ResolveGames and maketree; then the new password, or new playoffs when the user won or went out
 	lda.w OptPlayMode
 	bne .po

@@ -6,23 +6,23 @@ maketree:		;make playoff tree (potree) from playoffseats/winbits.
 		;   SNES: potree from playoffseats (postarts) and WinBits; reset the games of this round (.sett), then FigureJoy
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0014
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	lda.w postarts		; a1 = playoffseats + 16 * postarts
 	asl a
@@ -54,7 +54,7 @@ maketree:		;make playoff tree (potree) from playoffseats/winbits.
 	sta.b a1+2
 	lda.w WinBits
 	sta.b d0
-.zero:		;winbit picks the team of each pair
+.0:		;winbit picks the team of each pair
 	lda.b d0
 	and.w #$0001
 	sta.b d1
@@ -68,7 +68,7 @@ maketree:		;make playoff tree (potree) from playoffseats/winbits.
 	inc.b a0
 	lsr.b d0
 	dec.b d2
-	bpl .zero
+	bpl .0
 	jsl.l GetShifter		; d1 = games of this round, d2 = first slot
 	lda.b d1
 	bmi .nogames
@@ -79,7 +79,7 @@ maketree:		;make playoff tree (potree) from playoffseats/winbits.
 	lda.w #$0000
 	sta.b a0+2
 	stz.b a1
-.two:
+.2:
 	ldx.b a1
 	stz.w gss1,x
 	stz.w gss2,x
@@ -91,26 +91,26 @@ maketree:		;make playoff tree (potree) from playoffseats/winbits.
 	inc.b a1
 	inc.b a1
 	dec.b d1
-	bpl .two
+	bpl .2
 	jsl.l FigureJoy
 .nogames:
 	stx.b xsave
 	ldx.w #$000E
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0012
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	ldx.b a3
 	rtl
@@ -150,7 +150,7 @@ maketree:		;make playoff tree (potree) from playoffseats/winbits.
 
 org $8D8217
 StartPer:		;start a period: reset stack, rink and clock, face off, run the game loop
-		;   SNES: reset the stack, rink and clock, faceoff at centre ice, music cue timers, replay reset; then the game loop (Gameloop)
+		;   SNES: reset the stack, rink and clock, faceoff at centre ice, music cue timers, replay reset; then Gameloop
 	lda.w #$1FFF		; reset the stack
 	tcs
 	jsl.l Readjoy1
@@ -282,7 +282,7 @@ Bcheck:		;player a2 is in SPA $B44 and a3 is the other player. Entered from chec
 	stx.b a3
 	sty.b a2
 	jsl.l FallDown		; a3 falls
-	jsl.l checkagr		; checkagr
+	jsl.l checkagr
 	lda.b d0
 	cmp.w #$0005
 	bcs .swap
@@ -298,26 +298,27 @@ Bcheck:		;player a2 is in SPA $B44 and a3 is the other player. Entered from chec
 	sta.b collflag
 .rtl:
 	rtl
-NewPO93:		;continue the playoffs from passbits (ReadPassBits, maketree, OptPlayers = 7 - pojoy); no caller found
+ContinuePlayoffs:		;continue playoffs: read the playoff state back from the password bits, rebuild the tree.
+		;   SNES: no caller found
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0020
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	lda.w #passbits		; a3 = passbits
 	sta.b a3
@@ -336,27 +337,27 @@ NewPO93:		;continue the playoffs from passbits (ReadPassBits, maketree, OptPlaye
 .ex:
 	stx.b xsave
 	ldx.w #$000E
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$001E
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	ldx.b a3
 	rtl
 
 org $8D84E2
-DrawTeamBlocks:		;draw team block d1 (team*2) from TeamBlocks.map at printx/printy; the user's team (potree entry
+DrawTeamBlocks:		;draw team block d1 (team*2) from TeamBlocks.map at printx/printy
 		;   SNES: the 9 x 2 TeamBlocksMap block of team d1 into textmap at printx/printy (scorechars, printa)
 	lda.b a2
 	pha
@@ -417,7 +418,7 @@ DrawTeamBlocks:		;draw team block d1 (team*2) from TeamBlocks.map at printx/prin
 
 org $8D85A9
 PeriodOver:		;what to do if period over. Branched to from puckfaceoff when the clock runs out.
-		;   SNES: next period (gmdir flips); overtime only for a tied playoff game; gsp 4 = game over (ContinuePlayoffs), else StartPer
+		;   SNES: next period (gmdir flips); overtime only for a tied playoff game; gsp 4 = game over (GameOver), else StartPer
 	jsl.l forceblack
 	inc.w gsp		; next period
 	lda.w gmode
@@ -444,34 +445,34 @@ PeriodOver:		;what to do if period over. Branched to from puckfaceoff when the c
 	jsl.l SetHor
 	jsl.l setvideo
 	jsl.l UpdateScores
-	jsl.l Intermission		; Intermission
+	jsl.l Intermission
 	lda.w gsp
 	cmp.w #$0004
 	bne .per
-	jml.l ContinuePlayoffs
+	jml.l GameOver
 .per:
 	jmp.w StartPer
-GetPlayerName:		;a1 = mesarea "NN First Last" (getname) for player TempPlOffset (bit 15 set: away
+GetPlayerName:		;a1 = mesarea "NN First Last" (getname) for player TempPlOffset (bit 15 set: away team)
 		;   SNES: mesarea = number and name of player TempPlOffset (bit 15: away team) via PlayerNumName
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea2:
 	lda.b a2,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pusha
+	bne .savea2
 	ldx.b xsave
 	stz.b a2
 	lda.w TempPlOffset		; bit 15: away team
@@ -485,21 +486,21 @@ GetPlayerName:		;a1 = mesarea "NN First Last" (getname) for player TempPlOffset 
 	jsl.l PlayerNumName
 	stx.b xsave
 	ldx.w #$0002
-.popa:
+.resta2:
 	pla
 	sta.b a2,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta2
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0002
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	rtl
 

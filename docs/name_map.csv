@@ -199,7 +199,7 @@ $82FB79,QueueSound,CODE_82FB79,SNES,,sound_b82
 $82FBC5,PWtoBits,CODE_82FBC5,92G,,hockey_b82
 $82FBEA,ClrPassBits,CODE_82FBEA,92G,,hockey_b82
 $82FC03,PushBits,CODE_82FC03,93G,,hockey_b82
-$82FC59,ContinuePlayoffs,CODE_82FC59,SNES,,hockey_b82
+$82FC59,GameOver,CODE_82FC59,93G,was ContinuePlayoffs (93G GameOver),hockey_b82
 $82FC97,SaveRegsStartHL2,CODE_82FC97,SNES,,hockey_b82
 $82FCCD,marktextlo,CODE_82FCCD,SNES,,video_b82
 $82FCDB,muls32,CODE_82FCDB,,,middle_b82
@@ -276,7 +276,7 @@ $8888C3,DrawGameSetupBack,CODE_8888C3,SNES,,hockey_b88
 $888942,mulu,CODE_888942,,,middle_b88
 $88EF9C,GetPassWord,CODE_88EF9C,92G,from $8FF0F4,hockey_b88
 $88F2B0,TitleScreen,CODE_88F2B0,93G,from $8B816A,hockey_b88
-$88F512,PlayoffScreen,CODE_88F512,93G,"from ContinuePlayoffs, $80F5F2",hockey_b88
+$88F512,PlayoffScreen,CODE_88F512,93G,"from GameOver, $80F5F2",hockey_b88
 $88FBA6,assdefd,CODE_88FBA6,,asstab 2,logic_b88
 $88FDB2,SuperAdd,CODE_88FDB2,92G,,hockey_b88
 $88FDD0,skateto,CODE_88FDD0,93G,,logic_b88
@@ -307,7 +307,7 @@ $8AFE21,SetScore,CODE_8AFE21,93G,"from UpdateScores $82F9F4, $8F9062",penalty_b8
 $8B8000,NewPO,CODE_8B8000,92G,,hockey_b8B
 $8B807D,FigureJoy,CODE_8B807D,92G,,hockey_b8B
 $8B816A,Opening,CODE_8B816A,92G,"from Start, $80C407",hockey_b8B
-$8B8172,Opening4,CODE_8B8172,92G,"from ContinuePlayoffs, PlayoffScreenOpening4",hockey_b8B
+$8B8172,Opening4,CODE_8B8172,92G,"from GameOver, PlayoffScreenOpening4",hockey_b8B
 $8B817A,ReadPassBits,CODE_8B817A,92G,,hockey_b8B
 $8B8253,ResolveGames,CODE_8B8253,92G,,hockey_b8B
 $8BFCCE,printbig,CODE_8BFCCE,93G,,middle_b8B
@@ -321,7 +321,7 @@ $8D8120,InitPPU,CODE_8D8120,SNES,,video_b8D
 $8D8217,StartPer,CODE_8D8217,93G,from StartGame,hockey_b8D
 $8D82F0,GetLowestPen,CODE_8D82F0,93G,from updatepwrplay,penalty_b8D
 $8D8389,Bcheck,CODE_8D8389,93G,from checkcheck,hockey_b8D
-$8D8416,NewPO93,CODE_8D8416,93G,,hockey_b8D
+$8D8416,ContinuePlayoffs,CODE_8D8416,93G,was NewPO93 (93G ContinuePlayoffs),hockey_b8D
 $8D847C,eraser,CODE_8D847C,92G,,middle_b8D
 $8D84E2,DrawTeamBlocks,CODE_8D84E2,93G,,hockey_b8D
 $8D8549,EASNLogo,CODE_8D8549,93G,,penalty_b8D

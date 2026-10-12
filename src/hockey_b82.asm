@@ -82,7 +82,7 @@ PushBits:		;bits = bits * d1 + d0.
 BitMaskTable:		;SNES: the 16 bit masks 1 << n (read by the playoff bit code in bank $8B)
 	dw $0001,$0002,$0004,$0008,$0010,$0020,$0040,$0080
 	dw $0100,$0200,$0400,$0800,$1000,$2000,$4000,$8000
-ContinuePlayoffs:		;SNES: after a game: EncodePW and PlayoffScreen; when the playoffs go on with a user game (OptPlayMode 1, gamenum set) DecodePW the new password and maketree
+GameOver:		;SNES: after a game: EncodePW and PlayoffScreen; when the playoffs go on with a user game (OptPlayMode 1, gamenum set) DecodePW the new password and maketree
 		;   (sf3alttree picks the path); else back to Restart
 	jsl.l EncodePW		; bank $88
 	jsl.l PlayoffScreen		; bank $88 (font tile bases, the playoff tree)
