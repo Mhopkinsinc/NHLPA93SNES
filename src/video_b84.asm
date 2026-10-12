@@ -99,10 +99,10 @@ InitSortObjects:		;SNES: clear the sort objects, then set the 4 sso arrows, the 
 	lda.w #$0000
 	sta.w pfnc,y
 	cpy.w #$001E		; object $1E (puck shadow): pfnc
-	bne .tm
+	bne .goal
 	lda.w #$0001
 	sta.w pfnc,y
-.tm:
+.goal:
 	cpx.w #$006C		; pfgoal for objects 6-11 and 12-15, pfteam $34 for 6-11
 	rol a
 	inc a
