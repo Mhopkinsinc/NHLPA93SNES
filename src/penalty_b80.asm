@@ -2,17 +2,17 @@
 ; Bank $80. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $80A828
-ClrHor:		;revert the graphics back to vertical ice rink mode. 93 does not remap the fonts
+ClrHor:		;revert the graphics back to vertical ice rink mode. Does not remap the fonts
 		;   SNES: revert to the vertical ice rink: clear sfhormode, Oldrow, SprSort, clear the text map, printscores1
 	stx.b xsave
 	ldx.w #$0000
-.push:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$003C
-	bne .push
+	bne .savea
 	ldx.b xsave
 	stz.w sfhormode		; vertical
 	lda.w #999		; Oldrow = 999: redraw the rink rows
@@ -20,7 +20,7 @@ ClrHor:		;revert the graphics back to vertical ice rink mode. 93 does not remap 
 	jsl.l SprSort
 	lda.w sflags
 	bit.w #sfpz		; paused: keep the text
-	bne .pop
+	bne .ex
 	lda.w blankchar		; clear the text map
 	clc
 	adc.w charofs
@@ -34,15 +34,15 @@ ClrHor:		;revert the graphics back to vertical ice rink mode. 93 does not remap 
 	lda.w #$03FF
 	sta.b textdirtyhi
 	jsl.l printscores1		; bank $89
-.pop:
+.ex:
 	stx.b xsave
 	ldx.w #$003A
-.popl:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popl
+	bpl .resta
 	ldx.b xsave
 	ldx.b a3
 	rtl
@@ -52,23 +52,23 @@ AvgCline:		;return d0 = average energy of current line on team a2
 		;   SNES: d0 = average energy of the current line of team a2
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d1,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	stz.b d0
 	stz.b d1
@@ -77,7 +77,7 @@ AvgCline:		;return d0 = average energy of current line on team a2
 	ldy.b a2
 	lda.w tmsort,y
 	sta.b a0
-.loop:
+.l0:
 	ldy.b a0
 	lda.w position,y
 	beq .next
@@ -100,7 +100,7 @@ AvgCline:		;return d0 = average energy of current line on team a2
 	inc.b a0
 	inc.b a0
 	dec.b d2
-	bpl .loop
+	bpl .l0
 	lda.b d1		; players counted
 	beq .ex
 	sta.b mula
@@ -111,26 +111,26 @@ AvgCline:		;return d0 = average energy of current line on team a2
 .ex:
 	stx.b xsave
 	ldx.w #$0002
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000A
-.popd:
+.restore:
 	pla
 	sta.b d1,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	rtl
 
 org $80B9F4
-updatepwrplay:		;show graphic and time remaining for power plays. 93: plays song $33 at the start of a home power play, then prints the time and the team on the power play
+updatepwrplay:		;show graphic and time remaining for power plays. Prints the time and the team on the power play
 		;   SNES: show the power play box: time left and the team on the power play
 	stz.b a2		; a2 = home, a3 = away
 	lda.w #$0002
@@ -139,12 +139,12 @@ updatepwrplay:		;show graphic and time remaining for power plays. 93: plays song
 	sec
 	sbc.w tmap+2
 	sta.b d0
-	bne .neg
+	bne .ne
 	jmp.w updatepwrplay_clr
-.neg:
+.ne:
 	bpl .t0
 	lda.w sflags
-	bit.w #sf2pwrtm		; sf2pwrtm
+	bit.w #sf2pwrtm
 	bne .upp
 	jsl.l updatepwrplay_clr
 	lda.w #sf2pwrtm
@@ -185,7 +185,7 @@ updatepwrplay:		;show graphic and time remaining for power plays. 93: plays song
 	sta.b a3+2
 	lda.w #$0002
 	sta.b [a3]
-	jsl.l appendz		; appendz (bank $82)
+	jsl.l appendz		; bank $82
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$01,$19
 	lda.b a0
@@ -198,7 +198,7 @@ updatepwrplay:		;show graphic and time remaining for power plays. 93: plays song
 	sta.b a1
 	lda.b a0+2
 	sta.b a1+2
-	jsl.l appstring		; appstring, bank $8F
+	jsl.l appstring		; bank $8F
 	lda.b a3
 	sta.b a1
 	lda.b a3+2
@@ -208,7 +208,7 @@ updatepwrplay_clr:		;power play over, EASN logo back
 	lda.w #sf2pwrplay
 	trb.w sflags
 	beq .rtl
-	jml.l EASNLogo		; EASNLogo, bank $8D
+	jml.l EASNLogo		; bank $8D
 .rtl:
 	rtl
 printteamname:		;print the team name of team d3 (0 home) at printx/printy, then printy += 2
@@ -263,27 +263,27 @@ AddPenalty2:		;forced penalties like face off and game over. d0 = penalty, X = p
 .go:
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d1,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	lda.b d0
 	sec
-	sbc.w #$000E		; goal (93 $E) and up
+	sbc.w #$000E		; goal and up
 	bmi .v1
 	bvc .snd
 	bra .nosnd
@@ -350,40 +350,40 @@ AddPenalty2:		;forced penalties like face off and game over. d0 = penalty, X = p
 .noplayer:
 	stx.b xsave
 	ldx.w #$0006
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0002
-.popd:
+.restore:
 	pla
 	sta.b d1,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 .rtl:
 	rtl
 
 org $80D12E
-ChkShotStat:		;add to shot stat if a shot was taken. 93 also raises the crowd and counts the shot for the shooter and against the other team's goalie
+ChkShotStat:		;add to shot stat if a shot was taken
 		;   SNES: if a shot was taken (sf2shot, cleared here), add 1 to the shooting team tmshots
 	lda.w #sf2shot
 	trb.w sflags
 	beq .rtl
 	stx.b xsave
 	ldx.w #$0000
-.push:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .push
+	bne .save
 	ldx.b xsave
 	phx
 	lda.w shotplayer
@@ -399,12 +399,12 @@ ChkShotStat:		;add to shot stat if a shot was taken. 93 also raises the crowd an
 	stx.b a3
 	stx.b xsave
 	ldx.w #$0006
-.pop:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .pop
+	bpl .restore
 	ldx.b xsave
 .rtl:
 	rtl
@@ -424,29 +424,27 @@ addteamstat:		;add d0 to the team word stat at d1 (+2 for team 2, pfteam of X). 
 org $80D329
 PenGoalStuff:		;do this stuff after a goal. a1 = scored on team, a2 = scoring team. If the scoring team had more players on ice, the first scored on player in the box without a coincidental
 		;   penalty is released
-		;   SNES: a1 = scored on team, a2 = scoring team. If the scoring team had more players on the ice, release the first scored on
-		;   player in the box without a coincidental penalty
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pusha
+	bne .savea
 	ldx.b xsave
-	jsl.l ClearPenaltyBuffer		; ClearPenaltyBuffer, bank $8F
+	jsl.l ClearPenaltyBuffer		; bank $8F
 	ldy.b a2
 	lda.w tmap,y		; tmap(a2) - tmap(a1) > 0?
 	ldy.b a1
@@ -499,28 +497,28 @@ PenGoalStuff:		;do this stuff after a goal. a1 = scored on team, a2 = scoring te
 .ex:
 	stx.b xsave
 	ldx.w #$0002
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000A
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	rtl
 
 org $80E6C7
 PenaltyManager:		;called periodically. d7 = elapsed time since last call
 		;   SNES: updatepentime, checkfornewpen, chkprogress, UpdatePA
-	jsl.l updatepentime		; updatepentime, checkfornewpen, chkprogress, then UpdatePA, bank $8F
+	jsl.l updatepentime		; bank $8F
 	jsl.l checkfornewpen
 	jsl.l chkprogress
 	jmp.w UpdatePA
@@ -533,9 +531,9 @@ chkatop:		;attack time of possession stat update. Called once a second from upda
 	beq .lo
 	bmi .v1
 	bvs .lo
-	bra .one
+	bra .1
 .v1:
-	bvs .one
+	bvs .1
 .lo:
 	inc.b d1
 	inc.b d1
@@ -543,27 +541,25 @@ chkatop:		;attack time of possession stat update. Called once a second from upda
 	sec
 	sbc.w #$FFA8
 	bmi .v2
-	bvs .one
+	bvs .1
 	bra .rtl
 .v2:
 	bvs .rtl
-.one:
+.1:
 	lda.w gmode		; gmdir: swap the teams
 	bit.w #gmdir
-	beq .zero
+	beq .0
 	lda.b d1
 	eor.w #$0002
 	sta.b d1
-.zero:
+.0:
 	ldy.b d1
 	lda.w tmATOP,y
 	inc a
 	sta.w tmATOP,y
 .rtl:
 	rtl
-checkfornewpen:		;look for new penalty (entered thru addpenalty(2)). Stops play at once for penalties without minutes or when the guilty team does not have the puck, otherwise starts a
-		;   delayed penalty call
-		;   SNES: new penalties in PenBuf. Stops play at once for penalties without minutes or when the guilty team has the puck, otherwise a
+checkfornewpen:		;look for new penalty (entered thru addpenalty(2)). Stops play at once for penalties without minutes or when the guilty team has the puck, otherwise starts a
 		;   delayed penalty call
 	lda.w sfhormode		; not in horizontal mode
 	beq .go
@@ -728,63 +724,63 @@ Stop4Pen:		;a0 = penaltylist penalty +2. Stop the clock, set the face off spot f
 	sbc.w #$0046
 	bmi .v0
 	bvc .x0
-	bra .zero
+	bra .0
 .v0:
-	bvc .zero
+	bvc .0
 .x0:
 	lda.w #$0046
 	sta.b d0
-.zero:
+.0:
 	lda.b d0
 	sec
 	sbc.w #$FFBA
 	beq .x1
 	bmi .v1
 	bvs .x1
-	bra .one
+	bra .1
 .v1:
-	bvs .one
+	bvs .1
 .x1:
 	lda.w #$FFBA
 	sta.b d0
-.one:
+.1:
 	lda.b d1
 	sec
 	sbc.w #$00A6
 	bmi .v2
 	bvc .yhi
-	bra .two
+	bra .2
 .v2:
-	bvc .two
+	bvc .2
 .yhi:
 	lda.w #$00CE
 	sta.b d1
 	lda.w #$0046
 	sta.b d0
 	lda.b tmp0
-	bpl .two
+	bpl .2
 	lda.w #$FFBA
 	sta.b d0
-.two:
+.2:
 	lda.b d1
 	sec
 	sbc.w #$FF5A
 	beq .ylo
 	bmi .v3
 	bvs .ylo
-	bra .three
+	bra .3
 .v3:
-	bvs .three
+	bvs .3
 .ylo:
 	lda.w #$FF32
 	sta.b d1
 	lda.w #$0046
 	sta.b d0
 	lda.b tmp0
-	bpl .three
+	bpl .3
 	lda.w #$FFBA
 	sta.b d0
-.three:
+.3:
 	lda.b d0
 	sta.w fox
 	lda.b d1
@@ -811,23 +807,23 @@ limitfo:		;limit face off to 5-20 feet from walls of rink. Checks every player i
 		;   SNES: keep the face off spot 65 from the blue line for every player in PenBuf
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	lda.w #PenBuf
 	sta.b a0
@@ -841,21 +837,21 @@ limitfo:		;limit face off to 5-20 feet from walls of rink. Checks every player i
 	bne .loop
 	stx.b xsave
 	ldx.w #$0006
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0006
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	rtl
 .lf:		;a0 = PenBuf entry
@@ -867,7 +863,7 @@ limitfo:		;limit face off to 5-20 feet from walls of rink. Checks every player i
 	lda.w #$0058
 	sta.b d1
 	lda.w pfgoal,y
-	bne .zero
+	bne .0
 	lda.w #$FFA8
 	sta.b d1
 	sec
@@ -881,7 +877,7 @@ limitfo:		;limit face off to 5-20 feet from walls of rink. Checks every player i
 	lda.w #$FFBF
 	sta.w foy
 	bra .sx
-.zero:
+.0:
 	lda.b d1
 	sec
 	sbc.w foy
@@ -898,10 +894,10 @@ limitfo:		;limit face off to 5-20 feet from walls of rink. Checks every player i
 	lda.w #$0046
 	sta.b d0
 	lda.w fox
-	bpl .one
+	bpl .1
 	lda.w #$FFBA
 	sta.b d0
-.one:
+.1:
 	lda.b d0
 	sta.w fox
 .rtl:
@@ -992,23 +988,23 @@ InProgress:		;ref in progress-- update graphics and stats and penalty informatio
 .go:
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 .top:
 	lda.w #$0000
@@ -1019,14 +1015,14 @@ InProgress:		;ref in progress-- update graphics and stats and penalty informatio
 	inc.b a0
 	inc.b a0
 	cmp.w #$0000
-	bne .end
+	bne .0
 	jmp.w .exit
-.end:		;find the end of the list
+.0:		;find the end of the list
 	lda.b [a0]
 	inc.b a0
 	inc.b a0
 	cmp.w #$0000
-	bne .end
+	bne .0
 	dec.b a0
 	dec.b a0
 	dec.b a0
@@ -1071,25 +1067,25 @@ InProgress:		;ref in progress-- update graphics and stats and penalty informatio
 .min:
 	stx.b xsave
 	ldx.w #$0000
-.pushd2:
+.save2:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0008
-	bne .pushd2
+	bne .save2
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha2:
+.savea2:
 	lda.b a1,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .pusha2
+	bne .savea2
 	ldx.b xsave
-	jsl.l GetPeriodTimeRemaining		; GetPeriodTimeRemaining
+	jsl.l GetPeriodTimeRemaining
 	lda.b [a0]
 	xba
 	and.w #$00FF
@@ -1211,26 +1207,26 @@ InProgress:		;ref in progress-- update graphics and stats and penalty informatio
 	sta.b a0
 	pla
 	sta.b a0+2
-	lda.w #apenalty		; apenalty
+	lda.w #apenalty
 	sta.b d0
 	jsl.l assreplace
 	stx.b xsave
 	ldx.w #$000E
-.popa2:
+.resta2:
 	pla
 	sta.b a1,x
 	dex
 	dex
-	bpl .popa2
+	bpl .resta2
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0006
-.popd2:
+.restore2:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd2
+	bpl .restore2
 	ldx.b xsave
 	ldx.b a3		; SetPA, USBoard
 	jsl.l SetPA
@@ -1261,21 +1257,21 @@ InProgress:		;ref in progress-- update graphics and stats and penalty informatio
 .ex:
 	stx.b xsave
 	ldx.w #$000E
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0002
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	ldx.b a3
 .rtl:
@@ -1315,16 +1311,16 @@ coinsearch:		;penalty-box part of InProgress. a2 = team. Clears tmpdst bit 5, co
 	lda.b d1
 	sta.w tmap,y
 	rtl
-UpdatePA:		;animate ref in ref window. 93: also runs ShowThreeStars for game over and reprints the horizontal penalty message line when penmsgtimer runs out
+UpdatePA:		;animate ref in ref window. Reprints the horizontal penalty message line when penmsgtimer runs out
 		;   SNES: animate the ref (SetPA2 when RefCnt runs out); reprint the horizontal penalty message line when penmsgtimer runs out
 	lda.w RefCnt		; RefCnt negative: idle
 	bmi .rtl
 	sec
 	sbc.b d7
 	sta.w RefCnt
-	bpl .zero
-	jsl.l SetPA2		; SetPA2
-.zero:
+	bpl .1
+	jsl.l SetPA2
+.1:
 	lda.w penmsgtimer
 	sec
 	sbc.b d7
@@ -1332,7 +1328,7 @@ UpdatePA:		;animate ref in ref window. 93: also runs ShowThreeStars for game ove
 	bpl .rtl
 	lda.w #$7FFF
 	sta.w penmsgtimer
-	jsl.l ClearPenaltyMessage		; ClearPenaltyMessage, then the player name centered at row $B
+	jsl.l ClearPenaltyMessage		; then the player name centered at row $B
 	jsl.l printz
 	dw $0005		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$11,$0B
@@ -1347,8 +1343,7 @@ UpdatePA:		;animate ref in ref window. 93: also runs ShowThreeStars for game ove
 	jmp.w print
 .rtl:
 	rtl
-SetPA:		;start ref animation. d0 = animation (penalty number). 93: goal also calls ShowGoalBox, and penmsgtimer is set to 60 in horizontal mode. Falls into SetPA2
-
+SetPA:		;start ref animation. d0 = animation (penalty number)
 		;   SNES: start the ref animation for penalty d0: prefmes, ShowGoalBox for a goal, penmsgtimer (60 in horizontal mode), then SetPA2
 	lda.b d0		; RefPen = d0, RefStep = 0, prefmes
 	sta.w RefPen
@@ -1356,9 +1351,9 @@ SetPA:		;start ref animation. d0 = animation (penalty number). 93: goal also cal
 	jsl.l prefmes		; bank $8F
 	lda.b d0
 	cmp.w #PenGoal		; goal: the goal box
-	bne .zero
-	jsl.l ShowGoalBox		; the goal box
-.zero:
+	bne .0
+	jsl.l ShowGoalBox
+.0:
 	lda.w #$7FFF
 	sta.w penmsgtimer
 	lda.w sfhormode
@@ -1369,8 +1364,7 @@ SetPA:		;start ref animation. d0 = animation (penalty number). 93: goal also cal
 	jml.l SetPA2
 
 org $80FED1
-reenergizeteam:		;set all players to max energy on team a2. 93 also moves players marked -3 in tmpdst to the bench (-2). Called from SetupTeamForIntermission and StartHL2 .setteam
-
+reenergizeteam:		;set all players to max energy on team a2. Also moves players marked -3 in tmpdst to the bench (-2). Called from SetupTeamForIntermission and StartHL2 .setteam
 		;   SNES: max energy for every player of team a2; TMPDOUT players go to the bench
 	lda.w #$0032
 	sta.b d0
