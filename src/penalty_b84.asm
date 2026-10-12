@@ -2,7 +2,7 @@
 ; Bank $84. Each block keeps its ROM address with org; blocks of other modules sit between them.
 
 org $84FAE3
-DisplayStats:		;the STATS page of the pause menu: Shots, Power Play, Penalties, Body Checks (Fights Won), AttackZone for both teams
+DisplayStats:		;the STATS page of the pause menu: Shots, Power Play, Penalties, Body Checks, AttackZone for both teams
 	jsl.l printbigz
 	dw $000A		; printz inline string: length (counts itself), then control bytes / text
 	db $BF,$0B,$02,"STATS"

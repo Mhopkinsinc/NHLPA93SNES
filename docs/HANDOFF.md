@@ -1,6 +1,6 @@
 ## Current state (name review)
 
-Name review pass, one file per push; checklist in `docs/name_review_93s.md`. Done: `src/middle_b80.asm`, `src/logic_b8B.asm`, `src/middle_b86.asm`, `src/sound_b82.asm`, `src/video_b8F.asm`, `src/sound_b84.asm`, `src/video_b8B.asm`, `src/sound_b81.asm`, `src/middle_b89.asm`, `src/stats_b8F.asm`, `src/sound_b8F.asm`, `src/middle_b84.asm`, `src/sound_b8D.asm`, `src/logic_b87.asm`, `src/middle_b82.asm`, `src/video_b82.asm`, `src/video_b88.asm`, `src/main.asm`, `src/video_b8D.asm`, `src/penalty_b88.asm`, `src/sound_b86.asm`, `src/logic_b83.asm`, `src/teamdata_b8A.asm`, `src/hockey_b85.asm`, `src/logic_b8A.asm`, `src/penalty_b82.asm`. Next: the smaller files with generic locals (...), then `logic_b80`/`hockey_b80`/`penalty_b80`/`frames`. Rename history goes in `docs/name_map.csv` only.
+Name review pass, one file per push; checklist in `docs/name_review_93s.md`. Done: `src/middle_b80.asm`, `src/logic_b8B.asm`, `src/middle_b86.asm`, `src/sound_b82.asm`, `src/video_b8F.asm`, `src/sound_b84.asm`, `src/video_b8B.asm`, `src/sound_b81.asm`, `src/middle_b89.asm`, `src/stats_b8F.asm`, `src/sound_b8F.asm`, `src/middle_b84.asm`, `src/sound_b8D.asm`, `src/logic_b87.asm`, `src/middle_b82.asm`, `src/video_b82.asm`, `src/video_b88.asm`, `src/main.asm`, `src/video_b8D.asm`, `src/penalty_b88.asm`, `src/sound_b86.asm`, `src/logic_b83.asm`, `src/teamdata_b8A.asm`, `src/hockey_b85.asm`, `src/logic_b8A.asm`, `src/penalty_b82.asm`, `src/penalty_b84.asm`. Next: the smaller files with generic locals (...), then `logic_b80`/`hockey_b80`/`penalty_b80`/`frames`. Rename history goes in `docs/name_map.csv` only.
 
 # Setup handoff (2026-10-09)
 
@@ -37,7 +37,7 @@ Branch `cursor/source-cleanup-fbaa`. Every commit builds MATCH. Counts come from
 Per bank: banks $80-$8F all went through tasks 1-4. Code is mostly in $80, $88 and $8F; the other banks are mostly data in `src/gfx/` and `teamdata_*`.
 
 Left as is (with reason):
-- 4 operands `lda.w $0000,y` / `sta.w $0000,y` (in `penalty_b80`/`penalty_b84`, the old bank80_D000/bank84_F000 code). The base really is zero (Y holds a full address), so no label applies.
+- 4 operands `lda.w $0000,y` / `sta.w $0000,y` (in `penalty_b80`/the old bank80_D000/bank84_F000 code). The base really is zero (Y holds a full address), so no label applies.
 - Bank-suffixed data/RAM names (`sfx8F`, `PixelRemap83`, `jdtab8F`, `dirtab8F`, `unusedFFxx`). No 93G counterpart is confirmed yet.
 
 What's next:
