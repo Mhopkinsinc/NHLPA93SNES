@@ -185,44 +185,44 @@ Gameloop:		;main loop for game
 PlayerShortName:		;SNES: mesarea = "<number> <first initial>. <last name>" of roster player d0 (team a2)
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$0010
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha2:
+.savea2:
 	lda.b a2,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pusha2
+	bne .savea2
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	jsl.l GetPlayerRecord
 	stx.b xsave
 	ldx.w #$0000
-.pusha3:
+.pushrec:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pusha3
+	bne .pushrec
 	ldx.b xsave
 	lda.w #$0000
 	sta.b a1+2
@@ -241,12 +241,12 @@ PlayerShortName:		;SNES: mesarea = "<number> <first initial>. <last name>" of ro
 	inc.b a1
 	stx.b xsave
 	ldx.w #$0002
-.popa3:
+.poprec:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa3
+	bpl .poprec
 	ldx.b xsave
 	lda.b [a0]		; name length
 	sta.b d0
@@ -267,12 +267,12 @@ PlayerShortName:		;SNES: mesarea = "<number> <first initial>. <last name>" of ro
 	lda.w #' '
 	sta.b [a1]
 	inc.b a1
-.skip:
+.skipfirst:
 	lda.b [a0]		; skip to the last name
 	inc.b a0
 	and.w #$00FF
 	cmp.w #' '
-	bne .skip
+	bne .skipfirst
 .last:
 	lda.b [a0]
 	inc.b a0
@@ -284,29 +284,29 @@ PlayerShortName:		;SNES: mesarea = "<number> <first initial>. <last name>" of ro
 	jsl.l MesAreaDone
 	stx.b xsave
 	ldx.w #$0002
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0002
-.popa2:
+.resta2:
 	pla
 	sta.b a2,x
 	dex
 	dex
-	bpl .popa2
+	bpl .resta2
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000E
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	rtl
