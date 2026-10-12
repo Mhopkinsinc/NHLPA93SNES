@@ -1,7 +1,3 @@
-; Penalties, scoreboard, ticker, intermission.
-; Bank $88. Each block keeps its ROM address with org; blocks of other modules sit between them.
-
-org $888405
 getlinee:		;d0 = line number, a2 = team struct. Return d0 = energy level of this line
 		;   SNES: Returns d0 = average energy (tmpde) of the skaters of that line (priolist picks the positions)
 	stx.b xsave
