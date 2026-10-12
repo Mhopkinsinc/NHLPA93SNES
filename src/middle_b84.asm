@@ -8,7 +8,7 @@ PutDigits2:		;SNES: write the 2 digit number d0 (BCD byte, blank leading zero) a
 	lda.b d0
 	and.w #$00FF
 	cmp.w #$000A
-	bcc .lo
+	bcc .ones
 	lsr a
 	lsr a
 	lsr a
@@ -16,7 +16,7 @@ PutDigits2:		;SNES: write the 2 digit number d0 (BCD byte, blank leading zero) a
 	clc
 	adc.w #$0030
 	sta.b tmp0
-.lo:
+.ones:
 	lda.b d0
 	and.w #$000F
 	clc
