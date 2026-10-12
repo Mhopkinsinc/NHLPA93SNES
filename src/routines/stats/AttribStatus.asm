@@ -1,5 +1,4 @@
-AttribStatus:		;Roster column: status. Player d0's word at $66(a2)
-		;   SNES: tmpdst of player d0: Ice/Bench/Injury, or the penalty time (injured: Inj G, $4000: C)
+AttribStatus:		;Roster column: where the player is (ice, bench, injured) or his penalty time
 	asl.b d0
 	lda.b a2
 	beq .team

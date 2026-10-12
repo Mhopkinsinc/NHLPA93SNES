@@ -1,5 +1,4 @@
-AttribFighting:		;Roster column: fighting
-		;   SNES: bit 0 of the nibble is handedness, only bits 1-3 count
+AttribFighting:		;Roster column: fighting rating (the handedness bit is left out)
 	lda.b d0
 	and.w #$000E
 	sta.b d0

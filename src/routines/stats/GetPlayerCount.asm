@@ -1,5 +1,4 @@
-GetPlayerCount:		;d0 = players on team a2 (records until a length word of 2)
-		;   SNES: d0 = roster players of team a2 (its bank $83 team record: Player entries until the empty one); saves a0
+GetPlayerCount:		;d0 = the number of players on team a2's roster
 	lda.b a0+2		; save a0
 	pha
 	lda.b a0

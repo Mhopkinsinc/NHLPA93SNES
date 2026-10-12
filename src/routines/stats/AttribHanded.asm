@@ -1,4 +1,4 @@
-AttribHanded:		;Roster column: handedness. Bit 0 of the sum
+AttribHanded:		;Roster column: shooting hand
 	lda.b d0
 	and.w #$0001
 	sta.b d0

@@ -1,5 +1,4 @@
-AttribEnergy:		;Roster column: energy. $32(a2) word / 40, max 100
-		;   SNES: tmpde of player d0 / 40, max 100
+AttribEnergy:		;Roster column: the player's energy, scaled to at most 100
 	asl.b d0
 	lda.b a2
 	beq .team

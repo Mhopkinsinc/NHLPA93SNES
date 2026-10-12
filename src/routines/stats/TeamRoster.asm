@@ -1,4 +1,5 @@
-TeamRoster:		;SNES Team Roster screen: the team block, each line's players and an attribute; dpad moves, Y switches team, Start leaves
+TeamRoster:		;Team Roster screen: each line's players and one attribute column. The pad moves, Y switches team,
+		;   Start leaves
 	jsl.l forceblack
 	sep #$20
 	stz.w BG1HOFS

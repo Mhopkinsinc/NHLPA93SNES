@@ -1,6 +1,4 @@
-GetNameandAttrib:		;print player d0's name, then the column picked by d4
-		;   SNES: print player d0 (number and name), then at x 26 the column d4 (attribjmp); columns above 2 average the rating nibbles masked by
-		;   d4 high word
+GetNameandAttrib:		;Print player d0's number and name, then the roster column picked by d4
 	stx.b xsave
 	ldx.w #$0000
 .save:

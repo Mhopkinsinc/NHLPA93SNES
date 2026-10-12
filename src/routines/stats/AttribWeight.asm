@@ -1,4 +1,4 @@
-AttribWeight:		;140 + 8 * rating lb
+AttribWeight:		;Roster column: the player's weight in pounds, from his weight rating
 	lda.b d0
 	asl a
 	asl a
