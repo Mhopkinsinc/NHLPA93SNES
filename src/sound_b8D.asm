@@ -24,9 +24,9 @@ updatesound:		;move the crowd noise volume (psg noise channel) toward crowdlevel
 	lsr a
 	lsr a
 	bit.w #$0800
-	beq .pos
+	beq .add
 	ora.w #$F000
-.pos:
+.add:
 	clc
 	adc.w asv
 	sta.w asv
