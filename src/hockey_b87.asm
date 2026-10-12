@@ -7,23 +7,23 @@ RestoreReplayFrame:		;a4 = current replay frame address to convert into normal
 		;   shadow z, lastsfx, d7 = frame delay, PadControlBits, crowdframe, glovecords, PBnum, Hpos/Vpos (not when sfscrl)
 	stx.b xsave
 	ldx.w #$0000
-.pushd:
+.save:
 	lda.b d0,x
 	pha
 	inx
 	inx
 	cpx.w #$000C
-	bne .pushd
+	bne .save
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$0000
-.pusha:
+.savea:
 	lda.b a0,x
 	pha
 	inx
 	inx
 	cpx.w #$0004
-	bne .pusha
+	bne .savea
 	ldx.b xsave
 	lda.b a4		; a0 = a4 (the record)
 	sta.b a0
@@ -170,20 +170,20 @@ RestoreReplayFrame:		;a4 = current replay frame address to convert into normal
 .x:
 	stx.b xsave
 	ldx.w #$0002
-.popa:
+.resta:
 	pla
 	sta.b a0,x
 	dex
 	dex
-	bpl .popa
+	bpl .resta
 	ldx.b xsave
 	stx.b xsave
 	ldx.w #$000A
-.popd:
+.restore:
 	pla
 	sta.b d0,x
 	dex
 	dex
-	bpl .popd
+	bpl .restore
 	ldx.b xsave
 	rtl
